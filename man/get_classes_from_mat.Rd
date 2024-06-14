@@ -10,7 +10,8 @@ get_classes_from_mat(mat_file, variable_name = "class2use")
 \item{mat_file}{A character string specifying the path to the .mat file containing class information.}
 
 \item{variable_name}{A character string specifying the variable name in the .mat file that contains the class information.
-Default is "class2use".}
+Default is "class2use". Other examples are class2use.manual from a manual file, or class2use.auto for an
+classlist used for automatic assignment. This parameter can be found using `get_variable_names_from_mat`.}
 }
 \value{
 A character vector of class names.
@@ -28,4 +29,7 @@ print(classes)
 classes <- get_classes_from_mat("path/to/classifier.mat", "classes")
 print(classes)
 }
+}
+\seealso{
+\code{\link{get_variable_names_from_mat}}
 }
