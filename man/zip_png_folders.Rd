@@ -37,3 +37,6 @@ zip_png_folders("path/to/images", "images.zip", readme_file = "path/to/README.md
 zip_png_folders("path/to/images", "images.zip")
 
 }
+\seealso{
+\code{\link{zip_manual_files}}
+}

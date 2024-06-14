@@ -67,3 +67,6 @@ zip_manual_files("path/to/manual_files", "path/to/feature_files",
 }
 
 }
+\seealso{
+\code{\link{zip_png_folders}}
+}
