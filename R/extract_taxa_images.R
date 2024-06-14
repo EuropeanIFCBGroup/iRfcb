@@ -17,7 +17,8 @@
 #' sample <- "D20230311T092911"
 #' extract_taxa_images(sample, classifier, "path/to/ifcb_data")
 #' }
-#' @import tidyverse
+#' @import dplyr
+#' @import tibble
 #' @import here
 #' @import R.matlab
 #' @export
