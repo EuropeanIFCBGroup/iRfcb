@@ -19,13 +19,12 @@
 #' # Zip all subdirectories in the 'images' folder without a README file
 #' zip_png_folders("path/to/images", "images.zip")
 #'
+#' @import zip
+#' @importFrom stringr str_extract
+#' @importFrom dplyr arrange count
+#' @importFrom lubridate year
+#' @seealso \code{\link{zip_manual_files}}
 zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, email_address = "", version = "") {
-  # Load necessary packages
-  library(zip)
-  library(stringr)
-  library(dplyr)
-  library(lubridate)
-
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_directory, recursive = FALSE)
 

@@ -42,6 +42,7 @@
 #' @importFrom dplyr count arrange
 #'
 #' @export
+#' @seealso \code{\link{zip_png_folders}}
 zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip_filename,
                              data_folder = NULL, readme_file = NULL, png_directory = NULL,
                              email_address = "", matlab_readme_file = NULL, version = "") {

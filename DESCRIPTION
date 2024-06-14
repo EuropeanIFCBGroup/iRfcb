@@ -15,5 +15,6 @@ Imports:
   dplyr,
   imager,
   here,
-  R.matlab
+  R.matlab,
+  lubridate
 RoxygenNote: 7.3.1
