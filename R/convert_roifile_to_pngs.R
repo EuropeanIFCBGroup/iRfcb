@@ -10,7 +10,7 @@
 #' # Convert ROI file to PNG images
 #' convert_roifile_to_pngs("your_roi_file.roi")
 #' }
-#' @import imager
+#' @importFrom imager as.cimg save.image
 #' @export
 convert_roifile_to_pngs <- function(roifile) {
   # Create output directory if needed

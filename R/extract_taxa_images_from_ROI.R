@@ -13,7 +13,7 @@
 #' # Extract taxa images from ROI file
 #' extract_taxa_images_from_ROI("your_roi_file.roi", "output_directory", "taxa_name")
 #' }
-#' @import imager
+#' @importFrom imager as.cimg save.image
 #' @export
 extract_taxa_images_from_ROI <- function(roifile, outdir, taxaname, ROInumbers = NULL) {
   # Create output directory if needed

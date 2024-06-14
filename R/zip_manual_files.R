@@ -38,11 +38,8 @@
 #' }
 #'
 #' @import zip
-#' @importFrom tibble count arrange
 #' @importFrom stringr str_extract
-#' @importFrom base gsub basename dirname file.path formatC
-#' @importFrom utils file.info readLines
-#' @importFrom stats grep
+#' @importFrom dplyr count arrange
 #'
 #' @export
 zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip_filename,

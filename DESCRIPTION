@@ -12,7 +12,11 @@ LazyData: true
 Imports:
   zip,
   lubridate,
+  stringr,
+  dplyr,
   imager,
+  stats,
   here,
   R.matlab,
-  tidyverse
+  magrittr
+RoxygenNote: 7.3.1
