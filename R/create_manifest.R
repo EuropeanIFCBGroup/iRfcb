@@ -1,14 +1,36 @@
-# Load necessary library
-library(dplyr)
-
-# Function to create MANIFEST.txt
+#' Create a MANIFEST.txt file
+#'
+#' This function generates a MANIFEST.txt file listing all files in a specified folder and its subfolders,
+#' along with their sizes in bytes. The function can optionally exclude an existing MANIFEST.txt file from
+#' the generated list.
+#'
+#' @param folder_path A character string specifying the path to the folder whose files are to be listed.
+#' @param manifest_path A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "MANIFEST.txt".
+#' @param exclude_manifest A logical value indicating whether to exclude an existing MANIFEST.txt file from the list. Defaults to TRUE.
+#' @return No return value, called for side effects. Creates a MANIFEST.txt file at the specified location.
+#' @examples
+#' \dontrun{
+#' # Create a MANIFEST.txt file for the current directory
+#' create_manifest(".")
+#'
+#' # Create a MANIFEST.txt file for a specific directory, excluding an existing MANIFEST.txt file
+#' create_manifest("path/to/directory")
+#'
+#' # Create a MANIFEST.txt file and save it to a specific path
+#' create_manifest("path/to/directory", manifest_path = "path/to/manifest/MANIFEST.txt")
+#'
+#' # Create a MANIFEST.txt file without excluding an existing MANIFEST.txt file
+#' create_manifest("path/to/directory", exclude_manifest = FALSE)
+#' }
+#' @import dplyr
+#' @export
 create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", exclude_manifest = TRUE) {
   # List all files in the folder and subfolders
   files <- list.files(folder_path, recursive = TRUE, full.names = TRUE)
-  
+
   # Normalize paths to use forward slashes
   files <- normalizePath(files, winslash = "/")
-  
+
   # Optionally exclude the existing MANIFEST.txt
   if (exclude_manifest) {
     if(exists(manifest_path)) {
@@ -16,22 +38,22 @@ create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", exclude
       files <- files[files != manifest_file_path]
     }
   }
-  
+
   # Get file sizes
   file_sizes <- file.info(files)$size
-  
+
   # Create a data frame with filenames and their sizes
   manifest_df <- data.frame(
     file = gsub(paste0(normalizePath(folder_path, winslash = "/"), "/"), "", files, fixed = TRUE),  # Remove the folder path from the file names
     size = file_sizes,
     stringsAsFactors = FALSE
   )
-  
+
   # Format the file information as "filename [size]"
   manifest_content <- paste0(manifest_df$file, " [", formatC(manifest_df$size, format = "d", big.mark = ","), " bytes]")
-  
+
   # Write the manifest content to MANIFEST.txt
   writeLines(manifest_content, manifest_path)
-  
+
   cat("MANIFEST.txt has been created at", manifest_path, "\n")
 }
