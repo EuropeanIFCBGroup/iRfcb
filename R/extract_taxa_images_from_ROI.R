@@ -1,35 +1,46 @@
-#' Extract Taxa Images from ROI File
+#' Extract Images from ROI File
 #'
 #' This function reads a .roi file and its corresponding .adc file, extracts specified regions of interest (ROIs),
-#' and saves each ROI as a PNG image in a specified directory under a given taxa name.
+#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify a taxa name and ROI numbers.
 #'
 #' @param roifile A character string specifying the path to the .roi file.
-#' @param outdir A character string specifying the directory where the PNG images will be saved.
-#' @param taxaname A character string specifying the taxa name for the subdirectory where images will be saved.
+#' @param outdir A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
+#' @param taxaname An optional character string specifying the taxa name for the subdirectory where images will be saved. Defaults to NULL.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @return No return value, called for side effects. Writes PNG images to a directory.
 #' @examples
 #' \dontrun{
+#' # Convert ROI file to PNG images
+#' extract_images_from_ROI("your_roi_file.roi")
+#'
 #' # Extract taxa images from ROI file
-#' extract_taxa_images_from_ROI("your_roi_file.roi", "output_directory", "taxa_name")
+#' extract_images_from_ROI("your_roi_file.roi", "output_directory", "taxa_name")
 #' }
 #' @importFrom imager as.cimg save.image
 #' @export
-extract_taxa_images_from_ROI <- function(roifile, outdir, taxaname, ROInumbers = NULL) {
+extract_images_from_ROI <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
   # Create output directory if needed
-  outpath <- file.path(outdir, taxaname)
+  if (!is.null(taxaname)) {
+    outpath <- file.path(outdir, taxaname)
+  } else {
+    outpath <- file.path(outdir, tools::file_path_sans_ext(basename(roifile)))
+  }
   dir.create(outpath, showWarnings = FALSE, recursive = TRUE)
 
   # Get ADC data for start byte and length of each ROI
   adcfile <- sub("\\.roi$", ".adc", roifile)
   adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
-  adcdata <- adcdata[ROInumbers,]
   x <- as.numeric(adcdata$V16)
   y <- as.numeric(adcdata$V17)
   startbyte <- as.numeric(adcdata$V18)
 
-  if (is.null(ROInumbers)) {
-    ROInumbers <- which(x > 0)
+  if (!is.null(ROInumbers)) {
+    adcdata <- adcdata[ROInumbers,]
+    x <- as.numeric(adcdata$V16)
+    y <- as.numeric(adcdata$V17)
+    startbyte <- as.numeric(adcdata$V18)
+  } else {
+    ROInumbers <- seq_along(startbyte)
   }
 
   # Open roi file
@@ -40,10 +51,6 @@ extract_taxa_images_from_ROI <- function(roifile, outdir, taxaname, ROInumbers =
     cat("An error occurred:", conditionMessage(e), "\n")
     return(NULL)
   })
-
-  targets <- list()
-  targets$targetNumber <- ROInumbers
-  targets$pid <- list()
 
   # Function to convert binary to 0-255
   convert_to_0_255 <- function(binary_value) {
@@ -85,6 +92,3 @@ extract_taxa_images_from_ROI <- function(roifile, outdir, taxaname, ROInumbers =
   # Close the roi file
   close(fid)
 }
-
-# Example usage:
-# extract_taxa_images_from_ROI("your_roi_file.roi", "output_directory", "taxa_name")
