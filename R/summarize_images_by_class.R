@@ -8,7 +8,7 @@
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @return A data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
 #' @importFrom dplyr group_by summarise bind_rows arrange
-#' @importFrom lubridate year month day
+#' @importFrom lubridate date year month day
 #' @export
 summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
@@ -49,6 +49,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
         gpsLatitude <- NA
         gpsLongitude <- NA
         timestamp <- gps_timestamp$full_timestamp
+        date <- gps_timestamp$date
         year <- gps_timestamp$year
         month <- gps_timestamp$month
         day <- gps_timestamp$day
@@ -60,6 +61,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
           gpsLatitude <- hdr_info$gpsLatitude[match_row]
           gpsLongitude <- hdr_info$gpsLongitude[match_row]
           timestamp <- hdr_info$full_timestamp[match_row]
+          date <- lubridate::date(timestamp)
           year <- lubridate::year(timestamp)
           month <- lubridate::month(timestamp)
           day <- lubridate::day(timestamp)
@@ -70,6 +72,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
           gpsLatitude <- NA
           gpsLongitude <- NA
           timestamp <- gps_timestamp$full_timestamp
+          date <- gps_timestamp$date
           year <- gps_timestamp$year
           month <- gps_timestamp$month
           day <- gps_timestamp$day
@@ -86,6 +89,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
         gpsLatitude = gpsLatitude,
         gpsLongitude = gpsLongitude,
         timestamp = timestamp,
+        date = date,
         year = year,
         month = month,
         day = day,
@@ -104,6 +108,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
         gpsLatitude = first(gpsLatitude),   # Take the first value of gpsLatitude (assuming it's constant per sample)
         gpsLongitude = first(gpsLongitude), # Take the first value of gpsLongitude (assuming it's constant per sample)
         timestamp = first(timestamp),       # Take the first value of timestamp (assuming it's constant per sample)
+        date = first(date),                 # Take the first value of date (assuming it's constant per sample)
         year = first(year),                 # Take the first value of year (assuming it's constant per sample)
         month = first(month),               # Take the first value of month (assuming it's constant per sample)
         day = first(day),                   # Take the first value of day (assuming it's constant per sample)

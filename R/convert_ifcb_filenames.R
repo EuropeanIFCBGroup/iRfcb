@@ -28,7 +28,8 @@ convert_ifcb_filenames <- function(filenames) {
       )
     )
 
-    # Extract year, month, day, and time
+    # Extract date, year, month, day, and time
+    date <- lubridate::date(full_timestamp)
     year <- lubridate::year(full_timestamp)
     month <- lubridate::month(full_timestamp)
     day <- lubridate::day(full_timestamp)
@@ -37,6 +38,7 @@ convert_ifcb_filenames <- function(filenames) {
     return(data.frame(
       sample = tools::file_path_sans_ext(filename),  # Extract sample name without extension
       full_timestamp = full_timestamp,
+      date = date,
       year = year,
       month = month,
       day = day,
