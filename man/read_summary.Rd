@@ -4,23 +4,28 @@
 \alias{read_summary}
 \title{Read and Summarize MATLAB .mat File}
 \usage{
-read_summary(summary_file, biovolume = FALSE, threshold = "opt")
+read_summary(
+  summary_file,
+  hdr_directory = NULL,
+  biovolume = FALSE,
+  threshold = "opt"
+)
 }
 \arguments{
 \item{summary_file}{A character string specifying the path to the .mat summary file.}
 
+\item{hdr_directory}{A character string specifying the path to the directory containing header (.hdr) files. Default is NULL.}
+
 \item{biovolume}{A logical indicating whether to include biovolume data. Default is FALSE.}
 
-\item{threshold}{A character string specifying the threshold type for counts and biovolume.
-Options are "opt" (default), "adhoc", and "none".}
+\item{threshold}{A character string specifying the threshold type for counts and biovolume. Options are "opt" (default), "adhoc", and "none".}
 }
 \value{
-A data frame containing the summary information including file list, dates,
-        volume analyzed, species counts, and optionally biovolume.
+A data frame containing the summary information including file list, volume analyzed, species counts, optionally biovolume, and other metadata.
 }
 \description{
 This function reads a MATLAB .mat file containing summary IFCB (Imaging FlowCytobot) data generated
-by the `countcells_allTBnew_user_training` function from the [IFCB analysis repository](https://github.com/hsosik/ifcb-analysis/tree/master).
+by the countcells_allTBnew_user_training function from the IFCB analysis repository.
 It returns a data frame with species counts and optionally biovolume information based on specified thresholds.
 }
 \examples{

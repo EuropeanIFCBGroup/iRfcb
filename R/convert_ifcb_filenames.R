@@ -37,7 +37,7 @@ convert_ifcb_filenames <- function(filenames) {
 
     return(data.frame(
       sample = tools::file_path_sans_ext(filename),  # Extract sample name without extension
-      full_timestamp = full_timestamp,
+      timestamp = full_timestamp,
       date = date,
       year = year,
       month = month,

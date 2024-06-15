@@ -1,29 +1,47 @@
 #' Read and Summarize MATLAB .mat File
 #'
 #' This function reads a MATLAB .mat file containing summary IFCB (Imaging FlowCytobot) data generated
-#' by the `countcells_allTBnew_user_training` function from the [IFCB analysis repository](https://github.com/hsosik/ifcb-analysis/tree/master).
+#' by the countcells_allTBnew_user_training function from the IFCB analysis repository.
 #' It returns a data frame with species counts and optionally biovolume information based on specified thresholds.
 #'
 #' @param summary_file A character string specifying the path to the .mat summary file.
+#' @param hdr_directory A character string specifying the path to the directory containing header (.hdr) files. Default is NULL.
 #' @param biovolume A logical indicating whether to include biovolume data. Default is FALSE.
-#' @param threshold A character string specifying the threshold type for counts and biovolume.
-#'                  Options are "opt" (default), "adhoc", and "none".
-#' @return A data frame containing the summary information including file list, dates,
-#'         volume analyzed, species counts, and optionally biovolume.
+#' @param threshold A character string specifying the threshold type for counts and biovolume. Options are "opt" (default), "adhoc", and "none".
+#' @return A data frame containing the summary information including file list, volume analyzed, species counts, optionally biovolume, and other metadata.
 #' @importFrom R.matlab readMat
+#' @importFrom dplyr mutate filter left_join relocate coalesce
+#' @importFrom tidyr pivot_longer pivot_wider
 #' @export
 #' @examples
 #' \dontrun{
 #' summary_data <- read_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
 #' print(summary_data)
 #' }
-read_summary <- function(summary_file, biovolume = FALSE, threshold = "opt") {
-  # Read the MATLAB file
+read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, threshold = "opt") {
+
+  # Read the MATLAB .mat file
   mat <- R.matlab::readMat(summary_file)
 
-  # Extract common fields
-  ml_analyzed <- mat$ml.analyzedTB
-  mdateTB <- as.Date(mat$mdateTB, origin = "1970-01-01") - 719529
+  # Check if hdr_directory is provided and exists
+  if (!is.null(hdr_directory)) {
+    # Extract GPS information from header files
+    hdr_info <- extract_hdr_data(file.path(hdr_directory), gps_only = TRUE, verbose = FALSE)
+    gps_info <- hdr_info %>%
+      dplyr::select(sample, gpsLatitude, gpsLongitude)
+
+    # List all .hdr files in the specified directory
+    files <- list.files(hdr_directory, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
+
+    # Extract volume analyzed information from .hdr files
+    volume_info <- data.frame(
+      sample = gsub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", files),
+      ml_analyzed_calc = IFCB_volume_analyzed(files)
+    )
+  }
+
+  # Extract ml_analyzed and file list from the MATLAB data
+  ml_analyzed <- as.vector(mat$ml.analyzedTB)
   filelistTB <- unlist(mat$filelistTB)
 
   # Select class count based on threshold
@@ -33,21 +51,27 @@ read_summary <- function(summary_file, biovolume = FALSE, threshold = "opt") {
                          "none" = mat$classcountTB,
                          stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 
+  # Check if classcountTB is NULL
   if (is.null(classcountTB)) {
     stop(paste("Class count data for threshold", threshold, "does not exist in the file."))
   }
 
-  # Extract species names
+  # Extract species names from class2useTB
   class2useTB <- unlist(mat$class2useTB)
 
-  # Assign column names for class counts
-  colnames(classcountTB) <- paste("counts", gsub("_", " ", class2useTB), sep = "_")
+  # Sanitize species names for use as column names
+  class2useTB <- gsub("[^[:alnum:]_]", "_", class2useTB)
+  class2useTB <- make.names(class2useTB, unique = TRUE)
 
-  # Initialize the summary data frame
-  summary <- data.frame(sample = filelistTB,
-                        date = mdateTB,
-                        ml_analyzed = ml_analyzed,
-                        classcountTB)
+  # Assign column names for class counts
+  colnames(classcountTB) <- paste("counts", class2useTB, sep = "_")
+
+  # Initialize the summary data frame with sample and ml_analyzed
+  summary <- data.frame(
+    sample = filelistTB,
+    ml_analyzed = ml_analyzed,
+    classcountTB
+  )
 
   # If biovolume is requested, include biovolume data
   if (biovolume) {
@@ -58,16 +82,63 @@ read_summary <- function(summary_file, biovolume = FALSE, threshold = "opt") {
                             "none" = mat$classbiovolTB,
                             stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 
+    # Check if classbiovolTB is NULL
     if (is.null(classbiovolTB)) {
       stop(paste("Biovolume data for threshold", threshold, "does not exist in the file."))
     }
 
     # Assign column names for biovolume
-    colnames(classbiovolTB) <- paste("biovolume", gsub("_", " ", class2useTB), sep = "_")
+    colnames(classbiovolTB) <- paste("biovolume", class2useTB, sep = "_")
 
     # Combine biovolume data with summary
     summary <- cbind(summary, classbiovolTB)
   }
 
-  return(summary)
+  # Transform summary data into long format and calculate counts per liter
+  summary_long <- summary %>%
+    tidyr::pivot_longer(
+      cols = !c("sample", "ml_analyzed"),
+      names_pattern = "([^_]+)_(.*)",
+      names_to = c("type", "species"),
+      values_to = "value"
+    ) %>%
+    tidyr::pivot_wider(names_from = type, values_from = value) %>%
+    dplyr::filter(counts != 0)
+
+  # If hdr_directory is provided, adjust ml_analyzed with calculated volume
+  if (!is.null(hdr_directory)) {
+    summary_long <- summary_long %>%
+      dplyr::left_join(volume_info, by = "sample") %>%
+      dplyr::mutate(ml_analyzed = dplyr::coalesce(ml_analyzed, ml_analyzed_calc)) %>%
+      dplyr::select(-ml_analyzed_calc)
+  }
+
+  # Calculate counts per liter
+  summary_long <- summary_long %>%
+    dplyr::mutate(counts_per_liter = counts / ml_analyzed * 1000)
+
+  # If biovolume is requested, calculate biovolume per liter and in mm3
+  if (biovolume) {
+    summary_long <- summary_long %>%
+      dplyr::mutate(biovolume_per_liter = biovolume / ml_analyzed * 1000,
+                    biovolume_mm3 = biovolume_per_liter / 1000)
+  }
+
+  # Extract date information from sample names
+  date_info <- convert_ifcb_filenames(unique(summary_long$sample))
+
+  # Merge date information with summary_long
+  summary_long <- summary_long %>%
+    dplyr::left_join(date_info, by = "sample") %>%
+    dplyr::relocate(timestamp, date, year, month, day, time, ifcb_number, .after = sample)
+
+  # If hdr_directory is provided, merge GPS information with summary_long
+  if (!is.null(hdr_directory)) {
+    summary_long <- summary_long %>%
+      dplyr::left_join(gps_info, by = "sample") %>%
+      dplyr::relocate(gpsLatitude, gpsLongitude, .after = ifcb_number)
+  }
+
+  # Return the finalized summary_long data frame
+  return(summary_long)
 }
