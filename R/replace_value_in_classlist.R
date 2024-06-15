@@ -6,7 +6,7 @@
 #' @param output_file A character string specifying the path to the output .mat file.
 #' @param target_value The value to be replaced in the specified column of the classlist.
 #' @param new_value The new value to replace the target value with.
-#' @param column_index A numeric value specifying the index of the column where the replacement should occur (1-based index). Defaults to 1.
+#' @param column_index A numeric value specifying the index of the column where the replacement should occur (1-based index). Defaults to 2.
 #' @return No return value, called for side effects. Writes modified .mat file to the specified directory.
 #' @examples
 #' \dontrun{
@@ -15,7 +15,7 @@
 #' }
 #' @import R.matlab
 #' @export
-replace_value_in_classlist <- function(input_file, output_file, target_value, new_value, column_index = 1) {
+replace_value_in_classlist <- function(input_file, output_file, target_value, new_value, column_index = 2) {
   # Load the MATLAB file
   mat_contents <- R.matlab::readMat(input_file)
 

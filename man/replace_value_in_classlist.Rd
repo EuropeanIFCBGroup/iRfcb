@@ -9,7 +9,7 @@ replace_value_in_classlist(
   output_file,
   target_value,
   new_value,
-  column_index = 1
+  column_index = 2
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ replace_value_in_classlist(
 
 \item{new_value}{The new value to replace the target value with.}
 
-\item{column_index}{A numeric value specifying the index of the column where the replacement should occur (1-based index). Defaults to 1.}
+\item{column_index}{A numeric value specifying the index of the column where the replacement should occur (1-based index). Defaults to 2.}
 }
 \value{
 No return value, called for side effects. Writes modified .mat file to the specified directory.
