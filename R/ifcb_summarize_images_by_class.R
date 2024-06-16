@@ -3,16 +3,16 @@
 #' This function summarizes the number of images per class for each sample,
 #' and optionally retrieves GPS positions, timestamps, and IFCB information using ifcb_extract_hdr_data and ifcb_convert_filenames functions.
 #'
-#' @param main_directory A character string specifying the path to the main directory containing subfolders (classes) with .png images.
+#' @param png_directory A character string specifying the path to the main directory containing subfolders (classes) with .png images.
 #' @param hdr_directory A character string specifying the path to the directory containing the .hdr files. Default is NULL.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @return A data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
 #' @importFrom dplyr group_by summarise bind_rows arrange
 #' @importFrom lubridate date year month day
 #' @export
-ifcb_summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verbose = TRUE) {
+ifcb_summarize_images_by_class <- function(png_directory, hdr_directory = NULL, verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
-  subdirs <- list.dirs(main_directory, recursive = FALSE, full.names = FALSE)
+  subdirs <- list.dirs(png_directory, recursive = FALSE, full.names = FALSE)
 
   # Initialize an empty list to store results
   results <- list()
@@ -29,7 +29,7 @@ ifcb_summarize_images_by_class <- function(main_directory, hdr_directory = NULL,
     class_name <- subdir  # Assuming subdir name is the class name
 
     # List all PNG files in the current subdirectory
-    png_files <- list.files(file.path(main_directory, subdir), pattern = "\\.png$", full.names = TRUE)
+    png_files <- list.files(file.path(png_directory, subdir), pattern = "\\.png$", full.names = TRUE)
 
     # Initialize a list to store results for the current class
     class_results <- list()

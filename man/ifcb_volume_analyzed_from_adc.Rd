@@ -19,7 +19,8 @@ A list containing:
 This function reads an IFCB ADC file to extract sample run time and inhibittime,
 and returns the associated estimate of sample volume analyzed (in milliliters).
 The function assumes a standard IFCB configuration with a sample syringe operating
-at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008).
+at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
+the R equivalent function of `IFCB_volume_analyzed_fromADC` from the ifcb-analysis repository.
 }
 \examples{
 \dontrun{
@@ -28,4 +29,7 @@ adc_file <- "path/to/IFCB_adc_file.csv"
 adc_info <- ifcb_volume_analyzed_from_adc(adc_file)
 print(adc_info$ml_analyzed)
 }
+}
+\seealso{
+\url{https://github.com/hsosik/ifcb-analysis}
 }

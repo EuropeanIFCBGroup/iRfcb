@@ -1,6 +1,7 @@
 #' Get Classes from a MAT File
 #'
-#' This function reads a .mat file containing class information and extracts the list of classes.
+#' This function reads a .mat file generated the ifcb-analysis repository,
+#' containing class information and extracts the list of classes.
 #'
 #' @param mat_file A character string specifying the path to the .mat file containing class information.
 #' @param variable_name A character string specifying the variable name in the .mat file that contains the class information.
@@ -10,16 +11,16 @@
 #' @examples
 #' \dontrun{
 #' # Get class names from a class2use file
-#' classes <- ifcb_get_classes("path/to/class2use.mat", "class2use")
+#' classes <- ifcb_get_mat_classes("path/to/class2use.mat", "class2use")
 #' print(classes)
 #'
 #' # Get class names from a classifier file
-#' classes <- ifcb_get_classes("path/to/classifier.mat", "classes")
+#' classes <- ifcb_get_mat_classes("path/to/classifier.mat", "classes")
 #' print(classes)
 #' }
 #' @import R.matlab
 #' @export
-#' @seealso \code{\link{get_variable_names_from_mat}}
+#' @seealso \code{\link{get_variable_names_from_mat}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_classes <- function(mat_file, variable_name = "class2use") {
   # Read class information from MAT file
   class_info <- R.matlab::readMat(mat_file)

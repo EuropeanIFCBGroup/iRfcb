@@ -5,13 +5,13 @@
 \title{Summarize Image Counts by Class and Sample}
 \usage{
 ifcb_summarize_images_by_class(
-  main_directory,
+  png_directory,
   hdr_directory = NULL,
   verbose = TRUE
 )
 }
 \arguments{
-\item{main_directory}{A character string specifying the path to the main directory containing subfolders (classes) with .png images.}
+\item{png_directory}{A character string specifying the path to the main directory containing subfolders (classes) with .png images.}
 
 \item{hdr_directory}{A character string specifying the path to the directory containing the .hdr files. Default is NULL.}
 

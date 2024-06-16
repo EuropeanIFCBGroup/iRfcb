@@ -25,7 +25,7 @@ A data frame containing the summary information including file list, volume anal
 }
 \description{
 This function reads a MATLAB .mat file containing summary IFCB (Imaging FlowCytobot) data generated
-by the countcells_allTBnew_user_training function from the IFCB analysis repository.
+by the `countcells_allTBnew_user_training` function from the ifcb-analysis repository.
 It returns a data frame with species counts and optionally biovolume information based on specified thresholds.
 }
 \examples{
@@ -33,4 +33,7 @@ It returns a data frame with species counts and optionally biovolume information
 summary_data <- ifcb_read_mat_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
 print(summary_data)
 }
+}
+\seealso{
+\url{https://github.com/hsosik/ifcb-analysis}
 }

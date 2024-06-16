@@ -13,7 +13,8 @@ ifcb_get_mat_variables(mat_file)
 A character vector of variable names.
 }
 \description{
-This function reads a .mat file and retrieves the names of all variables stored within it.
+This function reads a .mat file generated the ifcb-analysis repository and retrieves the
+names of all variables stored within it.
 }
 \examples{
 \dontrun{
@@ -23,5 +24,5 @@ print(variables)
 }
 }
 \seealso{
-\code{\link{get_classes_from_mat}}
+\code{\link{get_classes_from_mat}}  \url{https://github.com/hsosik/ifcb-analysis}
 }

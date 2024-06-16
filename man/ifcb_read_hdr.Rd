@@ -15,7 +15,8 @@ A list (hdr) containing runtime, inhibittime, and runType (if available) extract
 \description{
 This function imports an IFCB header file (either from local path or URL),
 extracts specific target values such as runtime, inhibittime, and runType,
-and returns them in a structured format (hdr).
+and returns them in a structured format (hdr). This is
+the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository.
 }
 \examples{
 \dontrun{
@@ -23,4 +24,7 @@ and returns them in a structured format (hdr).
 hdr_info <- ifcb_read_hdr("path/to/IFCB_hdr_file.hdr")
 print(hdr_info)
 }
+}
+\seealso{
+\url{https://github.com/hsosik/ifcb-analysis}
 }

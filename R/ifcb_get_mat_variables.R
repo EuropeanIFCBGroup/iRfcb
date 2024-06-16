@@ -1,6 +1,7 @@
 #' Get Variable Names from a MAT File
 #'
-#' This function reads a .mat file and retrieves the names of all variables stored within it.
+#' This function reads a .mat file generated the ifcb-analysis repository and retrieves the
+#' names of all variables stored within it.
 #'
 #' @param mat_file A character string specifying the path to the .mat file.
 #' @return A character vector of variable names.
@@ -12,7 +13,7 @@
 #' }
 #' @import R.matlab
 #' @export
-#' @seealso \code{\link{get_classes_from_mat}}
+#' @seealso \code{\link{get_classes_from_mat}}  \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_variables <- function(mat_file) {
   # Read the contents of the MAT file
   mat_contents <- R.matlab::readMat(mat_file)

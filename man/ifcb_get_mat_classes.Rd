@@ -17,19 +17,20 @@ classlist used for automatic assignment. This parameter can be found using `get_
 A character vector of class names.
 }
 \description{
-This function reads a .mat file containing class information and extracts the list of classes.
+This function reads a .mat file generated the ifcb-analysis repository,
+containing class information and extracts the list of classes.
 }
 \examples{
 \dontrun{
 # Get class names from a class2use file
-classes <- ifcb_get_classes("path/to/class2use.mat", "class2use")
+classes <- ifcb_get_mat_classes("path/to/class2use.mat", "class2use")
 print(classes)
 
 # Get class names from a classifier file
-classes <- ifcb_get_classes("path/to/classifier.mat", "classes")
+classes <- ifcb_get_mat_classes("path/to/classifier.mat", "classes")
 print(classes)
 }
 }
 \seealso{
-\code{\link{get_variable_names_from_mat}}
+\code{\link{get_variable_names_from_mat}} \url{https://github.com/hsosik/ifcb-analysis}
 }

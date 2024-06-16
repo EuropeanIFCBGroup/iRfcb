@@ -1,7 +1,7 @@
 #' Read and Summarize MATLAB .mat File
 #'
 #' This function reads a MATLAB .mat file containing summary IFCB (Imaging FlowCytobot) data generated
-#' by the countcells_allTBnew_user_training function from the IFCB analysis repository.
+#' by the `countcells_allTBnew_user_training` function from the ifcb-analysis repository.
 #' It returns a data frame with species counts and optionally biovolume information based on specified thresholds.
 #'
 #' @param summary_file A character string specifying the path to the .mat summary file.
@@ -12,6 +12,7 @@
 #' @importFrom R.matlab readMat
 #' @importFrom dplyr mutate filter left_join relocate coalesce
 #' @importFrom tidyr pivot_longer pivot_wider
+#' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
 #' @examples
 #' \dontrun{
