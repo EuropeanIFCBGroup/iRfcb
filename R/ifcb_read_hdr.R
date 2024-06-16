@@ -1,6 +1,6 @@
 #' Read IFCB Header File and Extract Runtime Information
 #'
-#' This function imports an IFCB header file (either from local path or URL),
+#' This function imports an IFCB header file (either from a local path or URL),
 #' extracts specific target values such as runtime, inhibittime, and runType,
 #' and returns them in a structured format (hdr). This is
 #' the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository.
@@ -53,7 +53,8 @@ ifcb_read_hdr <- function(fullfilename) {
       spos <- regexpr('s', linestr)[[1]]
       hdr$runtime <- as.numeric(trimws(substr(linestr, eqpos + 1, spos - 1)))
 
-      eqpos2 <- regexpr('=', linestr, fixed = TRUE, after = eqpos + 1)[[1]]
+      eqpos2 <- regexpr('=', linestr)[[1]]
+      spos2 <- regexpr('s', linestr)[[1]]
       hdr$inhibittime <- as.numeric(trimws(substr(linestr, eqpos2 + 1, spos2 - 1)))
     }
   }

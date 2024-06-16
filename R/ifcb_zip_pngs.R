@@ -14,7 +14,11 @@
 #'
 #' @examples
 #' # Zip all subdirectories in the 'images' folder with a README file
-#' ifcb_zip_pngs("path/to/images", "images.zip", readme_file = "path/to/README.md", email_address = "example@example.com", version = "1.0")
+#' ifcb_zip_pngs("path/to/images",
+#'              "images.zip",
+#'              readme_file = system.file("inst/exdata/README-template.md", package = "ifcb4r"),
+#'              email_address = "example@example.com",
+#'              version = "1.0")
 #'
 #' # Zip all subdirectories in the 'images' folder without a README file
 #' ifcb_zip_pngs("path/to/images", "images.zip")

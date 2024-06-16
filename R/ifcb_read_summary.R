@@ -10,7 +10,7 @@
 #' @param threshold A character string specifying the threshold type for counts and biovolume. Options are "opt" (default), "adhoc", and "none".
 #' @return A data frame containing the summary information including file list, volume analyzed, species counts, optionally biovolume, and other metadata.
 #' @importFrom R.matlab readMat
-#' @importFrom dplyr mutate filter left_join relocate coalesce
+#' @importFrom dplyr mutate filter left_join relocate coalesce select
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
@@ -92,7 +92,7 @@ ifcb_read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FA
     colnames(classbiovolTB) <- paste("biovolume", class2useTB, sep = "_")
 
     # Combine biovolume data with summary
-    summary <- cbind(summary, classbiovolTB)
+    summary <- dplyr::bind_cols(summary, classbiovolTB)
   }
 
   # Transform summary data into long format and calculate counts per liter
