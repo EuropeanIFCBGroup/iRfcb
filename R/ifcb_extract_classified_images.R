@@ -23,19 +23,19 @@
 #' threshold <- "opt"  # or specify another threshold
 #'
 #' # Extract taxa images from the classified sample
-#' ifcb_extract_taxa_images(sample, classifieddir, roidir, outdir, taxa, threshold)
+#' ifcb_extract_classified_images(sample, classifieddir, roidir, outdir, taxa, threshold)
 #' }
 #' @import dplyr
 #' @import tibble
 #' @import R.matlab
-#' @seealso \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_extract_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
-ifcb_extract_taxa_images <- function(sample,
-                                     classifieddir,
-                                     roidir,
-                                     outdir,
-                                     taxa = "All",
-                                     threshold = "opt") {
+ifcb_extract_classified_images <- function(sample,
+                                           classifieddir,
+                                           roidir,
+                                           outdir,
+                                           taxa = "All",
+                                           threshold = "opt") {
   # Define year
   year <- substr(sample, start = 2, stop = 5)
 
@@ -76,7 +76,7 @@ ifcb_extract_taxa_images <- function(sample,
       tryCatch({
         taxa.list.ix <- taxa.list %>% filter(V1 == taxon)
 
-        ifcb_extract_pngs_from_roi(
+        ifcb_extract_pngs(
           roifilename,
           outdir,
           taxon,

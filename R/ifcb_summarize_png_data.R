@@ -1,7 +1,7 @@
 #' Summarize Image Counts by Class and Sample
 #'
-#' This function summarizes the number of images per class for each sample,
-#' and optionally retrieves GPS positions, timestamps, and IFCB information using ifcb_extract_hdr_data and ifcb_convert_filenames functions.
+#' This function summarizes the number of images per class for each sample and timestamps,
+#' and optionally retrieves GPS positions, and IFCB information using `ifcb_extract_hdr_data` and `ifcb_convert_filenames` functions.
 #'
 #' @param png_directory A character string specifying the path to the main directory containing subfolders (classes) with .png images.
 #' @param hdr_directory A character string specifying the path to the directory containing the .hdr files. Default is NULL.
@@ -10,7 +10,8 @@
 #' @importFrom dplyr group_by summarise bind_rows arrange
 #' @importFrom lubridate date year month day
 #' @export
-ifcb_summarize_images_by_class <- function(png_directory, hdr_directory = NULL, verbose = TRUE) {
+#' @seealso \code{\link{ifcb_extract_hdr_data}} \code{\link{ifcb_convert_filenames}}
+ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
   subdirs <- list.dirs(png_directory, recursive = FALSE, full.names = FALSE)
 

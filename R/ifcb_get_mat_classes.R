@@ -20,7 +20,7 @@
 #' }
 #' @import R.matlab
 #' @export
-#' @seealso \code{\link{get_variable_names_from_mat}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_get_mat_variables}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_classes <- function(mat_file, variable_name = "class2use") {
   # Read class information from MAT file
   class_info <- R.matlab::readMat(mat_file)

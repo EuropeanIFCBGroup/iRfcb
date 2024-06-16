@@ -23,7 +23,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year
-#' @seealso \code{\link{zip_manual_files}}
+#' @seealso \code{\link{ifcb_zip_matlab}}
 ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email_address = "", version = "") {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_directory, recursive = FALSE)

@@ -1,7 +1,8 @@
 #' Extract Images from ROI File
 #'
 #' This function reads a .roi file and its corresponding .adc file, extracts specified regions of interest (ROIs),
-#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify a taxa name and ROI numbers.
+#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify a taxa name and ROI numbers
+#' if extracting specific ROIs, e.g. from classifier results (see `ifcb_extract_classified_images`).
 #'
 #' @param roifile A character string specifying the path to the .roi file.
 #' @param outdir A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
@@ -11,14 +12,15 @@
 #' @examples
 #' \dontrun{
 #' # Convert ROI file to PNG images
-#' ifcb_extract_pngs_from_roi("your_roi_file.roi")
+#' ifcb_extract_pngs("your_roi_file.roi")
 #'
 #' # Extract taxa images from ROI file
-#' ifcb_extract_pngs_from_roi("your_roi_file.roi", "output_directory", "taxa_name")
+#' ifcb_extract_pngs("your_roi_file.roi", "output_directory", "taxa_name")
 #' }
 #' @importFrom imager as.cimg save.image
 #' @export
-ifcb_extract_pngs_from_roi <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
+#' @seealso \code{\link{ifcb_extract_classified_images}}
+ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(outdir, taxaname)

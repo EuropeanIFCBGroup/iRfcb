@@ -32,5 +32,5 @@ print(classes)
 }
 }
 \seealso{
-\code{\link{get_variable_names_from_mat}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_get_mat_variables}} \url{https://github.com/hsosik/ifcb-analysis}
 }

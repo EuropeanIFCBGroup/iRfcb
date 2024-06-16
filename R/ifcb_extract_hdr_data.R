@@ -1,9 +1,9 @@
 #' Extract HDR data from IFCB HDR Files
 #'
-#' This function reads IFCB instrument settings information files (.hdr) from a specified directory,
-#' extracts the GPS positions (latitude and longitude), sample names, and optionally timestamps.
+#' This function reads all IFCB instrument settings information files (.hdr) from a specified directory,
+#' and extracts the GPS positions if available (optionally).
 #'
-#' @param datadir A character string specifying the path to the directory containing the .hdr files.
+#' @param hdrdir A character string specifying the path to the directory containing the .hdr files.
 #' @param gps_only A logical indicating whether to include only GPS information (latitude and longitude). Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @return A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
@@ -20,9 +20,9 @@
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
 #' @export
-ifcb_extract_hdr_data <- function(datadir, gps_only = FALSE, verbose = TRUE) {
+ifcb_extract_hdr_data <- function(hdrdir, gps_only = FALSE, verbose = TRUE) {
   # List all .hdr files in the specified directory
-  files <- list.files(datadir, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
+  files <- list.files(hdrdir, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
 
   # Read all files into a list of data frames
   all_hdr_data_list <- lapply(files, read_hdr_file) # Helper function

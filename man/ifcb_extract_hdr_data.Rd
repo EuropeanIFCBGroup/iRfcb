@@ -4,10 +4,10 @@
 \alias{ifcb_extract_hdr_data}
 \title{Extract HDR data from IFCB HDR Files}
 \usage{
-ifcb_extract_hdr_data(datadir, gps_only = FALSE, verbose = TRUE)
+ifcb_extract_hdr_data(hdrdir, gps_only = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{datadir}{A character string specifying the path to the directory containing the .hdr files.}
+\item{hdrdir}{A character string specifying the path to the directory containing the .hdr files.}
 
 \item{gps_only}{A logical indicating whether to include only GPS information (latitude and longitude). Default is FALSE.}
 
@@ -17,8 +17,8 @@ ifcb_extract_hdr_data(datadir, gps_only = FALSE, verbose = TRUE)
 A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
 }
 \description{
-This function reads IFCB instrument settings information files (.hdr) from a specified directory,
-extracts the GPS positions (latitude and longitude), sample names, and optionally timestamps.
+This function reads all IFCB instrument settings information files (.hdr) from a specified directory,
+and extracts the GPS positions if available (optionally).
 }
 \examples{
 \dontrun{

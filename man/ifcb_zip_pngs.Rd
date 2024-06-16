@@ -38,5 +38,5 @@ ifcb_zip_pngs("path/to/images", "images.zip")
 
 }
 \seealso{
-\code{\link{zip_manual_files}}
+\code{\link{ifcb_zip_matlab}}
 }
