@@ -16,11 +16,11 @@
 #' \dontrun{
 #' # Example: Estimate volume analyzed from an IFCB ADC file
 #' adc_file <- "path/to/IFCB_adc_file.csv"
-#' adc_info <- IFCB_volume_analyzed_fromADC(adc_file)
+#' adc_info <- ifcb_volume_analyzed_from_adc(adc_file)
 #' print(adc_info$ml_analyzed)
 #' }
 
-IFCB_volume_analyzed_fromADC <- function(adcfilename) {
+ifcb_volume_analyzed_from_adc <- function(adcfilename) {
   flowrate <- 0.25  # milliliters per minute for syringe pump
 
   if (is.character(adcfilename)) {

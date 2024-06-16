@@ -7,13 +7,13 @@
 #' @examples
 #' \dontrun{
 #' # Get variable names from a MAT file
-#' variables <- get_variable_names_from_mat("path/to/file.mat")
+#' variables <- ifcb_get_mat_variables("path/to/file.mat")
 #' print(variables)
 #' }
 #' @import R.matlab
 #' @export
 #' @seealso \code{\link{get_classes_from_mat}}
-get_variable_names_from_mat <- function(mat_file) {
+ifcb_get_mat_variables <- function(mat_file) {
   # Read the contents of the MAT file
   mat_contents <- R.matlab::readMat(mat_file)
 

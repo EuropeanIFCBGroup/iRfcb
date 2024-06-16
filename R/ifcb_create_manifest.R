@@ -11,20 +11,20 @@
 #' @examples
 #' \dontrun{
 #' # Create a MANIFEST.txt file for the current directory
-#' create_manifest(".")
+#' ifcb_create_manifest(".")
 #'
 #' # Create a MANIFEST.txt file for a specific directory, excluding an existing MANIFEST.txt file
-#' create_manifest("path/to/directory")
+#' ifcb_create_manifest("path/to/directory")
 #'
 #' # Create a MANIFEST.txt file and save it to a specific path
-#' create_manifest("path/to/directory", manifest_path = "path/to/manifest/MANIFEST.txt")
+#' ifcb_create_manifest("path/to/directory", manifest_path = "path/to/manifest/MANIFEST.txt")
 #'
 #' # Create a MANIFEST.txt file without excluding an existing MANIFEST.txt file
-#' create_manifest("path/to/directory", exclude_manifest = FALSE)
+#' ifcb_create_manifest("path/to/directory", exclude_manifest = FALSE)
 #' }
 #' @import dplyr
 #' @export
-create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", exclude_manifest = TRUE) {
+ifcb_create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", exclude_manifest = TRUE) {
   # List all files in the folder and subfolders
   files <- list.files(folder_path, recursive = TRUE, full.names = TRUE)
 

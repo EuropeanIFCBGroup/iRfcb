@@ -12,11 +12,11 @@
 #' @examples
 #' \dontrun{
 #' # Get images from ROI file
-#' targets <- get_images_fromROI("path/to/ROIfile.roi")
+#' targets <- ifcb_get_images_from_roi("path/to/ROIfile.roi")
 #' print(targets)
 #' }
 #' @export
-get_images_fromROI <- function(ROIfile_withpath, ROInumbers = NULL) {
+ifcb_get_images_from_roi <- function(ROIfile_withpath, ROInumbers = NULL) {
   basedir <- dirname(ROIfile_withpath)
   filename <- tools::file_path_sans_ext(basename(ROIfile_withpath))
   ROIfile <- paste0(filename, ".roi")

@@ -14,17 +14,17 @@
 #'
 #' @examples
 #' # Zip all subdirectories in the 'images' folder with a README file
-#' zip_png_folders("path/to/images", "images.zip", readme_file = "path/to/README.md", email_address = "example@example.com", version = "1.0")
+#' ifcb_zip_pngs("path/to/images", "images.zip", readme_file = "path/to/README.md", email_address = "example@example.com", version = "1.0")
 #'
 #' # Zip all subdirectories in the 'images' folder without a README file
-#' zip_png_folders("path/to/images", "images.zip")
+#' ifcb_zip_pngs("path/to/images", "images.zip")
 #'
 #' @import zip
 #' @importFrom stringr str_extract
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year
 #' @seealso \code{\link{zip_manual_files}}
-zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, email_address = "", version = "") {
+ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email_address = "", version = "") {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_directory, recursive = FALSE)
 
@@ -33,21 +33,6 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
 
   # Total number of subdirectories
   total_subdirs <- length(subdirs)
-
-  # Function to print the progress bar
-  print_progress <- function(current, total, bar_width = 50) {
-    progress <- current / total
-    complete <- round(progress * bar_width)
-    bar <- paste(rep("=", complete), collapse = "")
-    remaining <- paste(rep(" ", bar_width - complete), collapse = "")
-    cat(sprintf("\r[%s%s] %d%%", bar, remaining, round(progress * 100)))
-    flush.console()
-  }
-
-  # Function to truncate the folder name
-  truncate_folder_name <- function(folder_name) {
-    sub("_\\d{3}$", "", basename(folder_name))
-  }
 
   # Temporary directory to store renamed folders
   temp_dir <- tempdir()
@@ -60,7 +45,7 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
 
     # If there are any .png files, add the subdirectory to the list
     if (length(png_files) > 0) {
-      truncated_name <- truncate_folder_name(subdirs[i])
+      truncated_name <- truncate_folder_name(subdirs[i]) # Helper function
       temp_subdir <- file.path(temp_dir, truncated_name)
       if (!dir.exists(temp_subdir)) {
         dir.create(temp_subdir)
@@ -70,7 +55,7 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
     }
 
     # Update the progress bar
-    print_progress(i, total_subdirs)
+    print_progress(i, total_subdirs) # Helper function
   }
 
   # Print a new line after the progress bar is complete
@@ -92,7 +77,7 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
     # Summarize the number of images by directory
     files_df <- tibble(dir = dirname(files)) %>%
       count(dir) %>%
-      mutate(taxa = truncate_folder_name(dir)) %>%  # Use basename to get the folder name
+      mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
       arrange(desc(n))
 
     # Extract dates from file paths and get the years
@@ -128,50 +113,6 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
     writeLines(updated_readme, file.path(temp_dir, "README.md"), useBytes = TRUE)
   }
 
-  # Function to create MANIFEST.txt
-  create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_dir) {
-    # Initialize a vector to store all files
-    all_files <- c()
-
-    # Iterate over each path in the provided list
-    for (path in paths) {
-      if (dir.exists(path)) {
-        # If the path is a directory, list all files in the folder and subfolders
-        files <- list.files(path, recursive = TRUE, full.names = TRUE)
-      } else if (file.exists(path)) {
-        # If the path is a single file, add it to the list
-        files <- path
-      } else {
-        # If the path does not exist, skip it
-        next
-      }
-      # Append the files with their relative paths to the all_files vector
-      all_files <- c(all_files, files)
-    }
-
-    # Remove any potential duplicates
-    all_files <- unique(all_files)
-
-    # Get file sizes
-    file_sizes <- file.info(all_files)$size
-
-    # Create a data frame with filenames and their sizes
-    manifest_df <- data.frame(
-      file = gsub(paste0(temp_dir, "/"), "", all_files, fixed = TRUE),
-      size = file_sizes,
-      stringsAsFactors = FALSE
-    )
-
-    # Format the file information as "filename [size]"
-    manifest_content <- paste0(manifest_df$file, " [", formatC(manifest_df$size, format = "d", big.mark = ","), " bytes]")
-
-    # Exclude the manifest file itself if it's already present in the list
-    manifest_content <- manifest_content[manifest_df$file != basename(manifest_path)]
-
-    # Write the manifest content to MANIFEST.txt
-    writeLines(manifest_content, manifest_path)
-  }
-
   # If there are directories to zip
   if (length(temp_subdirs) > 0) {
     # Create the zip archive
@@ -184,7 +125,7 @@ zip_png_folders <- function(png_directory, zip_filename, readme_file = NULL, ema
     message("Creating MANIFEST.txt...")
 
     # Create a manifest for the zip package
-    create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir)
+    create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir) # Helper function
 
     # Print message to indicate starting zip creation
     message("Creating zip archive...")

@@ -1,4 +1,4 @@
-#' Create a Zip Archive of Manual Files
+#' Create a Zip Archive of Manual MATLAB Files
 #'
 #' This function creates a zip archive containing specified files and directories,
 #' organized into a structured format suitable for distribution or storage.
@@ -27,7 +27,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' zip_manual_files("path/to/manual_files", "path/to/feature_files",
+#' ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
 #'                  "path/to/class2use.txt", "output_zip_archive.zip",
 #'                  data_folder = "path/to/data_files",
 #'                  readme_file = "path/to/README.md",
@@ -43,7 +43,7 @@
 #'
 #' @export
 #' @seealso \code{\link{zip_png_folders}}
-zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip_filename,
+ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_filename,
                              data_folder = NULL, readme_file = NULL, png_directory = NULL,
                              email_address = "", matlab_readme_file = NULL, version = "") {
   # Print message to indicate starting listing files
@@ -60,30 +60,6 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
     data_files <- list.files(data_folder, pattern = "\\.(roi|adc|hdr)$", full.names = TRUE, recursive = TRUE)
   } else {
     data_files <- NULL
-  }
-
-  # Function to find matching feature files with a general pattern
-  find_matching_features <- function(mat_file, feature_files) {
-    base_name <- tools::file_path_sans_ext(basename(mat_file))
-    matching_files <- grep(base_name, feature_files, value = TRUE)
-    return(matching_files)
-  }
-
-  # Function to find matching data files with a general pattern
-  find_matching_data <- function(mat_file, data_files) {
-    base_name <- tools::file_path_sans_ext(basename(mat_file))
-    matching_files <- grep(base_name, data_files, value = TRUE)
-    return(matching_files)
-  }
-
-  # Function to print the progress bar
-  print_progress <- function(current, total, bar_width = 50) {
-    progress <- current / total
-    complete <- round(progress * bar_width)
-    bar <- paste(rep("=", complete), collapse = "")
-    remaining <- paste(rep(" ", bar_width - complete), collapse = "")
-    cat(sprintf("\r[%s%s] %d%%", bar, remaining, round(progress * 100)))
-    flush.console()
   }
 
   # Temporary directory to store renamed folders
@@ -110,7 +86,7 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
   for (mat_file in mat_files) {
     file.copy(mat_file, manual_dir, overwrite = TRUE)
     current_file <- current_file + 1
-    print_progress(current_file, total_files)
+    print_progress(current_file, total_files) # Helper function
   }
 
   # Print a new line after the progress bar is complete
@@ -126,9 +102,9 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
   # Find and copy matching feature files for each .mat file
   for (mat_file in mat_files) {
     current_mat_file <- current_mat_file + 1
-    print_progress(current_mat_file, total_mat_files)
+    print_progress(current_mat_file, total_mat_files) # Helper function
 
-    matching_features <- find_matching_features(mat_file, feature_files)
+    matching_features <- find_matching_features(mat_file, feature_files) # Helper function
     for (feature_file in matching_features) {
       # Get relative path of feature file with respect to features_folder
       relative_path <- substr(feature_file, nchar(features_folder) + 2, nchar(feature_file))
@@ -157,9 +133,9 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
     # Find and copy matching data files for each .mat file
     for (mat_file in mat_files) {
       current_mat_file <- current_mat_file + 1
-      print_progress(current_mat_file, total_mat_files)
+      print_progress(current_mat_file, total_mat_files) # Helper function
 
-      matching_data <- find_matching_data(mat_file, data_files)
+      matching_data <- find_matching_data(mat_file, data_files) # Helper function
       for (data_file in matching_data) {
         # Get relative path of data file with respect to data_folder
         relative_path <- substr(data_file, nchar(data_folder) + 2, nchar(data_file))
@@ -181,11 +157,6 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
   message("Copying class2use file...")
   file.copy(class2use_file, file.path(config_dir, "class2use.mat"), overwrite = TRUE)
 
-  # Function to truncate the folder name
-  truncate_folder_name <- function(folder_name) {
-    sub("_\\d{3}$", "", basename(folder_name))
-  }
-
   # If readme_file is provided, update it
   if (!is.null(readme_file)) {
     message("Creating README file...")
@@ -206,7 +177,7 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
       # Summarize the number of images by directory
       files_df <- tibble(dir = dirname(files)) %>%
         count(dir) %>%
-        mutate(taxa = truncate_folder_name(dir)) %>%  # Use basename to get the folder name
+        mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
         arrange(desc(n))
     }
 
@@ -255,50 +226,6 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
     writeLines(updated_readme, file.path(temp_dir, "README.md"), useBytes = TRUE)
   }
 
-  # Function to create MANIFEST.txt
-  create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_dir) {
-    # Initialize a vector to store all files
-    all_files <- c()
-
-    # Iterate over each path in the provided list
-    for (path in paths) {
-      if (dir.exists(path)) {
-        # If the path is a directory, list all files in the folder and subfolders
-        files <- list.files(path, recursive = TRUE, full.names = TRUE)
-      } else if (file.exists(path)) {
-        # If the path is a single file, add it to the list
-        files <- path
-      } else {
-        # If the path does not exist, skip it
-        next
-      }
-      # Append the files with their relative paths to the all_files vector
-      all_files <- c(all_files, files)
-    }
-
-    # Remove any potential duplicates
-    all_files <- unique(all_files)
-
-    # Get file sizes
-    file_sizes <- file.info(all_files)$size
-
-    # Create a data frame with filenames and their sizes
-    manifest_df <- data.frame(
-      file = gsub(paste0(temp_dir, "/"), "", all_files, fixed = TRUE),
-      size = file_sizes,
-      stringsAsFactors = FALSE
-    )
-
-    # Format the file information as "filename [size]"
-    manifest_content <- paste0(manifest_df$file, " [", formatC(manifest_df$size, format = "d", big.mark = ","), " bytes]")
-
-    # Exclude the manifest file itself if it's already present in the list
-    manifest_content <- manifest_content[manifest_df$file != basename(manifest_path)]
-
-    # Write the manifest content to MANIFEST.txt
-    writeLines(manifest_content, manifest_path)
-  }
-
   # Create the zip archive
   files_to_zip <- c(manual_dir, features_dir, config_dir)
   if (!is.null(data_files)) files_to_zip <- c(files_to_zip, data_dir)
@@ -308,7 +235,7 @@ zip_manual_files <- function(manual_folder, features_folder, class2use_file, zip
   message("Creating MANIFEST.txt...")
 
   # Create a manifest for the zip package
-  create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir)
+  create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir) # Helper function
 
   # Print message to indicate starting zip creation
   message("Creating zip archive...")

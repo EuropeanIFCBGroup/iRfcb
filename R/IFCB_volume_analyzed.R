@@ -15,10 +15,10 @@
 #' \dontrun{
 #' # Example: Estimate volume analyzed from an IFCB header file
 #' hdr_file <- "path/to/IFCB_hdr_file.hdr"
-#' ml_analyzed <- IFCB_volume_analyzed(hdr_file)
+#' ml_analyzed <- ifcb_volume_analyzed(hdr_file)
 #' print(ml_analyzed)
 #' }
-IFCB_volume_analyzed <- function(hdrfilename, hdrOnly_flag = 0) {
+ifcb_volume_analyzed <- function(hdrfilename, hdrOnly_flag = 0) {
   flowrate <- 0.25  # milliliters per minute for syringe pump
 
   if (is.character(hdrfilename)) {
@@ -28,13 +28,13 @@ IFCB_volume_analyzed <- function(hdrfilename, hdrOnly_flag = 0) {
   ml_analyzed <- rep(NA, length(hdrfilename))
 
   for (count in seq_along(hdrfilename)) {
-    hdr <- IFCBxxx_readhdr(hdrfilename[[count]])
+    hdr <- ifcb_read_hdr(hdrfilename[[count]])
     runtime <- hdr$runtime
     inhibittime <- hdr$inhibittime
 
     if (!hdrOnly_flag) {
       adcfilename <- sub("\\.hdr$", ".adc", hdrfilename[[count]])
-      adc_info <- IFCB_volume_analyzed_fromADC(adcfilename)
+      adc_info <- ifcb_volume_analyzed_from_adc(adcfilename)
 
       inhibittime_adc <- adc_info$inhibittime
       runtime_adc <- adc_info$runtime

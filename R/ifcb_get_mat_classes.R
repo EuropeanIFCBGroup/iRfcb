@@ -10,17 +10,17 @@
 #' @examples
 #' \dontrun{
 #' # Get class names from a class2use file
-#' classes <- get_classes_from_mat("path/to/class2use.mat", "class2use")
+#' classes <- ifcb_get_classes("path/to/class2use.mat", "class2use")
 #' print(classes)
 #'
 #' # Get class names from a classifier file
-#' classes <- get_classes_from_mat("path/to/classifier.mat", "classes")
+#' classes <- ifcb_get_classes("path/to/classifier.mat", "classes")
 #' print(classes)
 #' }
 #' @import R.matlab
 #' @export
 #' @seealso \code{\link{get_variable_names_from_mat}}
-get_classes_from_mat <- function(mat_file, variable_name = "class2use") {
+ifcb_get_mat_classes <- function(mat_file, variable_name = "class2use") {
   # Read class information from MAT file
   class_info <- R.matlab::readMat(mat_file)
 

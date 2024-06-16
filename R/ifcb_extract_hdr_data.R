@@ -10,35 +10,22 @@
 #' @examples
 #' \dontrun{
 #' # Extract all HDR data
-#' hdr_data <- extract_hdr_data("path/to/data")
+#' hdr_data <- ifcb_extract_hdr_data("path/to/data")
 #' print(hdr_data)
 #'
 #' # Extract only GPS data
-#' gps_data <- extract_hdr_data("path/to/data", gps_only = TRUE)
+#' gps_data <- ifcb_extract_hdr_data("path/to/data", gps_only = TRUE)
 #' print(gps_data)
 #' }
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
 #' @export
-extract_hdr_data <- function(datadir, gps_only = FALSE, verbose = TRUE) {
+ifcb_extract_hdr_data <- function(datadir, gps_only = FALSE, verbose = TRUE) {
   # List all .hdr files in the specified directory
   files <- list.files(datadir, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
 
-  # Function to read individual files and extract relevant lines
-  read_file <- function(file) {
-    lines <- readLines(file, warn = FALSE)
-    data <- do.call(rbind, lapply(lines, function(line) {
-      split_line <- strsplit(line, ": ", fixed = TRUE)[[1]]
-      if (length(split_line) == 2) {
-        return(data.frame(parameter = split_line[1], value = split_line[2], file = file, stringsAsFactors = FALSE))
-      }
-    }))
-    data <- na.omit(data)
-    return(data)
-  }
-
   # Read all files into a list of data frames
-  all_hdr_data_list <- lapply(files, read_file)
+  all_hdr_data_list <- lapply(files, read_hdr_file) # Helper function
 
   # Combine all data frames into one, filtering out those without GPS data if gps_only is TRUE
   if (gps_only) {
@@ -62,9 +49,9 @@ extract_hdr_data <- function(datadir, gps_only = FALSE, verbose = TRUE) {
   hdr_data_pivot$sample <- tools::file_path_sans_ext(basename(hdr_data_pivot$file))
 
   if (!gps_only) {
-    # Extract timestamps using convert_ifcb_filenames function
+    # Extract timestamps using ifcb_convert_filenames function
     filenames <- paste0(hdr_data_pivot$sample, ".hdr")
-    timestamps <- convert_ifcb_filenames(filenames)
+    timestamps <- ifcb_convert_filenames(filenames)
 
     # Merge positions with timestamps
     hdr_with_timestamps <- merge(hdr_data_pivot, timestamps, by = "sample", all.x = TRUE)
@@ -73,7 +60,7 @@ extract_hdr_data <- function(datadir, gps_only = FALSE, verbose = TRUE) {
   } else {
     # Convert filenames to get timestamps even when gps_only is TRUE
     filenames <- paste0(hdr_data_pivot$sample, ".hdr")
-    timestamps <- convert_ifcb_filenames(filenames)
+    timestamps <- ifcb_convert_filenames(filenames)
     hdr_data_pivot <- merge(hdr_data_pivot, timestamps, by = "sample", all.x = TRUE)
 
     # Remove the 'file' column if only GPS data is returned

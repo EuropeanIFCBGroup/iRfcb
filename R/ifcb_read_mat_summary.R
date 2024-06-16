@@ -15,10 +15,10 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' summary_data <- read_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
+#' summary_data <- ifcb_read_mat_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
 #' print(summary_data)
 #' }
-read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, threshold = "opt") {
+ifcb_read_mat_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, threshold = "opt") {
 
   # Read the MATLAB .mat file
   mat <- R.matlab::readMat(summary_file)
@@ -26,7 +26,7 @@ read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, 
   # Check if hdr_directory is provided and exists
   if (!is.null(hdr_directory)) {
     # Extract GPS information from header files
-    hdr_info <- extract_hdr_data(file.path(hdr_directory), gps_only = TRUE, verbose = FALSE)
+    hdr_info <- ifcb_extract_hdr_data(file.path(hdr_directory), gps_only = TRUE, verbose = FALSE)
     gps_info <- hdr_info %>%
       dplyr::select(sample, gpsLatitude, gpsLongitude)
 
@@ -36,7 +36,7 @@ read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, 
     # Extract volume analyzed information from .hdr files
     volume_info <- data.frame(
       sample = gsub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", files),
-      ml_analyzed_calc = IFCB_volume_analyzed(files)
+      ml_analyzed_calc = ifcb_volume_analyzed(files)
     )
   }
 
@@ -125,7 +125,7 @@ read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FALSE, 
   }
 
   # Extract date information from sample names
-  date_info <- convert_ifcb_filenames(unique(summary_long$sample))
+  date_info <- ifcb_convert_filenames(unique(summary_long$sample))
 
   # Merge date information with summary_long
   summary_long <- summary_long %>%

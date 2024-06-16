@@ -11,14 +11,14 @@
 #' @examples
 #' \dontrun{
 #' # Convert ROI file to PNG images
-#' extract_images_from_ROI("your_roi_file.roi")
+#' ifcb_extract_pngs_from_roi("your_roi_file.roi")
 #'
 #' # Extract taxa images from ROI file
-#' extract_images_from_ROI("your_roi_file.roi", "output_directory", "taxa_name")
+#' ifcb_extract_pngs_from_roi("your_roi_file.roi", "output_directory", "taxa_name")
 #' }
 #' @importFrom imager as.cimg save.image
 #' @export
-extract_images_from_ROI <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
+ifcb_extract_pngs_from_roi <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(outdir, taxaname)

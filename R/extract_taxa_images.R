@@ -61,7 +61,7 @@ extract_taxa_images <- function(sample,
         taxa.list.ix <- taxa.list %>%
           filter(V1 == unique(taxa.list$V1)[[i]])
 
-        extract_taxa_images_from_ROI(
+        ifcb_extract_pngs_from_roi(
           file.path(datadir, roifilename),
           outdir,
           unique(taxa.list.ix$V1),

@@ -11,10 +11,10 @@
 #' @examples
 #' \dontrun{
 #' # Example: Read and extract information from an IFCB header file
-#' hdr_info <- IFCBxxx_readhdr("path/to/IFCB_hdr_file.hdr")
+#' hdr_info <- ifcb_read_hdr("path/to/IFCB_hdr_file.hdr")
 #' print(hdr_info)
 #' }
-IFCBxxx_readhdr <- function(fullfilename) {
+ifcb_read_hdr <- function(fullfilename) {
   if (startsWith(fullfilename, "http")) {
     t <- readLines(fullfilename, warn = FALSE)
   } else {

@@ -1,7 +1,7 @@
 #' Summarize Image Counts by Class and Sample
 #'
 #' This function summarizes the number of images per class for each sample,
-#' and optionally retrieves GPS positions, timestamps, and IFCB information using extract_hdr_data and convert_ifcb_filenames functions.
+#' and optionally retrieves GPS positions, timestamps, and IFCB information using ifcb_extract_hdr_data and ifcb_convert_filenames functions.
 #'
 #' @param main_directory A character string specifying the path to the main directory containing subfolders (classes) with .png images.
 #' @param hdr_directory A character string specifying the path to the directory containing the .hdr files. Default is NULL.
@@ -10,7 +10,7 @@
 #' @importFrom dplyr group_by summarise bind_rows arrange
 #' @importFrom lubridate date year month day
 #' @export
-summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verbose = TRUE) {
+ifcb_summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
   subdirs <- list.dirs(main_directory, recursive = FALSE, full.names = FALSE)
 
@@ -19,7 +19,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
 
   # Check if hdr_directory is provided and exists
   if (!is.null(hdr_directory) && dir.exists(hdr_directory)) {
-    hdr_info <- extract_hdr_data(file.path(hdr_directory), verbose = FALSE)
+    hdr_info <- ifcb_extract_hdr_data(file.path(hdr_directory), verbose = FALSE)
   } else {
     hdr_info <- NULL
   }
@@ -44,8 +44,8 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
       roi_number <- as.integer(parts[3])
 
       if (is.null(hdr_info)) {
-        # If hdr_info is not available, use convert_ifcb_filenames directly
-        gps_timestamp <- convert_ifcb_filenames(sample_name)
+        # If hdr_info is not available, use ifcb_convert_filenames directly
+        gps_timestamp <- ifcb_convert_filenames(sample_name)
         gpsLatitude <- NA
         gpsLongitude <- NA
         timestamp <- gps_timestamp$full_timestamp
@@ -68,7 +68,7 @@ summarize_images_by_class <- function(main_directory, hdr_directory = NULL, verb
           time <- format(timestamp, "%H:%M:%S")
         } else {
           # If no match found (unlikely case), set to NA
-          gps_timestamp <- convert_ifcb_filenames(sample_name)
+          gps_timestamp <- ifcb_convert_filenames(sample_name)
           gpsLatitude <- NA
           gpsLongitude <- NA
           timestamp <- gps_timestamp$full_timestamp
