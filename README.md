@@ -1,4 +1,4 @@
-# IFCB for R Analysis Package
+# I are FlowCytobot (iRfcb): Functions for working with IFCB data in R
 
 This package provides a set of functions to facilitate the analysis of IFCB (Imaging FlowCytobot) data. The functions allow for the conversion of filenames, creation of manifests, extraction of header and image data, summarization of images by class, and more. The primary goal is to streamline the workflow for researchers working with IFCB data.
 
@@ -8,7 +8,7 @@ You can install the package from GitHub using the `devtools` package:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("anderstorstensson/ifcb4r")
+devtools::install_github("anderstorstensson/iRfcb")
 ```
 
 ## Functions
@@ -86,7 +86,7 @@ ifcb_extract_taxa_images(sample, classifieddir, roidir, outdir, taxa, threshold)
 
 ## Repository
 
-For more details and the latest updates, visit the [GitHub repository](https://github.com/anderstorstensson/ifcb4r).
+For more details and the latest updates, visit the [GitHub repository](https://github.com/anderstorstensson/iRfcb).
 
 ## License
 
