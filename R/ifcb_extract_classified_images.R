@@ -36,8 +36,6 @@ ifcb_extract_classified_images <- function(sample,
                                            outdir,
                                            taxa = "All",
                                            threshold = "opt") {
-  # Define year
-  year <- substr(sample, start = 2, stop = 5)
 
   # Get the list of classified files and find the one matching the sample
   classifiedfiles <- list.files(classifieddir, pattern="mat$", full.names = TRUE, recursive = FALSE)
