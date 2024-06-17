@@ -28,7 +28,7 @@
 #' @import dplyr
 #' @import tibble
 #' @import R.matlab
-#' @seealso \code{\link{ifcb_extract_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_annotated_images}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
 ifcb_extract_classified_images <- function(sample,
                                            classifieddir,

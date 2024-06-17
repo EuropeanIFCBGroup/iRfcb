@@ -50,5 +50,5 @@ ifcb_extract_classified_images(sample, classifieddir, roidir, outdir, taxa, thre
 }
 }
 \seealso{
-\code{\link{ifcb_extract_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_annotated_images}} \url{https://github.com/hsosik/ifcb-analysis}
 }
