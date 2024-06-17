@@ -1,3 +1,4 @@
+utils::globalVariables(c("parameter", "roi_numbers"))
 #' Extract HDR data from IFCB HDR Files
 #'
 #' This function reads all IFCB instrument settings information files (.hdr) from a specified directory,

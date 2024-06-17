@@ -12,6 +12,7 @@
 #'   - inhibittime: A numeric vector of inhibittime values extracted from ADC files.
 #'   - runtime: A numeric vector of runtime values extracted from ADC files.
 #' @importFrom utils read.csv
+#' @importFrom stats median
 #' @export
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples

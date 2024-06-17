@@ -1,3 +1,5 @@
+#' @importFrom utils flush.console
+#' @importFrom stats na.omit
 # Function to create MANIFEST.txt
 #
 # This function generates a MANIFEST.txt file that lists all files in the specified paths,

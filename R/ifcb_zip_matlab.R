@@ -190,21 +190,19 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     max_year <- max(years, na.rm = TRUE)
 
     # Update the README.md template placeholders
-    updated_readme <- readme_content %>%
-      gsub("<DATE>", current_date, .) %>%
-      gsub("<VERSION>", version, .) %>%
-      gsub("<E-MAIL>", email_address, .) %>%
-      gsub("<MATLAB_ZIP>", basename(zip_filename), .) %>%
-      gsub("<IMAGE_ZIP>", gsub("matlab_files", "annotated_images", basename(zip_filename)), .) %>%
-      gsub("<YEAR_START>", min_year, .) %>%
-      gsub("<YEAR_END>", max_year, .) %>%
-      gsub("<YEAR>", year(current_date), .)
+    updated_readme <- gsub("<DATE>", current_date, readme_content)
+    updated_readme <- gsub("<VERSION>", version, updated_readme)
+    updated_readme <- gsub("<E-MAIL>", email_address, updated_readme)
+    updated_readme <- gsub("<MATLAB_ZIP>", basename(zip_filename), updated_readme)
+    updated_readme <- gsub("<IMAGE_ZIP>", gsub("matlab_files", "annotated_images", basename(zip_filename)), updated_readme)
+    updated_readme <- gsub("<YEAR_START>", min_year, updated_readme)
+    updated_readme <- gsub("<YEAR_END>", max_year, updated_readme)
+    updated_readme <- gsub("<YEAR>", year(current_date), updated_readme)
 
     if (!is.null(png_directory)) {
       # Update the README.md template placeholders
-      updated_readme <- updated_readme %>%
-        gsub("<N_IMAGES>", formatC(sum(files_df$n), format = "d", big.mark = ","), .) %>%
-        gsub("<CLASSES>", nrow(files_df), .)
+      updated_readme <- gsub("<N_IMAGES>", formatC(sum(files_df$n), format = "d", big.mark = ","), updated_readme)
+      updated_readme <- gsub("<CLASSES>", nrow(files_df), updated_readme)
 
       # Create the new section for the number of images
       new_section <- c("## Number of images per class", "")

@@ -25,8 +25,6 @@
 #' # Extract taxa images from the classified sample
 #' ifcb_extract_classified_images(sample, classifieddir, roidir, outdir, taxa, threshold)
 #' }
-#' @import dplyr
-#' @import tibble
 #' @import R.matlab
 #' @seealso \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_annotated_images}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
@@ -62,17 +60,19 @@ ifcb_extract_classified_images <- function(sample,
                       "adhoc" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.adhocthresh), stringsAsFactors = FALSE),
                       "none" = as.data.frame(do.call(rbind, classified.mat$TBclass), stringsAsFactors = FALSE),
                       stop("Invalid threshold specified"))
-  taxa.list <- taxa.list %>% rownames_to_column("ROI")
+
+  # Add ROI column
+  taxa.list$ROI <- rownames(taxa.list)
 
   if (taxa != "All") {
-    taxa.list <- taxa.list %>% filter(V1 == taxa)
+    taxa.list <- taxa.list[taxa.list$V1 == taxa, ]
   }
 
   if (nrow(taxa.list) > 0) {
     unique_taxa <- unique(taxa.list$V1)
     for (taxon in unique_taxa) {
       tryCatch({
-        taxa.list.ix <- taxa.list %>% filter(V1 == taxon)
+        taxa.list.ix <- taxa.list[taxa.list$V1 == taxon, ]
 
         ifcb_extract_pngs(
           roifilename,

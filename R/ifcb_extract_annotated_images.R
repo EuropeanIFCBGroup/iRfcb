@@ -12,9 +12,7 @@
 #' @param skip_class A numeric value or vector specifying the class(es) to be skipped during the extraction process, e.g. unclassified. Default is NA.
 #'
 #' @importFrom R.matlab readMat
-#' @importFrom dplyr filter left_join mutate select
 #' @importFrom tools file_path_sans_ext
-#' @importFrom purrr map
 #'
 #' @return None. The function saves the extracted PNG images to the specified output directory.
 #'
@@ -63,8 +61,7 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
     names(taxa.list) <- unlist(manual.mat$list.titles)
 
     # Remove the skip class and NA values from the taxa list
-    taxa.list <- taxa.list %>%
-      filter(!manual %in% skip_class & !is.na(manual))
+    taxa.list <- taxa.list[!taxa.list$manual %in% skip_class & !is.na(taxa.list$manual), ]
 
     # Create a lookup table from class2use
     lookup_table <- data.frame(
@@ -73,18 +70,16 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
     )
 
     # Replace the numbers in taxa.list$manual with the corresponding names
-    taxa.list <- taxa.list %>%
-      left_join(lookup_table, by = "manual") %>%
-      mutate(class = ifelse(is.na(name), as.character(manual), name)) %>%
-      select(-name)
+    taxa.list <- merge(taxa.list, lookup_table, by = "manual", all.x = TRUE)
+    taxa.list$class <- ifelse(is.na(taxa.list$name), as.character(taxa.list$manual), taxa.list$name)
+    taxa.list$name <- NULL
 
     # Get the unique classes
     unique_classes <- unique(taxa.list$class)
 
     # Process each unique class
     for (class_name in unique_classes) {
-      taxa.list_ix <- taxa.list %>%
-        filter(class == class_name)
+      taxa.list_ix <- taxa.list[taxa.list$class == class_name, ]
 
       # Generate taxaname for each ROI number
       taxaname_list <- paste(class_name, sprintf("%03d", taxa.list_ix$manual), sep = "_")

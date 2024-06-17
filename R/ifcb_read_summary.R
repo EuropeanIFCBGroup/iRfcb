@@ -1,3 +1,4 @@
+utils::globalVariables(c("gpsLatitude", "gpsLongitude", "type", "value", "counts", "ml_analyzed_calc", "biovolume_per_liter", "timestamp", "time", "ifcb_number"))
 #' Read and Summarize Classified IFCB Data
 #'
 #' This function reads a MATLAB .mat file containing aggregated and classified IFCB (Imaging FlowCytobot)
