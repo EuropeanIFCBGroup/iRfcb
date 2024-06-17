@@ -3,7 +3,7 @@ Type: Package
 Title: I are FlowCytobot (iRfcb): Functions for working with IFCB data in R
 Version: 0.1.0
 Author: Anders Torstensson
-Maintainer: Anders Torstensson
+Maintainer: Anders Torstensson <anders.torstensson@smhi.se>
 Description: Provides functions to manage and analyze Imaging FlowCytobot (IFCB) data in R. Includes functionality to create zip archives of directories containing .mat and .csv files, and directories containing .png files. Functions also facilitate conversion of ROI files to PNG images, extraction of taxa-specific images from ROI files, extraction of taxa images from classified samples, retrieval of class information from classifier and class2use files, and extraction of ROI images and IDs from ROI files.
     Use four spaces when indenting paragraphs within the Description.
 License: MIT + file LICENSE
