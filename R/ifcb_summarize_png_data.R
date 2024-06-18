@@ -49,7 +49,7 @@ ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, verbose
         gps_timestamp <- ifcb_convert_filenames(sample_name)
         gpsLatitude <- NA
         gpsLongitude <- NA
-        timestamp <- gps_timestamp$full_timestamp
+        timestamp <- gps_timestamp$timestamp
         date <- gps_timestamp$date
         year <- gps_timestamp$year
         month <- gps_timestamp$month
@@ -61,7 +61,7 @@ ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, verbose
         if (any(match_row)) {
           gpsLatitude <- hdr_info$gpsLatitude[match_row]
           gpsLongitude <- hdr_info$gpsLongitude[match_row]
-          timestamp <- hdr_info$full_timestamp[match_row]
+          timestamp <- hdr_info$timestamp[match_row]
           date <- lubridate::date(timestamp)
           year <- lubridate::year(timestamp)
           month <- lubridate::month(timestamp)
@@ -72,7 +72,7 @@ ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, verbose
           gps_timestamp <- ifcb_convert_filenames(sample_name)
           gpsLatitude <- NA
           gpsLongitude <- NA
-          timestamp <- gps_timestamp$full_timestamp
+          timestamp <- gps_timestamp$timestamp
           date <- gps_timestamp$date
           year <- gps_timestamp$year
           month <- gps_timestamp$month
