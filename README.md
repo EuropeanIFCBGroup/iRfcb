@@ -1,3 +1,4 @@
+[![R-CMD-check](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml)
 # I are FlowCytobot (iRfcb): Functions for working with IFCB data in R
 
 This package provides a set of functions to facilitate the analysis of IFCB (Imaging FlowCytobot) data. The functions allow for the conversion of filenames, creation of manifests, extraction of header and image data, summarization of images by class, and more. The primary goal is to streamline the workflow for researchers working with IFCB data.
