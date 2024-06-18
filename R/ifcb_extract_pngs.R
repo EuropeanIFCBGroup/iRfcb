@@ -1,26 +1,27 @@
-#' Extract Images from ROI File
+#' Extract Images from IFCB ROI File
 #'
-#' This function reads a .roi file and its corresponding .adc file, extracts specified regions of interest (ROIs),
-#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify a taxa name and ROI numbers
-#' if extracting specific ROIs, e.g. from classifier results (see `ifcb_extract_classified_images`).
+#' This function reads an IFCB (.roi) file and its corresponding .adc file, extracts regions of interest (ROIs),
+#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
+#' to extract, useful for specific ROIs from manual or automatic classification results.
 #'
 #' @param roifile A character string specifying the path to the .roi file.
 #' @param outdir A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
-#' @param taxaname An optional character string specifying the taxa name for the subdirectory where images will be saved. Defaults to NULL.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
-#' @return No return value, called for side effects. Writes PNG images to a directory.
+#' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
+#' @return This function is called for its side effects: it writes PNG images to a directory.
 #' @examples
 #' \dontrun{
 #' # Convert ROI file to PNG images
-#' ifcb_extract_pngs("your_roi_file.roi")
+#' ifcb_extract_pngs("path/to/your_roi_file.roi")
 #'
-#' # Extract taxa images from ROI file
-#' ifcb_extract_pngs("your_roi_file.roi", "output_directory", "taxa_name")
+#' # Extract specific ROI numbers from ROI file
+#' ifcb_extract_pngs("path/to/your_roi_file.roi", "output_directory", ROInumbers = c(1, 2, 3))
 #' }
 #' @importFrom imager as.cimg save.image
 #' @export
-#' @seealso \code{\link{ifcb_extract_classified_images}}
-ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NULL, ROInumbers = NULL) {
+#' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
+#' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
+ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), ROInumbers = NULL, taxaname = NULL) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(outdir, taxaname)
@@ -54,8 +55,8 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NUL
     return(NULL)
   })
 
-  # Loop over classes and save PNG images to subdirs
-  cat(paste("Writing", length(ROInumbers), "ROIs from sample", basename(roifile), "to", outpath), "\n")
+  # Loop over ROIs and save PNG images
+  cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roifile), "to", outpath), "\n")
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
@@ -71,7 +72,7 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NUL
         img_matrix <- t(img_matrix)  # Rotate 90 degrees counterclockwise
 
         tryCatch({
-          # Convert the integers to the appropriate data type for PNG
+          # Convert matrix to image object
           img_matrix <- imager::as.cimg(img_matrix)
 
           # Write ROI in PNG format

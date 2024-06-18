@@ -2,13 +2,13 @@
 % Please edit documentation in R/ifcb_extract_pngs.R
 \name{ifcb_extract_pngs}
 \alias{ifcb_extract_pngs}
-\title{Extract Images from ROI File}
+\title{Extract Images from IFCB ROI File}
 \usage{
 ifcb_extract_pngs(
   roifile,
   outdir = dirname(roifile),
-  taxaname = NULL,
-  ROInumbers = NULL
+  ROInumbers = NULL,
+  taxaname = NULL
 )
 }
 \arguments{
@@ -16,27 +16,29 @@ ifcb_extract_pngs(
 
 \item{outdir}{A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.}
 
-\item{taxaname}{An optional character string specifying the taxa name for the subdirectory where images will be saved. Defaults to NULL.}
-
 \item{ROInumbers}{An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.}
+
+\item{taxaname}{An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.}
 }
 \value{
-No return value, called for side effects. Writes PNG images to a directory.
+This function is called for its side effects: it writes PNG images to a directory.
 }
 \description{
-This function reads a .roi file and its corresponding .adc file, extracts specified regions of interest (ROIs),
-and saves each ROI as a PNG image in a specified directory. Optionally, you can specify a taxa name and ROI numbers
-if extracting specific ROIs, e.g. from classifier results (see `ifcb_extract_classified_images`).
+This function reads an IFCB (.roi) file and its corresponding .adc file, extracts regions of interest (ROIs),
+and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
+to extract, useful for specific ROIs from manual or automatic classification results.
 }
 \examples{
 \dontrun{
 # Convert ROI file to PNG images
-ifcb_extract_pngs("your_roi_file.roi")
+ifcb_extract_pngs("path/to/your_roi_file.roi")
 
-# Extract taxa images from ROI file
-ifcb_extract_pngs("your_roi_file.roi", "output_directory", "taxa_name")
+# Extract specific ROI numbers from ROI file
+ifcb_extract_pngs("path/to/your_roi_file.roi", "output_directory", ROInumbers = c(1, 2, 3))
 }
 }
 \seealso{
-\code{\link{ifcb_extract_classified_images}}
+\code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
+
+\code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
 }

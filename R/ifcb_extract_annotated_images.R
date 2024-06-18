@@ -87,8 +87,9 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
       # Extract PNGs for each ROI number with corresponding taxaname
       ifcb_extract_pngs(roifilename,
                         outdir = outdir,
-                        taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_"),
-                        ROInumbers = taxa.list_ix$`roi number`)
+                        ROInumbers = taxa.list_ix$`roi number`,
+                        taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_")
+                        )
     }
   }
 }

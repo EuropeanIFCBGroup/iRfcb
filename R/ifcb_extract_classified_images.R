@@ -77,8 +77,8 @@ ifcb_extract_classified_images <- function(sample,
         ifcb_extract_pngs(
           roifilename,
           outdir,
-          taxon,
-          as.numeric(taxa.list.ix$ROI)
+          as.numeric(taxa.list.ix$ROI),
+          taxon
         )
       }, error = function(e) {
         cat("Error occurred while processing taxon", taxon, ":", conditionMessage(e), "\n")
