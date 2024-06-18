@@ -54,13 +54,6 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NUL
     return(NULL)
   })
 
-  # Function to convert binary to 0-255
-  convert_to_0_255 <- function(binary_value) {
-    decimal_value <- as.integer(paste0("0x", binary_value))
-    rescaled_value <- as.integer((decimal_value / 255) * 255)
-    return(rescaled_value)
-  }
-
   # Loop over classes and save PNG images to subdirs
   cat(paste("Writing", length(ROInumbers), "ROIs from sample", basename(roifile), "to", outpath), "\n")
   for (count in seq_along(ROInumbers)) {
@@ -72,8 +65,10 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), taxaname = NUL
       if (!file.exists(pngfile)) {
         seek(fid, startbyte[count])
         img_data <- readBin(fid, raw(), n = x[count] * y[count])  # Read img pixels as raw
-        img_matrix <- matrix(unlist(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array
-        img_matrix <- apply(img_matrix, 2, convert_to_0_255)  # Convert to 0-255 range
+        img_matrix <- matrix(as.integer(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array
+
+        # Correct orientation: Rotate 90 degrees counterclockwise
+        img_matrix <- t(img_matrix)  # Rotate 90 degrees counterclockwise
 
         tryCatch({
           # Convert the integers to the appropriate data type for PNG
