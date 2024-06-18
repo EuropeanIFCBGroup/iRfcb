@@ -4,17 +4,25 @@
 \alias{ifcb_summarize_png_data}
 \title{Summarize Image Counts by Class and Sample}
 \usage{
-ifcb_summarize_png_data(png_directory, hdr_directory = NULL, verbose = TRUE)
+ifcb_summarize_png_data(
+  png_directory,
+  hdr_directory = NULL,
+  sum_level = "sample",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{png_directory}{A character string specifying the path to the main directory containing subfolders (classes) with .png images.}
 
 \item{hdr_directory}{A character string specifying the path to the directory containing the .hdr files. Default is NULL.}
 
+\item{sum_level}{A character string specifying the level of summarization. Options: "sample" (default) or "class".}
+
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
-A data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
+If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
+        If sum_level is "class", returns a data frame with columns: class_name, n_images.
 }
 \description{
 This function summarizes the number of images per class for each sample and timestamps,
