@@ -224,16 +224,16 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     writeLines(updated_readme, file.path(temp_dir, "README.md"), useBytes = TRUE)
   }
 
+  # Create the zip archive
+  files_to_zip <- c(manual_dir, features_dir, config_dir)
+  if (!is.null(data_files)) files_to_zip <- c(files_to_zip, data_dir)
+  if (!is.null(readme_file)) files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"), file.path(temp_dir, "MANIFEST.txt"))
+
   # Print message to indicate creating of MANIFEST.txt
   message("Creating MANIFEST.txt...")
 
   # Create a manifest for the zip package
   create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir) # Helper function
-
-  # Create the zip archive
-  files_to_zip <- c(manual_dir, features_dir, config_dir)
-  if (!is.null(data_files)) files_to_zip <- c(files_to_zip, data_dir)
-  if (!is.null(readme_file)) files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"), file.path(temp_dir, "MANIFEST.txt"))
 
   # Print message to indicate starting zip creation
   message("Creating zip archive...")
