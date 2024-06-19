@@ -13,7 +13,7 @@
 #' }
 #' @import R.matlab
 #' @export
-#' @seealso \code{\link{ifcb_get_mat_classes}}  \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_get_mat_variable}}  \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_names <- function(mat_file) {
   # Read the contents of the MAT file
   mat_contents <- R.matlab::readMat(mat_file)
