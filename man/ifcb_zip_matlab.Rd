@@ -11,9 +11,8 @@ ifcb_zip_matlab(
   zip_filename,
   data_folder = NULL,
   readme_file = NULL,
-  png_directory = NULL,
-  email_address = "",
   matlab_readme_file = NULL,
+  email_address = "",
   version = ""
 )
 }
@@ -30,11 +29,9 @@ ifcb_zip_matlab(
 
 \item{readme_file}{Optionally, the path to a README file that will be updated with metadata and included in the zip archive.}
 
-\item{png_directory}{Optionally, the directory containing PNG images to calculate image statistics for inclusion in the README file.}
+\item{matlab_readme_file}{Optionally, the path to a MATLAB README file whose content will be appended to the end of the README file in the zip archive.}
 
 \item{email_address}{The email address to be included in the README file for contact information.}
-
-\item{matlab_readme_file}{Optionally, the path to a MATLAB README file whose content will be appended to the end of the README file in the zip archive.}
 
 \item{version}{Optionally, the version number to be included in the README file.}
 }
@@ -58,12 +55,11 @@ This function performs the following operations:
 \examples{
 \dontrun{
 ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
-                 "path/to/class2use.txt", "output_zip_archive.zip",
+                 "path/to/class2use.mat", "output_zip_archive.zip",
                  data_folder = "path/to/data_files",
                  readme_file = "path/to/README.md",
-                 png_directory = "path/to/png_images",
-                 email_address = "example@email.com",
                  matlab_readme_file = "path/to/MATLAB_README.md",
+                 email_address = "example@email.com",
                  version = "1.0")
 }
 

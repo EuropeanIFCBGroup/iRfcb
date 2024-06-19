@@ -10,9 +10,8 @@
 #' @param zip_filename The filename for the zip archive to be created.
 #' @param data_folder Optionally, the directory containing additional data files (.roi, .adc, .hdr) to be included in the zip archive.
 #' @param readme_file Optionally, the path to a README file that will be updated with metadata and included in the zip archive.
-#' @param png_directory Optionally, the directory containing PNG images to calculate image statistics for inclusion in the README file.
-#' @param email_address The email address to be included in the README file for contact information.
 #' @param matlab_readme_file Optionally, the path to a MATLAB README file whose content will be appended to the end of the README file in the zip archive.
+#' @param email_address The email address to be included in the README file for contact information.
 #' @param version Optionally, the version number to be included in the README file.
 #'
 #' @details This function performs the following operations:
@@ -29,12 +28,11 @@
 #' @examples
 #' \dontrun{
 #' ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
-#'                  "path/to/class2use.txt", "output_zip_archive.zip",
+#'                  "path/to/class2use.mat", "output_zip_archive.zip",
 #'                  data_folder = "path/to/data_files",
 #'                  readme_file = "path/to/README.md",
-#'                  png_directory = "path/to/png_images",
-#'                  email_address = "example@email.com",
 #'                  matlab_readme_file = "path/to/MATLAB_README.md",
+#'                  email_address = "example@email.com",
 #'                  version = "1.0")
 #' }
 #'
@@ -44,8 +42,8 @@
 #' @export
 #' @seealso \code{\link{ifcb_zip_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_filename,
-                             data_folder = NULL, readme_file = NULL, png_directory = NULL,
-                             email_address = "", matlab_readme_file = NULL, version = "") {
+                            data_folder = NULL, readme_file = NULL, matlab_readme_file = NULL,
+                            email_address = "", version = "") {
   # Print message to indicate starting listing files
   message("Listing all files...")
 
@@ -170,16 +168,8 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     # Get the current date
     current_date <- Sys.Date()
 
-    if (!is.null(png_directory)) {
-      # Get list of filenames with .png extension
-      files <- list.files(png_directory, pattern = "png$", full.names = TRUE, recursive = TRUE)
-
-      # Summarize the number of images by directory
-      files_df <- tibble(dir = dirname(files)) %>%
-        count(dir) %>%
-        mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
-        arrange(desc(n))
-    }
+    # Summarize the number of images by class
+    files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file)
 
     # Extract dates from file paths and get the years
     dates <- str_extract(mat_files, "D\\d{8}")
@@ -198,20 +188,17 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     updated_readme <- gsub("<YEAR_START>", min_year, updated_readme)
     updated_readme <- gsub("<YEAR_END>", max_year, updated_readme)
     updated_readme <- gsub("<YEAR>", year(current_date), updated_readme)
+    updated_readme <- gsub("<N_IMAGES>", formatC(sum(files_df$n), format = "d", big.mark = ","), updated_readme)
+    updated_readme <- gsub("<CLASSES>", nrow(files_df), updated_readme)
 
-    if (!is.null(png_directory)) {
-      # Update the README.md template placeholders
-      updated_readme <- gsub("<N_IMAGES>", formatC(sum(files_df$n), format = "d", big.mark = ","), updated_readme)
-      updated_readme <- gsub("<CLASSES>", nrow(files_df), updated_readme)
+    # Create the new section for the number of images
+    new_section <- c("## Number of images per class", "")
+    new_section <- c(new_section, paste0("- ", files_df$class, ": ", formatC(files_df$n, format = "d", big.mark = ",")))
+    new_section <- c("", new_section)  # Add an empty line before the new section for separation
 
-      # Create the new section for the number of images
-      new_section <- c("## Number of images per class", "")
-      new_section <- c(new_section, paste0("- ", files_df$taxa, ": ", formatC(files_df$n, format = "d", big.mark = ",")))
-      new_section <- c("", new_section)  # Add an empty line before the new section for separation
+    # Append the new section to the readme content
+    updated_readme <- c(updated_readme, new_section)
 
-      # Append the new section to the readme content
-      updated_readme <- c(updated_readme, new_section)
-    }
 
     if (!is.null(matlab_readme_file)) {
       matlab_section <- c("", matlab_content)  # Add an empty line before the new section for separation
