@@ -6,14 +6,14 @@
 \usage{
 ifcb_create_manifest(
   folder_path,
-  manifest_path = "MANIFEST.txt",
+  manifest_path = file.path(folder_path, "MANIFEST.txt"),
   exclude_manifest = TRUE
 )
 }
 \arguments{
 \item{folder_path}{A character string specifying the path to the folder whose files are to be listed.}
 
-\item{manifest_path}{A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "MANIFEST.txt".}
+\item{manifest_path}{A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "folder_path/MANIFEST.txt".}
 
 \item{exclude_manifest}{A logical value indicating whether to exclude an existing MANIFEST.txt file from the list. Defaults to TRUE.}
 }

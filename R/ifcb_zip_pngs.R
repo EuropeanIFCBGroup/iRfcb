@@ -120,15 +120,18 @@ ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email
   if (length(temp_subdirs) > 0) {
     # Create the zip archive
     files_to_zip <- temp_subdirs
-    if (!is.null(readme_file)) {
-      files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"), file.path(temp_dir, "MANIFEST.txt"))
-    }
 
     # Print message to indicate creating of MANIFEST.txt
     message("Creating MANIFEST.txt...")
 
     # Create a manifest for the zip package
     create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir) # Helper function
+
+    if (!is.null(readme_file)) {
+      files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"), file.path(temp_dir, "MANIFEST.txt"))
+    } else {
+      files_to_zip <- c(files_to_zip, file.path(temp_dir, "MANIFEST.txt"))
+    }
 
     # Print message to indicate starting zip creation
     message("Creating zip archive...")

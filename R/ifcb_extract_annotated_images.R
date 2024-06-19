@@ -39,7 +39,7 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
   }
 
   # Get the class names from the specified file
-  class2use <- ifcb_get_mat_classes(class2use_file)
+  class2use <- ifcb_get_mat_variable(class2use_file)
 
   # Process each manual file
   for (file in manualfiles) {

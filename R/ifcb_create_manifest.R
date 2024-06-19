@@ -5,7 +5,7 @@
 #' the generated list. A manifest may be useful when archiving images.
 #'
 #' @param folder_path A character string specifying the path to the folder whose files are to be listed.
-#' @param manifest_path A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "MANIFEST.txt".
+#' @param manifest_path A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "folder_path/MANIFEST.txt".
 #' @param exclude_manifest A logical value indicating whether to exclude an existing MANIFEST.txt file from the list. Defaults to TRUE.
 #' @return No return value, called for side effects. Creates a MANIFEST.txt file at the specified location.
 #' @examples
@@ -24,7 +24,7 @@
 #' }
 #' @import dplyr
 #' @export
-ifcb_create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", exclude_manifest = TRUE) {
+ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_path, "MANIFEST.txt"), exclude_manifest = TRUE) {
   # List all files in the folder and subfolders
   files <- list.files(folder_path, recursive = TRUE, full.names = TRUE)
 
@@ -33,8 +33,8 @@ ifcb_create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", ex
 
   # Optionally exclude the existing MANIFEST.txt
   if (exclude_manifest) {
-    if(exists(manifest_path)) {
-      manifest_file_path <- normalizePath(file.path(folder_path, "MANIFEST.txt"), winslash = "/")
+    if (file.exists(manifest_path)) {
+      manifest_file_path <- normalizePath(manifest_path, winslash = "/")
       files <- files[files != manifest_file_path]
     }
   }
@@ -49,7 +49,7 @@ ifcb_create_manifest <- function(folder_path, manifest_path = "MANIFEST.txt", ex
     stringsAsFactors = FALSE
   )
 
-  # Format the file information as "filename [size]"
+  # Format the file information as "filename [size bytes]"
   manifest_content <- paste0(manifest_df$file, " [", formatC(manifest_df$size, format = "d", big.mark = ","), " bytes]")
 
   # Write the manifest content to MANIFEST.txt
