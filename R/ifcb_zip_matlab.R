@@ -171,6 +171,9 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     # Summarize the number of images by class
     files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file)
 
+    # Arrange by n
+    files_df <- arrange(files_df, desc(n))
+
     # Extract dates from file paths and get the years
     dates <- str_extract(mat_files, "D\\d{8}")
     years <- as.integer(substr(dates, 2, 5))
