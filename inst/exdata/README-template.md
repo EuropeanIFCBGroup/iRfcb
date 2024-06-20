@@ -15,3 +15,4 @@ This dataset includes manually annotated plankton images by phytoplankton expert
 
 ## Available data
 
+- <ZIP_NAME>: Image archive
