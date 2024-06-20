@@ -4,8 +4,8 @@
 #' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
 #' to extract, useful for specific ROIs from manual or automatic classification results.
 #'
-#' @param roifile A character string specifying the path to the .roi file.
-#' @param outdir A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
+#' @param roi_file A character string specifying the path to the .roi file.
+#' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
 #' @return This function is called for its side effects: it writes PNG images to a directory.
@@ -21,17 +21,17 @@
 #' @export
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), ROInumbers = NULL, taxaname = NULL) {
+ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
-    outpath <- file.path(outdir, taxaname)
+    outpath <- file.path(out_folder, taxaname)
   } else {
-    outpath <- file.path(outdir, tools::file_path_sans_ext(basename(roifile)))
+    outpath <- file.path(out_folder, tools::file_path_sans_ext(basename(roi_file)))
   }
   dir.create(outpath, showWarnings = FALSE, recursive = TRUE)
 
   # Get ADC data for start byte and length of each ROI
-  adcfile <- sub("\\.roi$", ".adc", roifile)
+  adcfile <- sub("\\.roi$", ".adc", roi_file)
   adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
   x <- as.numeric(adcdata$V16)
   y <- as.numeric(adcdata$V17)
@@ -48,7 +48,7 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), ROInumbers = N
 
   # Open roi file
   tryCatch({
-    fid <- file(roifile, "rb")
+    fid <- file(roi_file, "rb")
   }, error = function(e) {
     # Handle the error
     cat("An error occurred:", conditionMessage(e), "\n")
@@ -56,11 +56,11 @@ ifcb_extract_pngs <- function(roifile, outdir = dirname(roifile), ROInumbers = N
   })
 
   # Loop over ROIs and save PNG images
-  cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roifile), "to", outpath), "\n")
+  cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roi_file), "to", outpath), "\n")
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
-      pngname <- paste0(tools::file_path_sans_ext(basename(roifile)), "_", sprintf("%05d", num), ".png")
+      pngname <- paste0(tools::file_path_sans_ext(basename(roi_file)), "_", sprintf("%05d", num), ".png")
       pngfile <- file.path(outpath, pngname)
 
       if (!file.exists(pngfile)) {

@@ -6,9 +6,9 @@
 \usage{
 ifcb_extract_classified_images(
   sample,
-  classifieddir,
-  roidir,
-  outdir,
+  classified_folder,
+  roi_folder,
+  out_folder,
   taxa = "All",
   threshold = "opt"
 )
@@ -16,11 +16,11 @@ ifcb_extract_classified_images(
 \arguments{
 \item{sample}{A character string specifying the sample name.}
 
-\item{classifieddir}{A character string specifying the directory containing the classified files.}
+\item{classified_folder}{A character string specifying the directory containing the classified files.}
 
-\item{roidir}{A character string specifying the directory containing the ROI files.}
+\item{roi_folder}{A character string specifying the directory containing the ROI files.}
 
-\item{outdir}{A character string specifying the directory to save the extracted images.}
+\item{out_folder}{A character string specifying the directory to save the extracted images.}
 
 \item{taxa}{A character string specifying the taxa to extract. Default is "All".}
 
@@ -38,15 +38,15 @@ and saves each image in a specified directory.
 \examples{
 \dontrun{
 # Define the parameters
-sample <- "D20230311T092911"
-classifieddir <- "path/to/classifieddir"
-roidir <- "path/to/roidir"
-outdir <- "path/to/outputdir"
+sample <- "D20230311T092911_IFCB135"
+classified_folder <- "path/to/classified_folder"
+roi_folder <- "path/to/roi_folder"
+out_folder <- "path/to/outputdir"
 taxa <- "All"  # or specify a particular taxa
 threshold <- "opt"  # or specify another threshold
 
 # Extract taxa images from the classified sample
-ifcb_extract_classified_images(sample, classifieddir, roidir, outdir, taxa, threshold)
+ifcb_extract_classified_images(sample, classified_folder, roi_folder, out_folder, taxa, threshold)
 }
 }
 \seealso{

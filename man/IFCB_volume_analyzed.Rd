@@ -4,10 +4,10 @@
 \alias{ifcb_volume_analyzed}
 \title{Estimate Volume Analyzed from IFCB Header File}
 \usage{
-ifcb_volume_analyzed(hdrfilename, hdrOnly_flag = 0)
+ifcb_volume_analyzed(hdr_file, hdrOnly_flag = 0)
 }
 \arguments{
-\item{hdrfilename}{A character vector specifying the path(s) to one or more .hdr files or URLs.}
+\item{hdr_file}{A character vector specifying the path(s) to one or more .hdr files or URLs.}
 
 \item{hdrOnly_flag}{An optional flag indicating whether to skip ADC file estimation (default is 0).}
 }

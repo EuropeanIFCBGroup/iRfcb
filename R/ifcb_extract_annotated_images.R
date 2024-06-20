@@ -1,3 +1,4 @@
+utils::globalVariables(c("name", "manual"))
 #' Extract Annotated Images from IFCB Data
 #'
 #' This function extracts labelled images from IFCB (Imaging FlowCytobot) data,
@@ -5,11 +6,11 @@
 #' It reads manually classified data, maps class indices to class names, and extracts
 #' the corresponding Region of Interest (ROI) images, saving them to the specified directory.
 #'
-#' @param manualdir A character string specifying the path to the directory containing the manually classified .mat files.
+#' @param manual_folder A character string specifying the path to the directory containing the manually classified .mat files.
 #' @param class2use_file A character string specifying the path to the file containing class names.
-#' @param roidir A character string specifying the path to the directory containing the ROI files.
-#' @param outdir A character string specifying the output directory where the extracted images will be saved.
-#' @param skip_class A numeric value or vector specifying the class(es) to be skipped during the extraction process, e.g. unclassified. Default is NA.
+#' @param roi_folder A character string specifying the path to the directory containing the ROI files.
+#' @param out_folder A character string specifying the output directory where the extracted images will be saved.
+#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #'
 #' @importFrom R.matlab readMat
 #' @importFrom tools file_path_sans_ext
@@ -22,17 +23,17 @@
 #' @examples
 #' \dontrun{
 #' ifcb_extract_annotated_images(
-#'   manualdir = "path/to/manualdir",
+#'   manual_folder = "path/to/manual_folder",
 #'   class2use_file = "path/to/class2use_file.mat",
-#'   roidir = "path/to/roidir",
-#'   outdir = "path/to/outdir",
+#'   roi_folder = "path/to/roi_folder",
+#'   out_folder = "path/to/out_folder",
 #'   skip_class = 1
 #' )
 #' }
-ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, outdir, skip_class = NA) {
+ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder, skip_class = NA) {
 
   # Get the list of classified files
-  manualfiles <- list.files(manualdir, pattern = "mat$", full.names = TRUE, recursive = FALSE)
+  manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = FALSE)
 
   if (length(manualfiles) == 0) {
     stop("No manual files found in the specified directory.")
@@ -48,7 +49,7 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
     manual.mat <- readMat(file)
 
     # Get the list of ROI files matching the sample
-    roifiles <- list.files(roidir, pattern = ".roi$", full.names = TRUE, recursive = TRUE)
+    roifiles <- list.files(roi_folder, pattern = ".roi$", full.names = TRUE, recursive = TRUE)
     roifilename <- roifiles[grepl(sample, roifiles)]
 
     if (length(roifilename) == 0) {
@@ -60,14 +61,23 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
     taxa.list <- as.data.frame(manual.mat$classlist)
     names(taxa.list) <- unlist(manual.mat$list.titles)
 
-    # Remove the skip class and NA values from the taxa list
-    taxa.list <- taxa.list[!taxa.list$manual %in% skip_class & !is.na(taxa.list$manual), ]
-
     # Create a lookup table from class2use
     lookup_table <- data.frame(
       manual = seq_along(class2use),
       name = class2use
     )
+
+    # Convert skip_class names to manual IDs if they are character strings
+    if (is.character(skip_class)) {
+      filtered_skip_class <- lookup_table %>% filter(name %in% skip_class)
+      if (nrow(filtered_skip_class) == 0) {
+        stop("None of the class names provided in skip_class were found in class2use.")
+      }
+      skip_class <- filtered_skip_class %>% pull(manual)
+    }
+
+    # Remove the skip class and NA values from the taxa list
+    taxa.list <- taxa.list[!taxa.list$manual %in% skip_class & !is.na(taxa.list$manual), ]
 
     # Replace the numbers in taxa.list$manual with the corresponding names
     taxa.list <- merge(taxa.list, lookup_table, by = "manual", all.x = TRUE)
@@ -86,7 +96,7 @@ ifcb_extract_annotated_images <- function(manualdir, class2use_file, roidir, out
 
       # Extract PNGs for each ROI number with corresponding taxaname
       ifcb_extract_pngs(roifilename,
-                        outdir = outdir,
+                        out_folder = out_folder,
                         ROInumbers = taxa.list_ix$`roi number`,
                         taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_")
                         )

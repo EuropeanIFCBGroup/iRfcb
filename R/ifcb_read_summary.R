@@ -28,7 +28,7 @@ ifcb_read_summary <- function(summary_file, hdr_directory = NULL, biovolume = FA
   # Check if hdr_directory is provided and exists
   if (!is.null(hdr_directory)) {
     # Extract GPS information from header files
-    hdr_info <- ifcb_extract_hdr_data(file.path(hdr_directory), gps_only = TRUE, verbose = FALSE)
+    hdr_info <- ifcb_read_hdr_data(file.path(hdr_directory), gps_only = TRUE, verbose = FALSE)
     gps_info <- hdr_info %>%
       dplyr::select(sample, gpsLatitude, gpsLongitude)
 

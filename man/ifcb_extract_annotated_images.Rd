@@ -5,23 +5,23 @@
 \title{Extract Annotated Images from IFCB Data}
 \usage{
 ifcb_extract_annotated_images(
-  manualdir,
+  manual_folder,
   class2use_file,
-  roidir,
-  outdir,
+  roi_folder,
+  out_folder,
   skip_class = NA
 )
 }
 \arguments{
-\item{manualdir}{A character string specifying the path to the directory containing the manually classified .mat files.}
+\item{manual_folder}{A character string specifying the path to the directory containing the manually classified .mat files.}
 
 \item{class2use_file}{A character string specifying the path to the file containing class names.}
 
-\item{roidir}{A character string specifying the path to the directory containing the ROI files.}
+\item{roi_folder}{A character string specifying the path to the directory containing the ROI files.}
 
-\item{outdir}{A character string specifying the output directory where the extracted images will be saved.}
+\item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
-\item{skip_class}{A numeric value or vector specifying the class(es) to be skipped during the extraction process, e.g. unclassified. Default is NA.}
+\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.
@@ -35,10 +35,10 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 \examples{
 \dontrun{
 ifcb_extract_annotated_images(
-  manualdir = "path/to/manualdir",
+  manual_folder = "path/to/manual_folder",
   class2use_file = "path/to/class2use_file.mat",
-  roidir = "path/to/roidir",
-  outdir = "path/to/outdir",
+  roi_folder = "path/to/roi_folder",
+  out_folder = "path/to/out_folder",
   skip_class = 1
 )
 }

@@ -5,7 +5,7 @@
 \title{Zip PNG Folders}
 \usage{
 ifcb_zip_pngs(
-  png_directory,
+  png_folder,
   zip_filename,
   readme_file = NULL,
   email_address = "",
@@ -13,7 +13,7 @@ ifcb_zip_pngs(
 )
 }
 \arguments{
-\item{png_directory}{The directory containing subdirectories with .png files.}
+\item{png_folder}{The directory containing subdirectories with .png files.}
 
 \item{zip_filename}{The name of the zip file to create.}
 

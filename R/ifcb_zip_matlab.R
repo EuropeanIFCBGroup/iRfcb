@@ -169,7 +169,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     current_date <- Sys.Date()
 
     # Summarize the number of images by class
-    files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file)
+    files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = "unclassified")
 
     # Arrange by n
     files_df <- arrange(files_df, desc(n))
@@ -182,12 +182,15 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     min_year <- min(years, na.rm = TRUE)
     max_year <- max(years, na.rm = TRUE)
 
+    # Remove suffix from zip-filename, if present
+    zip_name <- gsub("_annotated_images.zip|_matlab_files.zip", "", basename(zip_filename))
+    zip_name <- gsub(".zip", "", zip_name)
+
     # Update the README.md template placeholders
     updated_readme <- gsub("<DATE>", current_date, readme_content)
     updated_readme <- gsub("<VERSION>", version, updated_readme)
     updated_readme <- gsub("<E-MAIL>", email_address, updated_readme)
-    updated_readme <- gsub("<MATLAB_ZIP>", basename(zip_filename), updated_readme)
-    updated_readme <- gsub("<IMAGE_ZIP>", gsub("matlab_files", "annotated_images", basename(zip_filename)), updated_readme)
+    updated_readme <- gsub("<ZIP_NAME>", zip_name, updated_readme)
     updated_readme <- gsub("<YEAR_START>", min_year, updated_readme)
     updated_readme <- gsub("<YEAR_END>", max_year, updated_readme)
     updated_readme <- gsub("<YEAR>", year(current_date), updated_readme)
@@ -201,7 +204,6 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
     # Append the new section to the readme content
     updated_readme <- c(updated_readme, new_section)
-
 
     if (!is.null(matlab_readme_file)) {
       matlab_section <- c("", matlab_content)  # Add an empty line before the new section for separation

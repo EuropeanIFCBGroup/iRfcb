@@ -1,61 +1,89 @@
+utils::globalVariables(c("name", "manual"))
 #' Count IFCB Annotations from .mat Files
 #'
-#' This function processes .mat files in a specified folder to count and summarize 
+#' This function processes .mat files in a specified folder to count and summarize
 #' the annotations for each class based on the class2use information provided in a file.
 #'
 #' @param manual_folder A character string specifying the path to the folder containing .mat files.
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable.
-#' @param skip_class A numeric vector of class IDs to be excluded from the count. Default is NULL.
+#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #'
 #' @return A data frame with the total count of images per class.
 #' @export
+#' @import R.matlab
+#' @import dplyr
 #'
 #' @examples
 #' \dontrun{
-#' result <- ifcb_count_mat_annotations("path/to/manual_folder", "path/to/class2use_file", skip_class = c(99, 100))
+#' # Count annotations excluding specific class IDs
+#' result <- ifcb_count_mat_annotations("path/to/manual_folder",
+#'                                      "path/to/class2use_file",
+#'                                      skip_class = c(99, 100))
+#' print(result)
+#'
+#' # Count annotations excluding a specific class name
+#' result <- ifcb_count_mat_annotations("path/to/manual_folder",
+#'                                      "path/to/class2use_file",
+#'                                      skip_class = "unclassified")
+#' print(result)
 #' }
 ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class = NULL) {
   # List .mat files in the specified folder
   mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = FALSE)
-  
+
   # Get the class2use variable from the specified file
   class2use <- ifcb_get_mat_variable(class2use_file)
-  
+
   # Create a lookup table from class2use
   lookup_table <- data.frame(
     manual = seq_along(class2use),
-    name = class2use
+    name = class2use,
+    stringsAsFactors = FALSE
   )
-  
+
+  # Convert skip_class names to manual IDs if they are character strings
+  if (is.character(skip_class)) {
+    filtered_skip_class <- lookup_table %>% filter(name %in% skip_class)
+    if (nrow(filtered_skip_class) == 0) {
+      stop("None of the class names provided in skip_class were found in class2use.")
+    }
+    skip_class <- filtered_skip_class %>% pull(manual)
+  }
+
   # Initialize an empty data frame to accumulate the results
-  total_sum <- data.frame(class = character(), n = integer())
-  
+  total_sum <- data.frame(class = character(), n = integer(), stringsAsFactors = FALSE)
+
   for (file in mat_files) {
     # Read the taxa list from the file
-    taxa_list <- as.data.frame(readMat(file)$classlist)  # Assuming readMat is used to read .mat files
-    
+    mat_data <- R.matlab::readMat(file)
+    taxa_list <- as.data.frame(mat_data$classlist)  # Assuming readMat is used to read .mat files
+
     # Assign names to the columns in taxa_list
-    names(taxa_list) <- unlist(readMat(file)$list.titles)
-    
-    # Remove the skip class and NA values from the taxa list
-    taxa_list <- taxa_list[!taxa_list$manual %in% skip_class & !is.na(taxa_list$manual), ]
-    
+    names(taxa_list) <- unlist(mat_data$list.titles)
+
+    # Filter out the skipped classes and NA values from the taxa list
+    taxa_list <- taxa_list %>%
+      filter(!manual %in% skip_class & !is.na(manual))
+
     # Replace the numbers in taxa_list$manual with the corresponding names using a lookup table
-    taxa_list <- merge(taxa_list, lookup_table, by = "manual", all.x = TRUE)
-    taxa_list$class <- ifelse(is.na(taxa_list$name), as.character(taxa_list$manual), taxa_list$name)
-    taxa_list$name <- NULL
-    
+    taxa_list <- taxa_list %>%
+      left_join(lookup_table, by = "manual") %>%
+      mutate(class = ifelse(is.na(name), as.character(manual), name)) %>%
+      select(class)
+
     # Summarize the number of images by class
-    sample_sum <- count(taxa_list, class)
-    
+    sample_sum <- taxa_list %>%
+      group_by(class) %>%
+      summarise(n = n(), .groups = 'drop')
+
     # Accumulate the results into total_sum
-    total_sum <- rbind(total_sum, sample_sum)
+    total_sum <- bind_rows(total_sum, sample_sum)
   }
-  
+
   # Combine and summarize results
   total_sum <- total_sum %>%
     group_by(class) %>%
-    summarise(n = sum(n, na.rm = TRUE))
-  
+    summarise(n = sum(n, na.rm = TRUE), .groups = 'drop')
+
   return(total_sum)
 }

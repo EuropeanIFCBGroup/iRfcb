@@ -4,10 +4,10 @@
 \alias{ifcb_volume_analyzed_from_adc}
 \title{Estimate Volume Analyzed from IFCB ADC File}
 \usage{
-ifcb_volume_analyzed_from_adc(adcfilename)
+ifcb_volume_analyzed_from_adc(adc_file)
 }
 \arguments{
-\item{adcfilename}{A character vector specifying the path(s) to one or more .adc files or URLs.}
+\item{adc_file}{A character vector specifying the path(s) to one or more .adc files or URLs.}
 }
 \value{
 A list containing:

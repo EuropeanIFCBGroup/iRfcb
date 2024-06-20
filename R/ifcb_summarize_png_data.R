@@ -1,10 +1,10 @@
 #' Summarize Image Counts by Class and Sample
 #'
 #' This function summarizes the number of images per class for each sample and timestamps,
-#' and optionally retrieves GPS positions, and IFCB information using `ifcb_extract_hdr_data` and `ifcb_convert_filenames` functions.
+#' and optionally retrieves GPS positions, and IFCB information using `ifcb_read_hdr_data` and `ifcb_convert_filenames` functions.
 #'
-#' @param png_directory A character string specifying the path to the main directory containing subfolders (classes) with .png images.
-#' @param hdr_directory A character string specifying the path to the directory containing the .hdr files. Default is NULL.
+#' @param png_folder A character string specifying the path to the main directory containing subfolders (classes) with .png images.
+#' @param hdr_folder A character string specifying the path to the directory containing the .hdr files. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample" (default) or "class".
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @return If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
@@ -12,17 +12,17 @@
 #' @importFrom dplyr group_by summarise bind_rows arrange
 #' @importFrom lubridate date year month day
 #' @export
-#' @seealso \code{\link{ifcb_extract_hdr_data}} \code{\link{ifcb_convert_filenames}}
-ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, sum_level = "sample", verbose = TRUE) {
+#' @seealso \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
+ifcb_summarize_png_data <- function(png_folder, hdr_folder = NULL, sum_level = "sample", verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
-  subdirs <- list.dirs(png_directory, recursive = FALSE, full.names = FALSE)
+  subdirs <- list.dirs(png_folder, recursive = FALSE, full.names = FALSE)
 
   # Initialize an empty list to store results
   results <- list()
 
   # Check if sum_level is "class", then skip HDR extraction
-  if (sum_level == "sample" && !is.null(hdr_directory) && dir.exists(hdr_directory)) {
-    hdr_info <- ifcb_extract_hdr_data(file.path(hdr_directory), verbose = FALSE)
+  if (sum_level == "sample" && !is.null(hdr_folder) && dir.exists(hdr_folder)) {
+    hdr_info <- ifcb_read_hdr_data(file.path(hdr_folder), verbose = FALSE)
   } else {
     hdr_info <- NULL
   }
@@ -32,7 +32,7 @@ ifcb_summarize_png_data <- function(png_directory, hdr_directory = NULL, sum_lev
     class_name <- subdir  # Assuming subdir name is the class name
 
     # List all PNG files in the current subdirectory
-    png_files <- list.files(file.path(png_directory, subdir), pattern = "\\.png$", full.names = TRUE)
+    png_files <- list.files(file.path(png_folder, subdir), pattern = "\\.png$", full.names = TRUE)
 
     # Initialize a list to store results for the current class
     class_results <- list()

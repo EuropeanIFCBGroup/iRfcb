@@ -6,48 +6,52 @@
 #' and saves each image in a specified directory.
 #'
 #' @param sample A character string specifying the sample name.
-#' @param classifieddir A character string specifying the directory containing the classified files.
-#' @param roidir A character string specifying the directory containing the ROI files.
-#' @param outdir A character string specifying the directory to save the extracted images.
+#' @param classified_folder A character string specifying the directory containing the classified files.
+#' @param roi_folder A character string specifying the directory containing the ROI files.
+#' @param out_folder A character string specifying the directory to save the extracted images.
 #' @param taxa A character string specifying the taxa to extract. Default is "All".
 #' @param threshold A character string specifying the threshold to use ("none", "opt", "adhoc"). Default is "opt".
 #' @return No return value, called for side effects. Extracts and saves taxa images to a directory.
 #' @examples
 #' \dontrun{
 #' # Define the parameters
-#' sample <- "D20230311T092911"
-#' classifieddir <- "path/to/classifieddir"
-#' roidir <- "path/to/roidir"
-#' outdir <- "path/to/outputdir"
+#' sample <- "D20230311T092911_IFCB135"
+#' classified_folder <- "path/to/classified_folder"
+#' roi_folder <- "path/to/roi_folder"
+#' out_folder <- "path/to/outputdir"
 #' taxa <- "All"  # or specify a particular taxa
 #' threshold <- "opt"  # or specify another threshold
 #'
 #' # Extract taxa images from the classified sample
-#' ifcb_extract_classified_images(sample, classifieddir, roidir, outdir, taxa, threshold)
+#' ifcb_extract_classified_images(sample, classified_folder, roi_folder, out_folder, taxa, threshold)
 #' }
 #' @import R.matlab
 #' @seealso \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_annotated_images}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
 ifcb_extract_classified_images <- function(sample,
-                                           classifieddir,
-                                           roidir,
-                                           outdir,
+                                           classified_folder,
+                                           roi_folder,
+                                           out_folder,
                                            taxa = "All",
                                            threshold = "opt") {
 
   # Get the list of classified files and find the one matching the sample
-  classifiedfiles <- list.files(classifieddir, pattern="mat$", full.names = TRUE, recursive = FALSE)
+  classifiedfiles <- list.files(classified_folder, pattern="mat$", full.names = TRUE, recursive = TRUE)
   classifiedfilename <- classifiedfiles[grepl(sample, classifiedfiles)]
 
   if (length(classifiedfilename) == 0) {
     stop("Classified file for sample not found")
   }
 
+  if (length(classifiedfilename) > 1) {
+    stop("More than one matching class file in classified folder")
+  }
+
   # Read classified file
   classified.mat <- readMat(classifiedfilename)
 
   # Get the list of ROI files and find the one matching the sample
-  roifiles <- list.files(roidir, pattern=".roi$", full.names = TRUE, recursive = TRUE)
+  roifiles <- list.files(roi_folder, pattern=".roi$", full.names = TRUE, recursive = TRUE)
   roifilename <- roifiles[grepl(sample, roifiles)]
 
   if (length(roifilename) == 0) {
@@ -56,27 +60,27 @@ ifcb_extract_classified_images <- function(sample,
 
   # Extract taxa list based on the specified threshold
   taxa.list <- switch(threshold,
-                      "opt" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.optthresh), stringsAsFactors = FALSE),
+                      "opt" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.threshold), stringsAsFactors = FALSE),
                       "adhoc" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.adhocthresh), stringsAsFactors = FALSE),
                       "none" = as.data.frame(do.call(rbind, classified.mat$TBclass), stringsAsFactors = FALSE),
                       stop("Invalid threshold specified"))
 
   # Add ROI column
-  taxa.list$ROI <- rownames(taxa.list)
+  taxa.list$ROI <- classified.mat$roinum
 
   if (taxa != "All") {
     taxa.list <- taxa.list[taxa.list$V1 == taxa, ]
   }
 
   if (nrow(taxa.list) > 0) {
-    unique_taxa <- unique(taxa.list$V1)
+    unique_taxa <- unlist(unique(taxa.list$V1))
     for (taxon in unique_taxa) {
       tryCatch({
         taxa.list.ix <- taxa.list[taxa.list$V1 == taxon, ]
 
         ifcb_extract_pngs(
           roifilename,
-          outdir,
+          out_folder,
           as.numeric(taxa.list.ix$ROI),
           taxon
         )

@@ -5,16 +5,16 @@
 \title{Extract Images from IFCB ROI File}
 \usage{
 ifcb_extract_pngs(
-  roifile,
-  outdir = dirname(roifile),
+  roi_file,
+  out_folder = dirname(roi_file),
   ROInumbers = NULL,
   taxaname = NULL
 )
 }
 \arguments{
-\item{roifile}{A character string specifying the path to the .roi file.}
+\item{roi_file}{A character string specifying the path to the .roi file.}
 
-\item{outdir}{A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.}
+\item{out_folder}{A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.}
 
 \item{ROInumbers}{An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.}
 

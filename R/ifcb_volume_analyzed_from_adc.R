@@ -6,7 +6,7 @@
 #' at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
 #' the R equivalent function of `IFCB_volume_analyzed_fromADC` from the ifcb-analysis repository.
 #'
-#' @param adcfilename A character vector specifying the path(s) to one or more .adc files or URLs.
+#' @param adc_file A character vector specifying the path(s) to one or more .adc files or URLs.
 #' @return A list containing:
 #'   - ml_analyzed: A numeric vector of estimated sample volume analyzed for each ADC file.
 #'   - inhibittime: A numeric vector of inhibittime values extracted from ADC files.
@@ -23,22 +23,22 @@
 #' print(adc_info$ml_analyzed)
 #' }
 
-ifcb_volume_analyzed_from_adc <- function(adcfilename) {
+ifcb_volume_analyzed_from_adc <- function(adc_file) {
   flowrate <- 0.25  # milliliters per minute for syringe pump
 
-  if (is.character(adcfilename)) {
-    adcfilename <- as.list(adcfilename)
+  if (is.character(adc_file)) {
+    adc_file <- as.list(adc_file)
   }
 
-  ml_analyzed <- numeric(length(adcfilename))
-  inhibittime <- numeric(length(adcfilename))
-  runtime <- numeric(length(adcfilename))
+  ml_analyzed <- numeric(length(adc_file))
+  inhibittime <- numeric(length(adc_file))
+  runtime <- numeric(length(adc_file))
 
-  for (count in seq_along(adcfilename)) {
-    if (startsWith(adcfilename[[count]], 'http')) {
-      adc <- read.csv(adcfilename[[count]], header = FALSE)
+  for (count in seq_along(adc_file)) {
+    if (startsWith(adc_file[[count]], 'http')) {
+      adc <- read.csv(adc_file[[count]], header = FALSE)
     } else {
-      adc <- read.csv(adcfilename[[count]], header = FALSE)
+      adc <- read.csv(adc_file[[count]], header = FALSE)
     }
 
     # Adjust column indexing based on your ADC file structure

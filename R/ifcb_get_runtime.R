@@ -1,11 +1,11 @@
 #' Read IFCB Header File and Extract Runtime Information
 #'
 #' This function imports an IFCB header file (either from a local path or URL),
-#' extracts specific target values such as runtime, inhibittime, and runType,
-#' and returns them in a structured format (hdr). This is
+#' extracts specific target values such as runtime and inhibittime,
+#' and returns them in a structured format. This is
 #' the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository.
 #'
-#' @param fullfilename A character string specifying the full path to the .hdr file or URL.
+#' @param hdr_file A character string specifying the full path to the .hdr file or URL.
 #' @return A list (hdr) containing runtime, inhibittime, and runType (if available) extracted from the header file.
 #' @importFrom R.matlab readMat
 #' @export
@@ -13,14 +13,14 @@
 #' @examples
 #' \dontrun{
 #' # Example: Read and extract information from an IFCB header file
-#' hdr_info <- ifcb_read_hdr("path/to/IFCB_hdr_file.hdr")
+#' hdr_info <- ifcb_get_runtime("path/to/IFCB_hdr_file.hdr")
 #' print(hdr_info)
 #' }
-ifcb_read_hdr <- function(fullfilename) {
-  if (startsWith(fullfilename, "http")) {
-    t <- readLines(fullfilename, warn = FALSE)
+ifcb_get_runtime <- function(hdr_file) {
+  if (startsWith(hdr_file, "http")) {
+    t <- readLines(hdr_file, warn = FALSE)
   } else {
-    t <- readLines(fullfilename, warn = FALSE)
+    t <- readLines(hdr_file, warn = FALSE)
   }
   t <- tolower(t)
 

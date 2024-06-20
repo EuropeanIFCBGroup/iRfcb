@@ -6,7 +6,7 @@
 #' at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
 #' the R equivalent function of `IFCB_volume_analyzed` from the ifcb-analysis repository.
 #'
-#' @param hdrfilename A character vector specifying the path(s) to one or more .hdr files or URLs.
+#' @param hdr_file A character vector specifying the path(s) to one or more .hdr files or URLs.
 #' @param hdrOnly_flag An optional flag indicating whether to skip ADC file estimation (default is 0).
 #' @return A numeric vector containing the estimated sample volume analyzed for each header file.
 #' @importFrom utils read.table
@@ -20,22 +20,22 @@
 #' ml_analyzed <- ifcb_volume_analyzed(hdr_file)
 #' print(ml_analyzed)
 #' }
-ifcb_volume_analyzed <- function(hdrfilename, hdrOnly_flag = 0) {
+ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = 0) {
   flowrate <- 0.25  # milliliters per minute for syringe pump
 
-  if (is.character(hdrfilename)) {
-    hdrfilename <- as.list(hdrfilename)
+  if (is.character(hdr_file)) {
+    hdr_file <- as.list(hdr_file)
   }
 
-  ml_analyzed <- rep(NA, length(hdrfilename))
+  ml_analyzed <- rep(NA, length(hdr_file))
 
-  for (count in seq_along(hdrfilename)) {
-    hdr <- ifcb_read_hdr(hdrfilename[[count]])
+  for (count in seq_along(hdr_file)) {
+    hdr <- ifcb_get_runtime(hdr_file[[count]])
     runtime <- hdr$runtime
     inhibittime <- hdr$inhibittime
 
     if (!hdrOnly_flag) {
-      adcfilename <- sub("\\.hdr$", ".adc", hdrfilename[[count]])
+      adcfilename <- sub("\\.hdr$", ".adc", hdr_file[[count]])
       adc_info <- ifcb_volume_analyzed_from_adc(adcfilename)
 
       inhibittime_adc <- adc_info$inhibittime

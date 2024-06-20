@@ -11,17 +11,27 @@ ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = NULL)
 
 \item{class2use_file}{A character string specifying the path to the file containing the class2use variable.}
 
-\item{skip_class}{A numeric vector of class IDs to be excluded from the count. Default is NULL.}
+\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
 }
 \value{
 A data frame with the total count of images per class.
 }
 \description{
-This function processes .mat files in a specified folder to count and summarize 
+This function processes .mat files in a specified folder to count and summarize
 the annotations for each class based on the class2use information provided in a file.
 }
 \examples{
 \dontrun{
-result <- ifcb_count_mat_annotations("path/to/manual_folder", "path/to/class2use_file", skip_class = c(99, 100))
+# Count annotations excluding specific class IDs
+result <- ifcb_count_mat_annotations("path/to/manual_folder",
+                                     "path/to/class2use_file",
+                                     skip_class = c(99, 100))
+print(result)
+
+# Count annotations excluding a specific class name
+result <- ifcb_count_mat_annotations("path/to/manual_folder",
+                                     "path/to/class2use_file",
+                                     skip_class = "unclassified")
+print(result)
 }
 }

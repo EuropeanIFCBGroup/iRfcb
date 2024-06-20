@@ -2,7 +2,7 @@
 #'
 #' This function zips directories containing .png files and optionally includes a README file.
 #'
-#' @param png_directory The directory containing subdirectories with .png files.
+#' @param png_folder The directory containing subdirectories with .png files.
 #' @param zip_filename The name of the zip file to create.
 #' @param readme_file Optional path to a README file for inclusion in the zip package.
 #' @param email_address Optional email address to include in the README file.
@@ -28,9 +28,9 @@
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year
 #' @seealso \code{\link{ifcb_zip_matlab}}
-ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email_address = "", version = "") {
+ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "", version = "") {
   # List all subdirectories in the main directory
-  subdirs <- list.dirs(png_directory, recursive = FALSE)
+  subdirs <- list.dirs(png_folder, recursive = FALSE)
 
   # Initialize a vector to store directories with .png files
   dirs_to_zip <- character()
@@ -76,31 +76,34 @@ ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email
     current_date <- Sys.Date()
 
     # Get list of filenames with .png extension
-    files <- list.files(png_directory, pattern = "png$", full.names = TRUE, recursive = TRUE)
+    files <- list.files(png_folder, pattern = "png$", full.names = TRUE, recursive = TRUE)
 
     # Summarize the number of images by directory
-    files_df <- tibble(dir = dirname(files)) %>%
-      count(dir) %>%
-      mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
-      arrange(desc(n))
+    files_df <- tibble::tibble(dir = dirname(files)) %>%
+      dplyr::count(dir) %>%
+      dplyr::mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
+      dplyr::arrange(desc(n))
 
     # Extract dates from file paths and get the years
-    dates <- str_extract(files, "D\\d{8}")
+    dates <- stringr::str_extract(files, "D\\d{8}")
     years <- as.integer(substr(dates, 2, 5))
 
     # Find the minimum and maximum year
     min_year <- min(years, na.rm = TRUE)
     max_year <- max(years, na.rm = TRUE)
 
+    # Remove suffix from zip-filename, if present
+    zip_name <- gsub("_annotated_images.zip|_matlab_files.zip", "", basename(zip_filename))
+    zip_name <- gsub(".zip", "", zip_name)
+
     # Update the README.md template placeholders
     updated_readme <- gsub("<DATE>", current_date, readme_content)
     updated_readme <- gsub("<VERSION>", version, updated_readme)
     updated_readme <- gsub("<E-MAIL>", email_address, updated_readme)
-    updated_readme <- gsub("<MATLAB_ZIP>", basename(zip_filename), updated_readme)
-    updated_readme <- gsub("<IMAGE_ZIP>", gsub("annotated_images", "matlab_files", basename(zip_filename)), updated_readme)
+    updated_readme <- gsub("<ZIP_NAME>", zip_name, updated_readme)
     updated_readme <- gsub("<YEAR_START>", min_year, updated_readme)
     updated_readme <- gsub("<YEAR_END>", max_year, updated_readme)
-    updated_readme <- gsub("<YEAR>", year(current_date), updated_readme)
+    updated_readme <- gsub("<YEAR>", lubridate::year(current_date), updated_readme)
     updated_readme <- gsub("<N_IMAGES>", formatC(sum(files_df$n), format = "d", big.mark = ","), updated_readme)
     updated_readme <- gsub("<CLASSES>", nrow(files_df), updated_readme)
 
@@ -134,7 +137,7 @@ ifcb_zip_pngs <- function(png_directory, zip_filename, readme_file = NULL, email
     # Print message to indicate starting zip creation
     message("Creating zip archive...")
 
-    zipr(zipfile = zip_filename, files = files_to_zip)
+    zip::zipr(zipfile = zip_filename, files = files_to_zip)
     message("Zip archive created successfully.")
   } else {
     message("No directories with .png files found.")
