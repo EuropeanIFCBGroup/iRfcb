@@ -11,6 +11,8 @@ Encoding: UTF-8
 LazyData: true
 Imports:
   zip,
+  shiny,
+  base64enc,
   stringr,
   dplyr,
   tidyr,
