@@ -1,0 +1,61 @@
+utils::globalVariables(c("replace_value_in_classlist"))
+#' Replace Values in MATLAB Classlist
+#'
+#' This function replaces a target class ID with a new ID in MATLAB classlist files
+#' located in a specified manual folder. It ensures the appropriate virtual environment
+#' is set up and the necessary Python function is imported and utilized.
+#'
+#' @param manual_folder A character string specifying the path to the folder containing MAT classlist files to be updated.
+#' @param out_folder A character string specifying the path to the folder where updated MAT classlist files will be saved.
+#' @param target_id The target class ID to be replaced.
+#' @param new_id The new class ID to replace the target ID.
+#' @param column_index An integer value specifying which classlist column to edit. Default is 1 (manual).
+#'
+#' @return This function does not return any value; it updates the classlist files in the specified directory.
+#'
+#' @examples
+#' \dontrun{
+#' # Replace class ID 99 with 1 in .mat classlist files
+#' ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
+#' }
+#' @import reticulate
+#' @export
+ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1) {
+
+  # Ensure the iRfcb virtual environment is installed and used
+  ifcb_install_iRfcb()
+  .onLoad()
+
+  # Import the Python function
+  source_python(system.file("python", "replace_value_in_classlist.py", package = "iRfcb"))
+
+  # Check if the manual_folder exists
+  if (!dir.exists(manual_folder)) {
+    stop(paste("The manual folder does not exist:", manual_folder))
+  }
+
+  # Create the output folder if it does not exist
+  if (!dir.exists(out_folder)) {
+    dir.create(out_folder, recursive = TRUE)
+  }
+
+  # List files to be updated
+  files <- list.files(manual_folder, full.names = TRUE)
+
+  if (length(files) == 0) {
+    stop(paste("No files found in the manual folder:", manual_folder))
+  }
+
+  for (i in seq_along(files)) {
+    file_path_in <- files[i]
+    file_path_out <- file.path(out_folder, basename(files[i]))
+
+    replace_value_in_classlist(
+      file_path_in,  # Ensure correct file path
+      file_path_out,  # Ensure correct output file path
+      as.integer(target_id),
+      as.integer(new_id),
+      as.integer(column_index)
+    )
+  }
+}

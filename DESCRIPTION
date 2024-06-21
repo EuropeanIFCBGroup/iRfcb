@@ -15,6 +15,7 @@ Imports:
   base64enc,
   stringr,
   dplyr,
+  reticulate,
   tidyr,
   tibble,
   imager,

@@ -1,0 +1,70 @@
+utils::globalVariables(c("edit_manual_file"))
+#' Correct Annotations in MATLAB Classlist Files
+#'
+#' This function corrects annotations in MATLAB classlist files located in a specified manual folder.
+#' It replaces the class ID of specified regions of interest (ROIs) in the classlist files based on
+#' a correction file.
+#'
+#' @param manual_folder A character string specifying the path to the folder containing the original MAT classlist files to be updated.
+#' @param out_folder A character string specifying the path to the folder where updated MAT classlist files will be saved.
+#' @param correction_file A character string specifying the path to the correction file. The correction file should have columns `class_folder` and `image_filename`, but only `image_filename` is used.
+#' @param correct_classid An integer specifying the class ID to use for corrections.
+#'
+#' @return This function does not return any value; it updates the classlist files in the specified output directory.
+#'
+#' @details
+#' The correction file is expected to contain at least two columns: `class_folder`, which indicates the folder of the class,
+#' and `image_filename`, which includes the filenames of the images (with or without additional trailing information).
+#' The function processes each file, corrects the annotations, and saves the updated files in the output folder.
+#'
+#' The `correction_file` is typically generated using a Shiny app that provides an interactive interface for browsing and managing
+#' IFCB (Imaging FlowCytobot) image galleries. This Shiny app can be initialized using the function `ifcb_run_image_gallery()`.
+#'
+#' @examples
+#' \dontrun{
+#' # Correct class ID in .mat classlist files
+#' ifcb_correct_annotation("input/manual", "output/manual", "corrections.txt", 99)
+#' }
+#'
+#' @import reticulate
+#' @importFrom stats aggregate
+#' @export
+ifcb_correct_annotation <- function(manual_folder, out_folder, correction_file, correct_classid) {
+
+  # Ensure the iRfcb virtual environment is installed and used
+  ifcb_install_iRfcb()
+  .onLoad()
+
+  # Import the Python function
+  source_python(system.file("python", "edit_manual_file.py", package = "iRfcb"))
+
+  # Read corrections file
+  corrections <- read.table(correction_file, header = TRUE, row.names = NULL)
+
+  # Extract sample filenames without the trailing part after the last underscore
+  corrections$sample_filename <- sub("^(.*)_[^_]*$", "\\1", corrections$image_filename)
+
+  # Convert the filenames to get the roi values
+  corrections$roi <- ifcb_convert_filenames(corrections$image_filename)$roi
+
+  # Aggregate roi to correct per sample
+  corrections_aggregated <- stats::aggregate(roi ~ sample_filename, data = corrections, FUN = list)
+
+  # Loop through all files and apply corrections
+  for (i in seq_len(nrow(corrections_aggregated))) {
+    # Extract filename and roi values from the current row
+    filename <- as.character(corrections_aggregated$sample_filename[i])
+    roi_list <- unlist(corrections_aggregated$roi[[i]], use.names = FALSE)
+
+    # Ensure roi_list is a list of integers
+    roi_list <- as.list(as.integer(roi_list))
+
+    # Call the Python function with the extracted values
+    edit_manual_file(
+      file.path(manual_folder, paste0(filename, ".mat")),  # Ensure correct file path
+      file.path(out_folder, paste0(filename, ".mat")),  # Ensure correct output file path
+      roi_list,
+      correct_classid
+    )
+  }
+}

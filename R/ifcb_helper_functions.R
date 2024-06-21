@@ -129,8 +129,17 @@ read_hdr_file <- function(file) {
 # @param filename A character string specifying the filename to extract parts from.
 # @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
 extract_parts <- function(filename) {
+
+  # Clean filename
+  filename <- tools::file_path_sans_ext(filename)
+
+  # Extract timestamp and IFCB number
   timestamp_str <- stringr::str_extract(filename, "D\\d{8}T\\d{6}")
   ifcb_number <- stringr::str_extract(filename, "IFCB\\d+")
+
+  # Extract the ROI part if it exists
+  roi_str <- stringr::str_extract(filename, "_\\d+$")
+  roi <- ifelse(is.na(roi_str), NA, as.integer(stringr::str_remove(roi_str, "_")))
 
   # Convert timestamp string to proper datetime format
   full_timestamp <- lubridate::ymd_hms(
@@ -146,9 +155,10 @@ extract_parts <- function(filename) {
   month <- lubridate::month(full_timestamp)
   day <- lubridate::day(full_timestamp)
   time <- format(full_timestamp, "%H:%M:%S")
+  sample <- stringr::str_remove(filename, "_\\d+$")
 
-  return(data.frame(
-    sample = tools::file_path_sans_ext(filename),  # Extract sample name without extension
+  df <- data.frame(
+    sample = sample,
     timestamp = full_timestamp,
     date = date,
     year = year,
@@ -157,5 +167,37 @@ extract_parts <- function(filename) {
     time = time,
     ifcb_number = ifcb_number,
     stringsAsFactors = FALSE
-  ))
+  )
+
+  # Conditionally add the ROI column if it has no NAs
+  if (!any(is.na(roi))) {
+    df$roi <- roi
+  }
+  return(df)
+}
+#' Install iRfcb Python Environment
+#'
+#' This function creates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
+#'
+#' @param ... Additional arguments passed to `virtualenv_create`.
+#' @param envname A character string specifying the name of the virtual environment to create. Default is "iRfcb".
+#'
+#' @examples
+#' \dontrun{
+#' # Install the iRfcb Python environment
+#' ifcb_install_iRfcb()
+#' }
+#' @import reticulate
+#' @export
+ifcb_install_iRfcb <- function(..., envname = "/.virtualenvs/iRfcb") {
+  virtualenv_create(envname, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
+}
+#' Load iRfcb Python Environment on Package Load
+#'
+#' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
+#'virtualenv
+#' @param ... Additional arguments passed to the function.
+#' @param envname A character string specifying the name of the virtual environment to create. Default is "iRfcb".
+.onLoad <- function(..., envname = "/.virtualenvs/iRfcb") {
+  use_virtualenv(envname, required = FALSE)
 }
