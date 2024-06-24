@@ -6,7 +6,7 @@
 #' @param longitudes Numeric vector of longitudes for positions.
 #' @param distance Buffer distance in meters around the coastline in meter. Default is 100 m.
 #' @param shape Optional path to a shapefile containing coastline data. If provided,
-#'   the function will use this shapefile instead of downloading from rnaturalearth 1:10m vectors.
+#'   the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
 #'   A more detailed shapefile allows for a smaller buffer distance.
 #'   Detailed European coastline can be downloaded as polygons from EEA at
 #'   \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
@@ -36,11 +36,10 @@
 #' # Print the result
 #' print(near_land)
 #'
-#' @import rnaturalearthhires
-#' @importFrom rnaturalearth ne_coastline ne_countries
 #' @importFrom sf st_bbox st_crs st_as_sf st_transform st_intersects st_wrap_dateline st_as_sfc st_intersection st_make_valid st_union st_area st_geometry_type st_read
 #' @importFrom terra vect buffer
 #' @importFrom dplyr %>%
+#' @importFrom zip unzip
 #' @export
 ifcb_is_near_land <- function(latitudes,
                               longitudes,
@@ -60,61 +59,57 @@ ifcb_is_near_land <- function(latitudes,
 
   # Get coastline
   if (is.null(shape)) {
+    # Directory to extract files
+    exdir <- tempdir()  # Temporary directory
+
+    # Extract the files
+    unzip(system.file("exdata/ne_10m_land.zip", package = "iRfcb"), exdir = exdir)
+
     # Get coastline and land data within the bounding box
-    coast <- rnaturalearth::ne_coastline(scale = 10, returnclass = "sf")
+    land <- st_read(file.path(exdir, "ne_10m_land.shp"), quiet = TRUE)
   } else {
-    coast <- st_read(shape, quiet = TRUE)
-    coast <- st_transform(coast, crs = crs)
+    land <- st_read(shape, quiet = TRUE)
+    land <- st_transform(land, crs = crs)
   }
 
   # Check geometry type
-  geom_type <- unique(st_geometry_type(coast))
+  geom_type <- unique(st_geometry_type(land))
 
   # Optionally remove small islands based on area threshold
-  if (geom_type == "POLYGON" && remove_small_islands) {
-    coast$area <- st_area(coast)
+  if (remove_small_islands && any(st_geometry_type(land) %in% c("POLYGON", "MULTIPOLYGON"))) {
+    land$area <- st_area(land)
 
-    small_islands <- which(as.numeric(coast$area) < small_island_threshold)
-    coast <- coast[-small_islands, ]
+    small_islands <- which(as.numeric(land$area) < small_island_threshold)
+    land <- land[-small_islands, ]
 
     # Remove the 'area' attribute
-    coast$area <- NULL
+    land$area <- NULL
   }
 
-  # Get land data
-  land <- rnaturalearth::ne_countries(scale = 10, returnclass = "sf")
+  # Filter land data to include only the region within the bounding box
+  land <- suppressWarnings(st_intersection(land, st_as_sfc(bbox)))
 
-  # Filter coastline and land data to include only the region within the bounding box
-  coast <- suppressWarnings(st_intersection(coast, st_as_sfc(bbox)))
-  land <- suppressWarnings(st_intersection(st_make_valid(land), st_as_sfc(bbox)))
-
-  # Cleanup and transform coastline data
-  coast <- coast %>% st_union() %>% st_make_valid() %>% st_wrap_dateline()
-  coast_utm <- st_transform(coast, crs = utm_epsg)
+  # Cleanup and transform land data
+  land <- land %>% st_union() %>% st_make_valid() %>% st_wrap_dateline()
+  land_utm <- st_transform(land, crs = utm_epsg)
 
   # Create a buffered shape around the coastline in meters (specified distance)
-  c_buffer <- terra::vect(coast_utm)
-  terra::crs(c_buffer) <- utm_epsg
-  c_buffer <- terra::buffer(c_buffer, width = distance) %>% st_as_sf() %>% st_wrap_dateline()
+  l_buffer <- terra::vect(land_utm)
+  terra::crs(l_buffer) <- utm_epsg
+  l_buffer <- terra::buffer(l_buffer, width = distance) %>% st_as_sf() %>% st_wrap_dateline()
 
   # Transform the buffered coastline and land data back to the original CRS
-  c_buffer <- st_transform(c_buffer, crs = crs)
-  land <- st_transform(land, crs = crs)
+  l_buffer <- st_transform(l_buffer, crs = crs)
 
   # Create sf object for positions
   positions_sf <- st_as_sf(data.frame(lon = longitudes, lat = latitudes),
                            coords = c("lon", "lat"), crs = st_crs(crs))
 
   # Check which positions intersect with the buffer and land
-  near_land <- st_intersects(positions_sf, c_buffer)
-  on_land <- st_intersects(positions_sf, land)
+  near_land <- st_intersects(positions_sf, l_buffer)
 
   # Extract logical vectors indicating whether each position is near land or on land
-  near_coast_logical <- lengths(near_land) > 0
-  on_land_logical <- lengths(on_land) > 0
-
-  # Merge the logical vectors
-  near_land_logical <- near_coast_logical | on_land_logical
+  near_land_logical <- lengths(near_land) > 0
 
   # Return the logical vector indicating near land
   return(near_land_logical)

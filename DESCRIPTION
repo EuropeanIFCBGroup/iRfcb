@@ -16,8 +16,6 @@ Imports:
   stringr,
   dplyr,
   sf,
-  rnaturalearth,
-  rnaturalearthhires,
   terra,
   reticulate,
   tidyr,

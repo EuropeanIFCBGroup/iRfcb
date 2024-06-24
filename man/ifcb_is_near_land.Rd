@@ -23,7 +23,7 @@ ifcb_is_near_land(
 \item{distance}{Buffer distance in meters around the coastline in meter. Default is 100 m.}
 
 \item{shape}{Optional path to a shapefile containing coastline data. If provided,
-the function will use this shapefile instead of downloading from rnaturalearth 1:10m vectors.
+the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
 A more detailed shapefile allows for a smaller buffer distance.
 Detailed European coastline can be downloaded as polygons from EEA at
 \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}}
