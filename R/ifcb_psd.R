@@ -10,10 +10,11 @@
 #'
 #' @param feature_folder The absolute path to a directory containing all of the v2 feature files for the dataset.
 #' @param hdr_folder The absolute path to a directory containing all of the hdr files for the dataset.
+#' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
+#' @param output_file A string with the base file name for the .csv to use (including path).
 #' @param plot_folder The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).
 #' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
-#' @param name A string with the base file name for the .csv to use (including path).
 #' @param r_sqr The lower limit of acceptable R^2 values (any curves below it will be flagged). Default is 0.5.
 #' @param beads The maximum multiplier for the curve fit. Any files with higher curve fit multipliers will be flagged as bead runs. If this argument is included, files with "runBeads" marked as TRUE in the header file will also be flagged as a bead run. Optional.
 #' @param bubbles The minimum difference between the starting ESD and the ESD with the most targets.  Any files with a difference higher than this threshold will be flagged as mostly bubbles. Optional.
@@ -23,7 +24,7 @@
 #' @param bloom The minimum difference between the starting ESD and the ESD with the most targets. Any files with a difference less than this threshold will be flagged as a bloom. Will likely be lower than the bubbles threshold. Optional.
 #' @param humidity The maximum percent humidity. Any files with higher values will be flagged as high humidity. Optional.
 #'
-#' @return This function does not return any value; it generates and saves the PSD data.
+#' @return A list with data, fits, and flags DataFrames if `save_data` is FALSE; otherwise, NULL.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/kudelalab/PSD} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 #' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
@@ -33,12 +34,13 @@
 #' ifcb_psd(
 #'   feature_folder = 'path/to/features',
 #'   hdr_folder = 'path/to/hdr_data',
+#'   save_data = FALSE,
+#'   output_file = 'psd/svea_2021',
 #'   plot_folder = 'psd/plots',
 #'   use_marker = FALSE,
 #'   start_fit = 10,
-#'   name = 'psd/svea_2021',
 #'   r_sqr = 0.5,
-#'   beads = 10 ** 20,
+#'   beads = 10 ** 9,
 #'   bubbles = 150,
 #'   incomplete = c(1500, 3),
 #'   missing_cells = 0.7,
@@ -48,9 +50,13 @@
 #' )
 #' }
 #' @export
-ifcb_psd <- function(feature_folder, hdr_folder, plot_folder = NULL, use_marker = FALSE, start_fit = 10,
-                     name, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
+ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NA, plot_folder = NULL,
+                     use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL) {
+
+  if (save_data & is.na(output_file)) {
+    stop("No output file specified. Please provide a valid output file path to save the data.")
+  }
 
   # Ensure the iRfcb virtual environment is installed and used
   ifcb_py_install()
@@ -72,16 +78,32 @@ ifcb_psd <- function(feature_folder, hdr_folder, plot_folder = NULL, use_marker 
   # Plot the PSD
   b$plot_PSD(use_marker = use_marker, plot_folder = plot_folder, start_fit = as.integer(start_fit))
 
-  # Prepare arguments for save_data
-  args <- list(name = name, r_sqr = r_sqr)
-  if (!is.null(beads)) args$beads <- as.numeric(beads)
-  if (!is.null(bubbles)) args$bubbles <- as.integer(bubbles)
-  if (!is.null(incomplete)) args$incomplete <- as.integer(incomplete)
-  if (!is.null(missing_cells)) args$missing_cells <- missing_cells
-  if (!is.null(biomass)) args$biomass <- as.integer(biomass)
-  if (!is.null(bloom)) args$bloom <- as.integer(bloom)
-  if (!is.null(humidity)) args$humidity <- humidity
+  if (save_data) {
+    # Prepare arguments for save_data
+    args <- list(name = output_file, r_sqr = r_sqr)
+    if (!is.null(beads)) args$beads <- as.numeric(beads)
+    if (!is.null(bubbles)) args$bubbles <- as.integer(bubbles)
+    if (!is.null(incomplete)) args$incomplete <- as.integer(incomplete)
+    if (!is.null(missing_cells)) args$missing_cells <- missing_cells
+    if (!is.null(biomass)) args$biomass <- as.integer(biomass)
+    if (!is.null(bloom)) args$bloom <- as.integer(bloom)
+    if (!is.null(humidity)) args$humidity <- humidity
 
-  # Save the data
-  do.call(b$save_data, args)
+    # Save the data
+    do.call(b$save_data, args)
+    return(NULL)
+  } else {
+    # Retrieve data from Python
+    data <- b$get_data()
+    fits <- b$get_fits()
+    flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
+                         missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
+
+    # Convert to R data frames
+    data_df <- as.data.frame(data)
+    fits_df <- as.data.frame(fits)
+    flags_df <- as.data.frame(flags)
+
+    return(list(data = data_df, fits = fits_df, flags = flags_df))
+  }
 }
