@@ -189,7 +189,7 @@ extract_parts <- function(filename) {
 #' }
 #' @import reticulate
 #' @export
-ifcb_install_iRfcb <- function(..., envname = "/.virtualenvs/iRfcb") {
+ifcb_py_install <- function(..., envname = "/.virtualenvs/iRfcb") {
   virtualenv_create(envname, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
 }
 #' Load iRfcb Python Environment on Package Load

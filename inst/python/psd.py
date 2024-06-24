@@ -171,7 +171,7 @@ class Sample:
 
         return histogram
 
-    def plot_PSD(self, use_marker, save_graph, start_fit):
+    def plot_PSD(self, use_marker, plot_folder, start_fit):
 
         print(f'Graphing {self.name}')
 
@@ -188,7 +188,9 @@ class Sample:
         maximum = max(ydata)
         max_diff = start_fit - ydata.index(maximum)
 
-        if save_graph:
+        if plot_folder:
+            if not os.path.exists(plot_folder):
+                os.makedirs(plot_folder)
             fig, ax = plt.subplots()
             ax.set(xlabel="ESD [um]", ylabel="N'(D) [c/L⁻]")
             ax.set_ylim(bottom=-0.1 * maximum, top=1.1 * maximum)
@@ -200,11 +202,12 @@ class Sample:
             ss_res = np.sum(residuals ** 2)
             ss_tot = np.sum((ydata[start_fit:] - np.mean(ydata[start_fit:])) ** 2)
             r_sqr = 1 - (ss_res / ss_tot)
-            self.bin.add_fit(self.name, round_sig(popt[0], 5), round_sig(popt[1], 5), r_sqr, max_diff, self.capture_percent, self.bead_run, self.humidity)
+            self.bin.add_fit(self.name, round_sig(popt[0], 5), round_sig(popt[1], 5), r_sqr, max_diff,
+                             self.capture_percent, self.bead_run, self.humidity)
         except:
             popt = [0.0, 0.0]
             r_sqr = 0
-            self.bin.add_fit(self.name, 0,0, r_sqr, max_diff, self.capture_percent, self.bead_run, self.humidity)
+            self.bin.add_fit(self.name, 0, 0, r_sqr, max_diff, self.capture_percent, self.bead_run, self.humidity)
 
         self.bin.add_data(self.name, self.datenum, ydata, self.mL_analyzed, maximum)
 
@@ -213,19 +216,20 @@ class Sample:
         else:
             marker = None
 
-        if save_graph:
-            psd_line = ax.plot(xdata[start_fit:], xdata[start_fit:],
+        if plot_folder:
+            psd_line = ax.plot(xdata[start_fit:], ydata[start_fit:],
                                color='#00afbf', marker=marker, linestyle='solid',
                                linewidth=1.25, markersize=4, label='PSD')
             if r_sqr > 0:
-                curve_fit_line = ax.plot(xdata, power_curve(xdata[start_fit:], *popt), color='#516b6e', linestyle='dashed',
+                curve_fit_line = ax.plot(xdata[start_fit:], power_curve(xdata[start_fit:], *popt), color='#516b6e',
+                                         linestyle='dashed',
                                          label='Power Curve')
                 ax.text(80, maximum * 0.75,
                         f'$y = ({round_sig(popt[0], 3)})x^{{{round_sig(popt[1], 3)}}}$, $R^{{2}} = {round_sig(r_sqr, 3)}$')
 
             ax.legend()
             ax.set_title(f'{self.name}')
-            plt.savefig(os.path.join(os.getcwd(), 'Graphs', self.name))
+            plt.savefig(os.path.join(plot_folder, self.name))
             plt.close('all')
 
 
@@ -275,15 +279,13 @@ class Bin:
         print(files)
         print()
 
-    def plot_PSD(self, use_marker, save_graphs, start_fit):
+    def plot_PSD(self, use_marker, plot_folder, start_fit):
 
-        if save_graphs:
-            os.mkdir(os.path.join(os.getcwd(), 'Graphs'))
         if not self.samples_loaded:
             for sample in self.samples:
                 sample.create_histograms()
         for sample in self.samples:
-            sample.plot_PSD(use_marker=use_marker, save_graph=save_graphs, start_fit=start_fit)
+            sample.plot_PSD(use_marker=use_marker, plot_folder=plot_folder, start_fit=start_fit)
         print(f'Start fit: {start_fit}')
 
     def save_data(self, name, r_sqr=0.5, **kwargs):
