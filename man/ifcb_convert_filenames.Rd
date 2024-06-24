@@ -15,6 +15,7 @@ A data frame with columns: sample, full_timestamp, year, month, day, time, and i
 \description{
 This function converts IFCB filenames to a data frame with separate columns for
 the sample name, full timestamp, year, month, day, time, and IFCB number.
+ROI numbers are included if available.
 }
 \examples{
 \dontrun{

@@ -27,7 +27,7 @@ ifcb_zip_pngs(
 This function does not return any value; it creates a zip archive and potentially a README file.
 }
 \description{
-This function zips directories containing .png files and optionally includes a README file.
+This function zips directories containing .png files and optionally includes README and MANIFEST files.
 }
 \examples{
 # Zip all subdirectories in the 'images' folder with a README file

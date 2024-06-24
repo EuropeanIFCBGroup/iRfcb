@@ -4,7 +4,7 @@
 #'
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions.
-#' @param distance Buffer distance in meters around the coastline in meter. Default is 100 m.
+#' @param distance Buffer distance in meters around the coastline. Default is 100 m.
 #' @param shape Optional path to a shapefile containing coastline data. If provided,
 #'   the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
 #'   A more detailed shapefile allows for a smaller buffer distance.
@@ -16,7 +16,7 @@
 #' @param remove_small_islands Logical indicating whether to remove small islands from
 #'   the coastline. Default is TRUE.
 #' @param small_island_threshold Area threshold in square meters below which islands
-#'   will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2,000,000 sqm.
+#'   will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.
 #'
 #' @return Logical vector indicating whether each position is near land.
 #'

@@ -20,7 +20,7 @@ ifcb_is_near_land(
 
 \item{longitudes}{Numeric vector of longitudes for positions.}
 
-\item{distance}{Buffer distance in meters around the coastline in meter. Default is 100 m.}
+\item{distance}{Buffer distance in meters around the coastline. Default is 100 m.}
 
 \item{shape}{Optional path to a shapefile containing coastline data. If provided,
 the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
@@ -37,7 +37,7 @@ Default is EPSG code 4326 (WGS84).}
 the coastline. Default is TRUE.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
-will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2,000,000 sqm.}
+will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.}
 }
 \value{
 Logical vector indicating whether each position is near land.

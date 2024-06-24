@@ -1,6 +1,6 @@
 #' Zip PNG Folders
 #'
-#' This function zips directories containing .png files and optionally includes a README file.
+#' This function zips directories containing .png files and optionally includes README and MANIFEST files.
 #'
 #' @param png_folder The directory containing subdirectories with .png files.
 #' @param zip_filename The name of the zip file to create.

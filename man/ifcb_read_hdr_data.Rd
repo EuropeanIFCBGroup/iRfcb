@@ -17,8 +17,7 @@ ifcb_read_hdr_data(hdr_folder, gps_only = FALSE, verbose = TRUE)
 A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
 }
 \description{
-This function reads all IFCB instrument settings information files (.hdr) from a specified directory,
-and optionally extracts only the GPS positions (latitude and longitude) if available.
+This function reads all IFCB instrument settings information files (.hdr) from a specified directory.
 }
 \examples{
 \dontrun{

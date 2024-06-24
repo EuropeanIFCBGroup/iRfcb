@@ -2,8 +2,7 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 
 #' Reads HDR Data from IFCB HDR Files
 #'
-#' This function reads all IFCB instrument settings information files (.hdr) from a specified directory,
-#' and optionally extracts only the GPS positions (latitude and longitude) if available.
+#' This function reads all IFCB instrument settings information files (.hdr) from a specified directory.
 #'
 #' @param hdr_folder A character string specifying the path to the directory containing the .hdr files.
 #' @param gps_only A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.
