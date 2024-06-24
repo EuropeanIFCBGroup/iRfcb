@@ -3,12 +3,13 @@
 #' This function imports an IFCB header file (either from a local path or URL),
 #' extracts specific target values such as runtime and inhibittime,
 #' and returns them in a structured format. This is
-#' the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository.
+#' the R equivalent function of `IFCBxxx_readhdr` from the `ifcb-analysis` repository (Sosik and Olson 2007).
 #'
 #' @param hdr_file A character string specifying the full path to the .hdr file or URL.
 #' @return A list (hdr) containing runtime, inhibittime, and runType (if available) extracted from the header file.
 #' @importFrom R.matlab readMat
 #' @export
+#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
 #' \dontrun{

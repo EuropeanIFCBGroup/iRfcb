@@ -28,7 +28,7 @@ None. The function saves the extracted PNG images to the specified output direct
 }
 \description{
 This function extracts labelled images from IFCB (Imaging FlowCytobot) data,
-annotated using the MATLAB code from the ifcb-analysis repository.
+annotated using the MATLAB code from the `ifcb-analysis` repository (Sosik and Olson 2007).
 It reads manually classified data, maps class indices to class names, and extracts
 the corresponding Region of Interest (ROI) images, saving them to the specified directory.
 }
@@ -42,6 +42,9 @@ ifcb_extract_annotated_images(
   skip_class = 1
 )
 }
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_classified_images}} \url{https://github.com/hsosik/ifcb-analysis}

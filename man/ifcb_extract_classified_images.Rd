@@ -31,7 +31,7 @@ No return value, called for side effects. Extracts and saves taxa images to a di
 }
 \description{
 This function reads a MATLAB classified sample file (.mat) generated
-by the `start_classify_batch_user_training` function from the ifcb-analysis repository,
+by the `start_classify_batch_user_training` function from the `ifcb-analysis` repository (Sosik and Olson 2007),
 extracts specified taxa images from the corresponding ROI files,
 and saves each image in a specified directory.
 }
@@ -48,6 +48,9 @@ threshold <- "opt"  # or specify another threshold
 # Extract taxa images from the classified sample
 ifcb_extract_classified_images(sample, classified_folder, roi_folder, out_folder, taxa, threshold)
 }
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_annotated_images}} \url{https://github.com/hsosik/ifcb-analysis}

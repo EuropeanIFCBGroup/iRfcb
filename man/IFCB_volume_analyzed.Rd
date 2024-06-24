@@ -19,7 +19,7 @@ This function reads an IFCB header file to extract sample run time and inhibitti
 and returns the associated estimate of sample volume analyzed (in milliliters).
 The function assumes a standard IFCB configuration with a sample syringe operating
 at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
-the R equivalent function of `IFCB_volume_analyzed` from the ifcb-analysis repository.
+the R equivalent function of `IFCB_volume_analyzed` from the `ifcb-analysis` repository (Sosik and Olson 2007).
 }
 \examples{
 \dontrun{
@@ -28,6 +28,9 @@ hdr_file <- "path/to/IFCB_hdr_file.hdr"
 ml_analyzed <- ifcb_volume_analyzed(hdr_file)
 print(ml_analyzed)
 }
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \url{https://github.com/hsosik/ifcb-analysis}

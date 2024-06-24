@@ -4,7 +4,7 @@
 #' and returns the associated estimate of sample volume analyzed (in milliliters).
 #' The function assumes a standard IFCB configuration with a sample syringe operating
 #' at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
-#' the R equivalent function of `IFCB_volume_analyzed_fromADC` from the ifcb-analysis repository.
+#' the R equivalent function of `IFCB_volume_analyzed_fromADC` from the `ifcb-analysis repository` (Sosik and Olson 2007).
 #'
 #' @param adc_file A character vector specifying the path(s) to one or more .adc files or URLs.
 #' @return A list containing:
@@ -14,6 +14,7 @@
 #' @importFrom utils read.csv
 #' @importFrom stats median
 #' @export
+#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
 #' \dontrun{

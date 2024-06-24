@@ -13,7 +13,7 @@ ifcb_get_mat_names(mat_file)
 A character vector of variable names.
 }
 \description{
-This function reads a .mat file generated the ifcb-analysis repository and retrieves the
+This function reads a .mat file generated the `ifcb-analysis` repository (Sosik and Olson 2007) and retrieves the
 names of all variables stored within it.
 }
 \examples{
@@ -22,6 +22,9 @@ names of all variables stored within it.
 variables <- ifcb_get_mat_names("path/to/file.mat")
 print(variables)
 }
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \code{\link{ifcb_get_mat_variable}}  \url{https://github.com/hsosik/ifcb-analysis}

@@ -16,7 +16,7 @@ A list (hdr) containing runtime, inhibittime, and runType (if available) extract
 This function imports an IFCB header file (either from a local path or URL),
 extracts specific target values such as runtime and inhibittime,
 and returns them in a structured format. This is
-the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository.
+the R equivalent function of `IFCBxxx_readhdr` from the `ifcb-analysis` repository (Sosik and Olson 2007).
 }
 \examples{
 \dontrun{
@@ -24,6 +24,9 @@ the R equivalent function of `IFCBxxx_readhdr` from the ifcb-analysis repository
 hdr_info <- ifcb_get_runtime("path/to/IFCB_hdr_file.hdr")
 print(hdr_info)
 }
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \url{https://github.com/hsosik/ifcb-analysis}
