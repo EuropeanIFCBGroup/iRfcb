@@ -24,10 +24,6 @@ utils::globalVariables(c("replace_value_in_classlist"))
 #' @export
 ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1) {
 
-  # Ensure the iRfcb virtual environment is installed and used
-  ifcb_py_install()
-  .onLoad()
-
   # Import the Python function
   source_python(system.file("python", "replace_value_in_classlist.py", package = "iRfcb"))
 

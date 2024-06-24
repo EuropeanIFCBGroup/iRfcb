@@ -74,7 +74,7 @@ ifcb_psd(
   output_file = 'psd/svea_2021',
   plot_folder = 'psd/plots',
   use_marker = FALSE,
-  start_fit = 10,
+  start_fit = 13,
   r_sqr = 0.5,
   beads = 10 ** 9,
   bubbles = 150,

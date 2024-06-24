@@ -1,3 +1,4 @@
+utils::globalVariables(c("variable"))
 #' Plot and Save IFCB PSD Data
 #'
 #' This function generates and saves data about a dataset's Particle Size Distribution (PSD) from Imaging FlowCytobot (IFCB)
@@ -29,6 +30,8 @@
 #' @references Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 #' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 #' @import reticulate
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_wider pivot_longer
 #' @examples
 #' \dontrun{
 #' ifcb_psd(
@@ -38,7 +41,7 @@
 #'   output_file = 'psd/svea_2021',
 #'   plot_folder = 'psd/plots',
 #'   use_marker = FALSE,
-#'   start_fit = 10,
+#'   start_fit = 13,
 #'   r_sqr = 0.5,
 #'   beads = 10 ** 9,
 #'   bubbles = 150,
@@ -54,13 +57,13 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL) {
 
+  if (!reticulate::py_available(initialize = TRUE)) {
+    stop("Python is not installed on this machine. Please install Python to use this function.")
+  }
+
   if (save_data & is.na(output_file)) {
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
-
-  # Ensure the iRfcb virtual environment is installed and used
-  ifcb_py_install()
-  .onLoad()
 
   # Set the path to the directory containing psd.py
   python_path <- system.file("python", package = "iRfcb")
@@ -68,12 +71,11 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   # Set the Python path to include the directory containing psd.py
   reticulate::py_run_string(paste0("import sys; sys.path.append('", python_path, "')"))
 
-  # Import the PSD module
-  PSD <- reticulate::import("psd")
-  Bin <- PSD$Bin
+  # Import Python module
+  psd <- reticulate::import("psd", delay_load = TRUE)
 
   # Create a Bin object
-  b <- Bin(feature_dir = feature_folder, hdr_dir = hdr_folder)
+  b <- psd$Bin(feature_dir = feature_folder, hdr_dir = hdr_folder)
 
   # Plot the PSD
   b$plot_PSD(use_marker = use_marker, plot_folder = plot_folder, start_fit = as.integer(start_fit))
@@ -99,10 +101,51 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
                          missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
 
-    # Convert to R data frames
-    data_df <- as.data.frame(data)
-    fits_df <- as.data.frame(fits)
-    flags_df <- as.data.frame(flags)
+    # Convert the wide format data to long format
+    data_long <- as.data.frame(data) %>%
+      pivot_longer(
+        cols = everything(),
+        names_to = c("variable", "sample"),
+        names_pattern = "(.*)\\.(D\\d+T\\d+)"
+      )
+
+    fits_long <- as.data.frame(fits) %>%
+      pivot_longer(
+        cols = everything(),
+        names_to = c("variable", "sample"),
+        names_pattern = "(.*)\\.(D\\d+T\\d+)"
+      )
+
+    if (nrow(as.data.frame(flags)) > 0) {
+      flags_long <- as.data.frame(flags) %>%
+        pivot_longer(
+          cols = everything(),
+          names_to = c("variable", "sample"),
+          names_pattern = "(.*)\\.(D\\d+T\\d+)"
+        )
+    }
+
+    # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
+    data_df <- data_long %>%
+      pivot_wider(
+        names_from = variable,
+        values_from = value
+      )
+
+    fits_df <- fits_long %>%
+      pivot_wider(
+        names_from = variable,
+        values_from = value
+      )
+    if (nrow(as.data.frame(flags)) > 0) {
+      flags_df <- flags_long %>%
+        pivot_wider(
+          names_from = variable,
+          values_from = value
+        )
+    } else {
+      flags_df <- as.data.frame(flags)
+    }
 
     return(list(data = data_df, fits = fits_df, flags = flags_df))
   }

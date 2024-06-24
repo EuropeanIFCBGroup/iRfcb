@@ -35,10 +35,6 @@ utils::globalVariables(c("edit_manual_file"))
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction_file, correct_classid) {
 
-  # Ensure the iRfcb virtual environment is installed and used
-  ifcb_py_install()
-  .onLoad()
-
   # Import the Python function
   source_python(system.file("python", "edit_manual_file.py", package = "iRfcb"))
 
