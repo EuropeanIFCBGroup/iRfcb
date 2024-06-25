@@ -1,3 +1,24 @@
+# MIT License
+# Copyright (c) 2023 kudelalab
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 import os
 import pandas as pd
 import numpy as np
@@ -171,7 +192,7 @@ class Sample:
 
         return histogram
 
-    def plot_PSD(self, use_marker, plot_folder, start_fit):
+    def plot_PSD(self, use_marker, plot_folder, start_fit): # Modified from the original by kudelalabs to add option to choose plot folder
 
         print(f'Graphing {self.name}')
 
@@ -188,7 +209,7 @@ class Sample:
         maximum = max(ydata)
         max_diff = start_fit - ydata.index(maximum)
 
-        if plot_folder:
+        if plot_folder: # Modified from the original by kudelalabs to add option to choose plot folder
             if not os.path.exists(plot_folder):
                 os.makedirs(plot_folder)
             fig, ax = plt.subplots()
@@ -216,12 +237,12 @@ class Sample:
         else:
             marker = None
 
-        if plot_folder:
-            psd_line = ax.plot(xdata[start_fit:], ydata[start_fit:],
+        if plot_folder: # Modified from the original by kudelalabs to add option to choose plot folder
+            psd_line = ax.plot(xdata[start_fit:], ydata[start_fit:], # Corrected ydata
                                color='#00afbf', marker=marker, linestyle='solid',
                                linewidth=1.25, markersize=4, label='PSD')
             if r_sqr > 0:
-                curve_fit_line = ax.plot(xdata[start_fit:], power_curve(xdata[start_fit:], *popt), color='#516b6e',
+                curve_fit_line = ax.plot(xdata[start_fit:], power_curve(xdata[start_fit:], *popt), color='#516b6e', # Modified from the original by kudelalabs
                                          linestyle='dashed',
                                          label='Power Curve')
                 ax.text(80, maximum * 0.75,
@@ -229,7 +250,7 @@ class Sample:
 
             ax.legend()
             ax.set_title(f'{self.name}')
-            plt.savefig(os.path.join(plot_folder, self.name))
+            plt.savefig(os.path.join(plot_folder, self.name)) # Modified from the original by kudelalabs to add option to choose plot folder
             plt.close('all')
 
 
@@ -275,7 +296,7 @@ class Bin:
         print(files)
         print()
 
-    def plot_PSD(self, use_marker, plot_folder, start_fit):
+    def plot_PSD(self, use_marker, plot_folder, start_fit): # Modified from the original by kudelalabs to add option to choose plot folder
         if not self.samples_loaded:
             for sample in self.samples:
                 sample.create_histograms()
@@ -336,7 +357,8 @@ class Bin:
         self.data.to_csv(f'{name}_data.csv')
         self.fits.to_csv(f'{name}_fits.csv')
         flags.to_csv(f'{name}_flags.csv')
-
+        
+ # Modified from the original by kudelalabs to add option to import data into R
     def get_data(self):
         return self.data.to_dict()
 
