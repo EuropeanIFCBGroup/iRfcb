@@ -1,6 +1,7 @@
 [![R-CMD-check](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533226.svg)](https://doi.org/10.5281/zenodo.12533226)
 
-# I R FlowCytobot
+# I R FlowCytobot: Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB) using R
 
 The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB data for publication. The primary goal is to streamline the workflow for researchers working with IFCB data, and especially useful for someone who is using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package (Sosik and Olson 2007).
 
