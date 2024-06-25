@@ -10,7 +10,7 @@ The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB)
 You can install the package from GitHub using the `devtools` package:
 ```r
 # install.packages("devtools")
-devtools::install_github("anderstorstensson/iRfcb")
+devtools::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
 ## Getting Started
