@@ -105,10 +105,13 @@ print(mat_count)
 
 ### Run Image Gallery
 
-To visually inspect and correct annotations, run the image gallery. Images can be selected and a correction file can be downloaded:
+To visually inspect and correct annotations, run the image gallery. 
 ```r
 ifcb_run_image_gallery()
 ```
+
+![image_gallery](/man/figures/image_gallery.png)
+Individual images can be selected and a list of selected images can be downloaded as a 'correction_file'. This file can be used to correct .mat annotations below using the `ifcb_correct_annotation` function.
 
 ### Correct .mat Files After Checking Images in the App
 
