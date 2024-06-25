@@ -23,7 +23,8 @@ library(iRfcb)
 
 Download the sample data to get started:
 ```r
-ifcb_download_test_data("data")
+ifcb_download_test_data(dest_dir = "data",
+                        method = "auto")
 ```
 
 ## Run QC/QA Checks
