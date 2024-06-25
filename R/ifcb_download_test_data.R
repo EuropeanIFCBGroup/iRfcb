@@ -5,6 +5,9 @@
 #' specified folder. These data can, for instance, be used for testing `iRfcb`.
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
+#' @param method Method to be used for downloading files. Current download methods are "internal",
+#' "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
+#' see ‘utils::download.file’.
 #'
 #' @references
 #' Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024).
@@ -19,7 +22,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir) {
+ifcb_download_test_data <- function(dest_dir, method = "auto") {
   # URLs of the zip files
   urls <- c(
     "https://figshare.scilifelab.se/ndownloader/files/46770265",
@@ -47,7 +50,7 @@ ifcb_download_test_data <- function(dest_dir) {
     dest_file <- file.path(dest_dir, basename(url))
 
     # Download the file
-    download.file(url, dest_file, method = "auto", quiet = FALSE, mode = "wb",
+    download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb",
                   cacheOK = FALSE, extra = getOption("download.file.extra"),
                   headers = c(From = "noreply@example.com"))
 

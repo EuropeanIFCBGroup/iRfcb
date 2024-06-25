@@ -4,10 +4,14 @@
 \alias{ifcb_download_test_data}
 \title{Download test IFCB data}
 \usage{
-ifcb_download_test_data(dest_dir)
+ifcb_download_test_data(dest_dir, method = "auto")
 }
 \arguments{
 \item{dest_dir}{The destination directory where the files will be unzipped.}
+
+\item{method}{Method to be used for downloading files. Current download methods are "internal",
+"libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
+see ‘utils::download.file’.}
 }
 \description{
 This function downloads two zip archives containing .png images and MATLAB files from the `svea_skagerrak_kattegat`
