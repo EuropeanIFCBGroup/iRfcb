@@ -22,7 +22,7 @@ library(iRfcb)
 
 ## Download Sample Data
 
-Download the sample data to get started:
+To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
 ```r
 ifcb_download_test_data(dest_dir = "data",
                         method = "auto")
@@ -169,7 +169,7 @@ print(png_per_class)
 
 ### PNG Directory
 
-Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455.v2):
+Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
 ```r
 ifcb_zip_pngs(png_folder = "data/extracted_images",
               zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
@@ -180,7 +180,7 @@ ifcb_zip_pngs(png_folder = "data/extracted_images",
 
 ### MATLAB Directory
 
-Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455.v2):
+Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
 ```r
 ifcb_zip_matlab(
   manual_folder = "data/manual",
