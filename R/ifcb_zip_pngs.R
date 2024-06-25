@@ -16,7 +16,7 @@
 #' # Zip all subdirectories in the 'images' folder with a README file
 #' ifcb_zip_pngs("path/to/images",
 #'              "images.zip",
-#'              readme_file = system.file("inst/exdata/README-template.md", package = "iRfcb"),
+#'              readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
 #'              email_address = "example@example.com",
 #'              version = "1.0")
 #'
@@ -136,6 +136,10 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
     # Print message to indicate starting zip creation
     message("Creating zip archive...")
+
+    if (!dir.exists(dirname(zip_filename))) {
+      dir.create(dirname(zip_filename))
+    }
 
     zip::zipr(zipfile = zip_filename, files = files_to_zip)
     message("Zip archive created successfully.")

@@ -33,7 +33,7 @@ This function zips directories containing .png files and optionally includes REA
 # Zip all subdirectories in the 'images' folder with a README file
 ifcb_zip_pngs("path/to/images",
              "images.zip",
-             readme_file = system.file("inst/exdata/README-template.md", package = "iRfcb"),
+             readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
              email_address = "example@example.com",
              version = "1.0")
 

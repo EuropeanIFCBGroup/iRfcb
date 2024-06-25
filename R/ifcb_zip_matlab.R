@@ -30,7 +30,7 @@
 #' ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
 #'                  "path/to/class2use.mat", "output_zip_archive.zip",
 #'                  data_folder = "path/to/data_files",
-#'                  readme_file = system.file("inst/exdata/README-template.md", package = "iRfcb"),
+#'                  readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
 #'                  matlab_readme_file = system.file("inst/exdata/MATLAB-template.md",
 #'                                                   package = "iRfcb"),
 #'                  email_address = "example@email.com",
@@ -231,6 +231,10 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   # Print message to indicate starting zip creation
   message("Creating zip archive...")
+
+  if (!dir.exists(dirname(zip_filename))) {
+    dir.create(dirname(zip_filename))
+  }
 
   zipr(zipfile = zip_filename, files = files_to_zip)
   message("Zip archive created successfully.")

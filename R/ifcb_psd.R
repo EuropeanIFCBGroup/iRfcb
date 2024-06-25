@@ -1,4 +1,4 @@
-utils::globalVariables(c("variable"))
+utils::globalVariables(c("variable", "number"))
 #' Plot and Save IFCB PSD Data
 #'
 #' This function generates and saves data about a dataset's Particle Size Distribution (PSD) from Imaging FlowCytobot (IFCB)
@@ -30,7 +30,7 @@ utils::globalVariables(c("variable"))
 #' @references Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 #' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
 #' @import reticulate
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% rename select
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @examples
 #' \dontrun{
@@ -117,12 +117,14 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
       )
 
     if (nrow(as.data.frame(flags)) > 0) {
-      flags_long <- as.data.frame(flags) %>%
-        pivot_longer(
-          cols = everything(),
-          names_to = c("variable", "sample"),
-          names_pattern = "(.*)\\.(D\\d+T\\d+)"
-        )
+      flags_df <- as.data.frame(flags) %>%
+        pivot_longer(cols = everything(),
+                     names_to = c(".value", "number"),
+                     names_sep = "\\.") %>%
+        select(-number) %>%
+        rename(sample = file)
+    } else {
+      flags_df <- NULL
     }
 
     # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
@@ -137,15 +139,6 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
         names_from = variable,
         values_from = value
       )
-    if (nrow(as.data.frame(flags)) > 0) {
-      flags_df <- flags_long %>%
-        pivot_wider(
-          names_from = variable,
-          values_from = value
-        )
-    } else {
-      flags_df <- as.data.frame(flags)
-    }
 
     return(list(data = data_df, fits = fits_df, flags = flags_df))
   }

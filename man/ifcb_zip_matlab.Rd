@@ -57,7 +57,7 @@ This function performs the following operations:
 ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
                  "path/to/class2use.mat", "output_zip_archive.zip",
                  data_folder = "path/to/data_files",
-                 readme_file = system.file("inst/exdata/README-template.md", package = "iRfcb"),
+                 readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
                  matlab_readme_file = system.file("inst/exdata/MATLAB-template.md",
                                                   package = "iRfcb"),
                  email_address = "example@email.com",

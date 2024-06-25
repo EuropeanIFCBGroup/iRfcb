@@ -12,7 +12,7 @@ ifcb_py_install(..., envname = "/.virtualenvs/iRfcb")
 \item{envname}{A character string specifying the name of the virtual environment to create. Default is "iRfcb".}
 }
 \description{
-This function creates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
+This function creates and activates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
 }
 \examples{
 \dontrun{
