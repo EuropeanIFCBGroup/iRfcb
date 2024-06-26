@@ -3,7 +3,7 @@
 
 # I 'R' FlowCytobot: Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB) using R
 
-The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB data for publication. The primary goal is to streamline the workflow for researchers working with IFCB data, and especially useful for someone who is using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package (Sosik and Olson 2007).
+The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB images and data for publication. The primary goal is to streamline the workflow for researchers working with IFCB data, and especially useful for someone who is using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package (Sosik and Olson 2007).
 
 ## Installation
 
@@ -12,7 +12,7 @@ You can install the package from GitHub using the `devtools` package:
 # install.packages("devtools")
 devtools::install_github("EuropeanIFCBGroup/iRfcb")
 ```
-Some functions in `iRfcb` require Python to be installed. You can download Python from the official website: [python.org/downloads](python.org/downloads).
+Some functions in `iRfcb` require `Python` to be installed (see in the sections below). You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
 ## Getting Started
 
@@ -31,15 +31,13 @@ ifcb_download_test_data(dest_dir = "data",
 
 ## Run QC/QA Checks
 
-Before running quality checks, ensure the necessary Python environment is set up and activated:
-```r
-ifcb_py_install(envname = ".virtualenvs/iRfcb")
-```
-
 ### Run Particle Size Distribution QC
 
-IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. in prep). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD). Run the PSD quality control checks with the following parameters:
+IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. in prep). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD). Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
+
 ```r
+ifcb_py_install(envname = ".virtualenvs/iRfcb") # Or your preferred venv path
+
 psd <- ifcb_psd(feature_folder = "data/features/2023",
                 hdr_folder = "data/data/2023",
                 save_data = FALSE,
@@ -70,11 +68,12 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 
 gps_data$near_land <- ifcb_is_near_land(as.numeric(gps_data$gpsLatitude),
                                         as.numeric(gps_data$gpsLongitude),
-                                        distance = 100) # 100 meters from shore
+                                        distance = 100, # 100 meters from shore
+                                        shape = NULL) # Using the default Natural Earth 1:10m Land Polygon
 
 print(gps_data)
 ```
-For more accurate determination, a detailed coastline .shp file may be required. Refer to the help pages of `ifcb_is_near_land` for further information.
+For more accurate determination, a detailed coastline .shp file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of `ifcb_is_near_land` for further information.
 
 ## Annotated Files
 
@@ -101,7 +100,7 @@ Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_data`:
 ```r
 mat_count <- ifcb_count_mat_annotations(manual_folder = "data/manual",
                                         class2use_file = "data/config/class2use.mat",
-                                        skip_class = "unclassified")
+                                        skip_class = "unclassified") # Or class ID
 
 print(mat_count)
 ```
@@ -120,12 +119,21 @@ Individual images can be selected and a list of selected images can be downloade
 
 After reviewing images in the gallery, correct the .mat files using the 'correction file' with selected images:
 ```r
+# Get class2use
+class_name <- ifcb_get_mat_names("data/config/class2use.mat")
+class2use <- ifcb_get_mat_variable("data/config/class2use.mat",
+                                   variable_name = class_name)
+
+# Find the class id of unclassified
+unclassified_id <- which(grepl("unclassified",
+                         class2use))
+
 # ifcb_py_install(envname = ".virtualenvs/iRfcb") # If not already initialized
 
 ifcb_correct_annotation(manual_folder = "data/manual",
                         out_folder = "data/manual",
                         correction_file = "data/Alexandrium_pseudogonyaulax_selected_images.txt",
-                        correct_classid = 1) # Change to unclassified
+                        correct_classid = unclassified_id)
 ```
 
 ### Replace Specific Class Annotations
@@ -141,13 +149,17 @@ class2use <- ifcb_get_mat_variable("data/config/class2use.mat",
 ap_id <- which(grepl("Alexandrium_pseudogonyaulax",
                      class2use))
 
+# Find the class id of unclassified
+unclassified_id <- which(grepl("unclassified",
+                         class2use))
+
 # ifcb_py_install(envname = ".virtualenvs/iRfcb") # If not already initialized
 
 # Move all Alexandrium_pseudogonyaulax images to unclassified
 ifcb_replace_mat_values(manual_folder = "data/manual",
                         out_folder = "data/manual",
                         target_id = ap_id,
-                        new_id = 1)
+                        new_id = unclassified_id)
 ```
 
 ### Extract Annotated Images
@@ -158,7 +170,7 @@ ifcb_extract_annotated_images(manual_folder = "data/manual",
                               class2use_file = "data/config/class2use.mat",
                               roi_folder = "data/data",
                               out_folder = "data/extracted_images",
-                              skip_class = 1) # Skip unclassified
+                              skip_class = 1) # or "unclassified"
 ```
 
 ### Verify Correction
@@ -179,11 +191,11 @@ Prepare the PNG directory for publication as a zip-archive, similar to the files
 ```r
 ifcb_zip_pngs(png_folder = "data/extracted_images",
               zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
-              readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
+              readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
               email_address = "tutorial@test.com",
               version = "1.1")
 ```
-A general README template is included in `iRfcb`.
+
 
 ### MATLAB Directory
 
@@ -195,13 +207,12 @@ ifcb_zip_matlab(
   class2use_file = "data/config/class2use.mat",
   zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
   data_folder = "data/data",
-  readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
-  matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"),
+  readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
+  matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
   email_address = "tutorial@test.com",
   version = "1.1"
 )
 ```
-A general README template is included in `iRfcb`.
 
 ### Create MANIFEST.txt
 
