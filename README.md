@@ -1,5 +1,5 @@
 [![R-CMD-check](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12541883.svg)](https://doi.org/10.5281/zenodo.12541883)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
 
 # I 'R' FlowCytobot: Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB) using R
 
