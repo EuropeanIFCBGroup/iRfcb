@@ -1,5 +1,6 @@
 [![R-CMD-check](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
 # I 'R' FlowCytobot: Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB) using R
 
@@ -23,7 +24,7 @@ library(iRfcb)
 
 ## Download Sample Data
 
-To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
+To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) with the following function:
 ```r
 ifcb_download_test_data(dest_dir = "data",
                         method = "auto")
@@ -201,17 +202,15 @@ ifcb_zip_pngs(png_folder = "data/extracted_images",
 
 Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
 ```r
-ifcb_zip_matlab(
-  manual_folder = "data/manual",
-  features_folder = "data/features",
-  class2use_file = "data/config/class2use.mat",
-  zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
-  data_folder = "data/data",
-  readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
-  matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
-  email_address = "tutorial@test.com",
-  version = "1.1"
-)
+ifcb_zip_matlab(manual_folder = "data/manual",
+                features_folder = "data/features",
+                class2use_file = "data/config/class2use.mat",
+                zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
+                data_folder = "data/data",
+                readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
+                matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
+                email_address = "tutorial@test.com",
+                version = "1.1")
 ```
 
 ### Create MANIFEST.txt
@@ -308,4 +307,4 @@ This package is licensed under the MIT License.
 
 ## References
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
-- Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+- Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
