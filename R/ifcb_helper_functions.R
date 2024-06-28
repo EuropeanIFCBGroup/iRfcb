@@ -1,14 +1,12 @@
-#' @importFrom utils flush.console
-#' @importFrom stats na.omit
-# Function to create MANIFEST.txt
-#
-# This function generates a MANIFEST.txt file that lists all files in the specified paths,
-# along with their sizes. It recursively includes files from directories and skips paths that
-# do not exist. The manifest excludes the manifest file itself if present in the list.
-#
-# @param paths A character vector of paths to files and/or directories to include in the manifest.
-# @param manifest_path A character string specifying the path to the manifest file. Default is "MANIFEST.txt".
-# @param temp_dir A character string specifying the temporary directory to be removed from the file paths.
+#' Function to create MANIFEST.txt
+#'
+#' This function generates a MANIFEST.txt file that lists all files in the specified paths,
+#' along with their sizes. It recursively includes files from directories and skips paths that
+#' do not exist. The manifest excludes the manifest file itself if present in the list.
+#'
+#' @param paths A character vector of paths to files and/or directories to include in the manifest.
+#' @param manifest_path A character string specifying the path to the manifest file. Default is "MANIFEST.txt".
+#' @param temp_dir A character string specifying the temporary directory to be removed from the file paths.
 create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_dir) {
   # Initialize a vector to store all files
   all_files <- c()
@@ -52,23 +50,24 @@ create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_
   writeLines(manifest_content, manifest_path)
 }
 
-# Function to truncate the folder name
-#
-# This function removes the trailing underscore and three digits from the base name of a folder.
-#
-# @param folder_name A character string specifying the folder name to truncate.
-# @return A character string with the truncated folder name.
+#' Function to truncate the folder name
+#'
+#' This function removes the trailing underscore and three digits from the base name of a folder.
+#'
+#' @param folder_name A character string specifying the folder name to truncate.
+#' @return A character string with the truncated folder name.
 truncate_folder_name <- function(folder_name) {
   sub("_\\d{3}$", "", basename(folder_name))
 }
 
-# Function to print the progress bar
-#
-# This function prints a progress bar to the console to indicate the progress of a process.
-#
-# @param current An integer specifying the current progress.
-# @param total An integer specifying the total steps for the process.
-# @param bar_width An integer specifying the width of the progress bar. Default is 50.
+#' Function to print the progress bar
+#'
+#' This function prints a progress bar to the console to indicate the progress of a process.
+#'
+#' @param current An integer specifying the current progress.
+#' @param total An integer specifying the total steps for the process.
+#' @param bar_width An integer specifying the width of the progress bar. Default is 50.
+#' @importFrom utils flush.console
 print_progress <- function(current, total, bar_width = 50) {
   progress <- current / total
   complete <- round(progress * bar_width)
@@ -78,38 +77,39 @@ print_progress <- function(current, total, bar_width = 50) {
   flush.console()
 }
 
-# Function to find matching feature files with a general pattern
-#
-# This function finds feature files that match the base name of a given .mat file.
-#
-# @param mat_file A character string specifying the path to the .mat file.
-# @param feature_files A character vector of paths to feature files to search.
-# @return A character vector of matching feature files.
+#' Function to find matching feature files with a general pattern
+#'
+#' This function finds feature files that match the base name of a given .mat file.
+#'
+#' @param mat_file A character string specifying the path to the .mat file.
+#' @param feature_files A character vector of paths to feature files to search.
+#' @return A character vector of matching feature files.
 find_matching_features <- function(mat_file, feature_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, feature_files, value = TRUE)
   return(matching_files)
 }
 
-# Function to find matching data files with a general pattern
-#
-# This function finds data files that match the base name of a given .mat file.
-#
-# @param mat_file A character string specifying the path to the .mat file.
-# @param data_files A character vector of paths to data files to search.
-# @return A character vector of matching data files.
+#' Function to find matching data files with a general pattern
+#'
+#' This function finds data files that match the base name of a given .mat file.
+#'
+#' @param mat_file A character string specifying the path to the .mat file.
+#' @param data_files A character vector of paths to data files to search.
+#' @return A character vector of matching data files.
 find_matching_data <- function(mat_file, data_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, data_files, value = TRUE)
   return(matching_files)
 }
 
-# Function to read individual files and extract relevant lines
-#
-# This function reads an HDR file and extracts relevant lines containing parameters and their values.
-#
-# @param file A character string specifying the path to the HDR file.
-# @return A data frame with columns: parameter, value, and file.
+#' Function to read individual files and extract relevant lines
+#'
+#' This function reads an HDR file and extracts relevant lines containing parameters and their values.
+#'
+#' @param file A character string specifying the path to the HDR file.
+#' @return A data frame with columns: parameter, value, and file.
+#' @importFrom stats na.omit
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
   data <- do.call(rbind, lapply(lines, function(line) {
@@ -122,12 +122,12 @@ read_hdr_file <- function(file) {
   return(data)
 }
 
-# Function to extract parts using regular expressions
-#
-# This function extracts timestamp, IFCB number, and date components from a filename.
-#
-# @param filename A character string specifying the filename to extract parts from.
-# @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
+#' Function to extract parts using regular expressions
+#'
+#' This function extracts timestamp, IFCB number, and date components from a filename.
+#'
+#' @param filename A character string specifying the filename to extract parts from.
+#' @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
 extract_parts <- function(filename) {
 
   # Clean filename
@@ -183,4 +183,51 @@ extract_parts <- function(filename) {
 #' @param envname A character string specifying the name of the virtual environment to create. Default is "iRfcb".
 .onLoad <- function(..., envname = "/.virtualenvs/iRfcb") {
   use_virtualenv(envname, required = FALSE)
+}
+
+#' Summarize TreeBagger Classifier Results
+#'
+#' This function reads a TreeBagger classifier result file (.mat format) and summarizes
+#' the number of targets in each class based on the classification scores and thresholds.
+#'
+#' @param classfile Character string specifying the path to the TreeBagger classifier result file (.mat format).
+#' @param adhocthresh Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
+#'                    If a single numeric value is provided, it is applied to all classes.
+#'
+#' @return A list containing three elements:
+#'   \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
+#'   \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
+#'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
+#' @importFrom R.matlab readMat
+summarize_TBclass <- function(classfile, adhocthresh = NULL) {
+  data <- readMat(classfile)
+  class2useTB <- data$class2useTB
+  TBscores <- data$TBscores
+  TBclass <- data$TBclass
+  TBclass_above_threshold <- data$TBclass.above.threshold
+
+  classcount <- rep(NA, length(class2useTB))
+  classcount_above_optthresh <- classcount
+  classcount_above_adhocthresh <- classcount
+
+  if (!is.null(adhocthresh)) {
+    if (length(adhocthresh) == 1) {
+      adhocthresh <- rep(adhocthresh, length(class2useTB))
+    }
+  }
+
+  maxscore <- apply(TBscores, 1, max)
+  winclass <- apply(TBscores, 1, which.max)
+
+  for (ii in seq_along(class2useTB)) {
+    classcount[ii] <- sum(unlist(TBclass) == class2useTB[[ii]])
+    classcount_above_optthresh[ii] <- sum(unlist(TBclass_above_threshold) == class2useTB[[ii]])
+
+    if (!is.null(adhocthresh)) {
+      ind <- unlist(TBclass) == class2useTB[[ii]] & maxscore >= adhocthresh[ii]
+      classcount_above_adhocthresh[ii] <- sum(ind)
+    }
+  }
+
+  list(classcount, classcount_above_optthresh, classcount_above_adhocthresh)
 }
