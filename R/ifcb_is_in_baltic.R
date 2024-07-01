@@ -31,7 +31,7 @@ ifcb_is_in_baltic <- function(latitudes, longitudes) {
   unzip(system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb"), exdir = exdir)
 
   # Get coastline and land data within the bounding box
-  basins <- sf::st_read(file.path(exdir, "baltic_sea.shp"), quiet = TRUE)
+  basins <- sf::st_read(file.path(exdir, "baltic_sea_buffered.shp"), quiet = TRUE)
 
   # Change CRS
   basins <- sf::st_transform(basins, 4326)
