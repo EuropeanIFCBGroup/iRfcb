@@ -22,7 +22,7 @@ utils::globalVariables(c("edit_manual_file"))
 #' The `correction_file` is typically generated using a Shiny app that provides an interactive interface for browsing and managing
 #' IFCB (Imaging FlowCytobot) image galleries. This Shiny app can be initialized using the function `ifcb_run_image_gallery()`.
 #'
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
 #' \dontrun{
@@ -30,7 +30,7 @@ utils::globalVariables(c("edit_manual_file"))
 #' ifcb_correct_annotation("input/manual", "output/manual", "corrections.txt", 99)
 #' }
 #'
-#' @import reticulate
+#' @importFrom reticulate source_python
 #' @importFrom stats aggregate
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction_file, correct_classid) {

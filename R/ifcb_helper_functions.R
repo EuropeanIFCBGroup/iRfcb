@@ -231,3 +231,49 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL) {
 
   list(classcount, classcount_above_optthresh, classcount_above_adhocthresh)
 }
+#' Convert Biovolume to Carbon for Large Diatoms
+#'
+#' This function converts biovolume in microns^3 to carbon in picograms
+#' for large diatoms (> 2000 micron^3) according to Menden-Deuer and Lessard 2000.
+#' The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
+#' with log a = -0.933 and b = 0.881 for diatoms > 3000 um^3.
+#'
+#' @param volume A numeric vector of biovolume measurements in microns^3.
+#'
+#' @return A numeric vector of carbon measurements in picograms.
+#'
+#' @examples
+#' \dontrun{
+#' volume <- c(5000, 10000, 20000)
+#' vol2C_lgdiatom(volume)
+#' }
+vol2C_lgdiatom <- function(volume) {
+  loga <- -0.933
+  b <- 0.881
+  logC <- loga + b * log10(volume)
+  carbon <- 10^logC
+  return(carbon)
+}
+#' Convert Biovolume to Carbon for Non-Diatom Protists
+#'
+#' This function converts biovolume in microns^3 to carbon in picograms
+#' for protists besides large diatoms (> 3000 micron^3) according to Menden-Deuer and Lessard 2000.
+#' The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
+#' with log a = -0.665 and b = 0.939.
+#'
+#' @param volume A numeric vector of biovolume measurements in microns^3.
+#'
+#' @return A numeric vector of carbon measurements in picograms.
+#'
+#' @examples
+#' \dontrun{
+#' volume <- c(5000, 10000, 20000)
+#' vol2C_nondiatom(volume)
+#' }
+vol2C_nondiatom <- function(volume) {
+  loga <- -0.665
+  b <- 0.939
+  logC <- loga + b * log10(volume)
+  carbon <- 10^logC
+  return(carbon)
+}

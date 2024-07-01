@@ -9,9 +9,7 @@
 #' "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
 #' see ‘utils::download.file’.
 #'
-#' @references
-#' Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024).
-#' SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
+#' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
 #' \href{https://doi.org/10.17044/scilifelab.25883455.v2}{https://doi.org/10.17044/scilifelab.25883455.v2}
 #'
 #' @importFrom utils download.file

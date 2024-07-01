@@ -26,7 +26,7 @@ print(hdr_info)
 }
 }
 \references{
-Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \url{https://github.com/hsosik/ifcb-analysis}

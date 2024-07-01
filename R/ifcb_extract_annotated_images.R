@@ -14,12 +14,13 @@ utils::globalVariables(c("name", "manual"))
 #'
 #' @importFrom R.matlab readMat
 #' @importFrom tools file_path_sans_ext
+#' @importFrom dplyr pull
 #'
 #' @return None. The function saves the extracted PNG images to the specified output directory.
 #'
 #' @export
 #' @seealso \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_classified_images}} \url{https://github.com/hsosik/ifcb-analysis}
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @examples
 #' \dontrun{
 #' ifcb_extract_annotated_images(

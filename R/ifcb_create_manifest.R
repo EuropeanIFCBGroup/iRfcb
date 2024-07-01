@@ -22,7 +22,6 @@
 #' # Create a MANIFEST.txt file without excluding an existing MANIFEST.txt file
 #' ifcb_create_manifest("path/to/directory", exclude_manifest = FALSE)
 #' }
-#' @import dplyr
 #' @export
 ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_path, "MANIFEST.txt"), exclude_manifest = TRUE) {
   # List all files in the folder and subfolders

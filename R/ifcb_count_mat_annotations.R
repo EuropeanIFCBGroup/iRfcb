@@ -10,9 +10,9 @@ utils::globalVariables(c("name", "manual"))
 #'
 #' @return A data frame with the total count of images per class.
 #' @export
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
-#' @import R.matlab
-#' @import dplyr
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+#' @importFrom R.matlab readMat
+#' @importFrom dplyr filter left_join mutate select group_by summarise bind_rows pull n
 #'
 #' @examples
 #' \dontrun{
