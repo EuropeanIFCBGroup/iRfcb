@@ -1,6 +1,6 @@
 utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", "ferrybox_latitude", "ferrybox_longitude", '38059', '8002', '8003'))
 
-#' Get GPS coordinates from ferrybox data based on timestamps.
+#' Get GPS coordinates from ferrybox data based on timestamps
 #'
 #' This function reads .txt files from a specified folder containing ferrybox data,
 #' filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
@@ -24,8 +24,8 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select
-#' @importFrom lubridate round_date
+#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select %>%
+#' @importFrom lubridate round_date ymd_hms
 #'
 #' @export
 ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB") {

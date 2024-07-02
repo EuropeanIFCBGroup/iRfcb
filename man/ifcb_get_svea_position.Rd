@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_get_svea_position.R
 \name{ifcb_get_svea_position}
 \alias{ifcb_get_svea_position}
-\title{Get GPS coordinates from ferrybox data based on timestamps.}
+\title{Get GPS coordinates from ferrybox data based on timestamps}
 \usage{
 ifcb_get_svea_position(timestamps, ferrybox_folder, ship = "SveaFB")
 }
