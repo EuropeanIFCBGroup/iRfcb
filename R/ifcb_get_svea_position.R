@@ -49,7 +49,13 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
   # Convert ferrybox file names to dataframe and extract timestamps
   ferrybox_files_df <- data.frame(ferrybox_files = ferrybox_files) %>%
     dplyr::filter(grepl(ship, ferrybox_files)) %>%
-    dplyr::rowwise() %>%
+    dplyr::rowwise()
+
+  if (nrow(ferrybox_files_df) == 0) {
+    stop("No ferrybox files matching the specified ship name were found.")
+  }
+
+  ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::mutate(
       date_from = as.POSIXct(substr(regmatches(ferrybox_files, gregexpr("\\d{14}", ferrybox_files))[[1]][1], 1, 14),
                                         format = "%Y%m%d%H%M%S", tz = "UTC"),
@@ -57,10 +63,6 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
                                       format = "%Y%m%d%H%M%S", tz = "UTC")
     ) %>%
     dplyr::ungroup()
-
-  if (nrow(ferrybox_files_df) == 0) {
-    stop("No ferrybox files matching the specified ship name were found.")
-  }
 
   # Create a logical column indicating if any timestamp falls within the date range
   ferrybox_files_df <- ferrybox_files_df %>%
