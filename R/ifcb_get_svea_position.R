@@ -70,6 +70,10 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
     ferrybox_data <- dplyr::bind_rows(ferrybox_data, ferrybox_data_temp)
   }
 
+  if (nrow(ferrybox_data) == 0) {
+   stop("No ferrybox data could be matched with the provided timestamps")
+  }
+
   # Extract and clean ferrybox position data
   ferrybox_position <- ferrybox_data %>%
     mutate(timestamp_minute = ymd_hms(as.numeric(`38059`), tz = "UTC"),
