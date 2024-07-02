@@ -30,8 +30,21 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #'
 #' @export
 ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB") {
+  # Validate inputs
+  if (!inherits(timestamps, "POSIXct")) {
+    stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
+  }
+
+  if (!dir.exists(ferrybox_folder)) {
+    stop("The specified ferrybox folder does not exist.")
+  }
+
   # List all .txt files in the specified folder (excluding subfolders)
   ferrybox_files <- list.files(ferrybox_folder, pattern = "\\.txt$", full.names = TRUE, recursive = FALSE)
+
+  if (length(ferrybox_files) == 0) {
+    stop("No .txt files found in the specified ferrybox folder.")
+  }
 
   # Convert ferrybox file names to dataframe and extract timestamps
   ferrybox_files_df <- data.frame(ferrybox_files = ferrybox_files) %>%
@@ -45,6 +58,10 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
     ) %>%
     dplyr::ungroup()
 
+  if (nrow(ferrybox_files_df) == 0) {
+    stop("No ferrybox files matching the specified ship name were found.")
+  }
+
   # Create a logical column indicating if any timestamp falls within the date range
   ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::rowwise() %>%
@@ -55,31 +72,61 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
   filtered_ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::filter(in_range)
 
+  if (nrow(filtered_ferrybox_files_df) == 0) {
+    stop("No ferrybox files contain data within the provided timestamps.")
+  }
+
   # Initialize an empty data frame to store ferrybox data
   ferrybox_data <- data.frame()
 
   # Read and concatenate data from filtered ferrybox files
   for (file in filtered_ferrybox_files_df$ferrybox_files) {
-    ferrybox_data_temp <- read.table(file,
-                                     header = TRUE,
-                                     sep = "\t",
-                                     stringsAsFactors = FALSE,
-                                     check.names = FALSE,
-                                     colClasses = "character",
-                                     na.strings = "")
-    ferrybox_data <- dplyr::bind_rows(ferrybox_data, ferrybox_data_temp)
+    ferrybox_data_temp <- tryCatch({
+      read.table(file,
+                 header = TRUE,
+                 sep = "\t",
+                 stringsAsFactors = FALSE,
+                 check.names = FALSE,
+                 colClasses = "character",
+                 na.strings = "")
+    }, error = function(e) {
+      warning(paste("Failed to read file:", file, "-", e$message))
+      return(NULL)
+    })
+
+    if (!is.null(ferrybox_data_temp)) {
+      ferrybox_data <- dplyr::bind_rows(ferrybox_data, ferrybox_data_temp)
+    }
   }
 
   if (nrow(ferrybox_data) == 0) {
-   stop("No ferrybox data could be matched with the provided timestamps")
+    stop("No valid ferrybox data could be read from the filtered files.")
   }
 
   # Extract and clean ferrybox position data
   ferrybox_position <- ferrybox_data %>%
-    mutate(timestamp_minute = ymd_hms(as.numeric(`38059`), tz = "UTC"),
-           ferrybox_latitude = as.numeric(`8002`),
-           ferrybox_longitude = as.numeric(`8003`)) %>%
-    select(timestamp_minute, ferrybox_latitude, ferrybox_longitude)
+    dplyr::mutate(
+      timestamp_minute = tryCatch({
+        ymd_hms(as.numeric(`38059`), tz = "UTC")
+      }, error = function(e) {
+        stop("Error parsing ferrybox timestamp data.")
+      }),
+      ferrybox_latitude = tryCatch({
+        as.numeric(`8002`)
+      }, error = function(e) {
+        stop("Error parsing latitude data.")
+      }),
+      ferrybox_longitude = tryCatch({
+        as.numeric(`8003`)
+      }, error = function(e) {
+        stop("Error parsing longitude data.")
+      })
+    ) %>%
+    dplyr::select(timestamp_minute, ferrybox_latitude, ferrybox_longitude)
+
+  if (nrow(ferrybox_position) == 0) {
+    stop("No valid position data could be extracted from the ferrybox data.")
+  }
 
   # Merge the ferrybox position data with the input timestamps
   output <- data.frame(timestamp = timestamps) %>%
