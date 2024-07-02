@@ -33,9 +33,6 @@ ifcb_is_in_baltic <- function(latitudes, longitudes) {
   # Get coastline and land data within the bounding box
   basins <- sf::st_read(file.path(exdir, "baltic_sea_buffered.shp"), quiet = TRUE)
 
-  # Change CRS
-  basins <- sf::st_transform(basins, 4326)
-
   # Create a data frame of the points
   points_df <- data.frame(longitude = longitudes, latitude = latitudes)
 

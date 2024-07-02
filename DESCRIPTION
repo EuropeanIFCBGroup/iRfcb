@@ -25,5 +25,5 @@ Imports:
   imager,
   R.matlab,
   lubridate
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
