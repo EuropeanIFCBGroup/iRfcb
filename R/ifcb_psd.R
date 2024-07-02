@@ -31,7 +31,8 @@ utils::globalVariables(c("variable", "number"))
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @importFrom reticulate py_available py_run_string import
-#' @importFrom dplyr %>% rename select everything
+#' @importFrom dplyr rename select everything
+#' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider pivot_longer
 #'
 #' @examples

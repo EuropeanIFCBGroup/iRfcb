@@ -33,7 +33,8 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
 #' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
-#' @importFrom dplyr group_by summarise left_join %>%
+#' @importFrom dplyr group_by summarise left_join
+#' @importFrom magrittr %>%
 #'
 #' @export
 ifcb_summarize_biovolumes <- function(feature_folder, class_folder, hdr_folder = NULL, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt") {

@@ -24,7 +24,8 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @import dplyr
+#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select
+#' @importFrom magrittr %>%
 #' @importFrom lubridate round_date ymd_hms
 #'
 #' @export
