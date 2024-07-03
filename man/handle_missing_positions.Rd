@@ -15,6 +15,8 @@ handle_missing_positions(
 \arguments{
 \item{data}{A data frame containing timestamps and GPS positions.}
 
+\item{ferrybox_position}{A data frame containing timestamps and GPS positions from ferrybox.}
+
 \item{rounding_function}{A function used to round the timestamps.
 This can be `lubridate::floor_date`, `lubridate::ceiling_date`,
 or any other suitable rounding function.}

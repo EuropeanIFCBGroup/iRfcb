@@ -1,4 +1,4 @@
-utils::globalVariables(c("ferrybox_position", ":="))
+utils::globalVariables(c(":="))
 #' Function to create MANIFEST.txt
 #'
 #' This function generates a MANIFEST.txt file that lists all files in the specified paths,
@@ -288,6 +288,7 @@ vol2C_nondiatom <- function(volume) {
 #' rounded timestamps.
 #'
 #' @param data A data frame containing timestamps and GPS positions.
+#' @param ferrybox_position A data frame containing timestamps and GPS positions from ferrybox.
 #' @param rounding_function A function used to round the timestamps.
 #' This can be `lubridate::floor_date`, `lubridate::ceiling_date`,
 #' or any other suitable rounding function.
