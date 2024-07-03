@@ -30,6 +30,7 @@ This function does not return any value; it creates a zip archive and potentiall
 This function zips directories containing .png files and optionally includes README and MANIFEST files.
 }
 \examples{
+\dontrun{
 # Zip all subdirectories in the 'images' folder with a README file
 ifcb_zip_pngs("path/to/images",
              "images.zip",
@@ -39,6 +40,7 @@ ifcb_zip_pngs("path/to/images",
 
 # Zip all subdirectories in the 'images' folder without a README file
 ifcb_zip_pngs("path/to/images", "images.zip")
+}
 
 }
 \seealso{

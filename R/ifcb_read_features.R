@@ -10,11 +10,13 @@
 #'   The list is named with the base names of the feature files.
 #'
 #' @examples
+#' \dontrun{
 #' # Read feature files from a folder
 #' features <- ifcb_read_features("path/to/feature_folder")
 #'
 #' # Read only multiblob feature files
 #' multiblob_features <- ifcb_read_features("path/to/feature_folder", multiblob = TRUE)
+#' }
 #'
 #' @importFrom utils read.csv
 #' @importFrom stats setNames

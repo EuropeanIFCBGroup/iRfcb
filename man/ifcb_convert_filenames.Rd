@@ -18,9 +18,8 @@ the sample name, full timestamp, year, month, day, time, and IFCB number.
 ROI numbers are included if available.
 }
 \examples{
-\dontrun{
 filenames <- c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135")
 timestamps <- ifcb_convert_filenames(filenames)
 print(timestamps)
-}
+
 }

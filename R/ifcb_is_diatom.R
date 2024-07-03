@@ -12,10 +12,8 @@
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
 #'
 #' @examples
-#' \dontrun{
-#' taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Skeletonema_costatum", "Thalassiosira_sp")
+#' taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 #' ifcb_is_diatom(taxa_list)
-#' }
 #'
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_chr

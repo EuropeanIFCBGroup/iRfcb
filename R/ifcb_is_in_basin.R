@@ -71,7 +71,6 @@ ifcb_is_in_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
     plot_obj <- ggplot() +
       geom_sf(data = basins, fill = "lightblue", color = "black", alpha = 0.5) +
       geom_sf(data = points_sf, aes(color = as.factor(labels)), size = 2) +
-      geom_text(data = points_df, aes(x = longitude, y = latitude, label = in_basin), vjust = -1) +
       scale_color_manual(values = c("TRUE" = "red", "FALSE" = "blue")) +
       labs(title = ifelse(is.null(shape_file), "Points in land-buffered Baltic Sea Basins", "Points in basin"),
            color = "In Basin") +

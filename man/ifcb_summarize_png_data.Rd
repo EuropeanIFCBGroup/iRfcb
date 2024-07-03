@@ -28,6 +28,37 @@ If sum_level is "sample", returns a data frame with columns: sample, ifcb_number
 This function summarizes the number of images per class for each sample and timestamps,
 and optionally retrieves GPS positions, and IFCB information using `ifcb_read_hdr_data` and `ifcb_convert_filenames` functions.
 }
+\examples{
+\dontrun{
+# Example usage:
+# Assuming the following directory structure:
+# png_folder/
+# ├── class1/
+# │   ├── sample1_00001.png
+# │   ├── sample1_00002.png
+# │   ├── sample2_00001.png
+# ├── class2/
+# │   ├── sample1_00003.png
+# │   ├── sample3_00001.png
+
+png_folder <- "path/to/png_folder"
+hdr_folder <- "path/to/hdr_folder" # This folder should contain corresponding .hdr files
+
+# Summarize by sample
+summary_sample <- ifcb_summarize_png_data(png_folder,
+                                          hdr_folder,
+                                          sum_level = "sample",
+                                          verbose = TRUE)
+print(summary_sample)
+
+# Summarize by class
+summary_class <- ifcb_summarize_png_data(png_folder,
+                                         hdr_folder,
+                                         sum_level = "class",
+                                         verbose = TRUE)
+print(summary_class)
+}
+}
 \seealso{
 \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
 }

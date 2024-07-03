@@ -19,8 +19,6 @@ The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
 with log a = -0.933 and b = 0.881 for diatoms > 3000 um^3.
 }
 \examples{
-\dontrun{
 volume <- c(5000, 10000, 20000)
-vol2C_lgdiatom(volume)
-}
+iRfcb:::vol2C_lgdiatom(volume)
 }

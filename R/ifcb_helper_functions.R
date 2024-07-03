@@ -244,10 +244,8 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL) {
 #' @return A numeric vector of carbon measurements in picograms.
 #'
 #' @examples
-#' \dontrun{
 #' volume <- c(5000, 10000, 20000)
-#' vol2C_lgdiatom(volume)
-#' }
+#' iRfcb:::vol2C_lgdiatom(volume)
 vol2C_lgdiatom <- function(volume) {
   loga <- -0.933
   b <- 0.881
@@ -267,10 +265,8 @@ vol2C_lgdiatom <- function(volume) {
 #' @return A numeric vector of carbon measurements in picograms.
 #'
 #' @examples
-#' \dontrun{
 #' volume <- c(5000, 10000, 20000)
-#' vol2C_nondiatom(volume)
-#' }
+#' iRfcb:::vol2C_nondiatom(volume)
 vol2C_nondiatom <- function(volume) {
   loga <- -0.665
   b <- 0.939
