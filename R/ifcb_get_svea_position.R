@@ -1,4 +1,4 @@
-utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", "ferrybox_latitude", "ferrybox_longitude", '38059', '8002', '8003'))
+utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", "ferrybox_latitude", "ferrybox_longitude", '38059', '8002', '8003', "gpsLatitude_floor", "gpsLatitude_ceiling", "gpsLongitude_floor", "gpsLongitude_ceiling", "gpsLatitude_missing", "gpsLongitude_missing"))
 
 #' Get GPS coordinates from ferrybox data based on timestamps
 #'
@@ -24,9 +24,9 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select
+#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join
 #' @importFrom magrittr %>%
-#' @importFrom lubridate round_date ymd_hms
+#' @importFrom lubridate round_date ymd_hms floor_date ceiling_date
 #'
 #' @export
 ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB") {
@@ -124,6 +124,7 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
         stop("Error parsing longitude data.")
       })
     ) %>%
+    dplyr::mutate(timestamp_minute = lubridate::round_date(timestamp_minute, unit = "minute")) %>%
     dplyr::select(timestamp_minute, ferrybox_latitude, ferrybox_longitude)
 
   if (nrow(ferrybox_position) == 0) {
@@ -132,10 +133,32 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
 
   # Merge the ferrybox position data with the input timestamps
   output <- data.frame(timestamp = timestamps) %>%
-    dplyr::mutate(timestamp_minute = lubridate::round_date(timestamp, unit = "minute")) %>%
-    dplyr::left_join(ferrybox_position, by = "timestamp_minute") %>%
-    dplyr::rename(gpsLatitude = ferrybox_latitude, gpsLongitude = ferrybox_longitude) %>%
-    dplyr::select(timestamp, gpsLatitude, gpsLongitude)
+    mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
+    left_join(ferrybox_position, by = "timestamp_minute") %>%
+    rename(gpsLatitude = ferrybox_latitude, gpsLongitude = ferrybox_longitude) %>%
+    select(timestamp, gpsLatitude, gpsLongitude)
+
+  # Handle missing positions by floor and ceiling rounding
+  missing_position_floor <- handle_missing_positions(output, floor_date, "gpsLatitude_floor", "gpsLongitude_floor")
+  missing_position_ceiling <- handle_missing_positions(output, ceiling_date, "gpsLatitude_ceiling", "gpsLongitude_ceiling")
+
+  # Merge and coalesce missing positions
+  missing_position <- missing_position_floor %>%
+    full_join(missing_position_ceiling, by = "timestamp") %>%
+    mutate(
+      gpsLatitude_missing = coalesce(gpsLatitude_floor, gpsLatitude_ceiling),
+      gpsLongitude_missing = coalesce(gpsLongitude_floor, gpsLongitude_ceiling)
+    ) %>%
+    select(timestamp, gpsLatitude_missing, gpsLongitude_missing)
+
+  # Update the output with missing positions
+  output <- output %>%
+    left_join(missing_position, by = "timestamp") %>%
+    mutate(
+      gpsLatitude = coalesce(gpsLatitude, gpsLatitude_missing),
+      gpsLongitude = coalesce(gpsLongitude, gpsLongitude_missing)
+    ) %>%
+    select(timestamp, gpsLatitude, gpsLongitude)
 
   return(output)
 }

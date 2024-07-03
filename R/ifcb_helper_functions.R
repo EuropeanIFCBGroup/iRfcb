@@ -1,3 +1,4 @@
+utils::globalVariables(c("ferrybox_position", ":="))
 #' Function to create MANIFEST.txt
 #'
 #' This function generates a MANIFEST.txt file that lists all files in the specified paths,
@@ -276,4 +277,50 @@ vol2C_nondiatom <- function(volume) {
   logC <- loga + b * log10(volume)
   carbon <- 10^logC
   return(carbon)
+}
+
+#' Handle Missing Positions by Rounding Timestamps
+#'
+#' This function handles missing GPS positions by rounding the timestamps
+#' to the nearest minute using a specified rounding function, and then
+#' merging the resulting timestamps with the ferrybox position data.
+#' It updates the missing latitude and longitude values based on the
+#' rounded timestamps.
+#'
+#' @param data A data frame containing timestamps and GPS positions.
+#' @param rounding_function A function used to round the timestamps.
+#' This can be `lubridate::floor_date`, `lubridate::ceiling_date`,
+#' or any other suitable rounding function.
+#' @param lat_col The name of the new latitude column to be created.
+#' @param lon_col The name of the new longitude column to be created.
+#'
+#' @return A data frame with updated GPS positions where the positions were missing.
+#' The returned data frame contains the original timestamps and the new columns
+#' for latitude and longitude based on the rounded timestamps.
+#'
+#' @examples
+#' # Example usage:
+#' data <- data.frame(timestamp = Sys.time() + 1:10 * 60,
+#'                    gpsLatitude = c(NA, runif(9)),
+#'                    gpsLongitude = c(NA, runif(9)))
+#' ferrybox_position <- data.frame(timestamp_minute = lubridate::round_date(Sys.time(),
+#'                                                                          "minutes") + 1:10 * 60,
+#'                                 ferrybox_latitude = runif(10),
+#'                                 ferrybox_longitude = runif(10))
+#' updated_data <- iRfcb:::handle_missing_positions(data,
+#'                                                  lubridate::floor_date,
+#'                                                  "gpsLatitude_floor",
+#'                                                  "gpsLongitude_floor")
+#' @importFrom magrittr %>%
+#' @importFrom dplyr filter mutate left_join select coalesce
+handle_missing_positions <- function(data, rounding_function, lat_col, lon_col) {
+  data %>%
+    filter(is.na(gpsLatitude)) %>%
+    mutate(timestamp_minute = rounding_function(timestamp, unit = "minute")) %>%
+    left_join(ferrybox_position, by = "timestamp_minute") %>%
+    mutate(
+      !!lat_col := coalesce(gpsLatitude, ferrybox_latitude),
+      !!lon_col := coalesce(gpsLongitude, ferrybox_longitude)
+    ) %>%
+    select(timestamp, !!lat_col, !!lon_col)
 }
