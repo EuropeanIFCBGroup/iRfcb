@@ -139,8 +139,8 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
     select(timestamp, gpsLatitude, gpsLongitude)
 
   # Handle missing positions by floor and ceiling rounding
-  missing_position_floor <- handle_missing_positions(output, floor_date, "gpsLatitude_floor", "gpsLongitude_floor")
-  missing_position_ceiling <- handle_missing_positions(output, ceiling_date, "gpsLatitude_ceiling", "gpsLongitude_ceiling")
+  missing_position_floor <- handle_missing_positions(output, ferrybox_position, floor_date, "gpsLatitude_floor", "gpsLongitude_floor")
+  missing_position_ceiling <- handle_missing_positions(output, ferrybox_position, ceiling_date, "gpsLatitude_ceiling", "gpsLongitude_ceiling")
 
   # Merge and coalesce missing positions
   missing_position <- missing_position_floor %>%

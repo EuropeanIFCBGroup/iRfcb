@@ -307,13 +307,22 @@ vol2C_nondiatom <- function(volume) {
 #'                                                                          "minutes") + 1:10 * 60,
 #'                                 ferrybox_latitude = runif(10),
 #'                                 ferrybox_longitude = runif(10))
-#' updated_data <- iRfcb:::handle_missing_positions(data,
-#'                                                  lubridate::floor_date,
-#'                                                  "gpsLatitude_floor",
-#'                                                  "gpsLongitude_floor")
+#' if(lubridate::second(Sys.time()) < 30) {
+#'   updated_data <- iRfcb:::handle_missing_positions(data,
+#'                                                    ferrybox_position,
+#'                                                    lubridate::floor_date,
+#'                                                    "gpsLatitude_floor",
+#'                                                    "gpsLongitude_floor")
+#' } else {
+#'   updated_data <- iRfcb:::handle_missing_positions(data,
+#'                                                    ferrybox_position,
+#'                                                    lubridate::ceiling_date,
+#'                                                    "gpsLatitude_floor",
+#'                                                    "gpsLongitude_floor")
+#' }
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate left_join select coalesce
-handle_missing_positions <- function(data, rounding_function, lat_col, lon_col) {
+handle_missing_positions <- function(data, ferrybox_position, rounding_function, lat_col, lon_col) {
   data %>%
     filter(is.na(gpsLatitude)) %>%
     mutate(timestamp_minute = rounding_function(timestamp, unit = "minute")) %>%

@@ -4,7 +4,13 @@
 \alias{handle_missing_positions}
 \title{Handle Missing Positions by Rounding Timestamps}
 \usage{
-handle_missing_positions(data, rounding_function, lat_col, lon_col)
+handle_missing_positions(
+  data,
+  ferrybox_position,
+  rounding_function,
+  lat_col,
+  lon_col
+)
 }
 \arguments{
 \item{data}{A data frame containing timestamps and GPS positions.}
@@ -38,8 +44,17 @@ ferrybox_position <- data.frame(timestamp_minute = lubridate::round_date(Sys.tim
                                                                          "minutes") + 1:10 * 60,
                                 ferrybox_latitude = runif(10),
                                 ferrybox_longitude = runif(10))
-updated_data <- iRfcb:::handle_missing_positions(data,
-                                                 lubridate::floor_date,
-                                                 "gpsLatitude_floor",
-                                                 "gpsLongitude_floor")
+if(lubridate::second(Sys.time()) < 30) {
+  updated_data <- iRfcb:::handle_missing_positions(data,
+                                                   ferrybox_position,
+                                                   lubridate::floor_date,
+                                                   "gpsLatitude_floor",
+                                                   "gpsLongitude_floor")
+} else {
+  updated_data <- iRfcb:::handle_missing_positions(data,
+                                                   ferrybox_position,
+                                                   lubridate::ceiling_date,
+                                                   "gpsLatitude_floor",
+                                                   "gpsLongitude_floor")
+}
 }
