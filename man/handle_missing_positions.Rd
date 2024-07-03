@@ -56,7 +56,7 @@ if(lubridate::second(Sys.time()) < 30) {
   updated_data <- iRfcb:::handle_missing_positions(data,
                                                    ferrybox_position,
                                                    lubridate::ceiling_date,
-                                                   "gpsLatitude_floor",
-                                                   "gpsLongitude_floor")
+                                                   "gpsLatitude_ceiling",
+                                                   "gpsLongitude_ceiling")
 }
 }

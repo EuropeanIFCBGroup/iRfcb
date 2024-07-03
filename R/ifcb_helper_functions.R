@@ -318,8 +318,8 @@ vol2C_nondiatom <- function(volume) {
 #'   updated_data <- iRfcb:::handle_missing_positions(data,
 #'                                                    ferrybox_position,
 #'                                                    lubridate::ceiling_date,
-#'                                                    "gpsLatitude_floor",
-#'                                                    "gpsLongitude_floor")
+#'                                                    "gpsLatitude_ceiling",
+#'                                                    "gpsLongitude_ceiling")
 #' }
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter mutate left_join select coalesce
