@@ -40,16 +40,7 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae") {
     stop("Error occurred while retrieving worms records: ", conditionMessage(err))
   })
 
-  # Extract the class from the first row of each worms_records tibble
-  extract_class <- function(record) {
-    if (nrow(record) == 0) {
-      return(NA)
-    } else {
-      return(record$class[1])
-    }
-  }
-
-  classes <- sapply(worms_records, extract_class)
+  classes <- sapply(worms_records, extract_class) # Helper function
 
   # Create the dataframe with taxa_list_clean and classes
   result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = classes, stringsAsFactors = FALSE)

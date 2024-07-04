@@ -330,3 +330,21 @@ handle_missing_positions <- function(data, ferrybox_position, rounding_function,
     ) %>%
     select(timestamp, !!lat_col, !!lon_col)
 }
+
+# Extract the class from the first row of each worms_records tibble
+extract_class <- function(record) {
+  if (nrow(record) == 0) {
+    return(NA)
+  } else {
+    return(record$class[1])
+  }
+}
+
+# Extract the class from the first row of each worms_records tibble
+extract_aphia_id <- function(record) {
+  if (nrow(record) == 0) {
+    return(NA)
+  } else {
+    return(record$AphiaID[1])
+  }
+}
