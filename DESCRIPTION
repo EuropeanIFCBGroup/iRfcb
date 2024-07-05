@@ -21,6 +21,7 @@ Imports:
   tidyr,
   tibble,
   ggplot2,
+  readr,
   magrittr,
   purrr,
   worrms,

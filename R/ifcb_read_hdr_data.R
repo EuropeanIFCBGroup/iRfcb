@@ -20,6 +20,7 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 #' }
 #' @importFrom dplyr mutate select
 #' @importFrom tidyr pivot_wider
+#' @importFrom readr type_convert cols col_character
 #' @export
 ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   # List all .hdr files in the specified directory
@@ -57,6 +58,10 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   hdr_data_pivot <- merge(hdr_data_pivot, timestamps, by = "sample", all.x = TRUE)
 
   if (verbose) cat("Processing completed.\n")
+
+  # Convert column types
+  hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
+                                                  col_types = cols(GPSFeed = col_character())))
 
   # Remove the 'file' column from the final data frame
   return(dplyr::select(hdr_data_pivot, -file))

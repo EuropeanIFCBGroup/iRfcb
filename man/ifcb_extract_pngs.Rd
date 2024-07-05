@@ -8,7 +8,8 @@ ifcb_extract_pngs(
   roi_file,
   out_folder = dirname(roi_file),
   ROInumbers = NULL,
-  taxaname = NULL
+  taxaname = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ ifcb_extract_pngs(
 \item{ROInumbers}{An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.}
 
 \item{taxaname}{An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.}
+
+\item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 This function is called for its side effects: it writes PNG images to a directory.
