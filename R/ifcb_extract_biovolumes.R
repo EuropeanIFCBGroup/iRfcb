@@ -79,9 +79,17 @@ ifcb_extract_biovolumes <- function(feature_folder, class_folder, micron_factor 
   # Initialize an empty list to store data frames
   tb_list <- list()
 
+  # Initialize a list to store all warnings
+  warning_list <- list()
+
   # Loop through matching classes
   for (class in seq_along(matching_classes)) {
-    temp <- readMat(matching_classes[class])
+    # Capture warnings for each readMat call
+    temp <- suppressWarnings({
+      temp_result <- readMat(matching_classes[class])
+      warning_list <- c(warning_list, warnings())
+      temp_result
+    })
 
     # Create a data frame with sample, roi_number, and class information
     temp_df <- data.frame(
@@ -96,6 +104,13 @@ ifcb_extract_biovolumes <- function(feature_folder, class_folder, micron_factor 
 
     # Append to the list
     tb_list <- append(tb_list, list(temp_df))
+  }
+
+  # Display the number of warnings
+  num_warnings <- length(warning_list)
+
+  if (length(num_warnings) > 0) {
+    message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
   }
 
   # Combine all data frames into one

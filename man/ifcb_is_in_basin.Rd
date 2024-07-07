@@ -17,7 +17,7 @@ ifcb_is_in_basin(latitudes, longitudes, plot = FALSE, shape_file = NULL)
 Default is a land-buffered shapefile of the Baltic Sea basins (including Öresund), included in the `iRfcb` package.}
 }
 \value{
-A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins.
+A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins if `plot = TRUE`.
 }
 \description{
 This function checks if vectors of latitude and longitude points are within a user-supplied sea basin.

@@ -10,7 +10,7 @@ utils::globalVariables(c("longitude", "latitude", "in_basin"))
 #' @param shape_file The absolute path to a custom polygon shapefile in WGS84 (EPSG:4326) that represents the specific sea basin.
 #'                   Default is a land-buffered shapefile of the Baltic Sea basins (including Öresund), included in the `iRfcb` package.
 #'
-#' @return A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins.
+#' @return A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins if `plot = TRUE`.
 #'
 #' @details This function reads a pre-packaged shapefile of the Baltic Sea Basin from the `iRfcb` package by default, or a user-supplied
 #'          shapefile if provided. It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
