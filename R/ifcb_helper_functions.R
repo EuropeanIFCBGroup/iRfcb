@@ -113,6 +113,8 @@ find_matching_data <- function(mat_file, data_files) {
 #' @importFrom stats na.omit
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
+  lines <- gsub("\\bN/A\\b", NA, lines)
+
   data <- do.call(rbind, lapply(lines, function(line) {
     split_line <- strsplit(line, ": ", fixed = TRUE)[[1]]
     if (length(split_line) == 2) {
