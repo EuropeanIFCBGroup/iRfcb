@@ -109,7 +109,7 @@ ifcb_extract_biovolumes <- function(feature_folder, class_folder, micron_factor 
   # Display the number of warnings
   num_warnings <- length(warning_list)
 
-  if (length(num_warnings) > 0) {
+  if (num_warnings > 0) {
     message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
   }
 
