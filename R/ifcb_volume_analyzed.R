@@ -35,22 +35,19 @@ ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25
     runtime <- hdr$runtime
     inhibittime <- hdr$inhibittime
 
-    if (inhibittime > 0) {
-      if (!hdrOnly_flag) {
-        adcfilename <- sub("\\.hdr$", ".adc", hdr_file[[count]])
-        adc_info <- ifcb_volume_analyzed_from_adc(adcfilename)
+    if (!hdrOnly_flag) {
+      adcfilename <- sub("\\.hdr$", ".adc", hdr_file[[count]])
+      adc_info <- ifcb_volume_analyzed_from_adc(adcfilename)
 
-        inhibittime_adc <- adc_info$inhibittime
-        runtime_adc <- adc_info$runtime
+      inhibittime_adc <- adc_info$inhibittime
+      runtime_adc <- adc_info$runtime
 
-        if ((runtime / runtime_adc < 0.98) || (runtime / runtime_adc > 1.02)) {
-          runtime <- runtime_adc
-        }
-        if ((inhibittime / inhibittime_adc < 0.98) || (inhibittime / inhibittime_adc > 1.02)) {
-          inhibittime <- inhibittime_adc
-        }
+      if ((runtime / runtime_adc < 0.98) & runtime_adc > 0 || (runtime / runtime_adc > 1.02) & runtime_adc > 0) {
+        runtime <- runtime_adc
       }
-
+      if ((inhibittime / inhibittime_adc < 0.98) & inhibittime_adc > 0 || (inhibittime / inhibittime_adc > 1.02) & inhibittime_adc > 0 ) {
+        inhibittime <- inhibittime_adc
+      }
     }
 
     looktime <- runtime - inhibittime  # seconds
