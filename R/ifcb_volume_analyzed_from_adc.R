@@ -42,7 +42,6 @@ ifcb_volume_analyzed_from_adc <- function(adc_file) {
       adc <- read.csv(adc_file[[count]], header = FALSE)
     }
 
-    # Adjust column indexing based on your ADC file structure
     if (nrow(adc) > 1 && any(adc$V24 != 0)) {
       diffinh <- diff(adc$V24)
       iii <- c(1, which(adc$V24[-1] > 0 & diffinh > -0.1 & diffinh < 5) + 1)
