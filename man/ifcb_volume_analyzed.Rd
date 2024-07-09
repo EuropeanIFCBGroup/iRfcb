@@ -4,12 +4,14 @@
 \alias{ifcb_volume_analyzed}
 \title{Estimate Volume Analyzed from IFCB Header File}
 \usage{
-ifcb_volume_analyzed(hdr_file, hdrOnly_flag = 0)
+ifcb_volume_analyzed(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25)
 }
 \arguments{
 \item{hdr_file}{A character vector specifying the path(s) to one or more .hdr files or URLs.}
 
-\item{hdrOnly_flag}{An optional flag indicating whether to skip ADC file estimation (default is 0).}
+\item{hdrOnly_flag}{An optional flag indicating whether to skip ADC file estimation (default is FALSE).}
+
+\item{flowrate}{Milliliters per minute for syringe pump (default is 0.25).}
 }
 \value{
 A numeric vector containing the estimated sample volume analyzed for each header file.
@@ -30,7 +32,7 @@ print(ml_analyzed)
 }
 }
 \references{
-Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \url{https://github.com/hsosik/ifcb-analysis}
