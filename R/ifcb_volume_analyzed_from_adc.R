@@ -14,7 +14,7 @@
 #' @importFrom utils read.csv
 #' @importFrom stats median
 #' @export
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
 #' \dontrun{
@@ -42,7 +42,6 @@ ifcb_volume_analyzed_from_adc <- function(adc_file) {
       adc <- read.csv(adc_file[[count]], header = FALSE)
     }
 
-    # Adjust column indexing based on your ADC file structure
     if (nrow(adc) > 1 && any(adc$V24 != 0)) {
       diffinh <- diff(adc$V24)
       iii <- c(1, which(adc$V24[-1] > 0 & diffinh > -0.1 & diffinh < 5) + 1)
