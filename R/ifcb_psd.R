@@ -12,7 +12,7 @@ utils::globalVariables(c("variable", "number"))
 #' @param feature_folder The absolute path to a directory containing all of the v2 feature files for the dataset.
 #' @param hdr_folder The absolute path to a directory containing all of the hdr files for the dataset.
 #' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
-#' @param output_file A string with the base file name for the .csv to use (including path).
+#' @param output_file A string with the base file name for the .csv to use (including path). Set to NULL to not save data (default).
 #' @param plot_folder The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).
 #' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
@@ -56,7 +56,7 @@ utils::globalVariables(c("variable", "number"))
 #' )
 #' }
 #' @export
-ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NA, plot_folder = NULL,
+ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NULL, plot_folder = NULL,
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL) {
 
@@ -64,7 +64,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     stop("Python is not installed on this machine. Please install Python to use this function.")
   }
 
-  if (save_data & is.na(output_file)) {
+  if (save_data & is.null(output_file)) {
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
 
@@ -78,14 +78,14 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   psd <- reticulate::import("psd", delay_load = TRUE)
 
   # Create a Bin object
-  b <- psd$Bin(feature_dir = feature_folder, hdr_dir = hdr_folder)
+  b <- psd$Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder))
 
   # Plot the PSD
-  b$plot_PSD(use_marker = use_marker, plot_folder = plot_folder, start_fit = as.integer(start_fit))
+  b$plot_PSD(use_marker = use_marker, plot_folder = as.character(plot_folder), start_fit = as.integer(start_fit))
 
   if (save_data) {
     # Prepare arguments for save_data
-    args <- list(name = output_file, r_sqr = r_sqr)
+    args <- list(name = as.character(output_file), r_sqr = as.numeric(r_sqr))
     if (!is.null(beads)) args$beads <- as.numeric(beads)
     if (!is.null(bubbles)) args$bubbles <- as.integer(bubbles)
     if (!is.null(incomplete)) args$incomplete <- as.integer(incomplete)
@@ -96,53 +96,51 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
 
     # Save the data
     do.call(b$save_data, args)
-    return(NULL)
-  } else {
-    # Retrieve data from Python
-    data <- b$get_data()
-    fits <- b$get_fits()
-    flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
-                         missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
-
-    # Convert the wide format data to long format
-    data_long <- as.data.frame(data) %>%
-      pivot_longer(
-        cols = everything(),
-        names_to = c("variable", "sample"),
-        names_pattern = "(.*)\\.(D\\d+T\\d+)"
-      )
-
-    fits_long <- as.data.frame(fits) %>%
-      pivot_longer(
-        cols = everything(),
-        names_to = c("variable", "sample"),
-        names_pattern = "(.*)\\.(D\\d+T\\d+)"
-      )
-
-    if (nrow(as.data.frame(flags)) > 0) {
-      flags_df <- as.data.frame(flags) %>%
-        pivot_longer(cols = everything(),
-                     names_to = c(".value", "number"),
-                     names_sep = "\\.") %>%
-        select(-number) %>%
-        rename(sample = file)
-    } else {
-      flags_df <- NULL
-    }
-
-    # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
-    data_df <- data_long %>%
-      pivot_wider(
-        names_from = variable,
-        values_from = value
-      )
-
-    fits_df <- fits_long %>%
-      pivot_wider(
-        names_from = variable,
-        values_from = value
-      )
-
-    return(list(data = data_df, fits = fits_df, flags = flags_df))
   }
+
+  # Retrieve data from Python
+  data <- b$get_data()
+  fits <- b$get_fits()
+  flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
+                       missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
+
+  # Convert the wide format data to long format
+  data_long <- as.data.frame(data) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = c("variable", "sample"),
+      names_pattern = "(.*)\\.(D\\d+T\\d+)"
+    )
+
+  fits_long <- as.data.frame(fits) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = c("variable", "sample"),
+      names_pattern = "(.*)\\.(D\\d+T\\d+)"
+    )
+
+  if (nrow(as.data.frame(flags)) > 0) {
+    flags_df <- as.data.frame(flags) %>%
+      pivot_longer(cols = everything(),
+                   names_to = c(".value", "number"),
+                   names_sep = "\\.") %>%
+      select(-number) %>%
+      rename(sample = file)
+  } else {
+    flags_df <- NULL
+  }
+
+  # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
+  data_df <- data_long %>%
+    pivot_wider(
+      names_from = variable,
+      values_from = value
+    )
+
+  fits_df <- fits_long %>%
+    pivot_wider(
+      names_from = variable,
+      values_from = value
+    )
+  return(list(data = data_df, fits = fits_df, flags = flags_df))
 }

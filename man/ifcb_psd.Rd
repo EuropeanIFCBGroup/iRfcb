@@ -8,7 +8,7 @@ ifcb_psd(
   feature_folder,
   hdr_folder,
   save_data = FALSE,
-  output_file = NA,
+  output_file = NULL,
   plot_folder = NULL,
   use_marker = FALSE,
   start_fit = 10,
@@ -29,7 +29,7 @@ ifcb_psd(
 
 \item{save_data}{A boolean indicating whether to save data to CSV files. Default is FALSE.}
 
-\item{output_file}{A string with the base file name for the .csv to use (including path).}
+\item{output_file}{A string with the base file name for the .csv to use (including path). Set to NULL to not save data (default).}
 
 \item{plot_folder}{The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).}
 
