@@ -47,7 +47,7 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
 
   # Filter out non-GPS data if gps_only is TRUE
   if (gps_only) {
-    hdr_data_pivot <- dplyr::select(hdr_data_pivot, sample, gpsLatitude, gpsLongitude)
+    hdr_data_pivot <- dplyr::select(hdr_data_pivot, file, sample, gpsLatitude, gpsLongitude)
   }
 
   # Extract timestamps using ifcb_convert_filenames function
