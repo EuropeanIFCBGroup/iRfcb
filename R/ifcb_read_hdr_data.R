@@ -34,11 +34,6 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   # Combine all data frames into one
   hdr_data <- do.call(rbind, all_hdr_data_list)
 
-  # Filter out non-GPS data if gps_only is TRUE
-  if (gps_only) {
-    hdr_data <- hdr_data[hdr_data$parameter %in% c("gpsLatitude", "gpsLongitude"), ]
-  }
-
   # Check if there is any data to process
   if (nrow(hdr_data) == 0) {
     stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
@@ -50,6 +45,11 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   # Extract sample names from filenames
   hdr_data_pivot$sample <- tools::file_path_sans_ext(basename(hdr_data_pivot$file))
 
+  # Filter out non-GPS data if gps_only is TRUE
+  if (gps_only) {
+    hdr_data_pivot <- dplyr::select(hdr_data_pivot, sample, gpsLatitude, gpsLongitude)
+  }
+
   # Extract timestamps using ifcb_convert_filenames function
   filenames <- paste0(hdr_data_pivot$sample, ".hdr")
   timestamps <- ifcb_convert_filenames(filenames)
@@ -57,11 +57,14 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   # Merge positions with timestamps
   hdr_data_pivot <- merge(hdr_data_pivot, timestamps, by = "sample", all.x = TRUE)
 
-  if (verbose) cat("Processing completed.\n")
-
   # Convert column types
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
                                                   col_types = cols(GPSFeed = col_character())))
+
+
+
+
+  if (verbose) cat("Processing completed.\n")
 
   # Remove the 'file' column from the final data frame
   return(dplyr::select(hdr_data_pivot, -file))
