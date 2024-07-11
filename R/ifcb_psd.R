@@ -41,7 +41,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' ifcb_psd(
 #'   feature_folder = 'path/to/features',
 #'   hdr_folder = 'path/to/hdr_data',
-#'   save_data = FALSE,
+#'   save_data = TRUE,
 #'   output_file = 'psd/svea_2021',
 #'   plot_folder = 'psd/plots',
 #'   use_marker = FALSE,
@@ -147,11 +147,27 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     sample_names <- data_df$sample
 
     for (sample in sample_names) {
-      # Plot the sanoke
+
+      # Find the potential flag
+      flag <- flags_df[grepl(sample, flags_df$sample),]
+
+      # Specify plot subfolder
+      if (nrow(flag) == 0) {
+        flag_folder <- file.path(plot_folder, "PSD.OK")
+      } else {
+        flag_folder <- file.path(plot_folder, make.names(flag$flag))
+      }
+
+      # Create plot subfolder
+      if (!dir.exists(flag_folder)) {
+        dir.create(flag_folder, recursive = TRUE)
+      }
+
+      # Plot the sample PSD
       p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit)
 
       # Save the plot
-      ggsave(filename = file.path(plot_folder,
+      ggsave(filename = file.path(flag_folder,
                                   paste0(sample, ".png")),
              plot = p,
              bg = "white",
