@@ -1,4 +1,4 @@
-utils::globalVariables(c("variable", "number"))
+utils::globalVariables(c("variable", "number", "Bin"))
 #' Plot and Save IFCB PSD Data
 #'
 #' This function generates and saves data about a dataset's Particle Size Distribution (PSD) from Imaging FlowCytobot (IFCB)
@@ -13,7 +13,7 @@ utils::globalVariables(c("variable", "number"))
 #' @param hdr_folder The absolute path to a directory containing all of the hdr files for the dataset.
 #' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
 #' @param output_file A string with the base file name for the .csv to use (including path). Set to NULL to not save data (default).
-#' @param plot_folder The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).
+#' @param plot_folder The folder where graph images for each file will be saved. Not recommended for large datasets. Set to NULL to not save graphs (default).
 #' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
 #' @param r_sqr The lower limit of acceptable R^2 values (any curves below it will be flagged). Default is 0.5.
@@ -34,6 +34,7 @@ utils::globalVariables(c("variable", "number"))
 #' @importFrom dplyr rename select everything
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom ggplot2 ggsave
 #'
 #' @examples
 #' \dontrun{
@@ -68,20 +69,13 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
 
-  # Set the path to the directory containing psd.py
-  python_path <- system.file("python", package = "iRfcb")
-
-  # Set the Python path to include the directory containing psd.py
-  reticulate::py_run_string(paste0("import sys; sys.path.append('", python_path, "')"))
-
-  # Import Python module
-  psd <- reticulate::import("psd", delay_load = TRUE)
+  source_python(system.file("python", "psd.py", package = "iRfcb"))
 
   # Create a Bin object
-  b <- psd$Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder))
+  b <- Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder))
 
   # Plot the PSD
-  b$plot_PSD(use_marker = use_marker, plot_folder = as.character(plot_folder), start_fit = as.integer(start_fit))
+  b$plot_PSD(use_marker = use_marker, plot_folder = NULL, start_fit = as.integer(start_fit))
 
   if (save_data) {
     # Prepare arguments for save_data
@@ -142,5 +136,29 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
       names_from = variable,
       values_from = value
     )
+
+  if (!is.null(plot_folder)) {
+
+    if (!dir.exists(plot_folder)) {
+      dir.create(plot_folder, recursive = TRUE)
+    }
+
+    # List of sample names
+    sample_names <- data_df$sample
+
+    for (sample in sample_names) {
+      # Plot the sanoke
+      p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit)
+
+      # Save the plot
+      ggsave(filename = file.path(plot_folder,
+                                  paste0(sample, ".png")),
+             plot = p,
+             bg = "white",
+             width = 6,
+             height = 4)
+    }
+  }
+
   return(list(data = data_df, fits = fits_df, flags = flags_df))
 }
