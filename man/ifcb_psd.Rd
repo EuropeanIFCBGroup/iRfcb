@@ -31,7 +31,7 @@ ifcb_psd(
 
 \item{output_file}{A string with the base file name for the .csv to use (including path). Set to NULL to not save data (default).}
 
-\item{plot_folder}{The folder where graph images for each file will be saved. Not recommended for large datasets. Set to NULL to not save graphs (default).}
+\item{plot_folder}{The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).}
 
 \item{use_marker}{A boolean indicating whether to show markers on the plot. Default is FALSE.}
 
