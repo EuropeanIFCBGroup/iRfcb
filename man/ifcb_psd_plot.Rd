@@ -7,7 +7,7 @@
 ifcb_psd_plot(sample_name, data, fits, start_fit)
 }
 \arguments{
-\item{sample_name}{The name of the sample to plot.}
+\item{sample_name}{The name of the sample to plot in DYYYYMMDDTHHMMSS.}
 
 \item{data}{A data frame containing the PSD data (data output from `ifcb_psd`), where each row represents a sample and each column represents different particle sizes in micrometers.}
 
@@ -42,7 +42,7 @@ psd <- ifcb_psd(feature_folder = 'path/to/features',
                 humidity = NULL)
 
 # Plot PSD of the first sample
-plot <- ifcb_psd_plot(sample_name = psd$data$sample[1],
+plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
                       data = psd$data,
                       fits = psd$fits,
                       start_fit = 10)
