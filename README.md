@@ -307,7 +307,7 @@ print(run_time)
 
 ### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard 2000.
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard 2000. See `iRfcb:::vol2C_nondiatom` and `iRfcb:::vol2C_lgdiatom` for carbon calculations (not included in NAMESPACE).
 
 ```r
 class2use <- ifcb_get_mat_variable("data/config/class2use.mat")

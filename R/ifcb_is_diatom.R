@@ -6,7 +6,7 @@
 #' first name (genus name) of each taxa for classification.
 #'
 #' @param taxa_list A character vector containing the list of taxa names.
-#' @param diatom_class A character string specifying the class name to be identified as diatoms.
+#' @param diatom_class A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 #'        Default is "Bacillariophyceae".
 #'
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.

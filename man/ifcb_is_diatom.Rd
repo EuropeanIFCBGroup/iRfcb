@@ -9,7 +9,7 @@ ifcb_is_diatom(taxa_list, diatom_class = "Bacillariophyceae")
 \arguments{
 \item{taxa_list}{A character vector containing the list of taxa names.}
 
-\item{diatom_class}{A character string specifying the class name to be identified as diatoms.
+\item{diatom_class}{A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 Default is "Bacillariophyceae".}
 }
 \value{
