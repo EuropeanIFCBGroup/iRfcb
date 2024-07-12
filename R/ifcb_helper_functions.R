@@ -333,7 +333,21 @@ handle_missing_positions <- function(data, ferrybox_position, rounding_function,
     select(timestamp, !!lat_col, !!lon_col)
 }
 
-# Extract the class from the first row of each worms_records tibble
+#' Extract the class from the first row of each worms_records tibble
+#'
+#' This function extracts the class from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least a 'class' column.
+#' @return A character string representing the class of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- tibble::tibble(class = c("Class1", "Class2"))
+#' iRfcb:::extract_class(record)
+#'
+#' empty_record <- tibble::tibble(class = character(0))
+#' iRfcb:::extract_class(empty_record)
 extract_class <- function(record) {
   if (nrow(record) == 0) {
     return(NA)
@@ -342,7 +356,21 @@ extract_class <- function(record) {
   }
 }
 
-# Extract the class from the first row of each worms_records tibble
+#' Extract the AphiaID from the first row of each worms_records tibble
+#'
+#' This function extracts the AphiaID from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least an 'AphiaID' column.
+#' @return A numeric value representing the AphiaID of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- tibble::tibble(AphiaID = c(12345, 67890))
+#' iRfcb:::extract_aphia_id(record)
+#'
+#' empty_record <- tibble::tibble(AphiaID = numeric(0))
+#' iRfcb:::extract_aphia_id(empty_record)
 extract_aphia_id <- function(record) {
   if (nrow(record) == 0) {
     return(NA)
