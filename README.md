@@ -79,7 +79,7 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 gps_data$near_land <- ifcb_is_near_land(as.numeric(gps_data$gpsLatitude),
                                         as.numeric(gps_data$gpsLongitude),
                                         distance = 100, # 100 meters from shore
-                                        shape = NULL) # Using the default Natural Earth 1:10m Land Polygon
+                                        shape = NULL) # Using the default NE 1:10m Land Polygon
 
 print(gps_data)
 ```
@@ -223,7 +223,8 @@ Prepare the PNG directory for publication as a zip-archive, similar to the files
 ```r
 ifcb_zip_pngs(png_folder = "data/extracted_images",
               zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
-              readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
+              readme_file = system.file("exdata/README-template.md", 
+                                        package = "iRfcb"), # Template icluded in `iRfcb`
               email_address = "tutorial@test.com",
               version = "1.1")
 ```
@@ -238,8 +239,10 @@ ifcb_zip_matlab(manual_folder = "data/manual",
                 class2use_file = "data/config/class2use.mat",
                 zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
                 data_folder = "data/data",
-                readme_file = system.file("exdata/README-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
-                matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"), # Template icluded in `iRfcb`
+                readme_file = system.file("exdata/README-template.md", 
+                                          package = "iRfcb"), # Template icluded in `iRfcb`
+                matlab_readme_file = system.file("exdata/MATLAB-template.md", 
+                                                 package = "iRfcb"), # Template icluded in `iRfcb`
                 email_address = "tutorial@test.com",
                 version = "1.1")
 ```
