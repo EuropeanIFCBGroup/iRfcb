@@ -38,7 +38,7 @@
 #'
 #' @importFrom sf st_bbox st_crs st_as_sf st_transform st_intersects st_wrap_dateline st_as_sfc st_intersection st_make_valid st_union st_area st_geometry_type st_read
 #' @importFrom terra vect buffer
-#' @importFrom dplyr %>%
+#' @importFrom magrittr %>%
 #' @importFrom zip unzip
 #' @export
 ifcb_is_near_land <- function(latitudes,

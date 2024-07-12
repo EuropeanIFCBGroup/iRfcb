@@ -20,6 +20,11 @@ Imports:
   reticulate,
   tidyr,
   tibble,
+  ggplot2,
+  readr,
+  magrittr,
+  purrr,
+  worrms,
   imager,
   R.matlab,
   lubridate

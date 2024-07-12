@@ -7,11 +7,10 @@
 #' @param filenames A character vector of IFCB filenames in the format "DYYYYMMDDTHHMMSS_IFCBxxx".
 #' @return A data frame with columns: sample, full_timestamp, year, month, day, time, and ifcb_number.
 #' @examples
-#' \dontrun{
 #' filenames <- c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135")
 #' timestamps <- ifcb_convert_filenames(filenames)
 #' print(timestamps)
-#' }
+#'
 #' @importFrom stringr str_extract str_remove_all
 #' @importFrom lubridate ymd_hms
 #' @importFrom dplyr bind_rows

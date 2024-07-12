@@ -14,13 +14,13 @@ utils::globalVariables(c("replace_value_in_classlist"))
 #'
 #' @return This function does not return any value; it updates the classlist files in the specified directory.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @examples
 #' \dontrun{
 #' # Replace class ID 99 with 1 in .mat classlist files
 #' ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 #' }
-#' @import reticulate
+#' @importFrom reticulate source_python
 #' @export
 ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1) {
 

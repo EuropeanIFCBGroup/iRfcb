@@ -13,6 +13,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Zip all subdirectories in the 'images' folder with a README file
 #' ifcb_zip_pngs("path/to/images",
 #'              "images.zip",
@@ -22,8 +23,9 @@
 #'
 #' # Zip all subdirectories in the 'images' folder without a README file
 #' ifcb_zip_pngs("path/to/images", "images.zip")
+#' }
 #'
-#' @import zip
+#' @importFrom zip zipr
 #' @importFrom stringr str_extract
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year

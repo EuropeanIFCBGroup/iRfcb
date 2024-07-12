@@ -8,6 +8,7 @@
 #' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
+#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @return This function is called for its side effects: it writes PNG images to a directory.
 #' @examples
 #' \dontrun{
@@ -21,7 +22,7 @@
 #' @export
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL) {
+ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL, verbose = TRUE) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(out_folder, taxaname)
@@ -56,7 +57,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   })
 
   # Loop over ROIs and save PNG images
-  cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roi_file), "to", outpath), "\n")
+  if (verbose) cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roi_file), "to", outpath), "\n")
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
@@ -82,7 +83,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
           cat("An error occurred:", conditionMessage(e), "\n")
         })
       } else {
-        cat("PNG file already exists:", pngfile, "\n")
+        if (verbose) cat("PNG file already exists:", pngfile, "\n")
       }
     }
   }

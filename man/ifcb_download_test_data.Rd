@@ -26,7 +26,6 @@ ifcb_download_test_data("data")
 
 }
 \references{
-Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024).
-SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
+Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
 \href{https://doi.org/10.17044/scilifelab.25883455.v2}{https://doi.org/10.17044/scilifelab.25883455.v2}
 }

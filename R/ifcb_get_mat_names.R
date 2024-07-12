@@ -11,10 +11,10 @@
 #' variables <- ifcb_get_mat_names("path/to/file.mat")
 #' print(variables)
 #' }
-#' @import R.matlab
+#' @importFrom R.matlab readMat
 #' @export
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
-#' @seealso \code{\link{ifcb_get_mat_variable}}  \url{https://github.com/hsosik/ifcb-analysis}
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+#' @seealso \code{\link{ifcb_get_mat_variable}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_names <- function(mat_file) {
   # Read the contents of the MAT file
   mat_contents <- R.matlab::readMat(mat_file)

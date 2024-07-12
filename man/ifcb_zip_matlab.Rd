@@ -66,7 +66,7 @@ ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",
 
 }
 \references{
-Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
 \code{\link{ifcb_zip_pngs}} \url{https://github.com/hsosik/ifcb-analysis}

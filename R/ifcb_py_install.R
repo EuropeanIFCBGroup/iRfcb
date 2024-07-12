@@ -10,7 +10,7 @@
 #' # Install the iRfcb Python environment
 #' ifcb_py_install()
 #' }
-#' @importFrom reticulate virtualenv_create
+#' @importFrom reticulate virtualenv_create use_virtualenv
 #' @export
 ifcb_py_install <- function(..., envname = "/.virtualenvs/iRfcb") {
   virtualenv_create(envname, requirements = system.file("python", "requirements.txt", package = "iRfcb"))

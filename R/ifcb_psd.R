@@ -1,4 +1,4 @@
-utils::globalVariables(c("variable", "number"))
+utils::globalVariables(c("variable", "number", "Bin"))
 #' Plot and Save IFCB PSD Data
 #'
 #' This function generates and saves data about a dataset's Particle Size Distribution (PSD) from Imaging FlowCytobot (IFCB)
@@ -12,7 +12,7 @@ utils::globalVariables(c("variable", "number"))
 #' @param feature_folder The absolute path to a directory containing all of the v2 feature files for the dataset.
 #' @param hdr_folder The absolute path to a directory containing all of the hdr files for the dataset.
 #' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
-#' @param output_file A string with the base file name for the .csv to use (including path).
+#' @param output_file A string with the base file name for the .csv to use (including path). Set to NULL to not save data (default).
 #' @param plot_folder The folder where graph images for each file will be saved. Set to NULL to not save graphs (default).
 #' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
@@ -28,16 +28,20 @@ utils::globalVariables(c("variable", "number"))
 #' @return A list with data, fits, and flags DataFrames if `save_data` is FALSE; otherwise, NULL.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/kudelalab/PSD} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
-#' @import reticulate
-#' @importFrom dplyr %>% rename select
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+#'
+#' @importFrom reticulate py_available py_run_string import
+#' @importFrom dplyr rename select everything
+#' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider pivot_longer
+#' @importFrom ggplot2 ggsave
+#'
 #' @examples
 #' \dontrun{
 #' ifcb_psd(
 #'   feature_folder = 'path/to/features',
 #'   hdr_folder = 'path/to/hdr_data',
-#'   save_data = FALSE,
+#'   save_data = TRUE,
 #'   output_file = 'psd/svea_2021',
 #'   plot_folder = 'psd/plots',
 #'   use_marker = FALSE,
@@ -53,7 +57,7 @@ utils::globalVariables(c("variable", "number"))
 #' )
 #' }
 #' @export
-ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NA, plot_folder = NULL,
+ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NULL, plot_folder = NULL,
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL) {
 
@@ -61,28 +65,21 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     stop("Python is not installed on this machine. Please install Python to use this function.")
   }
 
-  if (save_data & is.na(output_file)) {
+  if (save_data & is.null(output_file)) {
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
 
-  # Set the path to the directory containing psd.py
-  python_path <- system.file("python", package = "iRfcb")
-
-  # Set the Python path to include the directory containing psd.py
-  reticulate::py_run_string(paste0("import sys; sys.path.append('", python_path, "')"))
-
-  # Import Python module
-  psd <- reticulate::import("psd", delay_load = TRUE)
+  source_python(system.file("python", "psd.py", package = "iRfcb"))
 
   # Create a Bin object
-  b <- psd$Bin(feature_dir = feature_folder, hdr_dir = hdr_folder)
+  b <- Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder))
 
   # Plot the PSD
-  b$plot_PSD(use_marker = use_marker, plot_folder = plot_folder, start_fit = as.integer(start_fit))
+  b$plot_PSD(use_marker = use_marker, plot_folder = NULL, start_fit = as.integer(start_fit))
 
   if (save_data) {
     # Prepare arguments for save_data
-    args <- list(name = output_file, r_sqr = r_sqr)
+    args <- list(name = as.character(output_file), r_sqr = as.numeric(r_sqr))
     if (!is.null(beads)) args$beads <- as.numeric(beads)
     if (!is.null(bubbles)) args$bubbles <- as.integer(bubbles)
     if (!is.null(incomplete)) args$incomplete <- as.integer(incomplete)
@@ -93,53 +90,91 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
 
     # Save the data
     do.call(b$save_data, args)
-    return(NULL)
+  }
+
+  # Retrieve data from Python
+  data <- b$get_data()
+  fits <- b$get_fits()
+  flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
+                       missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
+
+  # Convert the wide format data to long format
+  data_long <- as.data.frame(data) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = c("variable", "sample"),
+      names_pattern = "(.*)\\.(D\\d+T\\d+)"
+    )
+
+  fits_long <- as.data.frame(fits) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = c("variable", "sample"),
+      names_pattern = "(.*)\\.(D\\d+T\\d+)"
+    )
+
+  if (nrow(as.data.frame(flags)) > 0) {
+    flags_df <- as.data.frame(flags) %>%
+      pivot_longer(cols = everything(),
+                   names_to = c(".value", "number"),
+                   names_sep = "\\.") %>%
+      select(-number) %>%
+      rename(sample = file)
   } else {
-    # Retrieve data from Python
-    data <- b$get_data()
-    fits <- b$get_fits()
-    flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
-                         missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
+    flags_df <- NULL
+  }
 
-    # Convert the wide format data to long format
-    data_long <- as.data.frame(data) %>%
-      pivot_longer(
-        cols = everything(),
-        names_to = c("variable", "sample"),
-        names_pattern = "(.*)\\.(D\\d+T\\d+)"
-      )
+  # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
+  data_df <- data_long %>%
+    pivot_wider(
+      names_from = variable,
+      values_from = value
+    )
 
-    fits_long <- as.data.frame(fits) %>%
-      pivot_longer(
-        cols = everything(),
-        names_to = c("variable", "sample"),
-        names_pattern = "(.*)\\.(D\\d+T\\d+)"
-      )
+  fits_df <- fits_long %>%
+    pivot_wider(
+      names_from = variable,
+      values_from = value
+    )
 
-    if (nrow(as.data.frame(flags)) > 0) {
-      flags_df <- as.data.frame(flags) %>%
-        pivot_longer(cols = everything(),
-                     names_to = c(".value", "number"),
-                     names_sep = "\\.") %>%
-        select(-number) %>%
-        rename(sample = file)
-    } else {
-      flags_df <- NULL
+  if (!is.null(plot_folder)) {
+
+    if (!dir.exists(plot_folder)) {
+      dir.create(plot_folder, recursive = TRUE)
     }
 
-    # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
-    data_df <- data_long %>%
-      pivot_wider(
-        names_from = variable,
-        values_from = value
-      )
+    # List of sample names
+    sample_names <- data_df$sample
 
-    fits_df <- fits_long %>%
-      pivot_wider(
-        names_from = variable,
-        values_from = value
-      )
+    for (sample in sample_names) {
 
-    return(list(data = data_df, fits = fits_df, flags = flags_df))
+      # Find the potential flag
+      flag <- flags_df[grepl(sample, flags_df$sample),]
+
+      # Specify plot subfolder
+      if (nrow(flag) == 0) {
+        flag_folder <- file.path(plot_folder, "PSD.OK")
+      } else {
+        flag_folder <- file.path(plot_folder, make.names(flag$flag))
+      }
+
+      # Create plot subfolder
+      if (!dir.exists(flag_folder)) {
+        dir.create(flag_folder, recursive = TRUE)
+      }
+
+      # Plot the sample PSD
+      p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit)
+
+      # Save the plot
+      ggsave(filename = file.path(flag_folder,
+                                  paste0(sample, ".png")),
+             plot = p,
+             bg = "white",
+             width = 6,
+             height = 4)
+    }
   }
+
+  return(list(data = data_df, fits = fits_df, flags = flags_df))
 }

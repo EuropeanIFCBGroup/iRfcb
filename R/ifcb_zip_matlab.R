@@ -37,11 +37,11 @@
 #'                  version = "1.0")
 #' }
 #'
-#' @import zip
+#' @importFrom zip zipr
 #' @importFrom stringr str_extract
-#' @importFrom dplyr count arrange
+#' @importFrom dplyr count arrange desc n
 #' @export
-#' @references Sosik, H. M. and Olson, R. J. (2007) Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \code{\link{ifcb_zip_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_filename,
                             data_folder = NULL, readme_file = NULL, matlab_readme_file = NULL,

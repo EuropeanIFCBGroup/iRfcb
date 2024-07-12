@@ -9,10 +9,43 @@
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @return If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
 #'         If sum_level is "class", returns a data frame with columns: class_name, n_images.
-#' @importFrom dplyr group_by summarise bind_rows arrange
+#'
+#' @importFrom dplyr group_by summarise bind_rows arrange n first
 #' @importFrom lubridate date year month day
+#'
 #' @export
 #' @seealso \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
+#'
+#' @examples
+#' \dontrun{
+#' # Example usage:
+#' # Assuming the following directory structure:
+#' # png_folder/
+#' # ├── class1/
+#' # │   ├── sample1_00001.png
+#' # │   ├── sample1_00002.png
+#' # │   ├── sample2_00001.png
+#' # ├── class2/
+#' # │   ├── sample1_00003.png
+#' # │   ├── sample3_00001.png
+#'
+#' png_folder <- "path/to/png_folder"
+#' hdr_folder <- "path/to/hdr_folder" # This folder should contain corresponding .hdr files
+#'
+#' # Summarize by sample
+#' summary_sample <- ifcb_summarize_png_data(png_folder,
+#'                                           hdr_folder,
+#'                                           sum_level = "sample",
+#'                                           verbose = TRUE)
+#' print(summary_sample)
+#'
+#' # Summarize by class
+#' summary_class <- ifcb_summarize_png_data(png_folder,
+#'                                          hdr_folder,
+#'                                          sum_level = "class",
+#'                                          verbose = TRUE)
+#' print(summary_class)
+#' }
 ifcb_summarize_png_data <- function(png_folder, hdr_folder = NULL, sum_level = "sample", verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE, full.names = FALSE)
