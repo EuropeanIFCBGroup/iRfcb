@@ -317,6 +317,19 @@ data.frame(class2use,
 ```
 The default class for diatoms is defined as Bacillariophyceae, but may be adjusted using the `diatom_class` argument.
 
+### Find trophic type of plankton taxa
+
+This function takes a list of taxa names and matches them with the `SMHI Trophic Type` list used in [SHARK](https://sharkweb.smhi.se/hamta-data/).
+
+```r
+taxa_list <- c("Acanthoceras zachariasii",
+               "Nodularia spumigena",
+               "Acanthoica quattrospina",
+               "Noctiluca",
+               "Gymnodiniales")
+
+ifcb_get_trophic_type(taxa_list)
+```
 
 ### Check whether the positions are within the Baltic Sea or elsewhere
 
