@@ -323,10 +323,10 @@ This function takes a list of taxa names and matches them with the `SMHI Trophic
 
 ```r
 taxa_list <- c("Acanthoceras zachariasii",
-                "Nodularia spumigena",
-                "Acanthoica quattrospina",
-                "Noctiluca",
-                "Gymnodiniales")
+               "Nodularia spumigena",
+               "Acanthoica quattrospina",
+               "Noctiluca",
+               "Gymnodiniales")
 
 ifcb_get_trophic_type(taxa_list)
 ```
