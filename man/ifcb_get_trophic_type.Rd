@@ -2,21 +2,26 @@
 % Please edit documentation in R/ifcb_get_trophic_type.R
 \name{ifcb_get_trophic_type}
 \alias{ifcb_get_trophic_type}
-\title{Get Trophic Type for a List of Taxa}
+\title{Get Trophic Type for a List of Plankton Taxa}
 \usage{
-ifcb_get_trophic_type(taxa_list)
+ifcb_get_trophic_type(taxa_list = NULL, print_complete_list = FALSE)
 }
 \arguments{
 \item{taxa_list}{A character vector of scientific names for which trophic types are to be retrieved.}
+
+\item{print_complete_list}{Logical, if TRUE, prints the complete list of summarized trophic types.}
 }
 \value{
-A character vector of trophic types corresponding to the scientific names in \code{taxa_list}.
+A character vector of trophic types corresponding to the scientific names in \code{taxa_list},
+or a data frame containing all taxa and trophic types available in the `SMHI Trophic Type` list.
 }
 \description{
-This function reads a file containing trophic types for various taxa (originating from SMHI),
-             and returns the trophic type for a specified list of taxa.
-             If there are multiple unique trophic types for a scientific name,
-             the summarized trophic type is "NS".
+This function matches a specified list of taxa with a summarized list of trophic types
+             for various plankton taxa from Northern Europe (data sourced from `SMHI Trophic Type`).
+}
+\details{
+If there are multiple trophic types for a scientific name (i.e. AU and HT size classes),
+the summarized trophic type is "NS".
 }
 \examples{
 # Example usage:
