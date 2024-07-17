@@ -400,7 +400,7 @@ Read all feature files (.csv) from a folder:
 features <- ifcb_read_features("data/features/2023")
 
 # Read only multiblob feature files
-multiblob_features <- ifcb_read_features("data/features/2023"", multiblob = TRUE)
+multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
 ```
 
 ### Read a Summary File
