@@ -50,11 +50,26 @@ ifcb_is_near_land <- function(latitudes,
                               remove_small_islands = TRUE,
                               small_island_threshold = 2000000) {
 
+  # Check for NAs in latitudes and longitudes
+  na_positions <- is.na(latitudes) | is.na(longitudes)
+
+  # Create a result vector initialized to NA
+  result <- rep(NA, length(latitudes))
+
+  # If all positions are NA, return the result early
+  if (all(na_positions)) {
+    return(result)
+  }
+
+  # Filter out NA positions for further processing
+  latitudes_filtered <- latitudes[!na_positions]
+  longitudes_filtered <- longitudes[!na_positions]
+
   utm_epsg <- paste0("epsg:", 32600 + utm_zone)
 
   # Create a bounding box around the coordinates with a buffer
-  bbox <- st_bbox(c(xmin = min(longitudes) - 1, xmax = max(longitudes) + 1,
-                    ymin = min(latitudes) - 1, ymax = max(latitudes) + 1),
+  bbox <- st_bbox(c(xmin = min(longitudes_filtered) - 1, xmax = max(longitudes_filtered) + 1,
+                    ymin = min(latitudes_filtered) - 1, ymax = max(latitudes_filtered) + 1),
                   crs = st_crs(crs))
 
   # Get coastline
@@ -107,7 +122,7 @@ ifcb_is_near_land <- function(latitudes,
   l_buffer <- st_transform(l_buffer, crs = crs)
 
   # Create sf object for positions
-  positions_sf <- st_as_sf(data.frame(lon = longitudes, lat = latitudes),
+  positions_sf <- st_as_sf(data.frame(lon = longitudes_filtered, lat = latitudes_filtered),
                            coords = c("lon", "lat"), crs = st_crs(crs))
 
   # Check which positions intersect with the buffer and land
@@ -116,6 +131,9 @@ ifcb_is_near_land <- function(latitudes,
   # Extract logical vectors indicating whether each position is near land or on land
   near_land_logical <- lengths(near_land) > 0
 
-  # Return the logical vector indicating near land
-  return(near_land_logical)
+  # Assign results back to the appropriate positions in the result vector
+  result[!na_positions] <- near_land_logical
+
+  # Return the logical vector indicating near land with NAs for original NA positions
+  return(result)
 }
