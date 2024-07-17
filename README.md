@@ -76,8 +76,8 @@ To determine if the Imaging FlowCytobot (IFCB) is near land (i.e. in harbor), ex
 gps_data <- ifcb_read_hdr_data("data/data/",
                                gps_only = TRUE)
 
-gps_data$near_land <- ifcb_is_near_land(as.numeric(gps_data$gpsLatitude),
-                                        as.numeric(gps_data$gpsLongitude),
+gps_data$near_land <- ifcb_is_near_land(gps_data$gpsLatitude,
+                                        gps_data$gpsLongitude,
                                         distance = 100, # 100 meters from shore
                                         shape = NULL) # Using the default NE 1:10m Land Polygon
 
