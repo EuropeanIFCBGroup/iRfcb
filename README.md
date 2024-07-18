@@ -356,7 +356,7 @@ This function is used by SMHI to collect and match stored ferrybox positions whe
 
 ```r
 # Define path where ferrybox data are located
-ferrybox_folder <- "/path/to/ferrybox/data"
+ferrybox_folder <- "data/ferrybox_data"
 timestamps <- as.POSIXct(c("2016-08-10 10:47:34 UTC",
                            "2016-08-10 11:12:21 UTC",
                            "2016-08-10 11:35:59 UTC"))
