@@ -59,5 +59,20 @@ ifcb_download_test_data <- function(dest_dir, method = "auto") {
     file.remove(dest_file)
   }
 
+  # Copy classified file
+  class_file <- system.file("exdata/D20230810T113059_IFCB134_class_v1.mat", package = "iRfcb")
+  summary_file <- system.file("exdata/summary_allTB_2023.mat", package = "iRfcb")
+
+  # Create classified folder
+  dir.create(file.path(dest_dir, "classified", "summary"), recursive = TRUE)
+
+  # Copy classified to classfied folder
+  file.copy(class_file,
+            file.path(dest_dir, "classified", basename(class_file)))
+
+  # Copy summary file to summary folder
+  file.copy(summary_file,
+            file.path(dest_dir, "classified", "summary", basename(summary_file)))
+
   cat("Download and extraction complete.\n")
 }
