@@ -63,25 +63,30 @@ ifcb_download_test_data <- function(dest_dir, method = "auto") {
   class_file <- system.file("exdata/example.mat", package = "iRfcb")
   summary_file <- system.file("exdata/example_summary.mat", package = "iRfcb")
   correction_file <- system.file("exdata/example.txt", package = "iRfcb")
+  ferrybox_file <- system.file("exdata/example_ferrybox.txt", package = "iRfcb")
 
   # Define destination directories
   classified_dir <- file.path(dest_dir, "classified", "2023")
   summary_dir <- file.path(classified_dir, "summary")
   manual_dir <- file.path(dest_dir, "manual", "correction")
+  ferrybox_dir <- file.path(dest_dir, "ferrybox_data")
 
   # Create necessary directories
   dir.create(summary_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(manual_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(ferrybox_dir, recursive = TRUE, showWarnings = FALSE)
 
   # Define destination files
   dest_class_file <- file.path(classified_dir, "D20230810T113059_IFCB134_class_v1.mat")
   dest_summary_file <- file.path(summary_dir, "summary_allTB_2023.mat")
   dest_correction_file <- file.path(manual_dir, "Alexandrium_pseudogonyaulax_selected_images.txt")
+  dest_ferrybox_file <- file.path(ferrybox_dir, "SveaFB_38059_20220501000100_20220531235800_OK.txt")
 
   # Copy files to their respective destinations
   file.copy(class_file, dest_class_file)
   file.copy(summary_file, dest_summary_file)
   file.copy(correction_file, dest_correction_file)
+  file.copy(ferrybox_file, dest_ferrybox_file)
 
   cat("Download and extraction complete.\n")
 }
