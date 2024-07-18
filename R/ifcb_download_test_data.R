@@ -59,20 +59,29 @@ ifcb_download_test_data <- function(dest_dir, method = "auto") {
     file.remove(dest_file)
   }
 
-  # Copy classified file
-  class_file <- system.file("exdata/D20230810T113059_IFCB134_class_v1.mat", package = "iRfcb")
-  summary_file <- system.file("exdata/summary_allTB_2023.mat", package = "iRfcb")
+  # Define source files
+  class_file <- system.file("exdata/example.mat", package = "iRfcb")
+  summary_file <- system.file("exdata/example_summary.mat", package = "iRfcb")
+  correction_file <- system.file("exdata/example.txt", package = "iRfcb")
 
-  # Create classified folder
-  dir.create(file.path(dest_dir, "classified", "summary"), recursive = TRUE)
+  # Define destination directories
+  classified_dir <- file.path(dest_dir, "classified", "2023")
+  summary_dir <- file.path(classified_dir, "summary")
+  manual_dir <- file.path(dest_dir, "manual", "correction")
 
-  # Copy classified to classfied folder
-  file.copy(class_file,
-            file.path(dest_dir, "classified", basename(class_file)))
+  # Create necessary directories
+  dir.create(summary_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(manual_dir, recursive = TRUE, showWarnings = FALSE)
 
-  # Copy summary file to summary folder
-  file.copy(summary_file,
-            file.path(dest_dir, "classified", "summary", basename(summary_file)))
+  # Define destination files
+  dest_class_file <- file.path(classified_dir, "D20230810T113059_IFCB134_class_v1.mat")
+  dest_summary_file <- file.path(summary_dir, "summary_allTB_2023.mat")
+  dest_correction_file <- file.path(summary_dir, "Alexandrium_pseudogonyaulax_selected_images.txt")
+
+  # Copy files to their respective destinations
+  file.copy(class_file, dest_class_file)
+  file.copy(summary_file, dest_summary_file)
+  file.copy(correction_file, dest_correction_file)
 
   cat("Download and extraction complete.\n")
 }

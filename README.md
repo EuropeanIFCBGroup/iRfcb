@@ -384,7 +384,7 @@ Extract classified results from a sample:
 
 ```r
 ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
-                               classified_folder = "data/classified",
+                               classified_folder = "data/classified/2023",
                                roi_folder = "data/data",
                                out_folder = "data/classified_images",
                                taxa = "All", # or specify a particular taxa
@@ -408,7 +408,7 @@ multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
 Read a summary file:
 
 ```r
-summary_data <- ifcb_read_summary("data/classified/summary/summary_allTB_2023.mat",
+summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
                                   biovolume = TRUE,
                                   threshold = "opt")
 ```
@@ -420,7 +420,7 @@ This function calculates aggregated biovolumes and carbon content from Imaging F
 ```r
 # Summarize biovolume data using IFCB data from the specified folders
 biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
-                                            class_folder = "data/classified",
+                                            class_folder = "data/classified/2023",
                                             hdr_folder = "data/data/2023",
                                             micron_factor = 1/3.4,
                                             diatom_class = "Bacillariophyceae",

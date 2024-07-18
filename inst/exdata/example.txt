@@ -1,0 +1,3 @@
+class_folder	image_filename
+Alexandrium_pseudogonyaulax	D20220712T210855_IFCB134_00164.png
+Alexandrium_pseudogonyaulax	D20220712T222710_IFCB134_00044.png
