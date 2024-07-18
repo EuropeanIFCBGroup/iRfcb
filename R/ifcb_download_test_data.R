@@ -76,7 +76,7 @@ ifcb_download_test_data <- function(dest_dir, method = "auto") {
   # Define destination files
   dest_class_file <- file.path(classified_dir, "D20230810T113059_IFCB134_class_v1.mat")
   dest_summary_file <- file.path(summary_dir, "summary_allTB_2023.mat")
-  dest_correction_file <- file.path(summary_dir, "Alexandrium_pseudogonyaulax_selected_images.txt")
+  dest_correction_file <- file.path(manual_dir, "Alexandrium_pseudogonyaulax_selected_images.txt")
 
   # Copy files to their respective destinations
   file.copy(class_file, dest_class_file)
