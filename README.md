@@ -411,7 +411,7 @@ Read a summary file:
 
 ```r
 summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
-                                  biovolume = TRUE,
+                                  biovolume = FALSE,
                                   threshold = "opt")
 ```
 
