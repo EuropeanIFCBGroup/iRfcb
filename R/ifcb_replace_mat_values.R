@@ -38,7 +38,7 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
   }
 
   # List files to be updated
-  files <- list.files(manual_folder, full.names = TRUE)
+  files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE)
 
   if (length(files) == 0) {
     stop(paste("No files found in the manual folder:", manual_folder))

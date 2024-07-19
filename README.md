@@ -164,7 +164,7 @@ unclassified_id <- which(grepl("unclassified",
 
 ifcb_correct_annotation(manual_folder = "data/manual",
                         out_folder = "data/manual",
-                        correction_file = "data/Alexandrium_pseudogonyaulax_selected_images.txt",
+                        correction_file = "data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt",
                         correct_classid = unclassified_id)
 ```
 
@@ -355,14 +355,16 @@ This function reads a land-buffered shapefile of the Baltic Sea Basin (including
 This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
 
 ```r
-# Define path where ferrybox data are located
-ferrybox_folder <- "/path/to/ferrybox/data"
-timestamps <- as.POSIXct(c("2016-08-10 10:47:34 UTC",
-                           "2016-08-10 11:12:21 UTC",
-                           "2016-08-10 11:35:59 UTC"))
+# Read HDR data and extract GPS position (when available)
+gps_data <- ifcb_read_hdr_data("data/data/",
+                               gps_only = TRUE)
 
-result <- ifcb_get_svea_position(timestamps, ferrybox_folder)
-print(result)
+# Define path where ferrybox data are located
+ferrybox_folder <- "data/ferrybox_data"
+
+# Get GPS position from ferrybox data
+positions <- ifcb_get_svea_position(gps_data$timestamp, ferrybox_folder)
+print(positions)
 ```
 
 ### Get the column names needed for a data delivery to SHARK
@@ -383,10 +385,10 @@ print(shark_colnames)
 Extract classified results from a sample:
 
 ```r
-ifcb_extract_classified_images(sample = "D20230311T092911_IFCB135",
-                               classified_folder = "path/to/classified_folder",
-                               roi_folder = "path/to/roi_folder",
-                               out_folder = "path/to/outputdir",
+ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
+                               classified_folder = "data/classified/2023",
+                               roi_folder = "data/data",
+                               out_folder = "data/classified_images",
                                taxa = "All", # or specify a particular taxa
                                threshold = "opt") # or specify another threshold
 ```
@@ -408,8 +410,8 @@ multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
 Read a summary file:
 
 ```r
-summary_data <- ifcb_read_summary("path/to/summary_file.mat",
-                                  biovolume = TRUE,
+summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
+                                  biovolume = FALSE,
                                   threshold = "opt")
 ```
 
@@ -420,7 +422,7 @@ This function calculates aggregated biovolumes and carbon content from Imaging F
 ```r
 # Summarize biovolume data using IFCB data from the specified folders
 biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
-                                            class_folder = "path/to/class",
+                                            class_folder = "data/classified/2023",
                                             hdr_folder = "data/data/2023",
                                             micron_factor = 1/3.4,
                                             diatom_class = "Bacillariophyceae",
