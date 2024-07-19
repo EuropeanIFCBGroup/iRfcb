@@ -355,14 +355,16 @@ This function reads a land-buffered shapefile of the Baltic Sea Basin (including
 This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
 
 ```r
+# Read HDR data and extract GPS position (when available)
+gps_data <- ifcb_read_hdr_data("data/data/",
+                               gps_only = TRUE)
+
 # Define path where ferrybox data are located
 ferrybox_folder <- "data/ferrybox_data"
-timestamps <- as.POSIXct(c("2016-08-10 10:47:34 UTC",
-                           "2016-08-10 11:12:21 UTC",
-                           "2016-08-10 11:35:59 UTC"))
 
-result <- ifcb_get_svea_position(timestamps, ferrybox_folder)
-print(result)
+# Get GPS position from ferrybox data
+positions <- ifcb_get_svea_position(gps_data$timestamp, ferrybox_folder)
+print(positions)
 ```
 
 ### Get the column names needed for a data delivery to SHARK
