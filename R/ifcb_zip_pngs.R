@@ -7,6 +7,7 @@
 #' @param readme_file Optional path to a README file for inclusion in the zip package.
 #' @param email_address Optional email address to include in the README file.
 #' @param version Optional version information to include in the README file.
+#' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
 #'
 #' @return This function does not return any value; it creates a zip archive and potentially a README file.
 #'
@@ -30,7 +31,8 @@
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year
 #' @seealso \code{\link{ifcb_zip_matlab}}
-ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "", version = "") {
+ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "",
+                          version = "", print_progress = TRUE) {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE)
 
@@ -61,7 +63,9 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     }
 
     # Update the progress bar
-    print_progress(i, total_subdirs) # Helper function
+    if (print_progress) {
+      print_progress(i, total_subdirs) # Helper function
+    }
   }
 
   # Print a new line after the progress bar is complete

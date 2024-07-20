@@ -9,7 +9,8 @@ ifcb_extract_annotated_images(
   class2use_file,
   roi_folder,
   out_folder,
-  skip_class = NA
+  skip_class = NA,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ ifcb_extract_annotated_images(
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
 \item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
+
+\item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.

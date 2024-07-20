@@ -13,7 +13,8 @@ ifcb_zip_matlab(
   readme_file = NULL,
   matlab_readme_file = NULL,
   email_address = "",
-  version = ""
+  version = "",
+  print_progress = TRUE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ ifcb_zip_matlab(
 \item{email_address}{The email address to be included in the README file for contact information.}
 
 \item{version}{Optionally, the version number to be included in the README file.}
+
+\item{print_progress}{A logical value indicating whether to print progress bar. Default is TRUE.}
 }
 \description{
 This function creates a zip archive containing specified files and directories for manually

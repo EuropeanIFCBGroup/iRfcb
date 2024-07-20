@@ -11,6 +11,7 @@ utils::globalVariables(c("name", "manual"))
 #' @param roi_folder A character string specifying the path to the directory containing the ROI files.
 #' @param out_folder A character string specifying the output directory where the extracted images will be saved.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
+#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
 #' @importFrom R.matlab readMat
 #' @importFrom tools file_path_sans_ext
@@ -31,7 +32,7 @@ utils::globalVariables(c("name", "manual"))
 #'   skip_class = 1
 #' )
 #' }
-ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder, skip_class = NA) {
+ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder, skip_class = NA, verbose = TRUE) {
 
   # Get the list of classified files
   manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = FALSE)
@@ -99,7 +100,8 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
       ifcb_extract_pngs(roifilename,
                         out_folder = out_folder,
                         ROInumbers = taxa.list_ix$`roi number`,
-                        taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_")
+                        taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_"),
+                        verbose = verbose
                         )
     }
   }

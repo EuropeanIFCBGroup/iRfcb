@@ -1,7 +1,7 @@
 Package: iRfcb
 Type: Package
-Title: I 'R' FlowCytobot (iRfcb): Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB) using R
-Version: 0.2.3
+Title: I 'R' FlowCytobot (iRfcb): Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB)
+Version: 0.2.4
 Author: Anders Torstensson
 Maintainer: Anders Torstensson <anders.torstensson@smhi.se>
 Description: Provides functions to manage and analyze Imaging FlowCytobot (IFCB) data in R. Includes functionality to create zip archives of directories containing .mat and .csv files, and directories containing .png files. Functions also facilitate conversion of ROI files to PNG images, extraction of taxa-specific images from ROI files, extraction of taxa images from classified samples, retrieval of class information from classifier and class2use files, and extraction of ROI images and IDs from ROI files.
@@ -30,3 +30,7 @@ Imports:
   lubridate
 RoxygenNote: 7.3.2
 Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
