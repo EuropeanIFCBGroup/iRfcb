@@ -13,6 +13,7 @@
 #' @param matlab_readme_file Optionally, the path to a MATLAB README file whose content will be appended to the end of the README file in the zip archive.
 #' @param email_address The email address to be included in the README file for contact information.
 #' @param version Optionally, the version number to be included in the README file.
+#' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
 #'
 #' @details This function performs the following operations:
 #' - Lists .mat files from `manual_folder`.
@@ -45,7 +46,7 @@
 #' @seealso \code{\link{ifcb_zip_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_filename,
                             data_folder = NULL, readme_file = NULL, matlab_readme_file = NULL,
-                            email_address = "", version = "") {
+                            email_address = "", version = "", print_progress = TRUE) {
   # Print message to indicate starting listing files
   message("Listing all files...")
 
@@ -86,7 +87,9 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   for (mat_file in mat_files) {
     file.copy(mat_file, manual_dir, overwrite = TRUE)
     current_file <- current_file + 1
-    print_progress(current_file, total_files) # Helper function
+    if (print_progress) {
+      print_progress(current_file, total_files) # Helper function
+    }
   }
 
   # Print a new line after the progress bar is complete
@@ -102,7 +105,9 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   # Find and copy matching feature files for each .mat file
   for (mat_file in mat_files) {
     current_mat_file <- current_mat_file + 1
-    print_progress(current_mat_file, total_mat_files) # Helper function
+    if (print_progress) {
+      print_progress(current_mat_file, total_mat_files) # Helper function
+    }
 
     matching_features <- find_matching_features(mat_file, feature_files) # Helper function
     for (feature_file in matching_features) {
@@ -133,7 +138,9 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     # Find and copy matching data files for each .mat file
     for (mat_file in mat_files) {
       current_mat_file <- current_mat_file + 1
-      print_progress(current_mat_file, total_mat_files) # Helper function
+      if (print_progress) {
+        print_progress(current_mat_file, total_mat_files) # Helper function
+      }
 
       matching_data <- find_matching_data(mat_file, data_files) # Helper function
       for (data_file in matching_data) {

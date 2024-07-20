@@ -9,7 +9,9 @@
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
+#'
 #' @return This function is called for its side effects: it writes PNG images to a directory.
+#'
 #' @examples
 #' \dontrun{
 #' # Convert ROI file to PNG images
