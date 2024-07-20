@@ -29,8 +29,7 @@ library(iRfcb)
 
 ## Documentation and Tutorials
 
-For detailed usage instructions, please refer to the [tutorial](https://github.com/EuropeanIFCBGroup/iRfcb/articles/tutorial.html) and the vignette available in the `vignettes` directory of the package. 
-
+For detailed usage instructions, including a tutorial, please refer to the [package documentation](https://europeanifcbgroup.github.io/iRfcb/) and the vignette available in the `vignettes` directory of the package. 
 
 ### Key Features
 
