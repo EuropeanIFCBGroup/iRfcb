@@ -1,4 +1,4 @@
-utils::globalVariables(c(":="))
+utils::globalVariables(":=")
 #' Function to create MANIFEST.txt
 #'
 #' This function generates a MANIFEST.txt file that lists all files in the specified paths,
@@ -10,7 +10,7 @@ utils::globalVariables(c(":="))
 #' @param temp_dir A character string specifying the temporary directory to be removed from the file paths.
 create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_dir) {
   # Initialize a vector to store all files
-  all_files <- c()
+  all_files <- NULL
 
   # Iterate over each path in the provided list
   for (path in paths) {
@@ -88,7 +88,7 @@ print_progress <- function(current, total, bar_width = 50) {
 find_matching_features <- function(mat_file, feature_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, feature_files, value = TRUE)
-  return(matching_files)
+  matching_files
 }
 
 #' Function to find matching data files with a general pattern
@@ -101,7 +101,7 @@ find_matching_features <- function(mat_file, feature_files) {
 find_matching_data <- function(mat_file, data_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, data_files, value = TRUE)
-  return(matching_files)
+  matching_files
 }
 
 #' Function to read individual files and extract relevant lines
@@ -118,11 +118,11 @@ read_hdr_file <- function(file) {
   data <- do.call(rbind, lapply(lines, function(line) {
     split_line <- strsplit(line, ": ", fixed = TRUE)[[1]]
     if (length(split_line) == 2) {
-      return(data.frame(parameter = split_line[1], value = split_line[2], file = file, stringsAsFactors = FALSE))
+      data.frame(parameter = split_line[1], value = split_line[2], file = file, stringsAsFactors = FALSE)
     }
   }))
   data <- na.omit(data)
-  return(data)
+  data
 }
 
 #' Function to extract parts using regular expressions
@@ -176,7 +176,7 @@ extract_parts <- function(filename) {
   if (!any(is.na(roi))) {
     df$roi <- roi
   }
-  return(df)
+  df
 }
 #' Load iRfcb Python Environment on Package Load
 #'
@@ -274,7 +274,7 @@ vol2C_nondiatom <- function(volume) {
   b <- 0.939
   logC <- loga + b * log10(volume)
   carbon <- 10^logC
-  return(carbon)
+  carbon
 }
 
 #' Handle Missing Positions by Rounding Timestamps
@@ -350,9 +350,9 @@ handle_missing_positions <- function(data, ferrybox_position, rounding_function,
 #' iRfcb:::extract_class(empty_record)
 extract_class <- function(record) {
   if (nrow(record) == 0) {
-    return(NA)
+    NA
   } else {
-    return(record$class[1])
+    record$class[1]
   }
 }
 
@@ -373,8 +373,8 @@ extract_class <- function(record) {
 #' iRfcb:::extract_aphia_id(empty_record)
 extract_aphia_id <- function(record) {
   if (nrow(record) == 0) {
-    return(NA)
+    NA
   } else {
-    return(record$AphiaID[1])
+    record$AphiaID[1]
   }
 }

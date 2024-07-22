@@ -1,13 +1,16 @@
 ---
-title: "Tutorial"
-output: rmarkdown::html_vignette
+title: "iRfcb Tutorial"
+output:
+  rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Tutorial}
+  %\VignetteIndexEntry{iRfcb Tutorial}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-## Installation
+## Getting Started
+
+#### Installation
 
 You can install the package from GitHub using the `devtools` package:
 ```{r, eval=FALSE}
@@ -17,29 +20,128 @@ devtools::install_github("EuropeanIFCBGroup/iRfcb",
 ```
 Some functions in `iRfcb` require `Python` to be installed (see in the sections below). You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
-## Getting Started
-
 Load the `iRfcb` library:
 ```{r}
 library(iRfcb)
 ```
 
-## Download Sample Data
+#### Download Sample Data
 
-To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) with the following function:
-```{r}
+To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) with the following function:
+```{r, eval=FALSE}
 # Download and extract test data in the data folder
 ifcb_download_test_data(dest_dir = "data",
-                        method = "auto")
+                        method = "auto") # You may need to specify
 ```
 
-## Run QC/QA Checks
+```{r, echo=FALSE, warning=FALSE}
+# Download and extract test data in the data folder
+ifcb_download_test_data(dest_dir = "data",
+                        method = "wininet") # You may need to specify
+```
 
-### Run Particle Size Distribution QC
+## Extract Timestamps and Volumes
+
+#### Extract Timestamps from IFCB sample Filenames
+
+Extract timestamps from filenames:
+```{r}
+# Example sample names
+filenames <- c("D20230314T001205_IFCB134",
+               "D20230615T123045_IFCB135")
+
+# Convert filenames to timestamps
+timestamps <- ifcb_convert_filenames(filenames)
+
+# Print result
+print(timestamps)
+```
+
+With ROI numbers:
+```{r}
+# Example sample names
+filenames <- c("D20230314T001205_IFCB134_00023.png",
+               "D20230615T123045_IFCB135")
+
+# Convert filenames to timestamps
+timestamps <- ifcb_convert_filenames(filenames)
+
+# Print result
+print(timestamps)
+```
+
+#### Get Volume Analyzed in ml
+
+Get the volume analyzed from header/adc files:
+```{r}
+# Path to HDR file
+hdr_file <- "data/data/2023/D20230314/D20230314T001205_IFCB134.hdr"
+
+# Calculate volume analyzed (in ml)
+volume_analyzed <- ifcb_volume_analyzed(hdr_file)
+
+# Print result
+print(volume_analyzed)
+```
+
+#### Get Runtime
+
+Get the runtime from a header file:
+```{r}
+# Get runtime from HDR-file
+run_time <- ifcb_get_runtime(hdr_file)
+
+# Print result
+print(run_time)
+```
+
+## Extract .PNG Images from ROI
+
+Extract all images from a sample:
+```{r}
+# All ROIs in sample
+ifcb_extract_pngs("data/data/2023/D20230314/D20230314T001205_IFCB134.roi")
+```
+
+Extract specific ROIs:
+```{r}
+# Only ROI number 2 and 5
+ifcb_extract_pngs("data/data/2023/D20230314/D20230314T003836_IFCB134.roi",
+                  ROInumbers = c(2, 5))
+```
+
+To extract annotated images from MATLAB files, please see [Use MATLAB Annotated Files](#use-matlab-annotated-files)
+To extract classified results from MATLAB files, please see [Classified Results from MATLAB](#classified-results-from-matlab)
+
+## PSD QC/QA
+
+#### Particle Size Distribution
 
 IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. in prep). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD). Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
 
-```{r, echo=TRUE, include=FALSE}
+```{r, eval=FALSE}
+# Install python virtual environment
+ifcb_py_install(envname = ".virtualenvs/iRfcb") # Or your preferred venv path
+
+# Run PSD quality control
+psd <- ifcb_psd(feature_folder = "data/features/2023",
+                hdr_folder = "data/data/2023",
+                save_data = FALSE,
+                output_file = NULL,
+                plot_folder = NULL,
+                use_marker = FALSE,
+                start_fit = 10,
+                r_sqr = 0.5,
+                beads = 10 ** 12,
+                bubbles = 150,
+                incomplete = c(1500, 3),
+                missing_cells = 0.7,
+                biomass = 1000,
+                bloom = 5,
+                humidity = 70)
+```
+
+```{r, include=FALSE}
 # Install python virtual environment
 ifcb_py_install(envname = ".virtualenvs/iRfcb") # Or your preferred venv path
 
@@ -76,9 +178,11 @@ plot <- ifcb_psd_plot(sample_name = psd$data$sample[1],
 print(plot)
 ```
 
-### Check if IFCB is Near Land
+## Geographical QC/QA
 
-To determine if the Imaging FlowCytobot (IFCB) is near land (i.e. in harbor), examine the position data in the .hdr files (or from other vectors of latitudes and longitudes):
+#### Check if IFCB is Near Land
+
+To determine if the IFCB is near land (i.e. in harbor), examine the position data in the .hdr files (or from vectors of latitudes and longitudes):
 ```{r}
 # Read HDR data and extract GPS position (when available)
 gps_data <- ifcb_read_hdr_data("data/data/",
@@ -96,7 +200,7 @@ head(gps_data)
 
 For more accurate determination, a detailed coastline .shp file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of `ifcb_is_near_land` for further information.
 
-### Check which sub-basin an IFCB sample is from
+#### Check which sub-basin an IFCB sample is from
 
 To identify the specific sub-basin of the Baltic Sea (or using a custom shape-file) from which an Imaging FlowCytobot (IFCB) sample was collected, analyze the position data:
 ```{r}
@@ -117,11 +221,48 @@ ifcb_which_basin(latitudes,
                  plot = TRUE, 
                  shape_file = NULL)
 ```
+
 This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the 'iRfcb' package by default, or a user-supplied shapefile if provided. The shapefiles provided in 'iRfcb' originate from [SHARK](https://sharkweb.smhi.se/hamta-data/). 
 
-## Annotated Files
+#### Check whether the positions are within the Baltic Sea or elsewhere
 
-### Count and Summarize Annotated Image Data
+This check is useful if only you want to apply a classifier specifically to phytoplankton from the Baltic Sea.
+
+```{r}
+# Define example latitude and longitude vectors
+latitudes <- c(55.337, 54.729, 56.311, 57.975)
+longitudes <- c(12.674, 14.643, 12.237, 10.637)
+
+# Check if the points are in the Baltic Sea Basin
+points_in_the_baltic <- ifcb_is_in_basin(latitudes, longitudes)
+
+# Print results
+print(points_in_the_baltic)
+
+# Plot the points and the basin
+ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
+```
+
+This function reads a land-buffered shapefile of the Baltic Sea Basin (including Öresund) from the 'iRfcb' package by default, or a user-supplied shapefile if provided.
+
+#### Find missing positions from RV Svea Ferrybox
+
+This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
+
+```{r}
+# Define path where ferrybox data are located
+ferrybox_folder <- "data/ferrybox_data"
+
+# Get GPS position from ferrybox data
+positions <- ifcb_get_svea_position(gps_data$timestamp, ferrybox_folder)
+
+# Print result
+head(positions)
+```
+
+## Use MATLAB Annotated Files
+
+#### Count and Summarize Annotated Image Data
 
 #### PNG Directory
 
@@ -155,7 +296,7 @@ mat_count <- ifcb_count_mat_annotations(manual_folder = "data/manual",
 head(mat_count)
 ```
 
-### Run Image Gallery
+#### Run Image Gallery
 
 To visually inspect and correct annotations, run the image gallery. 
 ```{r, eval=FALSE}
@@ -166,7 +307,7 @@ ifcb_run_image_gallery()
 ![image_gallery](figures/image_gallery.png)
 Individual images can be selected and a list of selected images can be downloaded as a 'correction_file'. This file can be used to correct .mat annotations below using the `ifcb_correct_annotation` function.
 
-### Correct .mat Files After Checking Images in the App
+#### Correct .mat Files After Checking Images in the App
 
 After reviewing images in the gallery, correct the .mat files using the 'correction file' with selected images:
 ```{r}
@@ -189,7 +330,7 @@ ifcb_correct_annotation(manual_folder = "data/manual",
                         correct_classid = unclassified_id)
 ```
 
-### Replace Specific Class Annotations
+#### Replace Specific Class Annotations
 
 Replace all instances of a specific class with "unclassified" (class id 1):
 ```{r}
@@ -216,7 +357,7 @@ ifcb_replace_mat_values(manual_folder = "data/manual",
                         new_id = unclassified_id)
 ```
 
-### Extract Annotated Images
+#### Extract Annotated Images
 
 Extract annotated images, skipping the "unclassified" (class id 1) category:
 ```{r, echo=TRUE, results='hide'}
@@ -229,7 +370,7 @@ ifcb_extract_annotated_images(manual_folder = "data/manual",
                               verbose = FALSE)
 ```
 
-### Verify Correction
+#### Verify Correction
 
 Verify that the corrections have been applied:
 ```{r}
@@ -242,11 +383,11 @@ png_per_class <- ifcb_summarize_png_data(png_folder = "data/extracted_images",
 head(png_per_class)
 ```
 
-## Prepare Zip-Packages for Publication
+## Prepare Annotated Images for Publication
 
-### PNG Directory
+#### PNG Directory
 
-Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
+Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024):
 ```{r}
 # Create zip-archive
 ifcb_zip_pngs(png_folder = "data/extracted_images",
@@ -258,8 +399,7 @@ ifcb_zip_pngs(png_folder = "data/extracted_images",
               print_progress = FALSE)
 ```
 
-
-### MATLAB Directory
+#### MATLAB Directory
 
 Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
 ```{r}
@@ -278,7 +418,7 @@ ifcb_zip_matlab(manual_folder = "data/manual",
                 print_progress = FALSE)
 ```
 
-### Create MANIFEST.txt
+#### Create MANIFEST.txt
 
 Create a manifest file for the zip packages:
 ```{r}
@@ -286,77 +426,68 @@ Create a manifest file for the zip packages:
 ifcb_create_manifest("zip/")
 ```
 
-## MISC
+## Classified Results from MATLAB
 
-### Extract .png from a Sample
+#### Extract Classified Results from a Sample
 
-Extract all images from a sample:
+Extract classified results from a sample:
+
 ```{r}
-# All ROIs in sample
-ifcb_extract_pngs("data/data/2023/D20230314/D20230314T001205_IFCB134.roi")
+# Extract all classified images from a sample
+ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
+                               classified_folder = "data/classified",
+                               roi_folder = "data/data",
+                               out_folder = "data/classified_images",
+                               taxa = "All", # or specify a particular taxa
+                               threshold = "opt") # or specify another threshold
 ```
 
-Extract specific ROIs:
+#### Read feature data
+
+Read all feature files (.csv) from a folder:
+
 ```{r}
-# Only ROI number 2 and 5
-ifcb_extract_pngs("data/data/2023/D20230314/D20230314T003836_IFCB134.roi",
-                  ROInumbers = c(2, 5))
+# Read feature files from a folder
+features <- ifcb_read_features("data/features/2023/")
+
+# Print output of first 10 columns from the first sample in the list
+head(features[[1]])[,1:10]
+
+# Read only multiblob feature files
+multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
+
+# Print output of first 10 columns from the first sample in the list
+head(multiblob_features[[1]])[,1:10]
 ```
 
-### Extract Timestamps from Filenames
+#### Read a Summary File
 
-Extract timestamps from filenames:
+Read a summary file:
+
 ```{r}
-# Example sample names
-filenames <- c("D20230314T001205_IFCB134",
-               "D20230615T123045_IFCB135")
-
-# Convert filenames to timestamps
-timestamps <- ifcb_convert_filenames(filenames)
-
-# Print result
-print(timestamps)
+# Read a MATLAB summary file generated by `countcells_allTBnew_user_training`
+summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
+                                  biovolume = FALSE,
+                                  threshold = "opt")
 ```
 
-With ROI numbers:
+#### Summarize counts, biovolumes and carbon content from classified IFCB data
+
+This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000 for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
+
 ```{r}
-# Example sample names
-filenames <- c("D20230314T001205_IFCB134_00023.png",
-               "D20230615T123045_IFCB135")
-
-# Convert filenames to timestamps
-timestamps <- ifcb_convert_filenames(filenames)
-
-# Print result
-print(timestamps)
+# Summarize biovolume data using IFCB data from the specified folders
+biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
+                                            class_folder = "data/classified",
+                                            hdr_folder = "data/data/2023",
+                                            micron_factor = 1/3.4,
+                                            diatom_class = "Bacillariophyceae",
+                                            threshold = "opt")
 ```
 
-### Get Volume Analyzed in ml
+## Taxonomical Data
 
-Get the volume analyzed from header/adc files:
-```{r}
-# Path to HDR file
-hdr_file <- "data/data/2023/D20230314/D20230314T001205_IFCB134.hdr"
-
-# Calculate volume analyzed (in ml)
-volume_analyzed <- ifcb_volume_analyzed(hdr_file)
-
-# Print result
-print(volume_analyzed)
-```
-
-### Get Runtime
-
-Get the runtime from a header file:
-```{r}
-# Get runtime from HDR-file
-run_time <- ifcb_get_runtime(hdr_file)
-
-# Print result
-print(run_time)
-```
-
-### Check whether a class name is a diatom
+#### Check whether a class name is a diatom
 
 This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard 2000. See `iRfcb:::vol2C_nondiatom` and `iRfcb:::vol2C_lgdiatom` for carbon calculations (not included in NAMESPACE).
 
@@ -373,7 +504,7 @@ head(class_list)
 ```
 The default class for diatoms is defined as Bacillariophyceae, but may be adjusted using the `diatom_class` argument.
 
-### Find trophic type of plankton taxa
+#### Find trophic type of plankton taxa
 
 This function takes a list of taxa names and matches them with the `SMHI Trophic Type` list used in [SHARK](https://sharkweb.smhi.se/hamta-data/).
 
@@ -392,47 +523,7 @@ trophic_type <- ifcb_get_trophic_type(taxa_list)
 print(trophic_type)
 ```
 
-### Check whether the positions are within the Baltic Sea or elsewhere
-
-This check is useful if only you want to apply a classifier specifically to phytoplankton from the Baltic Sea.
-
-```{r}
-# Define example latitude and longitude vectors
-latitudes <- c(55.337, 54.729, 56.311, 57.975)
-longitudes <- c(12.674, 14.643, 12.237, 10.637)
-
-# Check if the points are in the Baltic Sea Basin
-points_in_the_baltic <- ifcb_is_in_basin(latitudes, longitudes)
-
-# Print results
-print(points_in_the_baltic)
-
-# Plot the points and the basin
-ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
-```
-
-This function reads a land-buffered shapefile of the Baltic Sea Basin (including Öresund) from the 'iRfcb' package by default, or a user-supplied shapefile if provided.
-
-### Find missing positions from RV Svea Ferrybox
-
-This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
-
-```{r}
-# Read HDR data and extract GPS position (when available)
-gps_data <- ifcb_read_hdr_data("data/data/",
-                               gps_only = TRUE)
-
-# Define path where ferrybox data are located
-ferrybox_folder <- "data/ferrybox_data"
-
-# Get GPS position from ferrybox data
-positions <- ifcb_get_svea_position(gps_data$timestamp, ferrybox_folder)
-
-# Print result
-head(positions)
-```
-
-### Get the column names needed for a data delivery to SHARK
+## SHARK export
 
 This function is used by SMHI to map IFCB data into the [SHARK](https://sharkweb.smhi.se/hamta-data/) standard data delivery format.
 
@@ -444,63 +535,10 @@ shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
 ```
 
-## Working with Classified Results from MATLAB
-
-### Extract Classified Results from a Sample
-#### NOTE: These steps require .mat and .csv files generated by the MATLAB package [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) (Sosik and Olson 2007)
-
-Extract classified results from a sample:
-
-```{r}
-# Extract all classified images from a sample
-ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
-                               classified_folder = "data/classified",
-                               roi_folder = "data/data",
-                               out_folder = "data/classified_images",
-                               taxa = "All", # or specify a particular taxa
-                               threshold = "opt") # or specify another threshold
-```
-
-### Read feature data
-
-Read all feature files (.csv) from a folder:
-
-```{r}
-# Read feature files from a folder
-features <- ifcb_read_features("data/features/2023/")
-
-# Read only multiblob feature files
-multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
-```
-
-### Read a Summary File
-
-Read a summary file:
-
-```{r}
-# Read a MATLAB summary file generated by `countcells_allTBnew_user_training`
-summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
-                                  biovolume = FALSE,
-                                  threshold = "opt")
-```
-
-### Summarize counts, biovolumes and carbon content from classified IFCB data
-
-This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000 for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
-
-```{r}
-# Summarize biovolume data using IFCB data from the specified folders
-biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
-                                            class_folder = "data/classified",
-                                            hdr_folder = "data/data/2023",
-                                            micron_factor = 1/3.4,
-                                            diatom_class = "Bacillariophyceae",
-                                            threshold = "opt")
-```
-
 This concludes the tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation. Happy analyzing!
 
 ## References
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 - Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 - Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v2
