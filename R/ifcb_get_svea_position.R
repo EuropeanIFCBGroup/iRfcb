@@ -93,7 +93,7 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
                  na.strings = "")
     }, error = function(e) {
       warning(paste("Failed to read file:", file, "-", e$message))
-      return(NULL)
+      NULL
     })
 
     if (!is.null(ferrybox_data_temp)) {

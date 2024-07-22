@@ -93,5 +93,5 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
       annotate("text", x = max(plot_data$x) * 0.5, y = max(plot_data$y) * 0.9, label = equation_text, hjust = 0, vjust = 1, size = 5, color = "black")
   }
 
-  return(p)
+  p
 }

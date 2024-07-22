@@ -47,8 +47,8 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
 
   path_out <- file.path(gsub("classxxxx_v1/", "", classpath_generic), "summary", .Platform$file.sep)
 
-  classfiles <- c()
-  filelist <- c()
+  classfiles <- NULL
+  filelist <- NULL
 
   for (yr in year_range) {
     classpath <- gsub("xxxx", as.character(yr), classpath_generic)

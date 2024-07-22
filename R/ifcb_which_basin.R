@@ -66,9 +66,9 @@ ifcb_which_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
   # Determine the basin for each point
   basin_names <- apply(points_in_basins, 1, function(row) {
     if (any(row)) {
-      return(basins$basin[which(row)])
+      basins$basin[which(row)]
     } else {
-      return(NA)
+      NA
     }
   })
 

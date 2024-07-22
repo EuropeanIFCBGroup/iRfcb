@@ -55,7 +55,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   }, error = function(e) {
     # Handle the error
     cat("An error occurred:", conditionMessage(e), "\n")
-    return(NULL)
+    NULL
   })
 
   # Loop over ROIs and save PNG images

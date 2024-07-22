@@ -67,5 +67,5 @@ ifcb_get_runtime <- function(hdr_file) {
     hdr$runType <- trimws(substr(linestr, colonpos + 2, nchar(linestr)))
   }
 
-  return(hdr)
+  hdr
 }

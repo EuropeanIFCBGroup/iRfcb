@@ -253,7 +253,7 @@ vol2C_lgdiatom <- function(volume) {
   b <- 0.881
   logC <- loga + b * log10(volume)
   carbon <- 10^logC
-  return(carbon)
+  carbon
 }
 #' Convert Biovolume to Carbon for Non-Diatom Protists
 #'

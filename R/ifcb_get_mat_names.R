@@ -22,5 +22,5 @@ ifcb_get_mat_names <- function(mat_file) {
   # Extract variable names
   variable_names <- names(mat_contents)
 
-  return(variable_names)
+  variable_names
 }

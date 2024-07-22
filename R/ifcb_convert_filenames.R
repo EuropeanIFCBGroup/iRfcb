@@ -20,5 +20,5 @@ ifcb_convert_filenames <- function(filenames) {
   timestamps_list <- lapply(filenames, extract_parts) # Helper function
   timestamps <- do.call(bind_rows, timestamps_list)
 
-  return(timestamps)
+  timestamps
 }

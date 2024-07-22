@@ -1,4 +1,4 @@
-utils::globalVariables(c("replace_value_in_classlist"))
+utils::globalVariables("replace_value_in_classlist")
 #' Replace Values in MATLAB Classlist
 #'
 #' This function replaces a target class ID with a new ID in MATLAB classlist files,
