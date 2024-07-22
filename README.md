@@ -34,7 +34,7 @@ For detailed documentation, please visit the project's [webpage](https://europea
 
 ### Tutorial
 
-- [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/tutorial/tutorial.html)
+- [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/articles/tutorial/tutorial.html)
 
 ### Reference
 
