@@ -59,7 +59,7 @@ ifcb_volume_analyzed_from_adc <- function(adc_file) {
           inhibittime_offset <- adc$V24[2] + modeinhibittime * 2
         }
 
-        runtime2 <- adc$V2[nrow(adc)] + median(adc$V23[seq_len(min(nrow(adc)), 50)] - adc$V2[seq_len(min(nrow(adc)), 50)]) - runtime_offset
+        runtime2 <- adc$V2[nrow(adc)] + median(adc$V23[seq_len(min(nrow(adc), 50))] - adc$V2[seq_len(min(nrow(adc), 50))]) - runtime_offset
 
         if (abs(runtime - runtime2) > 0.2) {
           runtime[count] <- runtime2
