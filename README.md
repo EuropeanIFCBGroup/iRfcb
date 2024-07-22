@@ -39,7 +39,7 @@ For detailed documentation, please visit the project's [webpage](https://europea
 ### Reference
 
 - [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
-ghbbb
+
 ### Key Features
 
 - **Data Management**: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.
