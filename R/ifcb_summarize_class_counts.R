@@ -125,5 +125,5 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
     summary_data$adhocthresh <- adhocthresh
   }
 
-  return(summary_data)
+  summary_data
 }
