@@ -8,4 +8,8 @@
 ^docs$
 ^_pkgdown\.yml$
 ^vignettes/.*
+^vignettes/.*\.Rmd$
+^vignettes/.*\.md$
+^vignettes/.*\.html$
 ^\.github$
+^pkgdown$
