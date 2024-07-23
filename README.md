@@ -9,6 +9,15 @@
 
 The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB images and data for publication. It is especially useful for researchers using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package (Sosik and Olson 2007).
 
+### Key Features
+
+- **Data Management**: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.
+- **Quality Control**: Tools for analyzing particle size distribution and ensuring high data quality (Hayashi et al. in prep).
+- **Geospatial Analysis**: Functions to determine if the IFCB is near land or within specific marine basins.
+- **Image Extraction**: Tools to extract and prepare images for publication.
+- **Image Gallery**: Interactive gallery for viewing and selecting IFCB images.
+- **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data (Menden-Deuer and Lessard 2000).
+
 ## Installation
 
 You can install the package from GitHub using the `devtools` package:
@@ -18,19 +27,9 @@ You can install the package from GitHub using the `devtools` package:
 devtools::install_github("EuropeanIFCBGroup/iRfcb", dependencies = TRUE)
 ```
 
-Some functions in `iRfcb` require Python. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/).
-
-## Getting Started
-
-Load the `iRfcb` library:
-
-```r
-library(iRfcb)
-```
+Some functions in `iRfcb` require Python. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For more details, please visit the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/).
 
 ## Documentation and Tutorials
-
-For detailed documentation, please visit the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/).
 
 ### Tutorial
 
@@ -39,15 +38,6 @@ For detailed documentation, please visit the project's [webpage](https://europea
 ### Reference
 
 - [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
-
-### Key Features
-
-- **Data Management**: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.
-- **Quality Control**: Tools for analyzing particle size distribution and ensuring high data quality (Hayashi et al. in prep).
-- **Geospatial Analysis**: Functions to determine if the IFCB is near land or within specific marine basins.
-- **Image Extraction**: Efficient tools to extract and prepare images for publication.
-- **Image Gallery**: Interactive gallery for viewing and selecting IFCB images.
-- **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data (Menden-Deuer and Lessard 2000).
 
 ## Repository
 
