@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">iRfcb</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.6</span>
       </span>
     </div>
 
@@ -66,6 +66,24 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>The <code>iRfcb</code> R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB images and data for publication. It is especially useful for researchers using, or partly using, the MATLAB <a href="https://github.com/hsosik/ifcb-analysis" class="external-link">ifcb-analysis</a> package (Sosik and Olson 2007).</p>
+<div class="section level3">
+<h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+</h3>
+<ul>
+<li>
+<strong>Data Management</strong>: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.</li>
+<li>
+<strong>Quality Control</strong>: Tools for analyzing particle size distribution and ensuring high data quality (Hayashi et al. in prep).</li>
+<li>
+<strong>Geospatial Analysis</strong>: Functions to determine if the IFCB is near land or within specific marine basins.</li>
+<li>
+<strong>Image Extraction</strong>: Tools to extract and prepare images for publication.</li>
+<li>
+<strong>Image Gallery</strong>: Interactive gallery for viewing and selecting IFCB images.</li>
+<li>
+<strong>Taxonomical Data</strong>: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data (Menden-Deuer and Lessard 2000).</li>
+</ul>
+</div>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -74,19 +92,11 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"EuropeanIFCBGroup/iRfcb"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions in <code>iRfcb</code> require Python. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>.</p>
-</div>
-<div class="section level2">
-<h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
-</h2>
-<p>Load the <code>iRfcb</code> library:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">iRfcb</span><span class="op">)</span></span></code></pre></div>
+<p>Some functions in <code>iRfcb</code> require Python. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For more details, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/" class="external-link">webpage</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="documentation-and-tutorials">Documentation and Tutorials<a class="anchor" aria-label="anchor" href="#documentation-and-tutorials"></a>
 </h2>
-<p>For detailed documentation, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/" class="external-link">webpage</a>.</p>
 <div class="section level3">
 <h3 id="tutorial">Tutorial<a class="anchor" aria-label="anchor" href="#tutorial"></a>
 </h3>
@@ -99,24 +109,6 @@
 </h3>
 <ul>
 <li><a href="https://europeanifcbgroup.github.io/iRfcb/reference/index.html" class="external-link">Function Reference</a></li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="key-features">Key Features<a class="anchor" aria-label="anchor" href="#key-features"></a>
-</h3>
-<ul>
-<li>
-<strong>Data Management</strong>: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.</li>
-<li>
-<strong>Quality Control</strong>: Tools for analyzing particle size distribution and ensuring high data quality (Hayashi et al. in prep).</li>
-<li>
-<strong>Geospatial Analysis</strong>: Functions to determine if the IFCB is near land or within specific marine basins.</li>
-<li>
-<strong>Image Extraction</strong>: Efficient tools to extract and prepare images for publication.</li>
-<li>
-<strong>Image Gallery</strong>: Interactive gallery for viewing and selecting IFCB images.</li>
-<li>
-<strong>Taxonomical Data</strong>: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data (Menden-Deuer and Lessard 2000).</li>
 </ul>
 </div>
 </div>

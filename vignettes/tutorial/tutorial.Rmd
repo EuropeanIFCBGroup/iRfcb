@@ -28,16 +28,10 @@ library(iRfcb)
 #### Download Sample Data
 
 To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) with the following function:
-```{r, eval=FALSE}
+```{r}
 # Download and extract test data in the data folder
 ifcb_download_test_data(dest_dir = "data",
                         method = "auto") # You may need to specify
-```
-
-```{r, echo=FALSE, warning=FALSE}
-# Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = "data",
-                        method = "wininet") # You may need to specify
 ```
 
 ## Extract Timestamps and Volumes
