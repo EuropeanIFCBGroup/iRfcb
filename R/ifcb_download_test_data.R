@@ -48,9 +48,7 @@ ifcb_download_test_data <- function(dest_dir, method = "auto") {
     dest_file <- file.path(dest_dir, basename(url))
 
     # Download the file
-    download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb",
-                  cacheOK = FALSE, extra = getOption("download.file.extra"),
-                  headers = c(From = "noreply@example.com"))
+    download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb")
 
     # Unzip the file into the appropriate subdirectory
     unzip(dest_file, exdir = subdir)

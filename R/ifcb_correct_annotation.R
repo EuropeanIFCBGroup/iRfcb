@@ -32,6 +32,8 @@ utils::globalVariables("edit_manual_file")
 #'
 #' @importFrom reticulate source_python
 #' @importFrom stats aggregate
+#' @importFrom tools file_path_sans_ext
+#'
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction_file, correct_classid) {
 
@@ -45,7 +47,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction_file, 
   corrections$sample_filename <- sub("^(.*)_[^_]*$", "\\1", corrections$image_filename)
 
   # Convert the filenames to get the roi values
-  corrections$roi <- ifcb_convert_filenames(corrections$image_filename)$roi
+  corrections$roi <- ifcb_convert_filenames(tools::file_path_sans_ext(corrections$image_filename))$roi
 
   # Aggregate roi to correct per sample
   corrections_aggregated <- stats::aggregate(roi ~ sample_filename, data = corrections, FUN = list)

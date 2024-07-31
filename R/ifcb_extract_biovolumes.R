@@ -42,7 +42,16 @@ utils::globalVariables("biovolume")
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
 ifcb_extract_biovolumes <- function(feature_folder, class_folder, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE) {
   features <- ifcb_read_features(feature_folder, multiblob = multiblob)
+
+  if (length(features) == 0) {
+    stop("No feature data files found")
+  }
+
   classes <- list.files(class_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = TRUE)
+
+  if (length(classes) == 0) {
+    stop("No class data files found")
+  }
 
   # Initialize an empty list to store data frames
   data_list <- list()

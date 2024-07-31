@@ -36,5 +36,10 @@ RoxygenNote: 7.3.2
 Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0),
+    fs,
+    mockery,
+    shinytest2
 VignetteBuilder: knitr
+Config/testthat/edition: 3

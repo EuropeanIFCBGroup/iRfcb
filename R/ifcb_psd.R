@@ -31,10 +31,11 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @importFrom reticulate py_available py_run_string import
-#' @importFrom dplyr rename select everything
+#' @importFrom dplyr rename select everything arrange
 #' @importFrom magrittr %>%
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom ggplot2 ggsave
+#' @importFrom tibble rownames_to_column as_tibble tibble
 #'
 #' @examples
 #' \dontrun{
@@ -98,44 +99,38 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
                        missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
 
-  # Convert the wide format data to long format
-  data_long <- as.data.frame(data) %>%
-    pivot_longer(
-      cols = everything(),
-      names_to = c("variable", "sample"),
-      names_pattern = "(.*)\\.(D\\d+T\\d+)"
-    )
 
-  fits_long <- as.data.frame(fits) %>%
-    pivot_longer(
-      cols = everything(),
-      names_to = c("variable", "sample"),
-      names_pattern = "(.*)\\.(D\\d+T\\d+)"
-    )
+  # Flatten nested lists and combine into a data frame
+  data_df <- as.data.frame(lapply(data, function(x) unlist(x)))
+
+  # Convert to tibble and add sample column
+  data_df <- tibble::rownames_to_column(data_df, var = "sample") %>%
+    dplyr::arrange(sample) %>%
+    as_tibble
+
+  # Convert nested list to a data frame
+  fits_df <- as.data.frame(lapply(fits, function(x) unlist(x)))
+
+  # Convert to long format and then to wide format
+  fits_df <- fits_df %>%
+    tibble::rownames_to_column("sample") %>%
+    as_tibble %>%
+    dplyr::arrange(sample)
 
   if (nrow(as.data.frame(flags)) > 0) {
-    flags_df <- as.data.frame(flags) %>%
-      pivot_longer(cols = everything(),
-                   names_to = c(".value", "number"),
-                   names_sep = "\\.") %>%
-      select(-number) %>%
-      rename(sample = file)
+    # Convert to a data frame
+    files <- unlist(flags$file)
+    flags <- unlist(flags$flag)
+
+    # Combine into a data frame
+    flags_df <- tibble(
+      sample = files,
+      flag = flags
+    ) %>%
+      dplyr::arrange(sample)
   } else {
     flags_df <- NULL
   }
-
-  # Reshape the data to wide format with 'a', 'k', 'R.2', etc., as columns
-  data_df <- data_long %>%
-    pivot_wider(
-      names_from = variable,
-      values_from = value
-    )
-
-  fits_df <- fits_long %>%
-    pivot_wider(
-      names_from = variable,
-      values_from = value
-    )
 
   if (!is.null(plot_folder)) {
 

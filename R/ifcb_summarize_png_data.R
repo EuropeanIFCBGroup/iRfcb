@@ -50,6 +50,11 @@ ifcb_summarize_png_data <- function(png_folder, hdr_folder = NULL, sum_level = "
   # List all subdirectories (classes) directly under the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE, full.names = FALSE)
 
+  # Stop function if there are no subdirectories in the png folder
+  if (length(subdirs) == 0) {
+    stop("No subdirectories found in the PNG folder")
+  }
+
   # Initialize an empty list to store results
   results <- list()
 
