@@ -14,7 +14,7 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
   stub(ifcb_py_install, 'use_virtualenv', mock_use_virtualenv)
 
   # Call the function
-  ifcb_py_install(".virtualenvs/iRfcb-test")
+  ifcb_py_install("~/.virtualenvs/iRfcb-test")
 
   # Capture the arguments passed to virtualenv_create
   args_virtualenv_create <- mock_args(mock_virtualenv_create)
@@ -29,7 +29,7 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
   expect_equal(args_use_virtualenv[[1]][[1]], "/.virtualenvs/iRfcb")
 
   # Clean up the temporary virtual environment
-  unlink(".virtualenvs/iRfcb-test", recursive = TRUE)
+  unlink("~/.virtualenvs/iRfcb-test", recursive = TRUE)
 })
 
 test_that("ifcb_py_install handles additional arguments", {
@@ -43,7 +43,7 @@ test_that("ifcb_py_install handles additional arguments", {
   stub(ifcb_py_install, 'use_virtualenv', mock_use_virtualenv)
 
   # Call the function with additional arguments
-  ifcb_py_install(envname = "test_env", packages = c("numpy", "pandas"))
+  ifcb_py_install(envname = "~/test_env", packages = c("numpy", "pandas"))
 
   # Capture the arguments passed to virtualenv_create
   args_virtualenv_create <- mock_args(mock_virtualenv_create)
@@ -59,5 +59,5 @@ test_that("ifcb_py_install handles additional arguments", {
   expect_equal(args_use_virtualenv[[1]][[1]], "test_env")
 
   # Clean up the temporary virtual environment
-  unlink("test_env", recursive = TRUE)
+  unlink("~/test_env", recursive = TRUE)
 })
