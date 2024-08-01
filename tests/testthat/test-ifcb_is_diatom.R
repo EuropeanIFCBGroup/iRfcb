@@ -13,12 +13,12 @@ mock_wm_records_names <- function(names, marine_only) {
     Dinophysis = list(class = "Dinophyceae"),
     Thalassiosira = list(class = "Bacillariophyceae")
   )
-  return(lapply(names, function(name) records[[name]]))
+  lapply(names, function(name) records[[name]])
 }
 
 # Mocking the extract_class function to return the class from the mocked records
 mock_extract_class <- function(record) {
-  return(record$class)
+  record$class
 }
 
 test_that("ifcb_is_diatom correctly identifies diatoms", {

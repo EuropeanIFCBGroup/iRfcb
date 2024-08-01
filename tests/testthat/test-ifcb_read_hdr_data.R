@@ -20,7 +20,7 @@ create_temp_hdr_from_example <- function() {
     dir.create(hdr_folder)
   }
   file.copy(hdr_file_path, file.path(hdr_folder, "D20230314T001205_IFCB134.hdr"))
-  return(hdr_folder)
+  hdr_folder
 }
 
 test_that("ifcb_read_hdr_data reads HDR data correctly", {

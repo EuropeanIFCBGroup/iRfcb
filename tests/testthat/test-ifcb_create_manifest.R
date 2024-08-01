@@ -13,7 +13,7 @@ setup_mock_directory <- function() {
   writeLines("This is another test file.", file.path(temp_dir, "file2.txt"))
   writeLines("This is a subfolder test file.", file.path(temp_dir, "subfolder", "file3.txt"))
 
-  return(temp_dir)
+  temp_dir
 }
 
 # Define test cases

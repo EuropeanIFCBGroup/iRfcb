@@ -25,7 +25,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_true(all(c("class", "n") %in% names(result)))
 
   # Run the function with skipping specific class IDs
-  skip_ids <- c(1)
+  skip_ids <- 1
   result_skip_ids <- ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = skip_ids)
 
   # Verify the structure and content of the result

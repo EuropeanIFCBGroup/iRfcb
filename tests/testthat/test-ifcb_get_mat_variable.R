@@ -13,7 +13,7 @@ test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a
   classes <- ifcb_get_mat_variable(mat_file, "classifierName")
 
   # Check if the retrieved classes are as expected (assuming you know the expected classes)
-  expected_classes <- c("Z:\\data\\manual\\Skagerrak-Kattegat\\summary\\results_21May202421May2024")  # Replace with actual expected values
+  expected_classes <- "Z:\\data\\manual\\Skagerrak-Kattegat\\summary\\results_21May202421May2024"
   expect_equal(classes[1], expected_classes, info = "Retrieved classes should match expected values")
 })
 
