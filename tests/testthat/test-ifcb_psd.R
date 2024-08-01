@@ -109,6 +109,6 @@ test_that("ifcb_psd works correctly", {
   expect_true(length(plot_files) > 0)
 
   # Clean up temporary files
-  unlink(venv_dir, recursive = TRUE)
+  # unlink(venv_dir, recursive = TRUE)
   unlink(temp_dir, recursive = TRUE)
 })

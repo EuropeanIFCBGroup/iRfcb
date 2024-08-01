@@ -29,7 +29,7 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
   expect_equal(args_use_virtualenv[[1]][[1]], "~/virtualenvs/iRfcb-test")
 
   # Clean up the temporary virtual environment
-  unlink("~/virtualenvs/iRfcb-test", recursive = TRUE)
+  # unlink("~/virtualenvs/iRfcb-test", recursive = TRUE)
 })
 
 test_that("ifcb_py_install handles additional arguments", {

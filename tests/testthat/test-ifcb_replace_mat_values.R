@@ -57,6 +57,6 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   expect_equal(output_classlist, expected_classlist)
 
   # Clean up the temporary virtual environment
-  unlink(venv_dir, recursive = TRUE)
+  # unlink(venv_dir, recursive = TRUE)
   unlink(manual_folder)
 })

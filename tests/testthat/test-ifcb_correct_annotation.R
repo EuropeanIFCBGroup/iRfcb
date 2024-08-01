@@ -77,7 +77,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
   expect_equal(output_classlist, expected_classlist)
 
   # Clean up the temporary virtual environment
-  unlink(venv_dir, recursive = TRUE)
+  # unlink(venv_dir, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
   unlink(manual_folder, recursive = TRUE)
   unlink(correction_file)
