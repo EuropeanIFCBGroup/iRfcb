@@ -66,7 +66,7 @@ test_that("ifcb_psd works correctly", {
   expect_true(dir.exists(hdr_folder))
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb-test"
+  venv_dir <- "~/virtualenvs/iRfcb-test"
   reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
   reticulate::use_virtualenv(venv_dir, required = TRUE)
 

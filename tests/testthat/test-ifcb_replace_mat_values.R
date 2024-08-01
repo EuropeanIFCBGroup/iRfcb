@@ -24,7 +24,7 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   column_index <- 0 # Python uses 0-based indexing
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb-test"
+  venv_dir <- "~/virtualenvs/iRfcb-test"
   reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
   reticulate::use_virtualenv(venv_dir, required = TRUE)
 
