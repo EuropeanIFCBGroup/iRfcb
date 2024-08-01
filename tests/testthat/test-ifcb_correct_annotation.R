@@ -44,8 +44,14 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
   # Create a temporary virtual environment
   venv_dir <- "~/virtualenvs/iRfcb-test"
-  reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-  reticulate::use_virtualenv(venv_dir, required = TRUE)
+
+  # Install a temporary virtual environment
+  if (virtualenv_exists(venv_dir)) {
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  } else {
+    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  }
 
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {

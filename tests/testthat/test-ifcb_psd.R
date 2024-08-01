@@ -67,8 +67,14 @@ test_that("ifcb_psd works correctly", {
 
   # Create a temporary virtual environment
   venv_dir <- "~/virtualenvs/iRfcb-test"
-  reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-  reticulate::use_virtualenv(venv_dir, required = TRUE)
+
+  # Install a temporary virtual environment
+  if (virtualenv_exists(venv_dir)) {
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  } else {
+    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  }
 
   # Run the function
   result <- ifcb_psd(

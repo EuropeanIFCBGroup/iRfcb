@@ -25,8 +25,14 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
 
   # Create a temporary virtual environment
   venv_dir <- "~/virtualenvs/iRfcb-test"
-  reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-  reticulate::use_virtualenv(venv_dir, required = TRUE)
+
+  # Install a temporary virtual environment
+  if (virtualenv_exists(venv_dir)) {
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  } else {
+    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
+    reticulate::use_virtualenv(venv_dir, required = TRUE)
+  }
 
   # Mock the Python function (replace_value_in_classlist)
   mock_replace_value_in_classlist <- function(input_file, output_file, target_value, new_value, column_index) {
