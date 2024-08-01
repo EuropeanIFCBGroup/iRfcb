@@ -29,8 +29,11 @@ library(iRfcb)
 
 To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) with the following function:
 ```{r}
+# Define data directory
+data_dir <- "data"
+
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = "data",
+ifcb_download_test_data(dest_dir = data_dir,
                         method = "auto") # You may need to specify
 ```
 
@@ -114,8 +117,11 @@ To extract classified results from MATLAB files, please see [Classified Results 
 IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. in prep). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD). Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
 
 ```{r, eval=FALSE}
+# Define path to virtual environment
+env_path <- "venv/iRfcb" # Or your preferred venv path
+
 # Install python virtual environment
-ifcb_py_install(envname = ".virtualenvs/iRfcb") # Or your preferred venv path
+ifcb_py_install(envname = env_path)
 
 # Run PSD quality control
 psd <- ifcb_psd(feature_folder = "data/features/2023",
@@ -136,8 +142,11 @@ psd <- ifcb_psd(feature_folder = "data/features/2023",
 ```
 
 ```{r, include=FALSE}
+# Define path to virtual environment
+env_path <- "venv/iRfcb" # Or your preferred venv path
+
 # Install python virtual environment
-ifcb_py_install(envname = ".virtualenvs/iRfcb") # Or your preferred venv path
+ifcb_py_install(envname = env_path) 
 
 # Run PSD quality control
 psd <- ifcb_psd(feature_folder = "data/features/2023",
@@ -315,7 +324,7 @@ unclassified_id <- which(grepl("unclassified",
                          class2use))
 
 # Initialize the python session if not already set up
-# ifcb_py_install(envname = ".virtualenvs/iRfcb") # If not already initialized
+# ifcb_py_install(envname = env_path) # If not already initialized
 
 # Correct the annotation with the output from the image gallery
 ifcb_correct_annotation(manual_folder = "data/manual",
@@ -342,7 +351,7 @@ unclassified_id <- which(grepl("unclassified",
                          class2use))
 
 # Initialize the python session if not already set up
-# ifcb_py_install(envname = ".virtualenvs/iRfcb") # If not already initialized
+# ifcb_py_install(envname = env_path) # If not already initialized
 
 # Move all Alexandrium_pseudogonyaulax images to unclassified
 ifcb_replace_mat_values(manual_folder = "data/manual",
@@ -530,6 +539,20 @@ print(shark_colnames)
 ```
 
 This concludes the tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation. Happy analyzing!
+
+```{r, include=FALSE}
+# Clean up
+unlink(data_dir, recursive = TRUE)
+unlink(env_path, recursive = TRUE)
+unlink("zip", recursive = TRUE)
+```
+
+## Citation
+
+```{r, echo=FALSE}
+# Print citation
+citation("iRfcb")
+```
 
 ## References
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
