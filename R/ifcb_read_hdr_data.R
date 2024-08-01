@@ -35,7 +35,7 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   hdr_data <- do.call(rbind, all_hdr_data_list)
 
   # Check if there is any data to process
-  if (nrow(hdr_data) == 0) {
+  if (is.null(hdr_data)) {
     stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
   }
 
@@ -60,9 +60,6 @@ ifcb_read_hdr_data <- function(hdr_folder, gps_only = FALSE, verbose = TRUE) {
   # Convert column types
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
                                                   col_types = cols(GPSFeed = col_character())))
-
-
-
 
   if (verbose) cat("Processing completed.\n")
 

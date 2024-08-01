@@ -60,6 +60,11 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
 
   # Extract the fit parameters
   fit_params <- fits %>% filter(sample == sample_name)
+
+  if (nrow(fit_params) == 0) {
+    stop("No fit parameters found for the specified sample.")
+  }
+
   a <- fit_params$a
   k <- fit_params$k
   R2 <- fit_params$R.2
@@ -68,10 +73,10 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
   power_curve <- function(x) { a * x^k }
 
   # Create the equation text
-  if (R2 != -Inf) {
+  if (!is.na(R2) && is.finite(R2)) {
     equation_text <- paste0("y = ", format(a, scientific = TRUE, digits = 3), " * x^", format(k, digits = 3), "\nR\u00B2 = ", format(R2, digits = 3))
   } else {
-    equation_text <- paste0("R\u00B2 = ", format(R2, digits = 3))
+    equation_text <- "No R\u00B2 value available."
   }
 
   # Plot the data
@@ -88,7 +93,7 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
     )
 
   # Add the power curve fit if R2 is not -Inf
-  if (R2 != -Inf) {
+  if (!is.na(R2) && is.finite(R2)) {
     p <- p + stat_function(fun = function(x) { a * x^k }, color = "blue") +
       annotate("text", x = max(plot_data$x) * 0.5, y = max(plot_data$y) * 0.9, label = equation_text, hjust = 0, vjust = 1, size = 5, color = "black")
   }

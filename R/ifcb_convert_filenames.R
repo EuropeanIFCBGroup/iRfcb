@@ -14,8 +14,20 @@
 #' @importFrom stringr str_extract str_remove_all
 #' @importFrom lubridate ymd_hms
 #' @importFrom dplyr bind_rows
+#' @importFrom tools file_path_sans_ext
+#'
 #' @export
 ifcb_convert_filenames <- function(filenames) {
+
+  # Remove extension if present
+  filenames <- tools::file_path_sans_ext(filenames)
+
+  # Check if filenames are in the correct format
+  valid_format <- grepl("^D\\d{8}T\\d{6}_IFCB\\d+(_\\d+)?$", filenames)
+  if (!all(valid_format)) {
+    stop("Error: One or more filenames are not in the correct format.")
+  }
+
   # Apply the extraction function to all filenames and combine results
   timestamps_list <- lapply(filenames, extract_parts) # Helper function
   timestamps <- do.call(bind_rows, timestamps_list)

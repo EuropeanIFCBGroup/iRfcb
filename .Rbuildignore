@@ -13,3 +13,4 @@
 ^vignettes/.*\.html$
 ^\.github$
 ^pkgdown$
+^codecov\.yml$

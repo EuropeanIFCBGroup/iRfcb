@@ -63,7 +63,7 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
     hdrfiles <- paste0(hdr_folder, filelist, ".hdr")
   } else {
     if (file.exists(file.path(hdr_folder, paste0(filelist[1], ".hdr")))) {
-      hdrfiles <- file.path(hdr_folder, filelist, ".hdr")
+      hdrfiles <- file.path(hdr_folder, paste0(filelist, ".hdr"))
     } else if (file.exists(file.path(hdr_folder, substr(filelist[1], 2, 5), paste0(filelist[1], ".hdr")))) {
       hdrfiles <- file.path(hdr_folder, substr(filelist, 2, 5), paste0(filelist, ".hdr"))
     } else if (file.exists(file.path(hdr_folder, substr(filelist[1], 2, 5), substr(filelist[1], 1, 9), paste0(filelist[1], ".hdr")))) {

@@ -131,6 +131,7 @@ read_hdr_file <- function(file) {
 #'
 #' @param filename A character string specifying the filename to extract parts from.
 #' @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
+#' @importFrom tools file_path_sans_ext
 extract_parts <- function(filename) {
 
   # Clean filename
