@@ -4,3 +4,7 @@
 .Ruserdata
 .DS_Store
 inst/doc
+/doc/
+/Meta/
+iRfcb.Rcheck
+docs
