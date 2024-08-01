@@ -51,12 +51,12 @@ test_that("ifcb_py_install handles additional arguments", {
   args_use_virtualenv <- mock_args(mock_use_virtualenv)
 
   # Check if virtualenv_create was called with the correct arguments
-  expect_equal(args_virtualenv_create[[1]][[1]], "test_env")
+  expect_equal(args_virtualenv_create[[1]][[1]], "~/test_env")
   expect_equal(args_virtualenv_create[[1]][[2]], system.file("python", "requirements.txt", package = "iRfcb"))
   expect_equal(args_virtualenv_create[[1]]$packages, c("numpy", "pandas"))
 
   # Check if use_virtualenv was called with the correct arguments
-  expect_equal(args_use_virtualenv[[1]][[1]], "test_env")
+  expect_equal(args_use_virtualenv[[1]][[1]], "~/test_env")
 
   # Clean up the temporary virtual environment
   unlink("~/test_env", recursive = TRUE)
