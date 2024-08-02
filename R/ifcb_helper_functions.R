@@ -1,5 +1,5 @@
 utils::globalVariables(":=")
-#' Function to create MANIFEST.txt
+#' Function to Create MANIFEST.txt
 #'
 #' This function generates a MANIFEST.txt file that lists all files in the specified paths,
 #' along with their sizes. It recursively includes files from directories and skips paths that
@@ -51,7 +51,7 @@ create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_
   writeLines(manifest_content, manifest_path)
 }
 
-#' Function to truncate the folder name
+#' Function to Truncate the Folder Name
 #'
 #' This function removes the trailing underscore and three digits from the base name of a folder.
 #'
@@ -61,7 +61,7 @@ truncate_folder_name <- function(folder_name) {
   sub("_\\d{3}$", "", basename(folder_name))
 }
 
-#' Function to print the progress bar
+#' Function to Print the Progress Bar
 #'
 #' This function prints a progress bar to the console to indicate the progress of a process.
 #'
@@ -78,7 +78,7 @@ print_progress <- function(current, total, bar_width = 50) {
   flush.console()
 }
 
-#' Function to find matching feature files with a general pattern
+#' Function to Find Matching Feature Files with a General Pattern
 #'
 #' This function finds feature files that match the base name of a given .mat file.
 #'
@@ -91,7 +91,7 @@ find_matching_features <- function(mat_file, feature_files) {
   matching_files
 }
 
-#' Function to find matching data files with a general pattern
+#' Function to Find Matching Data Files with a General Pattern
 #'
 #' This function finds data files that match the base name of a given .mat file.
 #'
@@ -104,7 +104,7 @@ find_matching_data <- function(mat_file, data_files) {
   matching_files
 }
 
-#' Function to read individual files and extract relevant lines
+#' Function to Read Individual Files and Extract Relevant Lines
 #'
 #' This function reads an HDR file and extracts relevant lines containing parameters and their values.
 #'
@@ -125,7 +125,7 @@ read_hdr_file <- function(file) {
   data
 }
 
-#' Function to extract parts using regular expressions
+#' Function to Extract Parts Using Regular Expressions
 #'
 #' This function extracts timestamp, IFCB number, and date components from a filename.
 #'
@@ -334,7 +334,7 @@ handle_missing_positions <- function(data, ferrybox_position, rounding_function,
     select(timestamp, !!lat_col, !!lon_col)
 }
 
-#' Extract the class from the first row of each worms_records tibble
+#' Extract the Class from the First Row of Each worms_records Tibble
 #'
 #' This function extracts the class from the first row of a given worms_records tibble.
 #' If the tibble is empty, it returns NA.
@@ -357,7 +357,7 @@ extract_class <- function(record) {
   }
 }
 
-#' Extract the AphiaID from the first row of each worms_records tibble
+#' Extract the AphiaID from the First Row of Each worms_records Tibble
 #'
 #' This function extracts the AphiaID from the first row of a given worms_records tibble.
 #' If the tibble is empty, it returns NA.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{find_matching_data}
 \alias{find_matching_data}
-\title{Function to find matching data files with a general pattern}
+\title{Function to Find Matching Data Files with a General Pattern}
 \usage{
 find_matching_data(mat_file, data_files)
 }

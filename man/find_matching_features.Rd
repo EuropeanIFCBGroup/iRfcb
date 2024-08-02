@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{find_matching_features}
 \alias{find_matching_features}
-\title{Function to find matching feature files with a general pattern}
+\title{Function to Find Matching Feature Files with a General Pattern}
 \usage{
 find_matching_features(mat_file, feature_files)
 }

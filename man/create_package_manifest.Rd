@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{create_package_manifest}
 \alias{create_package_manifest}
-\title{Function to create MANIFEST.txt}
+\title{Function to Create MANIFEST.txt}
 \usage{
 create_package_manifest(paths, manifest_path = "MANIFEST.txt", temp_dir)
 }

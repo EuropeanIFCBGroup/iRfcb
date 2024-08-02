@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_download_test_data.R
 \name{ifcb_download_test_data}
 \alias{ifcb_download_test_data}
-\title{Download test IFCB data}
+\title{Download Test IFCB Data}
 \usage{
 ifcb_download_test_data(dest_dir, method = "auto")
 }

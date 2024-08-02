@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_get_svea_position.R
 \name{ifcb_get_svea_position}
 \alias{ifcb_get_svea_position}
-\title{Get GPS coordinates from ferrybox data based on timestamps}
+\title{Get GPS Coordinates from Ferrybox Data Based on Timestamps}
 \usage{
 ifcb_get_svea_position(timestamps, ferrybox_folder, ship = "SveaFB")
 }
@@ -18,7 +18,7 @@ A data frame containing the input timestamps and corresponding GPS coordinates.
   Columns include 'timestamp', 'gpsLatitude', and 'gpsLongitude'.
 }
 \description{
-This function reads .txt files from a specified folder containing ferrybox data,
+This is an internal SMHI function that reads .txt files from a specified folder containing ferrybox data,
 filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
 GPS coordinates for timestamps (nearest minute) falling within the date ranges defined in the file names.
 }

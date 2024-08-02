@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{read_hdr_file}
 \alias{read_hdr_file}
-\title{Function to read individual files and extract relevant lines}
+\title{Function to Read Individual Files and Extract Relevant Lines}
 \usage{
 read_hdr_file(file)
 }

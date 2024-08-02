@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_extract_biovolumes.R
 \name{ifcb_extract_biovolumes}
 \alias{ifcb_extract_biovolumes}
-\title{Extract biovolumes from IFCB data and compute carbon content}
+\title{Extract Biovolumes from IFCB Data and Compute Carbon Content}
 \usage{
 ifcb_extract_biovolumes(
   feature_folder,

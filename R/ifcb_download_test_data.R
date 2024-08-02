@@ -1,4 +1,4 @@
-#' Download test IFCB data
+#' Download Test IFCB Data
 #'
 #' This function downloads two zip archives containing .png images and MATLAB files from the `svea_skagerrak_kattegat`
 #' dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024), and unzips them into the

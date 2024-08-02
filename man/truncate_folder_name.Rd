@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{truncate_folder_name}
 \alias{truncate_folder_name}
-\title{Function to truncate the folder name}
+\title{Function to Truncate the Folder Name}
 \usage{
 truncate_folder_name(folder_name)
 }

@@ -1,8 +1,8 @@
 utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", "ferrybox_latitude", "ferrybox_longitude", '38059', '8002', '8003', "gpsLatitude_floor", "gpsLatitude_ceiling", "gpsLongitude_floor", "gpsLongitude_ceiling", "gpsLatitude_missing", "gpsLongitude_missing"))
 
-#' Get GPS coordinates from ferrybox data based on timestamps
+#' Get GPS Coordinates from Ferrybox Data Based on Timestamps
 #'
-#' This function reads .txt files from a specified folder containing ferrybox data,
+#' This is an internal SMHI function that reads .txt files from a specified folder containing ferrybox data,
 #' filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
 #' GPS coordinates for timestamps (nearest minute) falling within the date ranges defined in the file names.
 #'

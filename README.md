@@ -8,13 +8,12 @@
 
 ## Overview
 
-The `iRfcb` R package provides tools for working with Imaging FlowCytobot (IFCB) data, including quality control, particle size distribution analysis, and handling of annotated image data. This package facilitates the processing, analysis, and preparation of IFCB images and data for publication. It is especially useful for researchers using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package.
+The `iRfcb` R package offers a suite of tools for managing and performing quality control on Imaging FlowCytobot (IFCB) data. It streamlines the processing and analysis of IFCB data, facilitating the preparation of IFCB images and data for publication. It is especially useful for researchers using, or partly using, the MATLAB [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package.
 
 ### Key Features
 
 - **Data Management**: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, and correcting annotated data.
-- **Quality Control**: Tools for analyzing particle size distribution and ensuring high data quality.
-- **Geospatial Analysis**: Functions to determine if the IFCB is near land or within specific marine basins.
+- **Quality Control**: Tools for geospatial quality control of IFCB data and analysis of [Particle Size Distribution](https://github.com/kudelalab/PSD).
 - **Image Extraction**: Tools to extract and prepare images for publication.
 - **Image Gallery**: Interactive gallery for viewing and selecting IFCB images.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data.
@@ -34,7 +33,7 @@ Some functions in `iRfcb` require Python. You can download Python from the offic
 
 ### Tutorial
 
-- [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/articles/tutorial/tutorial.html)
+- [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html)
 
 ### Reference
 

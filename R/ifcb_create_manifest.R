@@ -1,4 +1,4 @@
-#' Create a MANIFEST.txt file
+#' Create a MANIFEST.txt File
 #'
 #' This function generates a MANIFEST.txt file listing all files in a specified folder and its subfolders,
 #' along with their sizes in bytes. The function can optionally exclude an existing MANIFEST.txt file from

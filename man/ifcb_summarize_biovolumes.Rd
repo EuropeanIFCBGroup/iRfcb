@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_summarize_biovolumes.R
 \name{ifcb_summarize_biovolumes}
 \alias{ifcb_summarize_biovolumes}
-\title{Summarize biovolumes and carbon content from IFCB data}
+\title{Summarize Biovolumes and Carbon Content from IFCB Data}
 \usage{
 ifcb_summarize_biovolumes(
   feature_folder,

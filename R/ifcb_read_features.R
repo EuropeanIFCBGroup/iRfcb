@@ -1,4 +1,4 @@
-#' Read feature files from a specified folder
+#' Read Feature Files from a Specified Folder
 #'
 #' This function reads feature files from a given folder, filtering them optionally
 #' based on whether they are multiblob or single blob files.

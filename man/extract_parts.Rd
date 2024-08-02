@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{extract_parts}
 \alias{extract_parts}
-\title{Function to extract parts using regular expressions}
+\title{Function to Extract Parts Using Regular Expressions}
 \usage{
 extract_parts(filename)
 }

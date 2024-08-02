@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{extract_aphia_id}
 \alias{extract_aphia_id}
-\title{Extract the AphiaID from the first row of each worms_records tibble}
+\title{Extract the AphiaID from the First Row of Each worms_records Tibble}
 \usage{
 extract_aphia_id(record)
 }

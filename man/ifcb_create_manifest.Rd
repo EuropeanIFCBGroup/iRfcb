@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_create_manifest.R
 \name{ifcb_create_manifest}
 \alias{ifcb_create_manifest}
-\title{Create a MANIFEST.txt file}
+\title{Create a MANIFEST.txt File}
 \usage{
 ifcb_create_manifest(
   folder_path,

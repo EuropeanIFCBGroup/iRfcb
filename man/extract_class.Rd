@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{extract_class}
 \alias{extract_class}
-\title{Extract the class from the first row of each worms_records tibble}
+\title{Extract the Class from the First Row of Each worms_records Tibble}
 \usage{
 extract_class(record)
 }

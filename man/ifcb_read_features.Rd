@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_read_features.R
 \name{ifcb_read_features}
 \alias{ifcb_read_features}
-\title{Read feature files from a specified folder}
+\title{Read Feature Files from a Specified Folder}
 \usage{
 ifcb_read_features(feature_folder, multiblob = FALSE)
 }

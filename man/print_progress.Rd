@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_helper_functions.R
 \name{print_progress}
 \alias{print_progress}
-\title{Function to print the progress bar}
+\title{Function to Print the Progress Bar}
 \usage{
 print_progress(current, total, bar_width = 50)
 }
