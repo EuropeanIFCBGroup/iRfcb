@@ -1,18 +1,18 @@
-pkgdown:
-  template:
-    bootswatch: flatly
+url: https://europeanifcbgroup.github.io/iRfcb/
+template:
+  bootstrap: 5
 
 navbar:
   left:
     - text: "Tutorial"
-      href: articles/tutorial/tutorial.html
+      href: articles/tutorial.html
     - text: "Reference"
       href: reference/index.html
 
 articles:
 - title: All vignettes
   desc: ~
-  contents: '`tutorial/tutorial`'
+  contents: '`tutorial`'
   toc: true
   toc_depth: 1
 

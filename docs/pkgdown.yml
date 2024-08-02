@@ -1,7 +1,10 @@
-pandoc: 2.19.2
+pandoc: '3.3'
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  tutorial: tutorial/tutorial.html
-last_built: 2024-08-01T08:47Z
+  tutorial: tutorial.html
+last_built: 2024-08-02T12:16Z
+urls:
+  reference: https://europeanifcbgroup.github.io/iRfcb/reference
+  article: https://europeanifcbgroup.github.io/iRfcb/articles
 

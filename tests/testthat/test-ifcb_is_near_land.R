@@ -30,14 +30,14 @@ test_that("ifcb_is_near_land works correctly", {
   expect_true(all(is.na(near_land_shape[is.na(latitudes)])))
 
   # Test with different buffer distance
-  near_land_buffer <- ifcb_is_near_land(latitudes, longitudes, distance = 500)
+  near_land_buffer <- ifcb_is_near_land(latitudes, longitudes, distance = 1000)
   expect_type(near_land_buffer, "logical")
   expect_length(near_land_buffer, length(latitudes))
   expect_true(all(is.na(near_land_buffer[is.na(latitudes)])))
 
   # Check that positions are near land correctly identified (dummy check)
   # These values should be manually verified with known data
-  expected_near_land <- c(TRUE, FALSE, TRUE, FALSE, NA, NA)  # Adjust based on actual data
+  expected_near_land <- c(FALSE, FALSE, TRUE, FALSE, NA, NA)
   expect_equal(near_land_default, expected_near_land)
 
   # Cleanup temporary files

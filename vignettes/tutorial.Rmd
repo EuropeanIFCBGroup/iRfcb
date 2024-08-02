@@ -118,7 +118,7 @@ IFCB data can be quality controlled by analyzing the particle size distribution 
 
 ```{r, eval=FALSE}
 # Define path to virtual environment
-env_path <- "venv/iRfcb" # Or your preferred venv path
+env_path <- "~/virtualenvs/iRfcb-tutorial" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path)
@@ -143,7 +143,7 @@ psd <- ifcb_psd(feature_folder = "data/features/2023",
 
 ```{r, include=FALSE}
 # Define path to virtual environment
-env_path <- "venv/iRfcb" # Or your preferred venv path
+env_path <- "~/virtualenvs/iRfcb-tutorial" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path) 
@@ -195,7 +195,7 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 gps_data$near_land <- ifcb_is_near_land(gps_data$gpsLatitude,
                                         gps_data$gpsLongitude,
                                         distance = 100, # 100 meters from shore
-                                        shape = NULL) # Using the default NE 1:10m Land Polygon
+                                        shape = NULL) # Using the default NE 1:50m Land Polygon
 
 # Print output
 head(gps_data)
@@ -308,6 +308,7 @@ ifcb_run_image_gallery()
 ```
 
 ![image_gallery](figures/image_gallery.png)
+
 Individual images can be selected and a list of selected images can be downloaded as a 'correction_file'. This file can be used to correct .mat annotations below using the `ifcb_correct_annotation` function.
 
 #### Correct .mat Files After Checking Images in the App

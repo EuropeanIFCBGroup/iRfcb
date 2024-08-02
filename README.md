@@ -1,6 +1,6 @@
-# I 'R' FlowCytobot: Tools for analyzing and processing data from the Imaging FlowCytobot (IFCB)
+# I 'R' FlowCytobot: Tools for Analyzing and Processing Data from the Imaging FlowCytobot (IFCB)
 
-[![R-CMD-check](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/anderstorstensson/iRfcb/actions/workflows/r-cmd-check.yml)
+[![R-CMD-check](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
@@ -42,7 +42,7 @@ Some functions in `iRfcb` require Python. You can download Python from the offic
 
 ## Repository
 
-For more details and the latest updates, visit the [GitHub repository](https://github.com/anderstorstensson/iRfcb).
+For more details and the latest updates, visit the [GitHub repository](https://github.com/EuropeanIFCBGroup/iRfcb).
 
 ## License
 

@@ -7,10 +7,9 @@
 ^\.gitignore$
 ^docs$
 ^_pkgdown\.yml$
-^vignettes/.*
-^vignettes/.*\.Rmd$
-^vignettes/.*\.md$
-^vignettes/.*\.html$
 ^\.github$
 ^pkgdown$
 ^codecov\.yml$
+^doc$
+^Meta$
+^LICENSE\.md$
