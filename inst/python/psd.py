@@ -129,7 +129,7 @@ class Sample:
                     continue
                 try:
                     metadata[split[0]] = [float(v) for v in split[1].split(',')]
-                except:
+                except ValueError: # Modified from the original by kudelalabs to improve debugging
                     metadata[split[0]] = split[1].split(',')
 
         return metadata
@@ -202,7 +202,7 @@ class Sample:
         def round_sig(x, sig=2):
             try:
                 return round(x, sig - int(floor(log10(abs(x)))) - 1)
-            except:
+            except (ValueError, ZeroDivisionError): # Modified from the original by kudelalabs to improve debugging
                 return 0
 
         xdata, ydata = zip(*self.psd.items())
@@ -225,7 +225,7 @@ class Sample:
             r_sqr = 1 - (ss_res / ss_tot)
             self.bin.add_fit(self.name, round_sig(popt[0], 5), round_sig(popt[1], 5), r_sqr, max_diff,
                              self.capture_percent, self.bead_run, self.humidity)
-        except:
+        except (ValueError, RuntimeError, TypeError): # Modified from the original by kudelalabs to improve debugging
             popt = [0.0, 0.0]
             r_sqr = 0
             self.bin.add_fit(self.name, 0, 0, r_sqr, max_diff, self.capture_percent, self.bead_run, self.humidity)
