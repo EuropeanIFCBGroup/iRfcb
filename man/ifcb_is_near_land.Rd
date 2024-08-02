@@ -7,7 +7,7 @@
 ifcb_is_near_land(
   latitudes,
   longitudes,
-  distance = 100,
+  distance = 500,
   shape = NULL,
   crs = 4326,
   utm_zone = 33,
@@ -20,13 +20,15 @@ ifcb_is_near_land(
 
 \item{longitudes}{Numeric vector of longitudes for positions.}
 
-\item{distance}{Buffer distance in meters around the coastline. Default is 100 m.}
+\item{distance}{Buffer distance in meters around the coastline. Default is 500 m.}
 
 \item{shape}{Optional path to a shapefile containing coastline data. If provided,
-the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
-A more detailed shapefile allows for a smaller buffer distance.
-Detailed European coastline can be downloaded as polygons from EEA at
-\url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}}
+the function will use this shapefile instead of the default Natural Earth 1:50m land vectors.
+Using a more detailed shapefile allows for a smaller buffer distance.
+For detailed European coastlines, download polygons from the EEA at
+\url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.
+For more detailed world maps, download from Natural Earth at
+\url{https://www.naturalearthdata.com/downloads/10m-physical-vectors/}.}
 
 \item{crs}{Coordinate reference system (CRS) to use for positions and output.
 Default is EPSG code 4326 (WGS84).}
@@ -34,7 +36,7 @@ Default is EPSG code 4326 (WGS84).}
 \item{utm_zone}{UTM zone for buffering the coastline. Default is 33 (between 12°E and 18°E, northern hemisphere).}
 
 \item{remove_small_islands}{Logical indicating whether to remove small islands from
-the coastline. Default is TRUE.}
+the coastline if a custom shapefile is provided. Default is TRUE.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
 will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.}
