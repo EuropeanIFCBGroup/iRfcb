@@ -4,17 +4,19 @@
 #'
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions.
-#' @param distance Buffer distance in meters around the coastline. Default is 100 m.
+#' @param distance Buffer distance in meters around the coastline. Default is 500 m.
 #' @param shape Optional path to a shapefile containing coastline data. If provided,
-#'   the function will use this shapefile instead of reading rnaturalearth 1:10m vectors.
-#'   A more detailed shapefile allows for a smaller buffer distance.
-#'   Detailed European coastline can be downloaded as polygons from EEA at
-#'   \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
+#'   the function will use this shapefile instead of the default Natural Earth 1:50m land vectors.
+#'   Using a more detailed shapefile allows for a smaller buffer distance.
+#'   For detailed European coastlines, download polygons from the EEA at
+#'   \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.
+#'   For more detailed world maps, download from Natural Earth at
+#'   \url{https://www.naturalearthdata.com/downloads/10m-physical-vectors/}.
 #' @param crs Coordinate reference system (CRS) to use for positions and output.
 #'   Default is EPSG code 4326 (WGS84).
 #' @param utm_zone UTM zone for buffering the coastline. Default is 33 (between 12°E and 18°E, northern hemisphere).
 #' @param remove_small_islands Logical indicating whether to remove small islands from
-#'   the coastline. Default is TRUE.
+#'   the coastline if a custom shapefile is provided. Default is TRUE.
 #' @param small_island_threshold Area threshold in square meters below which islands
 #'   will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.
 #'
@@ -43,7 +45,7 @@
 #' @export
 ifcb_is_near_land <- function(latitudes,
                               longitudes,
-                              distance = 100,
+                              distance = 500,
                               shape = NULL,
                               crs = 4326,
                               utm_zone = 33,
@@ -78,10 +80,10 @@ ifcb_is_near_land <- function(latitudes,
     exdir <- tempdir()  # Temporary directory
 
     # Extract the files
-    unzip(system.file("exdata/ne_10m_land.zip", package = "iRfcb"), exdir = exdir)
+    unzip(system.file("exdata/ne_50m_land.zip", package = "iRfcb"), exdir = exdir)
 
     # Get coastline and land data within the bounding box
-    land <- st_read(file.path(exdir, "ne_10m_land.shp"), quiet = TRUE)
+    land <- st_read(file.path(exdir, "ne_50m_land.shp"), quiet = TRUE)
   } else {
     land <- st_read(shape, quiet = TRUE)
     land <- st_transform(land, crs = crs)
@@ -91,7 +93,7 @@ ifcb_is_near_land <- function(latitudes,
   geom_type <- unique(st_geometry_type(land))
 
   # Optionally remove small islands based on area threshold
-  if (remove_small_islands && any(st_geometry_type(land) %in% c("POLYGON", "MULTIPOLYGON"))) {
+  if (!is.null(shape) && remove_small_islands && any(st_geometry_type(land) %in% c("POLYGON", "MULTIPOLYGON"))) {
     land$area <- st_area(land)
 
     small_islands <- which(as.numeric(land$area) < small_island_threshold)
