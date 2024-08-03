@@ -4,7 +4,7 @@
 #' Additional packages can be installed by passing them through the `packages` argument.
 #'
 #' @param ... Additional arguments passed to `virtualenv_create`, such as `packages`.
-#' @param envname A character string specifying the name of the virtual environment to create. Default is "/.virtualenvs/iRfcb".
+#' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
 #'
 #' @examples
 #' \dontrun{
@@ -16,7 +16,7 @@
 #' }
 #' @importFrom reticulate virtualenv_create use_virtualenv
 #' @export
-ifcb_py_install <- function(..., envname = "/.virtualenvs/iRfcb") {
+ifcb_py_install <- function(..., envname = "~/.virtualenvs/iRfcb") {
   args <- list(...)
 
   if ("packages" %in% names(args)) {

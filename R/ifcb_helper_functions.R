@@ -184,8 +184,8 @@ extract_parts <- function(filename) {
 #' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
 #'virtualenv
 #' @param ... Additional arguments passed to the function.
-#' @param envname A character string specifying the name of the virtual environment to create. Default is "iRfcb".
-.onLoad <- function(..., envname = "/.virtualenvs/iRfcb") {
+#' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
+.onLoad <- function(..., envname = "~/.virtualenvs/iRfcb") {
   use_virtualenv(envname, required = FALSE)
 }
 
