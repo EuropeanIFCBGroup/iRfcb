@@ -250,7 +250,7 @@ This function reads a land-buffered shapefile of the Baltic Sea Basin (including
 
 #### Find missing positions from RV Svea Ferrybox
 
-This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
+This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files. An example ferrybox data file is provided in `iRfcb` with data matching D20220522T000439_IFCB134.
 
 ```{r}
 # Define path where ferrybox data are located
@@ -380,8 +380,7 @@ Verify that the corrections have been applied:
 ```{r}
 # Summarize new counts after correction
 png_per_class <- ifcb_summarize_png_data(png_folder = "data/extracted_images",
-                                         hdr_folder = "data/data",
-                                         sum_level = "sample")
+                                         sum_level = "class")
 
 # Print output
 head(png_per_class)
@@ -564,4 +563,4 @@ citation("iRfcb")
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 - Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 - Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
-- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v2
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3
