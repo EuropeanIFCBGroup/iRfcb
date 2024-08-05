@@ -55,7 +55,7 @@ test_that("ifcb_get_svea_position works correctly with valid inputs", {
 
 test_that("ifcb_get_svea_position handles missing ferrybox folder", {
   # Define test timestamps
-  test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39"), tz = "UTC")
+  test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with a non-existent folder
   expect_error(ifcb_get_svea_position(test_timestamps, "non_existent_folder"),
@@ -67,7 +67,7 @@ test_that("ifcb_get_svea_position handles no ferrybox files in folder", {
   temp_dir <- tempdir()
 
   # Define test timestamps
-  test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39"), tz = "UTC")
+  test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with an empty folder
   expect_error(ifcb_get_svea_position(test_timestamps, temp_dir),
@@ -92,7 +92,7 @@ test_that("ifcb_get_svea_position handles no matching ship name", {
   expect_true(file.exists(new_file_path))
 
   # Define test timestamps
-  test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39"), tz = "UTC")
+  test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with a ship name that doesn't match
   expect_error(ifcb_get_svea_position(test_timestamps, temp_dir),
@@ -132,7 +132,7 @@ test_that("ifcb_get_svea_position handles empty ferrybox files", {
   create_temp_ferrybox_file(corrupted_file_path, "corrupted content")
 
   # Define test timestamps
-  test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39"), tz = "UTC")
+  test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function
   expect_error(result <- ifcb_get_svea_position(test_timestamps, temp_dir),
@@ -161,7 +161,7 @@ test_that("ifcb_get_svea_position handles no matching GPS data", {
   expect_true(file.exists(new_file_path))
 
   # Define test timestamps outside the range of the ferrybox data
-  test_timestamps <- as.POSIXct(c("2023-01-01 00:00:00"), tz = "UTC")
+  test_timestamps <- as.POSIXct("2023-01-01 00:00:00", tz = "UTC")
 
   # Run the function
   expect_error(result <- ifcb_get_svea_position(test_timestamps, temp_dir),
