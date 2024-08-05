@@ -24,7 +24,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, method = "auto", figshare_article = "48158716?private_link=6ce9821e5a1baabc0d6d") {
+ifcb_download_test_data <- function(dest_dir, method = "auto", figshare_article = "48158716") {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 

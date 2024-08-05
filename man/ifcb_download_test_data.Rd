@@ -7,7 +7,7 @@
 ifcb_download_test_data(
   dest_dir,
   method = "auto",
-  figshare_article = "48158716?private_link=6ce9821e5a1baabc0d6d"
+  figshare_article = "48158716"
 )
 }
 \arguments{
