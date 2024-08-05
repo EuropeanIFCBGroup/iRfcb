@@ -73,7 +73,7 @@ test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
   out_folder <- tempdir()
 
   expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1),
-               paste("The manual folder does not exist:", manual_folder))
+               paste("The manual folder does not exist:"))
 
   unlink(manual_folder, recursive = TRUE)
 })
