@@ -1,16 +1,20 @@
 #' Download Test IFCB Data
 #'
-#' This function downloads two zip archives containing .png images and MATLAB files from the `svea_skagerrak_kattegat`
-#' dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024), and unzips them into the
-#' specified folder. These data can, for instance, be used for testing `iRfcb`.
+#' This function downloads a zip archive containing MATLAB files from the `iRfcb`
+#' dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024),
+#' unzips them into the specified folder and extracts png images. These data can be used, for instance,
+#' for testing iRfcb and for creating the tutorial vignette
+#' using \code{vignette("tutorial", package = "iRfcb")}
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param method Method to be used for downloading files. Current download methods are "internal",
 #' "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
 #' see ‘utils::download.file’.
+#' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
+#' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
 #'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
-#' \doi{10.17044/scilifelab.25883455.v2}
+#' \doi{10.17044/scilifelab.25883455.v3}
 #'
 #' @importFrom utils download.file
 #' @examples
@@ -20,42 +24,35 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, method = "auto") {
-  # URLs of the zip files
-  urls <- c(
-    "https://figshare.scilifelab.se/ndownloader/files/46770265",
-    "https://figshare.scilifelab.se/ndownloader/files/46770013"
-  )
-
-  # Subdirectories for the extracted contents
-  subdirs <- c(
-    dest_dir,
-    file.path(dest_dir, "png")
-  )
+ifcb_download_test_data <- function(dest_dir, method = "auto", figshare_article = "48158716") {
+  # URL of the zip file
+  url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
   # Create destination directories if they do not exist
-  for (subdir in subdirs) {
-    if (!dir.exists(subdir)) {
-      dir.create(subdir, recursive = TRUE)
-    }
+  if (!dir.exists(dest_dir)) {
+    dir.create(dest_dir, recursive = TRUE)
   }
 
-  for (i in seq_along(urls)) {
-    url <- urls[i]
-    subdir <- subdirs[i]
+  # Determine the local destination file path
+  dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-    # Determine the local destination file path
-    dest_file <- file.path(dest_dir, basename(url))
+  # Download the file
+  options(timeout = max(600, getOption("timeout")))  # Set timeout to 600 seconds
+  download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb")
 
-    # Download the file
-    download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb")
+  # Unzip the file into the appropriate subdirectory
+  unzip(dest_file, exdir = dest_dir)
 
-    # Unzip the file into the appropriate subdirectory
-    unzip(dest_file, exdir = subdir)
+  # Remove the downloaded zip file
+  file.remove(dest_file)
 
-    # Remove the downloaded zip file
-    file.remove(dest_file)
-  }
+  # Extract png images
+  ifcb_extract_annotated_images(file.path(dest_dir, "manual"),
+                                file.path(dest_dir, "config", "class2use.mat"),
+                                file.path(dest_dir, "data"),
+                                file.path(dest_dir, "png"),
+                                skip_class = "unclassified",
+                                verbose = FALSE)
 
   # Define source files
   class_file <- system.file("exdata/example.mat", package = "iRfcb")

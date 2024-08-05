@@ -45,7 +45,7 @@ test_that("ifcb_zip_matlab works correctly", {
     matlab_readme_file = matlab_readme_file,
     email_address = "test@example.com",
     version = "1.0",
-    print_progress = FALSE
+    print_progress = TRUE
   )
 
   # Verify that the zip file was created

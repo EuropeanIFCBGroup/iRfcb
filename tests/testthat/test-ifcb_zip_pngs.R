@@ -31,7 +31,7 @@ test_that("ifcb_zip_pngs works correctly", {
                 readme_file = readme_file,
                 email_address = "test@example.com",
                 version = "1.0",
-                print_progress = FALSE)
+                print_progress = TRUE)
 
   # Verify that the zip file was created
   expect_true(file.exists(zip_filename))

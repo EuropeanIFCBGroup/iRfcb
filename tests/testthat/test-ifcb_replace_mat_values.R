@@ -66,3 +66,104 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   # unlink(venv_dir, recursive = TRUE)
   unlink(manual_folder)
 })
+
+
+test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
+  manual_folder <- file.path(tempdir(), "nonexistent")
+  out_folder <- tempdir()
+
+  expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1),
+               paste("The manual folder does not exist:"))
+
+  unlink(manual_folder, recursive = TRUE)
+})
+
+test_that("ifcb_replace_mat_values handles missing files in manual folder gracefully", {
+  manual_folder <- tempdir()
+  out_folder <- tempdir()
+
+  manual_folder <- file.path(tempdir(), "empty_dir")
+
+  if(!dir.exists(manual_folder)) {
+    dir.create(manual_folder, recursive = TRUE)
+  }
+
+  if(!dir.exists(out_folder)) {
+    dir.create(out_folder, recursive = TRUE)
+  }
+
+  expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1, 0),
+               paste("No files found in the manual folder:"))
+
+  unlink(manual_folder, recursive = TRUE)
+})
+
+test_that("ifcb_replace_mat_values creates output directory if it does not exist", {
+  manual_folder <- tempdir()
+  out_folder <- file.path(tempdir(), "new_output")
+
+  # Create a test .mat file with a classlist
+  test_classlist <- matrix(c(1, 99, 3, 99, 5, 6, 99, 8, 9), ncol = 1, byrow = TRUE)
+  column_index <- 0 # Python uses 0-based indexing
+  test_file <- file.path(manual_folder, "test.mat")
+  create_temp_mat_file(test_file, test_classlist)
+
+  # Run the function
+  ifcb_replace_mat_values(manual_folder, out_folder, 99, 1, column_index)
+
+  # Verify the output directory was created and contains the expected file
+  expect_true(dir.exists(out_folder))
+  output_file <- file.path(out_folder, "test.mat")
+  expect_true(file.exists(output_file))
+
+  # Clean up temporary directories
+  unlink(manual_folder)
+  unlink(out_folder, recursive = TRUE)
+})
+
+test_that("ifcb_replace_mat_values handles different column indices correctly", {
+  manual_folder <- tempdir()
+  out_folder <- tempdir()
+
+  # Create a test .mat file with a classlist having multiple columns
+  test_classlist <- matrix(c(1, 2, 99, 3, 4, 99, 5, 6, 99), ncol = 3, byrow = TRUE)
+  test_file <- file.path(manual_folder, "test.mat")
+  create_temp_mat_file(test_file, test_classlist)
+
+  # Define the target and new IDs
+  target_id <- 99
+  new_id <- 1
+  column_index <- 2 # Update the third column
+
+  # Mock the Python function (replace_value_in_classlist)
+  mock_replace_value_in_classlist <- function(input_file, output_file, target_value, new_value, column_index) {
+    # Read the input .mat file
+    mat_contents <- readMat(input_file)
+    classlist <- mat_contents$classlist
+
+    # Replace target_value with new_value in the specified column
+    mask <- classlist[, column_index + 1] == target_value # Adjust for 1-based indexing in R
+    classlist[mask, column_index + 1] <- new_value
+
+    # Write the modified contents to the output .mat file
+    writeMat(output_file, classlist = classlist)
+  }
+
+  # Use the mock function instead of the actual Python function
+  source_python <- function(file) mock_replace_value_in_classlist
+
+  # Run the function
+  ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index)
+
+  # Verify the output file has the expected changes
+  output_file <- file.path(out_folder, "test.mat")
+  output_contents <- readMat(output_file)
+  output_classlist <- output_contents$classlist
+
+  expected_classlist <- matrix(c(1, 2, 1, 3, 4, 1, 5, 6, 1), ncol = 3, byrow = TRUE)
+  expect_equal(output_classlist, expected_classlist)
+
+  # Clean up temporary directories
+  unlink(manual_folder)
+  unlink(out_folder, recursive = TRUE)
+})

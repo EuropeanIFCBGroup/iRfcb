@@ -118,7 +118,7 @@ IFCB data can be quality controlled by analyzing the particle size distribution 
 
 ```{r, eval=FALSE}
 # Define path to virtual environment
-env_path <- "~/virtualenvs/iRfcb-tutorial" # Or your preferred venv path
+env_path <- "~/virtualenvs/iRfcb-test" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path)
@@ -143,7 +143,7 @@ psd <- ifcb_psd(feature_folder = "data/features/2023",
 
 ```{r, include=FALSE}
 # Define path to virtual environment
-env_path <- "~/virtualenvs/iRfcb-tutorial" # Or your preferred venv path
+env_path <- "~/virtualenvs/iRfcb-test" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path) 
@@ -250,7 +250,7 @@ This function reads a land-buffered shapefile of the Baltic Sea Basin (including
 
 #### Find missing positions from RV Svea Ferrybox
 
-This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files.
+This function is used by SMHI to collect and match stored ferrybox positions when they are not available in the .hdr files. An example ferrybox data file is provided in `iRfcb` with data matching D20220522T000439_IFCB134.
 
 ```{r}
 # Define path where ferrybox data are located
@@ -380,8 +380,7 @@ Verify that the corrections have been applied:
 ```{r}
 # Summarize new counts after correction
 png_per_class <- ifcb_summarize_png_data(png_folder = "data/extracted_images",
-                                         hdr_folder = "data/data",
-                                         sum_level = "sample")
+                                         sum_level = "class")
 
 # Print output
 head(png_per_class)
@@ -395,7 +394,7 @@ Prepare the PNG directory for publication as a zip-archive, similar to the files
 ```{r}
 # Create zip-archive
 ifcb_zip_pngs(png_folder = "data/extracted_images",
-              zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
+              zip_filename = "data/zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
               readme_file = system.file("exdata/README-template.md", 
                                         package = "iRfcb"), # Template icluded in `iRfcb`
               email_address = "tutorial@test.com",
@@ -411,7 +410,7 @@ Prepare the MATLAB directory for publication as a zip-archive, similar to the fi
 ifcb_zip_matlab(manual_folder = "data/manual",
                 features_folder = "data/features",
                 class2use_file = "data/config/class2use.mat",
-                zip_filename = "zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
+                zip_filename = "data/zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
                 data_folder = "data/data",
                 readme_file = system.file("exdata/README-template.md", 
                                           package = "iRfcb"), # Template icluded in `iRfcb`
@@ -427,7 +426,7 @@ ifcb_zip_matlab(manual_folder = "data/manual",
 Create a manifest file for the zip packages:
 ```{r}
 # Create MANIFEST.txt of the zip folder content
-ifcb_create_manifest("zip/")
+ifcb_create_manifest("data/zip/")
 ```
 
 ## Classified Results from MATLAB
@@ -473,11 +472,14 @@ Read a summary file:
 summary_data <- ifcb_read_summary("data/classified/2023/summary/summary_allTB_2023.mat",
                                   biovolume = FALSE,
                                   threshold = "opt")
+
+# Print output
+head(summary_data)
 ```
 
 #### Summarize counts, biovolumes and carbon content from classified IFCB data
 
-This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000 for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
+This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
 
 ```{r}
 # Summarize biovolume data using IFCB data from the specified folders
@@ -487,13 +489,16 @@ biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023
                                             micron_factor = 1/3.4,
                                             diatom_class = "Bacillariophyceae",
                                             threshold = "opt")
+
+# Print output
+head(biovolume_data)
 ```
 
 ## Taxonomical Data
 
 #### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard 2000. See `iRfcb:::vol2C_nondiatom` and `iRfcb:::vol2C_lgdiatom` for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See `iRfcb:::vol2C_nondiatom` and `iRfcb:::vol2C_lgdiatom` for carbon calculations (not included in NAMESPACE).
 
 ```{r}
 # Read class2use file
@@ -503,8 +508,8 @@ class2use <- ifcb_get_mat_variable("data/config/class2use.mat")
 class_list <- data.frame(class2use,
                          is_diatom = ifcb_is_diatom(class2use))
 
-# Print result
-head(class_list)
+# Print rows 10-15 of result
+class_list[10:15,]
 ```
 The default class for diatoms is defined as Bacillariophyceae, but may be adjusted using the `diatom_class` argument.
 
@@ -545,7 +550,6 @@ This concludes the tutorial for the `iRfcb` package. For more detailed informati
 # Clean up
 unlink(data_dir, recursive = TRUE)
 unlink(env_path, recursive = TRUE)
-unlink("zip", recursive = TRUE)
 ```
 
 ## Citation
@@ -559,4 +563,4 @@ citation("iRfcb")
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 - Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 - Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
-- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v2
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3

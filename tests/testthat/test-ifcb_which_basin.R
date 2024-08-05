@@ -42,14 +42,24 @@ test_that("ifcb_which_basin returns a ggplot object when plot = TRUE", {
   expect_true(inherits(plot_result, "ggplot"))
 })
 
-# Test for custom shapefile (optional, if you have a custom shapefile for testing)
-# custom_shape_file <- "path_to_custom_shapefile.shp"
-# test_that("ifcb_which_basin correctly handles a custom shapefile", {
-#   result <- ifcb_which_basin(latitudes, longitudes, shape_file = custom_shape_file)
-#
-#   # Check that the result is a character vector
-#   expect_true(is.character(result))
-#
-#   # Check the length of the result
-#   expect_equal(length(result), length(latitudes))
-# })
+test_that("ifcb_which_basin correctly handles a custom shapefile", {
+  # Directory to extract files
+  exdir <- tempdir()  # Temporary directory
+
+  # Extract the files
+  unzip(system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb"), exdir = exdir)
+
+  # Test a different shape-file
+  custom_shape_file <- file.path(exdir, "baltic_sea_buffered.shp")
+
+  # Run the test
+  result <- ifcb_which_basin(latitudes, longitudes, shape_file = custom_shape_file)
+
+  # Check that the result is a character vector
+  expect_true(is.list(result))
+
+  # Check the length of the result
+  expect_equal(length(result), length(latitudes))
+
+  unlink(exdir, recursive = TRUE)
+})

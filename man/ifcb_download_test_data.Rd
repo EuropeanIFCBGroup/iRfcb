@@ -4,7 +4,11 @@
 \alias{ifcb_download_test_data}
 \title{Download Test IFCB Data}
 \usage{
-ifcb_download_test_data(dest_dir, method = "auto")
+ifcb_download_test_data(
+  dest_dir,
+  method = "auto",
+  figshare_article = "48158716"
+)
 }
 \arguments{
 \item{dest_dir}{The destination directory where the files will be unzipped.}
@@ -12,11 +16,16 @@ ifcb_download_test_data(dest_dir, method = "auto")
 \item{method}{Method to be used for downloading files. Current download methods are "internal",
 "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
 see ‘utils::download.file’.}
+
+\item{figshare_article}{The file article number at the SciLifeLab Figshare data repository.
+By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.}
 }
 \description{
-This function downloads two zip archives containing .png images and MATLAB files from the `svea_skagerrak_kattegat`
-dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024), and unzips them into the
-specified folder. These data can, for instance, be used for testing `iRfcb`.
+This function downloads a zip archive containing MATLAB files from the `iRfcb`
+dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024),
+unzips them into the specified folder and extracts png images. These data can be used, for instance,
+for testing iRfcb and for creating the tutorial vignette
+using \code{vignette("tutorial", package = "iRfcb")}
 }
 \examples{
 \dontrun{
@@ -27,5 +36,5 @@ ifcb_download_test_data("data")
 }
 \references{
 Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
-\doi{10.17044/scilifelab.25883455.v2}
+\doi{10.17044/scilifelab.25883455.v3}
 }

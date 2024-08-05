@@ -173,6 +173,9 @@ ifcb_summarize_png_data <- function(png_folder, hdr_folder = NULL, sum_level = "
   # Combine all results into a single data frame
   final_results <- do.call(bind_rows, results)
 
+  # Remove the trailing _NNN from each class name, if present
+  final_results$class_name <- gsub("_\\d{3}$", "", final_results$class_name)
+
   # Remove row names
   rownames(final_results) <- NULL
 
