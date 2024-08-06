@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -197,7 +197,7 @@ Before running the PSD quality check, ensure the necessary Python
 environment is set up and activated:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path to virtual environment</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/virtualenvs/iRfcb-tutorial"</span> <span class="co"># Or your preferred venv path</span></span>
+<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/virtualenvs/iRfcb-test"</span> <span class="co"># Or your preferred venv path</span></span>
 <span></span>
 <span><span class="co"># Install python virtual environment</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
@@ -221,26 +221,21 @@ environment is set up and activated:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output from PSD</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">fits</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 8</span></span></span>
 <span><span class="co">##   sample            a     k   R.2 max_ESD_diff capture_percent bead_run humidity</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230314T… 7.56<span style="color: #949494;">e</span>10 -<span style="color: #BB0000;">6.22</span> 0.963            1           0.955 FALSE        16.0</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230314T… 2.44<span style="color: #949494;">e</span>11 -<span style="color: #BB0000;">6.75</span> 0.955            1           0.944 FALSE        16.0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230314T… 6.14<span style="color: #949494;">e</span>11 -<span style="color: #BB0000;">7.10</span> 0.961            1           0.953 FALSE        16.0</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230315T… 2.22<span style="color: #949494;">e</span> 9 -<span style="color: #BB0000;">4.84</span> 0.972            0           0.978 FALSE        16.2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230315T… 2.38<span style="color: #949494;">e</span> 9 -<span style="color: #BB0000;">4.90</span> 0.974            1           0.983 FALSE        16.2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230315T… 4.17<span style="color: #949494;">e</span> 8 -<span style="color: #BB0000;">4.18</span> 0.973            1           0.979 FALSE        16.2</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T… 9.02<span style="color: #949494;">e</span> 9 -<span style="color: #BB0000;">4.65</span> 0.980            2           0.919 FALSE        65.4</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230915T… 7.56<span style="color: #949494;">e</span> 9 -<span style="color: #BB0000;">4.88</span> 0.989            0           0.967 FALSE        71.5</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230915T… 4.62<span style="color: #949494;">e</span> 9 -<span style="color: #BB0000;">4.65</span> 0.962            1           0.961 FALSE        71.5</span></span></code></pre>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">flags</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">##   sample           flag         </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230915T091133 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230915T093804 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230915T100436 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230915T103107 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230915T110921 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230915T113552 High Humidity</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230915T093804 High Humidity</span></span></code></pre>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot PSD of the first sample</span></span>
 <span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_psd_plot.html">ifcb_psd_plot</a></span><span class="op">(</span>sample_name <span class="op">=</span> <span class="va">psd</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">sample</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
@@ -266,7 +261,7 @@ longitudes):</p>
 <code class="sourceCode R"><span><span class="co"># Read HDR data and extract GPS position (when available)</span></span>
 <span><span class="va">gps_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_hdr_data.html">ifcb_read_hdr_data</a></span><span class="op">(</span><span class="st">"data/data/"</span>,</span>
 <span>                               gps_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Found 91 .hdr files.</span></span>
+<pre><code><span><span class="co">## Found 9 .hdr files.</span></span>
 <span><span class="co">## Processing completed.</span></span></code></pre>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create new column with the results</span></span>
@@ -280,17 +275,17 @@ longitudes):</p>
 <pre><code><span><span class="co">##                     sample gpsLatitude gpsLongitude           timestamp</span></span>
 <span><span class="co">## 1 D20220522T000439_IFCB134          NA           NA 2022-05-22 00:04:39</span></span>
 <span><span class="co">## 2 D20220522T003051_IFCB134          NA           NA 2022-05-22 00:30:51</span></span>
-<span><span class="co">## 3 D20220522T005703_IFCB134          NA           NA 2022-05-22 00:57:03</span></span>
-<span><span class="co">## 4 D20220522T014928_IFCB134          NA           NA 2022-05-22 01:49:28</span></span>
-<span><span class="co">## 5 D20220522T063741_IFCB134          NA           NA 2022-05-22 06:37:41</span></span>
-<span><span class="co">## 6 D20220522T073005_IFCB134          NA           NA 2022-05-22 07:30:05</span></span>
+<span><span class="co">## 3 D20220712T210855_IFCB134          NA           NA 2022-07-12 21:08:55</span></span>
+<span><span class="co">## 4 D20220712T222710_IFCB134          NA           NA 2022-07-12 22:27:10</span></span>
+<span><span class="co">## 5 D20230314T001205_IFCB134    56.66883     12.11303 2023-03-14 00:12:05</span></span>
+<span><span class="co">## 6 D20230314T003836_IFCB134    56.66884     12.11302 2023-03-14 00:38:36</span></span>
 <span><span class="co">##         date year month day     time ifcb_number near_land</span></span>
 <span><span class="co">## 1 2022-05-22 2022     5  22 00:04:39     IFCB134        NA</span></span>
 <span><span class="co">## 2 2022-05-22 2022     5  22 00:30:51     IFCB134        NA</span></span>
-<span><span class="co">## 3 2022-05-22 2022     5  22 00:57:03     IFCB134        NA</span></span>
-<span><span class="co">## 4 2022-05-22 2022     5  22 01:49:28     IFCB134        NA</span></span>
-<span><span class="co">## 5 2022-05-22 2022     5  22 06:37:41     IFCB134        NA</span></span>
-<span><span class="co">## 6 2022-05-22 2022     5  22 07:30:05     IFCB134        NA</span></span></code></pre>
+<span><span class="co">## 3 2022-07-12 2022     7  12 21:08:55     IFCB134        NA</span></span>
+<span><span class="co">## 4 2022-07-12 2022     7  12 22:27:10     IFCB134        NA</span></span>
+<span><span class="co">## 5 2023-03-14 2023     3  14 00:12:05     IFCB134     FALSE</span></span>
+<span><span class="co">## 6 2023-03-14 2023     3  14 00:38:36     IFCB134     FALSE</span></span></code></pre>
 <p>For more accurate determination, a detailed coastline .shp file may
 be required (e.g. the <a href="https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon" class="external-link">EEA
 Coastline Polygon</a>). Refer to the help pages of
@@ -356,7 +351,9 @@ user-supplied shapefile if provided.</p>
 <h4 id="find-missing-positions-from-rv-svea-ferrybox">Find missing positions from RV Svea Ferrybox<a class="anchor" aria-label="anchor" href="#find-missing-positions-from-rv-svea-ferrybox"></a>
 </h4>
 <p>This function is used by SMHI to collect and match stored ferrybox
-positions when they are not available in the .hdr files.</p>
+positions when they are not available in the .hdr files. An example
+ferrybox data file is provided in <code>iRfcb</code> with data matching
+D20220522T000439_IFCB134.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path where ferrybox data are located</span></span>
 <span><span class="va">ferrybox_folder</span> <span class="op">&lt;-</span> <span class="st">"data/ferrybox_data"</span></span>
@@ -369,10 +366,10 @@ positions when they are not available in the .hdr files.</p>
 <pre><code><span><span class="co">##             timestamp gpsLatitude gpsLongitude</span></span>
 <span><span class="co">## 1 2022-05-22 00:04:39     55.0277      13.6142</span></span>
 <span><span class="co">## 2 2022-05-22 00:30:51          NA           NA</span></span>
-<span><span class="co">## 3 2022-05-22 00:57:03          NA           NA</span></span>
-<span><span class="co">## 4 2022-05-22 01:49:28          NA           NA</span></span>
-<span><span class="co">## 5 2022-05-22 06:37:41          NA           NA</span></span>
-<span><span class="co">## 6 2022-05-22 07:30:05          NA           NA</span></span></code></pre>
+<span><span class="co">## 3 2022-07-12 21:08:55          NA           NA</span></span>
+<span><span class="co">## 4 2022-07-12 22:27:10          NA           NA</span></span>
+<span><span class="co">## 5 2023-03-14 00:12:05          NA           NA</span></span>
+<span><span class="co">## 6 2023-03-14 00:38:36          NA           NA</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -399,12 +396,12 @@ frame:</p>
 <span><span class="co">## <span style="color: #949494;"># Groups:   sample, ifcb_number [3]</span></span></span>
 <span><span class="co">##   sample    ifcb_number class_name n_images roi_numbers gpsLatitude gpsLongitude</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> D2022052… IFCB134     Ciliates          1 5                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D2022052… IFCB134     Ciliophora        1 5                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> D2022052… IFCB134     Mesodiniu…        4 2, 6, 7, 8           <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> D2022052… IFCB134     Strombidi…        1 3                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> D2022052… IFCB134     Mesodiniu…        2 2, 3                 <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D2022052… IFCB134     Ciliates          1 2                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D2022052… IFCB134     Strombidi…        1 5                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D2022071… IFCB134     Alexandri…        2 42, 164              <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D2022071… IFCB134     Strombidi…        2 34, 79               <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 6 more variables: timestamp &lt;dttm&gt;, date &lt;date&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   day &lt;int&gt;, time &lt;chr&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
@@ -417,12 +414,12 @@ frame:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   class_name                  n_images</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> Akashiwo_sanguinea                 1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> Alexandrium_pseudogonyaulax        7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> Amphidnium_like                    2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> Apedinella_radians                 8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> Centrales                          8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cerataulina_pelagica              97</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Alexandrium_pseudogonyaulax        3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Amphidnium-like                    1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_chain              6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Chaetoceros_spp_single_cell        3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Ciliophora                        23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cryptomonadales                  245</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="matlab-files">MATLAB Files<a class="anchor" aria-label="anchor" href="#matlab-files"></a>
@@ -440,12 +437,12 @@ frame:</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   class                           n</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> Akashiwo_sanguinea              1</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> Alexandrium_pseudogonyaulax     7</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> Amphidnium_like                 2</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> Apedinella_radians              8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> Centrales                       8</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cerataulina_pelagica           97</span></span></code></pre>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Alexandrium_pseudogonyaulax     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Amphidnium-like                 1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_chain           6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Chaetoceros_spp_single_cell     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Ciliophora                     23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cryptomonadales               245</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="run-image-gallery">Run Image Gallery<a class="anchor" aria-label="anchor" href="#run-image-gallery"></a>
@@ -536,23 +533,19 @@ category:</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
 <span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>                                         hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>                                         sum_level <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></span>
+<span>                                         sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">png_per_class</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># Groups:   sample, ifcb_number [3]</span></span></span>
-<span><span class="co">##   sample    ifcb_number class_name n_images roi_numbers gpsLatitude gpsLongitude</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> D2022052… IFCB134     Ciliates_…        1 5                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> D2022052… IFCB134     Mesodiniu…        4 2, 6, 7, 8           <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> D2022052… IFCB134     Strombidi…        1 3                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> D2022052… IFCB134     Mesodiniu…        2 2, 3                 <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D2022052… IFCB134     Ciliates_…        1 2                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D2022052… IFCB134     Strombidi…        1 5                    <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 6 more variables: timestamp &lt;dttm&gt;, date &lt;date&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   day &lt;int&gt;, time &lt;chr&gt;</span></span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<span><span class="co">##   class_name                         n_images</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Amphidnium-like                           1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Chaetoceros_spp_chain                     6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_single_cell               3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Ciliophora                               23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Cryptomonadales                         245</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cylindrotheca_Nitzschia_longissima       47</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -567,7 +560,7 @@ image reference library</a> (Torstensson et al. 2024):</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>              zip_filename <span class="op">=</span> <span class="st">"zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip"</span>,</span>
+<span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip"</span>,</span>
 <span>              readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
 <span>                                        package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
 <span>              email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
@@ -589,7 +582,7 @@ image reference library</a>:</p>
 <span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
 <span>                class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                zip_filename <span class="op">=</span> <span class="st">"zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip"</span>,</span>
+<span>                zip_filename <span class="op">=</span> <span class="st">"data/zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip"</span>,</span>
 <span>                data_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
 <span>                                          package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
@@ -614,8 +607,8 @@ image reference library</a>:</p>
 <p>Create a manifest file for the zip packages:</p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create MANIFEST.txt of the zip folder content</span></span>
-<span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"zip/"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## MANIFEST.txt has been created at zip//MANIFEST.txt</span></span></code></pre>
+<span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip/"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip//MANIFEST.txt</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -710,7 +703,21 @@ image reference library</a>:</p>
 <code class="sourceCode R"><span><span class="co"># Read a MATLAB summary file generated by `countcells_allTBnew_user_training`</span></span>
 <span><span class="va">summary_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_summary.html">ifcb_read_summary</a></span><span class="op">(</span><span class="st">"data/classified/2023/summary/summary_allTB_2023.mat"</span>,</span>
 <span>                                  biovolume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                                  threshold <span class="op">=</span> <span class="st">"opt"</span><span class="op">)</span></span></code></pre></div>
+<span>                                  threshold <span class="op">=</span> <span class="st">"opt"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">summary_data</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 12</span></span></span>
+<span><span class="co">##   sample      timestamp           date        year month   day time  ifcb_number</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   counts_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="summarize-counts-biovolumes-and-carbon-content-from-classified-ifcb-data">Summarize counts, biovolumes and carbon content from classified IFCB
@@ -720,13 +727,13 @@ data<a class="anchor" aria-label="anchor" href="#summarize-counts-biovolumes-and
 from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB
 classification result files, without summarizing the data in MATLAB.
 Biovolumes are converted to carbon according to Menden-Deuer and Lessard
-2000 for individual regions of interest (ROI), where different
+(2000) for individual regions of interest (ROI), where different
 conversion factors are applied to diatoms and non-diatom protist. If
 provided, it also incorporates sample volume data from HDR files to
 compute biovolume and carbon content per liter of sample. See details in
 the help pages for <code>ifcb_summarize_biovolumes</code> and
 <code>ifcb_extract_biovolumes</code>.</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from the specified folders</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
 <span>                                            class_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -747,6 +754,19 @@ the help pages for <code>ifcb_summarize_biovolumes</code> and
 <span><span class="co">## Scrippsiella_group</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Print output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 9</span></span></span>
+<span><span class="co">##   sample       class counts biovolume_mm3 carbon_ug ml_analyzed counts_per_liter</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230810T1… Cera…      1    0.000<span style="text-decoration: underline;">001</span>75 0.000<span style="text-decoration: underline;">083</span>9        3.17             315.</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230810T1… Chae…     23    0.000<span style="text-decoration: underline;">017</span>6  0.000<span style="text-decoration: underline;">901</span>         3.17            <span style="text-decoration: underline;">7</span>251.</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T1… Chae…      3    0.000<span style="text-decoration: underline;">001</span>18 0.000<span style="text-decoration: underline;">067</span>4        3.17             946.</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230810T1… Cili…      6    0.000<span style="text-decoration: underline;">011</span>7  0.001<span style="text-decoration: underline;">59</span>          3.17            <span style="text-decoration: underline;">1</span>892.</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230810T1… Cryp…    519    0.000<span style="text-decoration: underline;">097</span>1  0.015<span style="text-decoration: underline;">1</span>           3.17          <span style="text-decoration: underline;">163</span>627.</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230810T1… Cyli…     66    0.000<span style="text-decoration: underline;">016</span>8  0.001<span style="text-decoration: underline;">01</span>          3.17           <span style="text-decoration: underline;">20</span>808.</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 2 more variables: biovolume_mm3_per_liter &lt;dbl&gt;, carbon_ug_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -760,11 +780,11 @@ their corresponding classification records from the World Register of
 Marine Species (WoRMS), and checks if they belong to the specified
 diatom class. The function only uses the first name (genus name) of each
 taxa for classification. This function can be useful for converting
-biovolumes to carbon according to Menden-Deuer and Lessard 2000. See
+biovolumes to carbon according to Menden-Deuer and Lessard (2000). See
 <code>iRfcb:::vol2C_nondiatom</code> and
 <code>iRfcb:::vol2C_lgdiatom</code> for carbon calculations (not
 included in NAMESPACE).</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
@@ -772,15 +792,15 @@ included in NAMESPACE).</p>
 <span><span class="va">class_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">class2use</span>,</span>
 <span>                         is_diatom <span class="op">=</span> <span class="fu"><a href="../reference/ifcb_is_diatom.html">ifcb_is_diatom</a></span><span class="op">(</span><span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Print result</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">class_list</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##                 class2use is_diatom</span></span>
-<span><span class="co">## 1            unclassified     FALSE</span></span>
-<span><span class="co">## 2           Dinobryon_spp     FALSE</span></span>
-<span><span class="co">## 3          Helicostomella     FALSE</span></span>
-<span><span class="co">## 4         Laboea_strobila     FALSE</span></span>
-<span><span class="co">## 5       Mesodinium_rubrum     FALSE</span></span>
-<span><span class="co">## 6 Parafavella_denticulata     FALSE</span></span></code></pre>
+<span><span class="co"># Print rows 10-15 of result</span></span>
+<span><span class="va">class_list</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">15</span>,<span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##                     class2use is_diatom</span></span>
+<span><span class="co">## 10        Nodularia_spumigena     FALSE</span></span>
+<span><span class="co">## 11            Cryptomonadales     FALSE</span></span>
+<span><span class="co">## 12    Acanthoica_quattrospina     FALSE</span></span>
+<span><span class="co">## 13 Asterionellopsis_glacialis      TRUE</span></span>
+<span><span class="co">## 14                  Centrales      TRUE</span></span>
+<span><span class="co">## 15            Centrales_chain      TRUE</span></span></code></pre>
 <p>The default class for diatoms is defined as Bacillariophyceae, but
 may be adjusted using the <code>diatom_class</code> argument.</p>
 </div>
@@ -789,7 +809,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h4>
 <p>This function takes a list of taxa names and matches them with the
 <code>SMHI Trophic Type</code> list used in <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
 <span>               <span class="st">"Nodularia spumigena"</span>,</span>
@@ -810,7 +830,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h2>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
 delivery format.</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load column names stored from `iRfcb`</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -855,7 +875,7 @@ analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
 <span><span class="co">##   Analyzing and Processing Data from the Imaging FlowCytobot. R package</span></span>
-<span><span class="co">##   version 0.3.1. https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   version 0.3.2. https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -863,7 +883,7 @@ analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.1},</span></span>
+<span><span class="co">##     note = {R package version 0.3.2},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
@@ -882,7 +902,7 @@ classification of phytoplankton sampled with imaging-in-flow cytometry.
 Limnol. Oceanogr: Methods 5, 204–216.</li>
 <li>Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and
 Karlson, B. (2024). SMHI IFCB plankton image reference library.
-SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v2" class="external-link uri">https://doi.org/10.17044/scilifelab.25883455.v2</a>
+SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link uri">https://doi.org/10.17044/scilifelab.25883455.v3</a>
 </li>
 </ul>
 </div>
