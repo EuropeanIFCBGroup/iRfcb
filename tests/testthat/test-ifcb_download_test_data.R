@@ -6,6 +6,9 @@ test_that("ifcb_download_test_data downloads and unzips files correctly", {
   temp_dir <- tempdir()
   on.exit(unlink(temp_dir, recursive = TRUE))  # Ensure temp_dir is removed after the test
 
+  # Non-existing directory
+  temp_dir <- file.path(temp_dir, "temp")
+
   # Call the function to download and unzip test data
   ifcb_download_test_data(temp_dir)
 

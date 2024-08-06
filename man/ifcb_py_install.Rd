@@ -4,12 +4,12 @@
 \alias{ifcb_py_install}
 \title{Install iRfcb Python Environment}
 \usage{
-ifcb_py_install(..., envname = "/.virtualenvs/iRfcb")
+ifcb_py_install(..., envname = "~/.virtualenvs/iRfcb")
 }
 \arguments{
 \item{...}{Additional arguments passed to `virtualenv_create`, such as `packages`.}
 
-\item{envname}{A character string specifying the name of the virtual environment to create. Default is "/.virtualenvs/iRfcb".}
+\item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
 }
 \description{
 This function creates and activates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
