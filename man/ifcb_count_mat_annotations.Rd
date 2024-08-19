@@ -4,7 +4,12 @@
 \alias{ifcb_count_mat_annotations}
 \title{Count IFCB Annotations from .mat Files}
 \usage{
-ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = NULL)
+ifcb_count_mat_annotations(
+  manual_folder,
+  class2use_file,
+  skip_class = NULL,
+  class_level = TRUE
+)
 }
 \arguments{
 \item{manual_folder}{A character string specifying the path to the folder containing .mat files.}
@@ -12,6 +17,8 @@ ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = NULL)
 \item{class2use_file}{A character string specifying the path to the file containing the class2use variable.}
 
 \item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
+
+\item{class_level}{A boolean that specifies whether to summarize counts at the class level, or on sample level. The default is TRUE.}
 }
 \value{
 A data frame with the total count of images per class.

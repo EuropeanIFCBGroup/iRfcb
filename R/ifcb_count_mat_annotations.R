@@ -7,12 +7,14 @@ utils::globalVariables(c("name", "manual"))
 #' @param manual_folder A character string specifying the path to the folder containing .mat files.
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
+#' @param class_level A boolean that specifies whether to summarize counts at the class level, or on sample level. The default is TRUE.
 #'
 #' @return A data frame with the total count of images per class.
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @importFrom R.matlab readMat
 #' @importFrom dplyr filter left_join mutate select group_by summarise bind_rows pull n
+#' @importFrom tools file_path_sans_ext
 #'
 #' @examples
 #' \dontrun{
@@ -28,7 +30,7 @@ utils::globalVariables(c("name", "manual"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class = NULL) {
+ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class = NULL, class_level = TRUE) {
   # List .mat files in the specified folder
   mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = FALSE)
 
@@ -52,7 +54,7 @@ ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class
   }
 
   # Initialize an empty data frame to accumulate the results
-  total_sum <- data.frame(class = character(), n = integer(), stringsAsFactors = FALSE)
+  total_sum <- data.frame(sample = character(), class = character(), n = integer(), stringsAsFactors = FALSE)
 
   for (file in mat_files) {
     # Read the taxa list from the file
@@ -74,17 +76,20 @@ ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class
 
     # Summarize the number of images by class
     sample_sum <- taxa_list %>%
-      group_by(class) %>%
+      mutate(sample = tools::file_path_sans_ext(basename(file))) %>%
+      group_by(sample, class) %>%
       summarise(n = n(), .groups = 'drop')
 
     # Accumulate the results into total_sum
     total_sum <- bind_rows(total_sum, sample_sum)
   }
 
-  # Combine and summarize results
-  total_sum <- total_sum %>%
-    group_by(class) %>%
-    summarise(n = sum(n, na.rm = TRUE), .groups = 'drop')
+  if (class_level) {
+    # Combine and summarize results
+    total_sum <- total_sum %>%
+      group_by(class) %>%
+      summarise(n = sum(n, na.rm = TRUE), .groups = 'drop')
+  }
 
   return(total_sum)
 }
