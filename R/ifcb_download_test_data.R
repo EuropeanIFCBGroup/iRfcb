@@ -9,11 +9,12 @@
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
+#' @param max_retries The maximum number of retry attempts in case of download failure. Default is 3.
 #'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
 #' \doi{10.17044/scilifelab.25883455.v3}
 #'
-#' @importFrom curl curl curl_download
+#' @importFrom curl curl_download new_handle
 #' @examples
 #' \dontrun{
 #' # Download and unzip IFCB test data into the "data" directory
@@ -21,7 +22,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716") {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 3) {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -30,13 +31,39 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716") {
     dir.create(dest_dir, recursive = TRUE)
   }
 
+  # Determine the local destination file path
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Open a new connection to the file
-  con <- curl(url)
+  # Initialize retry counter
+  attempts <- 0
+  success <- FALSE
 
-  # Download the file using curl
-  curl_download(url, dest_file)
+  # Implement retry logic
+  while (attempts < max_retries && !success) {
+    try({
+      # Attempt the download using curl with resume capability
+      handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
+      curl_download(url, dest_file, handle = handle, quiet = TRUE)
+
+      # Check if the download was successful
+      if (file.exists(dest_file)) {
+        success <- TRUE
+      }
+    }, silent = TRUE)
+
+    # Increment the attempt counter
+    attempts <- attempts + 1
+
+    if (!success) {
+      message("Attempt ", attempts, " failed. Retrying...")
+    }
+  }
+
+  # If download failed after max_retries, stop the function
+  if (!success) {
+    stop("Download failed after ", max_retries, " attempts.")
+  }
+
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)
