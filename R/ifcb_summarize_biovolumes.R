@@ -20,9 +20,11 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
 #'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'.
 #'
 #' @details This function performs the following steps:
-#'   1. Extracts biovolumes and carbon content from feature and class files using `ifcb_extract_biovolumes`.
-#'   2. Optionally incorporates volume data from HDR files to calculate volume analyzed per sample.
-#'   3. Computes biovolume and carbon content per liter of sample analyzed.
+#' \enumerate{
+#'   \item Extracts biovolumes and carbon content from feature and class files using `ifcb_extract_biovolumes`.
+#'   \item Optionally incorporates volume data from HDR files to calculate volume analyzed per sample.
+#'   \item Computes biovolume and carbon content per liter of sample analyzed.
+#' }
 #'
 #' @examples
 #' \dontrun{

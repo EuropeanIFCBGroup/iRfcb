@@ -7,10 +7,14 @@
 #' the R equivalent function of `IFCB_volume_analyzed_fromADC` from the `ifcb-analysis repository` (Sosik and Olson 2007).
 #'
 #' @param adc_file A character vector specifying the path(s) to one or more .adc files or URLs.
+#'
 #' @return A list containing:
-#'   - ml_analyzed: A numeric vector of estimated sample volume analyzed for each ADC file.
-#'   - inhibittime: A numeric vector of inhibittime values extracted from ADC files.
-#'   - runtime: A numeric vector of runtime values extracted from ADC files.
+#' \itemize{
+#'   \item \strong{ml_analyzed}: A numeric vector of estimated sample volume analyzed for each ADC file.
+#'   \item \strong{inhibittime}: A numeric vector of inhibittime values extracted from ADC files.
+#'   \item \strong{runtime}: A numeric vector of runtime values extracted from ADC files.
+#' }
+#'
 #' @importFrom utils read.csv
 #' @importFrom stats median
 #' @export

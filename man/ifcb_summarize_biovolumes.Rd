@@ -41,9 +41,11 @@ biovolume and carbon content per liter of sample.
 }
 \details{
 This function performs the following steps:
-  1. Extracts biovolumes and carbon content from feature and class files using `ifcb_extract_biovolumes`.
-  2. Optionally incorporates volume data from HDR files to calculate volume analyzed per sample.
-  3. Computes biovolume and carbon content per liter of sample analyzed.
+\enumerate{
+  \item Extracts biovolumes and carbon content from feature and class files using `ifcb_extract_biovolumes`.
+  \item Optionally incorporates volume data from HDR files to calculate volume analyzed per sample.
+  \item Computes biovolume and carbon content per liter of sample analyzed.
+}
 }
 \examples{
 \dontrun{
