@@ -33,7 +33,7 @@ from types import SimpleNamespace
 
 
 class Target:
-    micron_factor = 1 / 2.7
+    micron_factor = 1 / 3.4
 
     def __init__(self, sample, i, fea_file):
         self.sample = sample
@@ -56,7 +56,7 @@ class Sample:
     def __init__(self, name, feature_dir, roi_dir, overall_bin, ifcb):
         self.name = name
         self.ifcb = ifcb
-        self.micron_factor = 1 / 2.7
+        self.micron_factor = 1 / 3.4
         self.summary = {}
         self.data = []
         self.psd = {}
