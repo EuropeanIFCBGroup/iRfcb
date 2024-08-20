@@ -7,16 +7,13 @@
 #' using \code{vignette("tutorial", package = "iRfcb")}
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
-#' @param method Method to be used for downloading files. Current download methods are "internal",
-#' "libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
-#' see ‘utils::download.file’.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
 #'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
 #' \doi{10.17044/scilifelab.25883455.v3}
 #'
-#' @importFrom utils download.file
+#' @importFrom curl curl curl_download
 #' @examples
 #' \dontrun{
 #' # Download and unzip IFCB test data into the "data" directory
@@ -24,7 +21,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, method = "auto", figshare_article = "48158716") {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716") {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -33,12 +30,13 @@ ifcb_download_test_data <- function(dest_dir, method = "auto", figshare_article 
     dir.create(dest_dir, recursive = TRUE)
   }
 
-  # Determine the local destination file path
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Download the file
-  options(timeout = max(600, getOption("timeout")))  # Set timeout to 600 seconds
-  download.file(url, dest_file, method = method, quiet = FALSE, mode = "wb")
+  # Open a new connection to the file
+  con <- curl(url)
+
+  # Download the file using curl
+  curl_download(url, dest_file)
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)

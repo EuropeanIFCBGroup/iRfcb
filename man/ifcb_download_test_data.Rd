@@ -4,18 +4,10 @@
 \alias{ifcb_download_test_data}
 \title{Download Test IFCB Data}
 \usage{
-ifcb_download_test_data(
-  dest_dir,
-  method = "auto",
-  figshare_article = "48158716"
-)
+ifcb_download_test_data(dest_dir, figshare_article = "48158716")
 }
 \arguments{
 \item{dest_dir}{The destination directory where the files will be unzipped.}
-
-\item{method}{Method to be used for downloading files. Current download methods are "internal",
-"libcurl", "wget", "curl" and "wininet" (Windows only), and there is a value "auto":
-see ‘utils::download.file’.}
 
 \item{figshare_article}{The file article number at the SciLifeLab Figshare data repository.
 By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.}
