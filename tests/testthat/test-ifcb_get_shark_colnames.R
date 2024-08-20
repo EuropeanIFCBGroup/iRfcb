@@ -11,7 +11,7 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
                          "POSYS","WADEP","MSTAT","MPROG","MNDEP","MXDEP",
                          "SLABO","ACKR_SMP","SMTYP","PDMET","SMVOL","METFP",
                          "IFCBNO","SMPNO","LATNM","SFLAG","TRPHY","APHIA_ID",
-                         "COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
+                         "IMAGE_VERIFICATION","COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
                          "CLASS_NAME","CLASS_PD","CLASS_PR","CLASS_PM","METOA",
                          "COUNTPROG","ALABO","ACKR_ANA","ANADATE","METDC",
                          "TRAINING_SET","TRAINING_SET_ANNOTATED_BY","CLASSIFIER_CREATED_BY",
