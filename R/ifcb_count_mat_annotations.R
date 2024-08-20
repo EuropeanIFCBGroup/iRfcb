@@ -7,9 +7,9 @@ utils::globalVariables(c("name", "manual"))
 #' @param manual_folder A character string specifying the path to the folder containing .mat files.
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
-#' @param class_level A boolean that specifies whether to summarize counts at the class level, or on sample level. The default is TRUE.
+#' @param sum_level A character string specifying the level of summarization. Options: "sample" or "class" (default).
 #'
-#' @return A data frame with the total count of images per class.
+#' @return A data frame with the total count of images per class or per sample.
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @importFrom R.matlab readMat
@@ -30,7 +30,11 @@ utils::globalVariables(c("name", "manual"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class = NULL, class_level = TRUE) {
+ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class = NULL, sum_level = "class") {
+  if (!sum_level %in% c("class", "sample")) {
+    stop("sum_level should either be `class` or `sample`")
+  }
+
   # List .mat files in the specified folder
   mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = FALSE)
 
@@ -84,7 +88,7 @@ ifcb_count_mat_annotations <- function(manual_folder, class2use_file, skip_class
     total_sum <- bind_rows(total_sum, sample_sum)
   }
 
-  if (class_level) {
+  if (sum_level == "class") {
     # Combine and summarize results
     total_sum <- total_sum %>%
       group_by(class) %>%
