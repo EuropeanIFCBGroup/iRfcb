@@ -19,7 +19,8 @@ ifcb_psd(
   missing_cells = NULL,
   biomass = NULL,
   bloom = NULL,
-  humidity = NULL
+  humidity = NULL,
+  micron_factor = 1/3.4
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ ifcb_psd(
 \item{bloom}{The minimum difference between the starting ESD and the ESD with the most targets. Any files with a difference less than this threshold will be flagged as a bloom. Will likely be lower than the bubbles threshold. Optional.}
 
 \item{humidity}{The maximum percent humidity. Any files with higher values will be flagged as high humidity. Optional.}
+
+\item{micron_factor}{The conversion factor to microns. Default is 1/3.4.}
 }
 \value{
 A list with data, fits, and flags DataFrames if `save_data` is FALSE; otherwise, NULL.
@@ -82,7 +85,8 @@ ifcb_psd(
   missing_cells = 0.7,
   biomass = 1000,
   bloom = 5,
-  humidity = NULL
+  humidity = NULL,
+  micron_factor = 1/3.0
 )
 }
 }
