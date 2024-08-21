@@ -3,7 +3,7 @@ pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   tutorial: tutorial.html
-last_built: 2024-08-21T04:43Z
+last_built: 2024-08-21T06:30Z
 urls:
   reference: https://europeanifcbgroup.github.io/iRfcb/reference
   article: https://europeanifcbgroup.github.io/iRfcb/articles
