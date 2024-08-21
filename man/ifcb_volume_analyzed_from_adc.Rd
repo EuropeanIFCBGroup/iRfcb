@@ -11,9 +11,11 @@ ifcb_volume_analyzed_from_adc(adc_file)
 }
 \value{
 A list containing:
-  - ml_analyzed: A numeric vector of estimated sample volume analyzed for each ADC file.
-  - inhibittime: A numeric vector of inhibittime values extracted from ADC files.
-  - runtime: A numeric vector of runtime values extracted from ADC files.
+\itemize{
+  \item \strong{ml_analyzed}: A numeric vector of estimated sample volume analyzed for each ADC file.
+  \item \strong{inhibittime}: A numeric vector of inhibittime values extracted from ADC files.
+  \item \strong{runtime}: A numeric vector of runtime values extracted from ADC files.
+}
 }
 \description{
 This function reads an IFCB ADC file to extract sample run time and inhibittime,

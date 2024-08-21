@@ -24,6 +24,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @param biomass The minimum number of targets in the most populated ESD bin for any given run. Any files with fewer targets will be flagged as having low biomass. Optional.
 #' @param bloom The minimum difference between the starting ESD and the ESD with the most targets. Any files with a difference less than this threshold will be flagged as a bloom. Will likely be lower than the bubbles threshold. Optional.
 #' @param humidity The maximum percent humidity. Any files with higher values will be flagged as high humidity. Optional.
+#' @param micron_factor The conversion factor to microns. Default is 1/3.4.
 #'
 #' @return A list with data, fits, and flags DataFrames if `save_data` is FALSE; otherwise, NULL.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/kudelalab/PSD} \url{https://github.com/hsosik/ifcb-analysis}
@@ -54,13 +55,14 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   missing_cells = 0.7,
 #'   biomass = 1000,
 #'   bloom = 5,
-#'   humidity = NULL
+#'   humidity = NULL,
+#'   micron_factor = 1/3.0
 #' )
 #' }
 #' @export
 ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file = NULL, plot_folder = NULL,
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
-                     missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL) {
+                     missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL, micron_factor = 1/3.4) {
 
   if (!reticulate::py_available(initialize = TRUE)) {
     stop("Python is not installed on this machine. Please install Python to use this function.")
@@ -73,7 +75,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   source_python(system.file("python", "psd.py", package = "iRfcb"))
 
   # Create a Bin object
-  b <- Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder))
+  b <- Bin(feature_dir = as.character(feature_folder), hdr_dir = as.character(hdr_folder), micron_factor = as.numeric(micron_factor))
 
   # Plot the PSD
   b$plot_PSD(use_marker = use_marker, plot_folder = NULL, start_fit = as.integer(start_fit))

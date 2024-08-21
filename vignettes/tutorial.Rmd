@@ -33,8 +33,7 @@ To get started, download sample data from the [SMHI IFCB Plankton image referenc
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        method = "auto") # You may need to specify
+ifcb_download_test_data(dest_dir = data_dir)
 ```
 
 ## Extract Timestamps and Volumes
@@ -293,7 +292,8 @@ Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_data`:
 # Summarize counts from MATLAB files
 mat_count <- ifcb_count_mat_annotations(manual_folder = "data/manual",
                                         class2use_file = "data/config/class2use.mat",
-                                        skip_class = "unclassified") # Or class ID
+                                        skip_class = "unclassified", # Or class ID
+                                        sum_level = "class") # Or per "sample"
 
 # Print output
 head(mat_count)

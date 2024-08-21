@@ -57,7 +57,7 @@ ifcb_extract_biovolumes <- function(feature_folder, class_folder, micron_factor 
   class_date_times <- gsub(".*D(\\d{8}T\\d{6})_.*", "\\1", classes)
 
   # Filter features that match the extracted date-time
-  features <- features[sapply(class_date_times, function(dt) grepl(dt, names(features)))]
+  features <- features[sapply(names(features), function(feat_name) any(sapply(class_date_times, function(dt) grepl(dt, feat_name))))]
 
   # Initialize an empty list to store data frames
   data_list <- list()

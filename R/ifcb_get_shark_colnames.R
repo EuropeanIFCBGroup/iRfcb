@@ -1,6 +1,7 @@
 #' Get Shark Column Names
 #'
-#' This function reads shark column names from a specified tab-separated values (TSV) file included in the package.
+#' This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
+#' These columns are used for submitting IFCB data to \url{https://sharkweb.smhi.se/}.
 #'
 #' @return A data frame containing the shark column names.
 #' @export

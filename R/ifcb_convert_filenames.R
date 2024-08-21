@@ -23,7 +23,7 @@ ifcb_convert_filenames <- function(filenames) {
   filenames <- tools::file_path_sans_ext(filenames)
 
   # Check if filenames are in the correct format
-  valid_format <- grepl("^D\\d{8}T\\d{6}_IFCB\\d+(_\\d+)?$", filenames)
+  valid_format <- grepl("^D\\d{8}T\\d{6}", filenames)
   if (!all(valid_format)) {
     stop("Error: One or more filenames are not in the correct format.")
   }
