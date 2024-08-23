@@ -43,13 +43,18 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
 #'
 #' @importFrom dplyr group_by summarise left_join
 #' @importFrom magrittr %>%
+#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
-ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL, hdr_folder = NULL, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", class_folder = NULL) {
+ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL, hdr_folder = NULL, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", class_folder = deprecated()) {
 
   # Warn the user if class_folder is used
-  if (!is.null(class_folder)) {
-    warning("'class_folder' is deprecated. Use 'mat_folder' instead.")
+  if (lifecycle::is_present(class_folder)) {
+
+    # Signal the deprecation to the user
+    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(class_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_folder = )")
+
+    # Deal with the deprecated argument for compatibility
     mat_folder <- class_folder
   }
 

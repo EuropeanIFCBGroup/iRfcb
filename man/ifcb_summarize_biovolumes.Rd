@@ -12,7 +12,7 @@ ifcb_summarize_biovolumes(
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
   threshold = "opt",
-  class_folder = NULL
+  class_folder = deprecated()
 )
 }
 \arguments{

@@ -9,7 +9,7 @@ ifcb_count_mat_annotations(
   class2use_file,
   skip_class = NULL,
   sum_level = "class",
-  manual_folder = NULL
+  manual_folder = deprecated()
 )
 }
 \arguments{

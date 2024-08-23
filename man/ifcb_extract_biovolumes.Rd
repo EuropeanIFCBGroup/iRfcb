@@ -12,8 +12,8 @@ ifcb_extract_biovolumes(
   diatom_class = "Bacillariophyceae",
   threshold = "opt",
   multiblob = FALSE,
-  feature_folder = NULL,
-  class_folder = NULL
+  feature_folder = deprecated(),
+  class_folder = deprecated()
 )
 }
 \arguments{

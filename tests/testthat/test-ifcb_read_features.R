@@ -1,4 +1,5 @@
 library(testthat)
+library(lifecycle)
 
 # Mock feature files creation
 setup_test_files <- function(base_path) {
@@ -76,7 +77,7 @@ test_that("ifcb_read_features returns named list of data frames", {
 test_that("ifcb_read_features handles deprecated function correctly", {
   setup_test_files(test_feature_folder)
 
-  expect_warning(ifcb_read_features(feature_folder = test_feature_folder), "'feature_folder' is deprecated. Use 'feature_files' instead")
+  expect_deprecated(ifcb_read_features(feature_folder = test_feature_folder))
 
   features <- suppressWarnings(ifcb_read_features(feature_folder = test_feature_folder))
 

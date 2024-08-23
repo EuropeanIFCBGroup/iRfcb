@@ -1,5 +1,6 @@
 library(testthat)
 library(dplyr)
+library(lifecycle)
 
 # Define the path to the test data zip file
 zip_path <- test_path("test_data/test_data.zip")
@@ -84,10 +85,9 @@ test_that("ifcb_extract_biovolumes calculates carbon content correctly for diato
 
 test_that("ifcb_extract_biovolumes handles deprecated arguments", {
 
-  w <- capture_warnings(ifcb_extract_biovolumes(feature_folder = feature_folder, class_folder = class_folder))
+  expect_deprecated(ifcb_extract_biovolumes(feature_files = feature_folder, class_folder = class_folder))
 
-  expect_match(w, "'feature_folder' is deprecated", all = FALSE)
-  expect_match(w, "'class_folder' is deprecated", all = FALSE)
+  expect_deprecated(ifcb_extract_biovolumes(feature_folder = feature_folder, mat_folder = class_folder))
 })
 
 test_that("ifcb_extract_biovolumes manual data correctly", {

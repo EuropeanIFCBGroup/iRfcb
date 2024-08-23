@@ -1,5 +1,6 @@
 library(testthat)
 library(dplyr)
+library(lifecycle)
 
 # Define paths to the test data
 test_data_zip <- test_path("test_data/test_data.zip")
@@ -45,7 +46,7 @@ test_that("ifcb_summarize_biovolumes works correctly", {
 
 test_that("ifcb_summarize_biovolumes handles deprecated arguments correctly", {
 
-  expect_warning(ifcb_summarize_biovolumes(feature_folder, class_folder = class_folder, hdr_folder = hdr_folder), "'class_folder' is deprecated. Use 'mat_folder' instead.")
+  expect_deprecated(ifcb_summarize_biovolumes(feature_folder, class_folder = class_folder, hdr_folder = hdr_folder))
 
   # Call the function with the test data
   result <- suppressWarnings(ifcb_summarize_biovolumes(feature_folder, class_folder = class_folder, hdr_folder = hdr_folder))

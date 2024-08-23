@@ -18,6 +18,7 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @importFrom R.matlab readMat
 #' @importFrom dplyr filter left_join mutate select group_by summarise bind_rows pull n
 #' @importFrom tools file_path_sans_ext
+#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @examples
 #' \dontrun{
@@ -33,14 +34,18 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", manual_folder = NULL) {
+ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", manual_folder = deprecated()) {
   if (!sum_level %in% c("class", "sample", "roi")) {
     stop("sum_level should either be `class`, `roi` or `sample`")
   }
 
-  # Warn the user if feature_folder is used
-  if (!is.null(manual_folder)) {
-    warning("'manual_folder' is deprecated. Use 'feature_files' instead.")
+  # Warn the user if class_folder is used
+  if (lifecycle::is_present(manual_folder)) {
+
+    # Signal the deprecation to the user
+    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(manual_folder = )", "iRfcb::ifcb_extract_biovolumes(manual_files = )")
+
+    # Deal with the deprecated argument for compatibility
     manual_files <- manual_folder
   }
 

@@ -27,13 +27,18 @@
 #'
 #' @importFrom utils read.csv
 #' @importFrom stats setNames
+#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
-ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, feature_folder = NULL) {
+ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, feature_folder = deprecated()) {
 
   # Warn the user if feature_folder is used
-  if (!is.null(feature_folder)) {
-    warning("'feature_folder' is deprecated. Use 'feature_files' instead.")
+  if (lifecycle::is_present(feature_folder)) {
+
+    # Signal the deprecation to the user
+    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(feature_folder = )", "iRfcb::ifcb_extract_biovolumes(feature_files = )")
+
+    # Deal with the deprecated argument for compatibility
     feature_files <- feature_folder
   }
 

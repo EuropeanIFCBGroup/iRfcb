@@ -7,7 +7,7 @@
 ifcb_read_features(
   feature_files = NULL,
   multiblob = FALSE,
-  feature_folder = NULL
+  feature_folder = deprecated()
 )
 }
 \arguments{
