@@ -69,9 +69,6 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
   k <- fit_params$k
   R2 <- fit_params$R.2
 
-  # Generate the power curve function
-  power_curve <- function(x) { a * x^k }
-
   # Create the equation text
   if (!is.na(R2) && is.finite(R2)) {
     equation_text <- paste0("y = ", format(a, scientific = TRUE, digits = 3), " * x^", format(k, digits = 3), "\nR\u00B2 = ", format(R2, digits = 3))

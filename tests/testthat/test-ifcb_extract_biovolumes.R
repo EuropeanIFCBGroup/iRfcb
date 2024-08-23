@@ -13,6 +13,8 @@ unzip(zip_path, exdir = temp_dir)
 # Define paths to the unzipped folders
 feature_folder <- file.path(temp_dir, "test_data/features")
 class_folder <- file.path(temp_dir, "test_data/class/class2022_v1")
+manual_folder <- file.path(temp_dir, "test_data/manual")
+class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
 
 test_that("ifcb_extract_biovolumes works correctly", {
 
@@ -78,6 +80,45 @@ test_that("ifcb_extract_biovolumes calculates carbon content correctly for diato
   # Check if non-diatom classes are identified correctly and carbon is calculated
   non_diatom_rows <- biovolume_df %>% filter(!class %in% "Bacillariophyceae")
   expect_true(all(non_diatom_rows$carbon_pg > 0))
+})
+
+test_that("ifcb_extract_biovolumes handles deprecated arguments", {
+
+  w <- capture_warnings(ifcb_extract_biovolumes(feature_folder = feature_folder, class_folder = class_folder))
+
+  expect_match(w, "'feature_folder' is deprecated", all = FALSE)
+  expect_match(w, "'class_folder' is deprecated", all = FALSE)
+})
+
+test_that("ifcb_extract_biovolumes manual data correctly", {
+
+  expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use must be specified when extracting manual biovolume data")
+
+  # Run the function with test data
+  biovolume_df <- ifcb_extract_biovolumes(feature_folder, manual_folder, class2use_file, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
+
+  # Check that the returned object is a data frame
+  expect_s3_class(biovolume_df, "data.frame")
+
+  # Check that the data frame contains the expected columns
+  expected_columns <- c("sample", "roi_number", "class", "biovolume_um3", "carbon_pg")
+  expect_true(all(expected_columns %in% names(biovolume_df)))
+
+  # Check that the data frame has non-zero rows
+  expect_gt(nrow(biovolume_df), 0)
+
+  # Check some specific values (replace with expected values based on your test data)
+  # Example: Check if specific sample and roi_number exist in the output
+  expect_true("D20220522T003051_IFCB134" %in% biovolume_df$sample)
+  expect_true(2 %in% biovolume_df$roi_number)
+
+  # Example: Check if biovolume_um3 and carbon_pg are calculated correctly
+  # Replace the following expected values with the actual expected values from your test data
+  expected_biovolume_um3 <- 5206.2003  # Example value
+  expect_equal(biovolume_df$biovolume_um3[1], expected_biovolume_um3, tolerance = 1e-8)
+
+  expected_carbon_pg <- 668.05635  # Example value
+  expect_equal(biovolume_df$carbon_pg[1], expected_carbon_pg, tolerance = 1e-8)
 })
 
 unlink(temp_dir, recursive = TRUE)

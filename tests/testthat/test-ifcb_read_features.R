@@ -72,3 +72,16 @@ test_that("ifcb_read_features returns named list of data frames", {
 
   cleanup_test_files(test_feature_folder)
 })
+
+test_that("ifcb_read_features handles deprecated function correctly", {
+  setup_test_files(test_feature_folder)
+
+  expect_warning(ifcb_read_features(feature_folder = test_feature_folder), "'feature_folder' is deprecated. Use 'feature_files' instead")
+
+  features <- suppressWarnings(ifcb_read_features(feature_folder = test_feature_folder))
+
+  expect_equal(length(features), 2)
+  expect_equal(names(features), c("D20230316T101514.csv", "D20230316T101516.csv"))
+
+  cleanup_test_files(test_feature_folder)
+})

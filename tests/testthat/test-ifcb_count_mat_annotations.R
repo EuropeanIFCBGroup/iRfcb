@@ -24,6 +24,18 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_named(result, c("class", "n"))
   expect_true(all(c("class", "n") %in% names(result)))
 
+  # Run the function and expect warning
+  expect_warning(ifcb_count_mat_annotations(manual_folder = manual_folder, class2use_file = class2use_file),
+                 "'manual_folder' is deprecated. Use 'feature_files' instead.")
+
+  # Run the function and expect error
+  expect_error(ifcb_count_mat_annotations(manual_folder, class2use_file, sum_level = NA),
+               "sum_level should either be `class`, `roi` or `sample`")
+
+  # Run the function and expect error
+  expect_error(ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = "not_a_class"),
+               "None of the class names provided in skip_class were found in class2use.")
+
   # Run the function with skipping specific class IDs
   skip_ids <- 1
   result_skip_ids <- ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = skip_ids)
@@ -53,9 +65,3 @@ test_that("ifcb_count_mat_annotations works correctly", {
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)
 })
-
-# Helper function to extract class2use from .mat file
-ifcb_get_mat_variable <- function(file) {
-  mat_data <- R.matlab::readMat(file)
-  as.character(mat_data$class2use)
-}
