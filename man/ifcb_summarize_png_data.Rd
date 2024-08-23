@@ -22,11 +22,11 @@ ifcb_summarize_png_data(
 }
 \value{
 If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
-        If sum_level is "class", returns a data frame with columns: class_name, n_images.
+If sum_level is "class", returns a data frame with columns: class_name, n_images.
 }
 \description{
 This function summarizes the number of images per class for each sample and timestamps,
-and optionally retrieves GPS positions, and IFCB information using `ifcb_read_hdr_data` and `ifcb_convert_filenames` functions.
+and optionally retrieves GPS positions, and IFCB information using \code{ifcb_read_hdr_data} and \code{ifcb_convert_filenames} functions.
 }
 \examples{
 \dontrun{

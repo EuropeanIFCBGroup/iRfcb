@@ -15,7 +15,7 @@ ifcb_get_svea_position(timestamps, ferrybox_folder, ship = "SveaFB")
 }
 \value{
 A data frame containing the input timestamps and corresponding GPS coordinates.
-  Columns include 'timestamp', 'gpsLatitude', and 'gpsLongitude'.
+Columns include 'timestamp', 'gpsLatitude', and 'gpsLongitude'.
 }
 \description{
 This is an internal SMHI function that reads .txt files from a specified folder containing ferrybox data,

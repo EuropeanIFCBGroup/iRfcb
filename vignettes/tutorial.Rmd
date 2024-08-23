@@ -484,7 +484,7 @@ This function calculates aggregated biovolumes and carbon content from Imaging F
 ```{r}
 # Summarize biovolume data using IFCB data from the specified folders
 biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
-                                            class_folder = "data/classified",
+                                            mat_folder = "data/classified",
                                             hdr_folder = "data/data/2023",
                                             micron_factor = 1/3.4,
                                             diatom_class = "Bacillariophyceae",
@@ -493,6 +493,24 @@ biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023
 # Print output
 head(biovolume_data)
 ```
+
+#### Summarize counts, biovolumes and carbon content from manually annotated IFCB data
+
+This function calculates aggregated biovolumes and carbon content from manually annotated Imaging FlowCytobot (IFCB) images based on feature files and manual MATLAB files. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_count_mat_annotations`, `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
+
+```{r}
+# Summarize biovolume data using IFCB data from the specified folders
+manual_biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features",
+                                                   mat_folder = "data/manual",
+                                                   class2use_file = "data/config/class2use.mat",
+                                                   hdr_folder = "data/data",
+                                                   micron_factor = 1/3.4,
+                                                   diatom_class = "Bacillariophyceae")
+
+# Print output
+head(manual_biovolume_data)
+```
+
 
 ## Taxonomical Data
 

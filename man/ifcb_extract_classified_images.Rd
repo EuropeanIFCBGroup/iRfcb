@@ -31,7 +31,7 @@ No return value, called for side effects. Extracts and saves taxa images to a di
 }
 \description{
 This function reads a MATLAB classified sample file (.mat) generated
-by the `start_classify_batch_user_training` function from the `ifcb-analysis` repository (Sosik and Olson 2007),
+by the \code{start_classify_batch_user_training} function from the \code{ifcb-analysis} repository (Sosik and Olson 2007),
 extracts specified taxa images from the corresponding ROI files,
 and saves each image in a specified directory.
 }

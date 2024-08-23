@@ -19,7 +19,7 @@ By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is 
 \item{max_retries}{The maximum number of retry attempts in case of download failure. Default is 3.}
 }
 \description{
-This function downloads a zip archive containing MATLAB files from the `iRfcb`
+This function downloads a zip archive containing MATLAB files from the \code{iRfcb}
 dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing iRfcb and for creating the tutorial vignette

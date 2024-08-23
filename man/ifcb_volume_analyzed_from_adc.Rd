@@ -12,9 +12,9 @@ ifcb_volume_analyzed_from_adc(adc_file)
 \value{
 A list containing:
 \itemize{
-  \item \strong{ml_analyzed}: A numeric vector of estimated sample volume analyzed for each ADC file.
-  \item \strong{inhibittime}: A numeric vector of inhibittime values extracted from ADC files.
-  \item \strong{runtime}: A numeric vector of runtime values extracted from ADC files.
+\item \strong{ml_analyzed}: A numeric vector of estimated sample volume analyzed for each ADC file.
+\item \strong{inhibittime}: A numeric vector of inhibittime values extracted from ADC files.
+\item \strong{runtime}: A numeric vector of runtime values extracted from ADC files.
 }
 }
 \description{
@@ -22,7 +22,7 @@ This function reads an IFCB ADC file to extract sample run time and inhibittime,
 and returns the associated estimate of sample volume analyzed (in milliliters).
 The function assumes a standard IFCB configuration with a sample syringe operating
 at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
-the R equivalent function of `IFCB_volume_analyzed_fromADC` from the `ifcb-analysis repository` (Sosik and Olson 2007).
+the R equivalent function of \code{IFCB_volume_analyzed_fromADC} from the \verb{ifcb-analysis repository} (Sosik and Olson 2007).
 }
 \examples{
 \dontrun{

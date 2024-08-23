@@ -17,15 +17,15 @@ This can be a URL for web services or a full path for local files.}
 }
 \value{
 A list containing the following elements:
-  \item{class2useTB}{Classes used in the TreeBagger classifier.}
-  \item{classcountTB}{Counts of each class considering each target placed in the winning class.}
-  \item{classcountTB_above_optthresh}{Counts of each class considering only classifications above the optimal threshold for maximum accuracy.}
-  \item{ml_analyzedTB}{Volume analyzed for each file.}
-  \item{mdateTB}{Dates associated with each file.}
-  \item{filelistTB}{List of files processed.}
-  \item{classpath_generic}{The generic classpath provided as input.}
-  \item{classcountTB_above_adhocthresh (optional)}{Counts of each class considering only classifications above the adhoc threshold.}
-  \item{adhocthresh (optional)}{The adhoc threshold used for classification.}
+\item{class2useTB}{Classes used in the TreeBagger classifier.}
+\item{classcountTB}{Counts of each class considering each target placed in the winning class.}
+\item{classcountTB_above_optthresh}{Counts of each class considering only classifications above the optimal threshold for maximum accuracy.}
+\item{ml_analyzedTB}{Volume analyzed for each file.}
+\item{mdateTB}{Dates associated with each file.}
+\item{filelistTB}{List of files processed.}
+\item{classpath_generic}{The generic classpath provided as input.}
+\item{classcountTB_above_adhocthresh (optional)}{Counts of each class considering only classifications above the adhoc threshold.}
+\item{adhocthresh (optional)}{The adhoc threshold used for classification.}
 }
 \description{
 This function summarizes class results for a series of classifier output files

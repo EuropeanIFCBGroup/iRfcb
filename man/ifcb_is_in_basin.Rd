@@ -14,19 +14,19 @@ ifcb_is_in_basin(latitudes, longitudes, plot = FALSE, shape_file = NULL)
 \item{plot}{A boolean indicating whether to plot the points and the sea basin. Default is FALSE.}
 
 \item{shape_file}{The absolute path to a custom polygon shapefile in WGS84 (EPSG:4326) that represents the specific sea basin.
-Default is a land-buffered shapefile of the Baltic Sea basins (including Öresund), included in the `iRfcb` package.}
+Default is a land-buffered shapefile of the Baltic Sea basins (including Öresund), included in the \code{iRfcb} package.}
 }
 \value{
-A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins if `plot = TRUE`.
+A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins if \code{plot = TRUE}.
 }
 \description{
 This function checks if vectors of latitude and longitude points are within a user-supplied sea basin.
-The Baltic Sea (including Öresund) basins are included as a pre-packaged shapefile in the `iRfcb` package.
+The Baltic Sea (including Öresund) basins are included as a pre-packaged shapefile in the \code{iRfcb} package.
 }
 \details{
-This function reads a pre-packaged shapefile of the Baltic Sea Basin from the `iRfcb` package by default, or a user-supplied
-         shapefile if provided. It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
-         fall within the specified sea basin. Optionally, it plots the points and the sea basin polygons together.
+This function reads a pre-packaged shapefile of the Baltic Sea Basin from the \code{iRfcb} package by default, or a user-supplied
+shapefile if provided. It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
+fall within the specified sea basin. Optionally, it plots the points and the sea basin polygons together.
 }
 \examples{
 # Define example latitude and longitude vectors

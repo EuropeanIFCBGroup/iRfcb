@@ -2,22 +2,30 @@
 % Please edit documentation in R/ifcb_read_features.R
 \name{ifcb_read_features}
 \alias{ifcb_read_features}
-\title{Read Feature Files from a Specified Folder}
+\title{Read Feature Files from a Specified Folder or File Paths}
 \usage{
-ifcb_read_features(feature_folder, multiblob = FALSE)
+ifcb_read_features(
+  feature_files = NULL,
+  multiblob = FALSE,
+  feature_folder = NULL
+)
 }
 \arguments{
-\item{feature_folder}{Path to the folder containing feature files.}
+\item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
 \item{multiblob}{Logical indicating whether to filter for multiblob files (default: FALSE).}
+
+\item{feature_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Use \code{feature_files} instead.}
 }
 \value{
-A named list of data frames, where each element corresponds to a feature file read from \code{feature_folder}.
-  The list is named with the base names of the feature files.
+A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
+The list is named with the base names of the feature files.
 }
 \description{
-This function reads feature files from a given folder, filtering them optionally
-based on whether they are multiblob or single blob files.
+This function reads feature files from a given folder or a specified set of file paths,
+optionally filtering them based on whether they are multiblob or single blob files.
 }
 \examples{
 \dontrun{
@@ -26,6 +34,9 @@ features <- ifcb_read_features("path/to/feature_folder")
 
 # Read only multiblob feature files
 multiblob_features <- ifcb_read_features("path/to/feature_folder", multiblob = TRUE)
+
+# Read feature files from a list of file paths
+features <- ifcb_read_features(c("path/to/file1.csv", "path/to/file2.csv"))
 }
 
 }
