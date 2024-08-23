@@ -36,7 +36,7 @@ data_dir <- "data"
 ifcb_download_test_data(dest_dir = data_dir)
 ```
 
-## Extract Timestamps and Volumes
+## Extract Timestamps and Sample Volumes
 
 #### Extract Timestamps from IFCB sample Filenames
 
@@ -80,7 +80,7 @@ volume_analyzed <- ifcb_volume_analyzed(hdr_file)
 print(volume_analyzed)
 ```
 
-#### Get Runtime
+#### Get Sample Runtime
 
 Get the runtime from a header file:
 ```{r}
@@ -482,7 +482,7 @@ head(summary_data)
 This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
 
 ```{r}
-# Summarize biovolume data using IFCB data from the specified folders
+# Summarize biovolume data using IFCB data from classified data folder
 biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features/2023",
                                             mat_folder = "data/classified",
                                             hdr_folder = "data/data/2023",
@@ -496,10 +496,10 @@ head(biovolume_data)
 
 #### Summarize counts, biovolumes and carbon content from manually annotated IFCB data
 
-This function calculates aggregated biovolumes and carbon content from manually annotated Imaging FlowCytobot (IFCB) images based on feature files and manual MATLAB files. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_count_mat_annotations`, `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
+The `ifcb_summarize_biovolumes` function can also be used to calculate aggregated biovolumes and carbon content from manually annotated Imaging FlowCytobot (IFCB) image data. See details in the help pages for `ifcb_summarize_biovolumes`, `ifcb_extract_biovolumes` and `ifcb_count_mat_annotations`.
 
 ```{r}
-# Summarize biovolume data using IFCB data from the specified folders
+# Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/features",
                                                    mat_folder = "data/manual",
                                                    class2use_file = "data/config/class2use.mat",
