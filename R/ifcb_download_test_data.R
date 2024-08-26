@@ -56,7 +56,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     attempts <- attempts + 1
 
     if (!success) {
-      message("Attempt", attempts, "failed. Retrying in", sleep_time, "seconds...")
+      message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
 
       Sys.sleep(sleep_time)
     }
