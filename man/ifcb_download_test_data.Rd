@@ -7,7 +7,8 @@
 ifcb_download_test_data(
   dest_dir,
   figshare_article = "48158716",
-  max_retries = 3
+  max_retries = 5,
+  sleep_time = 10
 )
 }
 \arguments{
@@ -16,10 +17,12 @@ ifcb_download_test_data(
 \item{figshare_article}{The file article number at the SciLifeLab Figshare data repository.
 By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.}
 
-\item{max_retries}{The maximum number of retry attempts in case of download failure. Default is 3.}
+\item{max_retries}{The maximum number of retry attempts in case of download failure. Default is 5.}
+
+\item{sleep_time}{The sleep time between download attempts, in seconds. Default is 10.}
 }
 \description{
-This function downloads a zip archive containing MATLAB files from the `iRfcb`
+This function downloads a zip archive containing MATLAB files from the \code{iRfcb}
 dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing iRfcb and for creating the tutorial vignette

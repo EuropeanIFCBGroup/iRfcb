@@ -1,7 +1,7 @@
 Package: iRfcb
 Type: Package
 Title: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot
-Version: 0.3.3
+Version: 0.3.4
 Authors@R: 
     person("Anders", "Torstensson",
            role = c("aut", "cre"),
@@ -14,6 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Imports:
   zip,
+  lifecycle,
   shiny,
   base64enc,
   stringr,
@@ -33,6 +34,7 @@ Imports:
   curl,
   lubridate
 RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
 Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
 Suggests: 
     knitr,

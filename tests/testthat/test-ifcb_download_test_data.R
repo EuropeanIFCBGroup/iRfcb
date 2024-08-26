@@ -9,6 +9,9 @@ test_that("ifcb_download_test_data downloads and unzips files correctly", {
   # Non-existing directory
   temp_dir <- file.path(temp_dir, "temp")
 
+  # Call the function to test error handling
+  expect_error(ifcb_download_test_data(temp_dir, figshare_article = "Non-valid-article"), "Download failed after 5 attempts.")
+
   # Call the function to download and unzip test data
   ifcb_download_test_data(temp_dir)
 

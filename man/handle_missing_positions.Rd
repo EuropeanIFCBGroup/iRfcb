@@ -18,7 +18,7 @@ handle_missing_positions(
 \item{ferrybox_position}{A data frame containing timestamps and GPS positions from ferrybox.}
 
 \item{rounding_function}{A function used to round the timestamps.
-This can be `lubridate::floor_date`, `lubridate::ceiling_date`,
+This can be \code{lubridate::floor_date}, \code{lubridate::ceiling_date},
 or any other suitable rounding function.}
 
 \item{lat_col}{The name of the new latitude column to be created.}

@@ -9,7 +9,8 @@
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
-#' @param max_retries The maximum number of retry attempts in case of download failure. Default is 3.
+#' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
+#' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
 #'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
 #' \doi{10.17044/scilifelab.25883455.v3}
@@ -22,7 +23,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 3) {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10) {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -55,7 +56,9 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     attempts <- attempts + 1
 
     if (!success) {
-      message("Attempt ", attempts, " failed. Retrying...")
+      message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
+
+      Sys.sleep(sleep_time)
     }
   }
 

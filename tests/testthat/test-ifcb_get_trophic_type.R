@@ -39,4 +39,7 @@ test_that("ifcb_get_trophic_type handles invalid inputs gracefully", {
 
   # Check if the function handles NULL input without print_complete_list
   expect_error(ifcb_get_trophic_type(), "Error: No valid input provided. Please specify either taxa_list or set print_complete_list to TRUE.")
+
+  # Check if the function handles input with print_complete_list
+  expect_warning(ifcb_get_trophic_type(taxa_list = "Chaetoceros", print_complete_list = TRUE), "Both taxa_list and print_complete_list are provided. Only the taxa_list results will be returned.")
 })

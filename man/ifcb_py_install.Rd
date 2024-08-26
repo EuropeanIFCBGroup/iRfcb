@@ -7,13 +7,13 @@
 ifcb_py_install(..., envname = "~/.virtualenvs/iRfcb")
 }
 \arguments{
-\item{...}{Additional arguments passed to `virtualenv_create`, such as `packages`.}
+\item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
 
 \item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
 }
 \description{
 This function creates and activates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
-Additional packages can be installed by passing them through the `packages` argument.
+Additional packages can be installed by passing them through the \code{packages} argument.
 }
 \examples{
 \dontrun{

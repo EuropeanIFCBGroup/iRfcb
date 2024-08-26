@@ -14,9 +14,9 @@ If a single numeric value is provided, it is applied to all classes.}
 }
 \value{
 A list containing three elements:
-  \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
-  \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
-  \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
+\item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
+\item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
+\item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 }
 \description{
 This function reads a TreeBagger classifier result file (.mat format) and summarizes

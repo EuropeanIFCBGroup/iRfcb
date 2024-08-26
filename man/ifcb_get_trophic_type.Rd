@@ -13,11 +13,11 @@ ifcb_get_trophic_type(taxa_list = NULL, print_complete_list = FALSE)
 }
 \value{
 A character vector of trophic types corresponding to the scientific names in \code{taxa_list},
-or a data frame containing all taxa and trophic types available in the `SMHI Trophic Type` list.
+or a data frame containing all taxa and trophic types available in the \verb{SMHI Trophic Type} list.
 }
 \description{
 This function matches a specified list of taxa with a summarized list of trophic types
-             for various plankton taxa from Northern Europe (data sourced from `SMHI Trophic Type`).
+for various plankton taxa from Northern Europe (data sourced from \verb{SMHI Trophic Type}).
 }
 \details{
 If there are multiple trophic types for a scientific name (i.e. AU and HT size classes),
