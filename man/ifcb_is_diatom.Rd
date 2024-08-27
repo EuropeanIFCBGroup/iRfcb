@@ -4,13 +4,24 @@
 \alias{ifcb_is_diatom}
 \title{Identify Diatoms in Taxa List}
 \usage{
-ifcb_is_diatom(taxa_list, diatom_class = "Bacillariophyceae")
+ifcb_is_diatom(
+  taxa_list,
+  diatom_class = "Bacillariophyceae",
+  max_retries = 3,
+  sleep_time = 10
+)
 }
 \arguments{
 \item{taxa_list}{A character vector containing the list of taxa names.}
 
 \item{diatom_class}{A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 Default is "Bacillariophyceae".}
+
+\item{max_retries}{An integer specifying the maximum number of attempts to retrieve WoRMS records in case of an error.
+Default is 3.}
+
+\item{sleep_time}{A numeric value indicating the number of seconds to wait between retry attempts.
+Default is 10 seconds.}
 }
 \value{
 A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
