@@ -1,6 +1,6 @@
 Package: iRfcb
 Type: Package
-Title: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot
+Title: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB
 Version: 0.3.5
 Authors@R: 
     person("Anders", "Torstensson",
