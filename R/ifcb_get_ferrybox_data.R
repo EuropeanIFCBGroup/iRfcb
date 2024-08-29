@@ -34,27 +34,27 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   if (!inherits(timestamps, "POSIXct")) {
     stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
   }
-  
+
   if (!dir.exists(ferrybox_folder)) {
     stop("The specified ferrybox folder does not exist.")
   }
-  
+
   # List all .txt files in the specified folder (excluding subfolders)
   ferrybox_files <- list.files(ferrybox_folder, pattern = "\\.txt$", full.names = TRUE, recursive = FALSE)
-  
+
   if (length(ferrybox_files) == 0) {
     stop("No .txt files found in the specified ferrybox folder.")
   }
-  
+
   # Convert ferrybox file names to dataframe and extract timestamps
   ferrybox_files_df <- data.frame(ferrybox_files = ferrybox_files) %>%
     dplyr::filter(grepl(ship, ferrybox_files)) %>%
     dplyr::rowwise()
-  
+
   if (nrow(ferrybox_files_df) == 0) {
     stop("No ferrybox files matching the specified ship name were found.")
   }
-  
+
   ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::mutate(
       date_from = as.POSIXct(substr(regmatches(ferrybox_files, gregexpr("\\d{14}", ferrybox_files))[[1]][1], 1, 14),
@@ -63,24 +63,24 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
                            format = "%Y%m%d%H%M%S", tz = "UTC")
     ) %>%
     dplyr::ungroup()
-  
+
   # Create a logical column indicating if any timestamp falls within the date range
   ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::rowwise() %>%
     dplyr::mutate(in_range = any(timestamps >= date_from & timestamps <= date_to)) %>%
     dplyr::ungroup()
-  
+
   # Filter the dataframe based on the in_range column
   filtered_ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::filter(in_range)
-  
+
   if (nrow(filtered_ferrybox_files_df) == 0) {
     stop("No ferrybox files contain data within the provided timestamps.")
   }
-  
+
   # Initialize an empty data frame to store ferrybox data
   ferrybox_data <- data.frame()
-  
+
   # Read and concatenate data from filtered ferrybox files
   for (file in filtered_ferrybox_files_df$ferrybox_files) {
     ferrybox_data_temp <- tryCatch({
@@ -95,22 +95,22 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
       warning(paste("Failed to read file:", file, "-", e$message))
       NULL
     })
-    
+
     if (!is.null(ferrybox_data_temp)) {
       ferrybox_data <- dplyr::bind_rows(ferrybox_data, ferrybox_data_temp)
     }
   }
-  
+
   if (nrow(ferrybox_data) == 0) {
     stop("No valid ferrybox data could be read from the filtered files.")
   }
-  
+
   # Ensure that the specified parameters exist in the data
   missing_params <- setdiff(parameters, colnames(ferrybox_data))
   if (length(missing_params) > 0) {
     stop(paste("The following parameters are missing from the ferrybox data:", paste(missing_params, collapse = ", ")))
   }
-  
+
   # Extract and clean ferrybox position data
   ferrybox_position <- ferrybox_data %>%
     dplyr::mutate(
@@ -122,46 +122,50 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     ) %>%
     dplyr::mutate(timestamp_minute = lubridate::round_date(timestamp_minute, unit = "minute")) %>%
     dplyr::select(all_of(c("timestamp_minute", parameters)))
-  
+
   # Convert parameters to numeric where applicable
   ferrybox_position <- ferrybox_position %>%
     dplyr::mutate(across(all_of(parameters), as.numeric, .names = "numeric_{col}"))
-  
+
   if (nrow(ferrybox_position) == 0) {
     stop("No valid position data could be extracted from the ferrybox data.")
   }
-  
+
   # Merge the ferrybox position data with the input timestamps
   output <- data.frame(timestamp = timestamps) %>%
     mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
     left_join(ferrybox_position, by = "timestamp_minute") %>%
     select(timestamp, all_of(parameters))
-  
+
   # Handle missing data using floor and ceiling rounding
   missing_data_floor <- handle_missing_ferrybox_data(output, ferrybox_position, parameters, floor_date)
   missing_data_ceiling <- handle_missing_ferrybox_data(output, ferrybox_position, parameters, ceiling_date)
-  
+
   # Merge and coalesce missing data
   missing_data <-missing_data_floor %>%
     full_join(missing_data_ceiling, by = "timestamp") %>%
     # Dynamically coalesce columns with .x and .y suffixes
     mutate(across(
-      .cols = contains(".x"), 
+      .cols = contains(".x"),
       .fns = ~ coalesce(.x, get(gsub(".x", ".y", cur_column()))),
       .names = "{str_remove(.col, '.x')}"
     )) %>%
     select(-contains(".y"), -contains(".x"))
-  
+
   # Update the output with missing data
   output <- output %>%
     left_join(missing_data, by = "timestamp") %>%
     # Dynamically coalesce columns with .x and .y suffixes
     mutate(across(
-      .cols = contains(".x"), 
+      .cols = contains(".x"),
       .fns = ~ coalesce(.x, get(gsub(".x", ".y", cur_column()))),
       .names = "{str_remove(.col, '.x')}"
     )) %>%
     select(-contains(".y"), -contains(".x"))
-  
+
+  # Ensure all parameters are numeric
+  output <- output %>%
+    mutate(across(all_of(parameters), as.numeric))
+
   return(output)
 }

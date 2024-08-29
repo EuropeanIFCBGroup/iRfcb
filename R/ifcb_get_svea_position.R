@@ -160,9 +160,5 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
     ) %>%
     select(timestamp, gpsLatitude, gpsLongitude)
 
-  # Ensure all parameters are numeric
-  output <- output %>%
-    mutate(across(all_of(parameters), as.numeric))
-
   return(output)
 }
