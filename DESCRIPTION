@@ -23,6 +23,7 @@ Imports:
   terra,
   reticulate,
   tidyr,
+  tidyselect,
   tibble,
   ggplot2,
   readr,

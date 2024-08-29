@@ -1,17 +1,25 @@
-utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", "ferrybox_latitude", "ferrybox_longitude", '38059', '8002', '8003', "gpsLatitude_floor", "gpsLatitude_ceiling", "gpsLongitude_floor", "gpsLongitude_ceiling", "gpsLatitude_missing", "gpsLongitude_missing"))
+utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059'))
 
-#' Get Ferrybox Data Based on Timestamps
+#' Retrieve Ferrybox Data for Specified Timestamps
 #'
 #' This internal SMHI function reads `.txt` files from a specified folder containing Ferrybox data,
 #' filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
 #' data (including GPS coordinates) for timestamps (rounded to the nearest minute) falling within the date ranges defined in the file names.
 #'
-#' @param timestamps A vector of POSIXct timestamps for which GPS coordinates and parameter data are to be retrieved.
-#' @param ferrybox_folder Path to the folder containing Ferrybox `.txt` files.
-#' @param parameters String vector with parameters to extract from the Ferrybox data. Defaults to `c("8002", "8003")`.
-#' @param ship Name of the ship to filter Ferrybox files (default is "SveaFB").
+#' @param timestamps A vector of POSIXct timestamps for which GPS coordinates and associated parameter data are to be retrieved.
+#' @param ferrybox_folder A string representing the path to the folder containing Ferrybox `.txt` files.
+#' @param parameters A character vector specifying the parameters to extract from the Ferrybox data. Defaults to `c("8002", "8003")`.
+#' @param ship A string representing the name of the ship to filter Ferrybox files. The default is "SveaFB".
+#' @param latitude_param A string specifying the header name for the latitude column in the Ferrybox data. Default is "8002".
+#' @param longitude_param A string specifying the header name for the longitude column in the Ferrybox data. Default is "8003".
 #'
-#' @return A data frame containing the input timestamps and corresponding data for the specified parameters. Columns include 'timestamp' and the specified parameters.
+#' @details
+#' The function extracts data from files whose names match the specified ship and fall within the date ranges defined in the file names. The columns corresponding to `latitude_param` and `longitude_param` will be renamed to `gpsLatitude` and `gpsLongitude`, respectively, if they are present in the `parameters` argument.
+#'
+#' The function also handles cases where the exact timestamp is missing by attempting to interpolate the data using floor and ceiling rounding methods. The final output will ensure that all specified parameters are numeric.
+#'
+#' @return A data frame containing the input timestamps and corresponding data for the specified parameters.
+#' Columns include 'timestamp', 'gpsLatitude', 'gpsLongitude' (if applicable), and the specified parameters.
 #'
 #' @examples
 #' \dontrun{
@@ -24,13 +32,14 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join bind_rows
+#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join bind_rows cur_column
 #' @importFrom magrittr %>%
 #' @importFrom lubridate round_date ymd_hms floor_date ceiling_date
 #' @importFrom tidyselect all_of contains
+#' @importFrom stringr str_remove
 #'
 #' @export
-ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("8002", "8003"), ship = "SveaFB") {
+ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("8002", "8003"), ship = "SveaFB", latitude_param = "8002", longitude_param = "8003") {
   # Validate inputs
   if (!inherits(timestamps, "POSIXct")) {
     stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
@@ -167,6 +176,16 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   # Ensure all parameters are numeric
   output <- output %>%
     mutate(across(all_of(parameters), as.numeric))
+
+  if (latitude_param %in% parameters) {
+    output <- output %>%
+      rename(gpsLatitude = latitude_param)
+  }
+
+  if (longitude_param %in% parameters) {
+    output <- output %>%
+      rename(gpsLongitude = longitude_param)
+  }
 
   return(output)
 }
