@@ -38,11 +38,13 @@ The function performs the following steps:
 }
 }
 \examples{
+\dontrun{
 # Assuming you have a data frame `data` with missing values, a Ferrybox data frame `ferrybox_data`,
 # and a rounding function `round_timestamp`.
 filled_data <- handle_missing_ferrybox_data(data,
                                             ferrybox_data,
                                             c("8002", "8003", "8172"),
                                             round_timestamp)
+}
 
 }
