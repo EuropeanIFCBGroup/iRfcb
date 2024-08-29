@@ -42,11 +42,11 @@ ifcb_download_test_data(dest_dir = data_dir,
 
 #### Extract Timestamps from IFCB sample Filenames
 
-Extract timestamps from filenames:
+Extract timestamps from sample names or filenames:
 ```{r}
 # Example sample names
 filenames <- c("D20230314T001205_IFCB134",
-               "D20230615T123045_IFCB135")
+               "D20230615T123045_IFCB135.roi")
 
 # Convert filenames to timestamps
 timestamps <- ifcb_convert_filenames(filenames)
@@ -258,10 +258,25 @@ This function is used by SMHI to collect and match stored ferrybox positions whe
 ferrybox_folder <- "data/ferrybox_data"
 
 # Get GPS position from ferrybox data
-positions <- ifcb_get_svea_position(gps_data$timestamp, ferrybox_folder)
+positions <- ifcb_get_ferrybox_data(gps_data$timestamp, 
+                                    ferrybox_folder)
 
 # Print result
 head(positions)
+```
+
+#### Find contextual ferrybox data from RV Svea
+
+The `ifcb_get_ferrybox_data` function can also be used to extract additional ferrybox parameters, such as temperature (parameter number 8180) and salinity (parameter number 8181). 
+
+```{r}
+# Get salinity and temperature from ferrybox data
+ferrybox_data <- ifcb_get_ferrybox_data(gps_data$timestamp, 
+                                        ferrybox_folder, 
+                                        parameters = c("8180", "8181"))
+
+# Print result
+head(ferrybox_data)
 ```
 
 ## Use MATLAB Annotated Files
@@ -459,7 +474,8 @@ features <- ifcb_read_features("data/features/2023/")
 head(features[[1]])[,1:10]
 
 # Read only multiblob feature files
-multiblob_features <- ifcb_read_features("data/features/2023", multiblob = TRUE)
+multiblob_features <- ifcb_read_features("data/features/2023", 
+                                         multiblob = TRUE)
 
 # Print output of first 10 columns from the first sample in the list
 head(multiblob_features[[1]])[,1:10]
