@@ -4,7 +4,7 @@
 \name{iRfcb-package}
 \alias{iRfcb}
 \alias{iRfcb-package}
-\title{iRfcb: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot}
+\title{iRfcb: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB}
 \description{
 A comprehensive suite of tools for managing and analyzing data from the Imaging FlowCytobot (IFCB).
 }
