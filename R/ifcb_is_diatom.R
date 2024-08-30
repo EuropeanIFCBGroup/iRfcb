@@ -20,7 +20,6 @@
 #' ifcb_is_diatom(taxa_list)
 #'
 #' @importFrom magrittr %>%
-#' @importFrom purrr map_chr
 #' @importFrom stringr word
 #' @importFrom worrms wm_records_names
 #'
