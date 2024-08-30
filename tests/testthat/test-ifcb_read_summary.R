@@ -1,4 +1,4 @@
-library(testthat)
+suppressWarnings(library(testthat))
 
 # Define the path to the test .mat file
 summary_file_path <- system.file("exdata/example_summary.mat", package = "iRfcb")

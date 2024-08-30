@@ -1,7 +1,9 @@
-library(testthat)
-library(R.matlab)
-library(dplyr)
-library(tools)
+suppressWarnings({
+  library(testthat)
+  library(R.matlab)
+  library(dplyr)
+  library(tools)
+})
 
 test_that("ifcb_extract_annotated_images works correctly", {
   # Create a temporary directory

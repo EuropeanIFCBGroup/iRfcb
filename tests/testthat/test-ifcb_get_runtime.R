@@ -1,5 +1,7 @@
-library(testthat)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(iRfcb)
+})
 
 test_that("ifcb_get_runtime correctly extracts runtime and inhibittime from a local header file", {
   # Create a temporary header file with sample content

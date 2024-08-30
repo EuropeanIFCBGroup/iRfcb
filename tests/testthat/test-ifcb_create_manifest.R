@@ -1,6 +1,8 @@
-library(testthat)
-library(fs)
-library(zip)  # For unzipping files
+suppressWarnings({
+  library(testthat)
+  library(fs)
+  library(zip)
+})
 
 # Define the setup function
 setup_mock_directory <- function() {

@@ -1,6 +1,8 @@
-library(testthat)
-library(ggplot2)
-library(dplyr)
+suppressWarnings({
+  library(testthat)
+  library(ggplot2)
+  library(dplyr)
+})
 
 # Mock Data
 sample_data <- data.frame(

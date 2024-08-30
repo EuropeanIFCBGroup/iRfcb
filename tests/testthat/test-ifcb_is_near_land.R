@@ -1,7 +1,9 @@
-library(testthat)
-library(sf)
-library(terra)
-library(zip)
+suppressWarnings({
+  library(testthat)
+  library(sf)
+  library(terra)
+  library(zip)
+})
 
 test_that("ifcb_is_near_land works correctly", {
   # Define test latitudes and longitudes

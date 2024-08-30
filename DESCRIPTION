@@ -1,7 +1,7 @@
 Package: iRfcb
 Type: Package
-Title: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot
-Version: 0.3.4
+Title: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB
+Version: 0.3.5
 Authors@R: 
     person("Anders", "Torstensson",
            role = c("aut", "cre"),
@@ -23,6 +23,7 @@ Imports:
   terra,
   reticulate,
   tidyr,
+  tidyselect,
   tibble,
   ggplot2,
   readr,

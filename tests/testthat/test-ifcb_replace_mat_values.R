@@ -1,7 +1,9 @@
-library(testthat)
-library(reticulate)
-library(R.matlab)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(reticulate)
+  library(R.matlab)
+  library(iRfcb)
+})
 
 # Helper function to create a temporary .mat file with a named classlist object
 create_temp_mat_file <- function(file_path, classlist) {

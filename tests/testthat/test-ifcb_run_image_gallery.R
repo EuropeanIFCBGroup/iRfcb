@@ -1,5 +1,7 @@
-library(shinytest2)
-library(testthat)
+suppressWarnings({
+  library(shinytest2)
+  library(testthat)
+})
 
 test_that("ifcb_run_image_gallery launches the Shiny app", {
   # Set up a temporary directory for the Shiny app

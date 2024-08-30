@@ -18,6 +18,11 @@ A data frame containing the input timestamps and corresponding GPS coordinates.
 Columns include 'timestamp', 'gpsLatitude', and 'gpsLongitude'.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated as it has been replaced by the more general \code{ifcb_get_ferrybox_data}
+function.
+
 This is an internal SMHI function that reads .txt files from a specified folder containing ferrybox data,
 filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
 GPS coordinates for timestamps (nearest minute) falling within the date ranges defined in the file names.
@@ -30,7 +35,11 @@ timestamps <- as.POSIXct(c("2016-08-10 10:47:34 UTC",
                            "2016-08-10 11:35:59 UTC"))
 
 result <- ifcb_get_svea_position(timestamps, ferrybox_folder)
+# ->
+result <- ifcb_get_ferrybox_data(timestamps, ferrybox_folder)
+
 print(result)
 }
 
 }
+\keyword{internal}

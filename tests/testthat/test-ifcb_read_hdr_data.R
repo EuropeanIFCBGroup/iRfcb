@@ -1,8 +1,10 @@
-library(testthat)
-library(dplyr)
-library(tidyr)
-library(readr)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(tidyr)
+  library(readr)
+  library(iRfcb)
+})
 
 # Directory to extract files
 exdir <- tempdir()

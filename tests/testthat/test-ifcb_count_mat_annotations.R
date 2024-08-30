@@ -1,7 +1,9 @@
-library(testthat)
-library(dplyr)
-library(R.matlab)
-library(lifecycle)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(R.matlab)
+  library(lifecycle)
+})
 
 test_that("ifcb_count_mat_annotations works correctly", {
   # Define paths to the test data

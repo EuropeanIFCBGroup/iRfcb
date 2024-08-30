@@ -1,6 +1,8 @@
-library(testthat)
-library(R.matlab)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(R.matlab)
+  library(iRfcb)
+})
 
 test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a MAT file", {
   # Define the path to the example .mat file included in the iRfcb package

@@ -8,6 +8,10 @@
 #' @param taxa_list A character vector containing the list of taxa names.
 #' @param diatom_class A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 #'        Default is "Bacillariophyceae".
+#' @param max_retries An integer specifying the maximum number of attempts to retrieve WoRMS records in case of an error.
+#'        Default is 3.
+#' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
+#'        Default is 10 seconds.
 #'
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
 #'
@@ -21,8 +25,7 @@
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
-
-ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae") {
+ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10) {
 
   # Clean the taxa list
   taxa_list_clean <- taxa_list %>%
@@ -31,14 +34,28 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae") {
     gsub("\\s+", " ", .) %>%
     trimws()
 
-  # Retrieve worms records
-  tryCatch({
-    worms_records <- wm_records_names(word(taxa_list_clean, 1), marine_only = FALSE)
-  }, error = function(err) {
-    # Handle the error
-    stop("Error occurred while retrieving worms records: ", conditionMessage(err))
-  })
+  # Initialize variables
+  worms_records <- NULL
+  attempt <- 1
 
+  # Retrieve worms records with retry mechanism
+  while(attempt <= max_retries) {
+    tryCatch({
+      worms_records <- wm_records_names(word(taxa_list_clean, 1), marine_only = FALSE)
+      if (!is.null(worms_records)) break  # Exit the loop if successful
+    }, error = function(err) {
+      if (attempt == max_retries) {
+        stop("Error occurred while retrieving worms records after ", max_retries, " attempts: ", conditionMessage(err))
+      } else {
+        message("Attempt ", attempt, " failed: ", conditionMessage(err), " - Retrying...")
+        Sys.sleep(sleep_time)  # Pause before retrying
+      }
+    })
+
+    attempt <- attempt + 1
+  }
+
+  # Extract classes
   classes <- sapply(worms_records, extract_class) # Helper function
 
   # Create the dataframe with taxa_list_clean and classes
