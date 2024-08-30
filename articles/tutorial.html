@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,11 +100,11 @@ function:</p>
 <div class="section level4">
 <h4 id="extract-timestamps-from-ifcb-sample-filenames">Extract Timestamps from IFCB sample Filenames<a class="anchor" aria-label="anchor" href="#extract-timestamps-from-ifcb-sample-filenames"></a>
 </h4>
-<p>Extract timestamps from filenames:</p>
+<p>Extract timestamps from sample names or filenames:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example sample names</span></span>
 <span><span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"D20230314T001205_IFCB134"</span>,</span>
-<span>               <span class="st">"D20230615T123045_IFCB135"</span><span class="op">)</span></span>
+<span>               <span class="st">"D20230615T123045_IFCB135.roi"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Convert filenames to timestamps</span></span>
 <span><span class="va">timestamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_convert_filenames.html">ifcb_convert_filenames</a></span><span class="op">(</span><span class="va">filenames</span><span class="op">)</span></span>
@@ -360,7 +360,8 @@ D20220522T000439_IFCB134.</p>
 <span><span class="va">ferrybox_folder</span> <span class="op">&lt;-</span> <span class="st">"data/ferrybox_data"</span></span>
 <span></span>
 <span><span class="co"># Get GPS position from ferrybox data</span></span>
-<span><span class="va">positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_svea_position.html">ifcb_get_svea_position</a></span><span class="op">(</span><span class="va">gps_data</span><span class="op">$</span><span class="va">timestamp</span>, <span class="va">ferrybox_folder</span><span class="op">)</span></span>
+<span><span class="va">positions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data</a></span><span class="op">(</span><span class="va">gps_data</span><span class="op">$</span><span class="va">timestamp</span>, </span>
+<span>                                    <span class="va">ferrybox_folder</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print result</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">positions</span><span class="op">)</span></span></code></pre></div>
@@ -371,6 +372,28 @@ D20220522T000439_IFCB134.</p>
 <span><span class="co">## 4 2022-07-12 22:27:10          NA           NA</span></span>
 <span><span class="co">## 5 2023-03-14 00:12:05          NA           NA</span></span>
 <span><span class="co">## 6 2023-03-14 00:38:36          NA           NA</span></span></code></pre>
+</div>
+<div class="section level4">
+<h4 id="find-contextual-ferrybox-data-from-rv-svea">Find contextual ferrybox data from RV Svea<a class="anchor" aria-label="anchor" href="#find-contextual-ferrybox-data-from-rv-svea"></a>
+</h4>
+<p>The <code>ifcb_get_ferrybox_data</code> function can also be used to
+extract additional ferrybox parameters, such as temperature (parameter
+number 8180) and salinity (parameter number 8181).</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get salinity and temperature from ferrybox data</span></span>
+<span><span class="va">ferrybox_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data</a></span><span class="op">(</span><span class="va">gps_data</span><span class="op">$</span><span class="va">timestamp</span>, </span>
+<span>                                        <span class="va">ferrybox_folder</span>, </span>
+<span>                                        parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"8180"</span>, <span class="st">"8181"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ferrybox_data</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##             timestamp    8180  8181</span></span>
+<span><span class="co">## 1 2022-05-22 00:04:39 11.3897 7.864</span></span>
+<span><span class="co">## 2 2022-05-22 00:30:51      NA    NA</span></span>
+<span><span class="co">## 3 2022-07-12 21:08:55      NA    NA</span></span>
+<span><span class="co">## 4 2022-07-12 22:27:10      NA    NA</span></span>
+<span><span class="co">## 5 2023-03-14 00:12:05      NA    NA</span></span>
+<span><span class="co">## 6 2023-03-14 00:38:36      NA    NA</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -386,7 +409,7 @@ D20220522T000439_IFCB134.</p>
 <p>Summarize counts of annotated images at the sample and class levels.
 The ‘hdr_folder’ can be included to add GPS positions to the sample data
 frame:</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on sample level</span></span>
 <span><span class="va">png_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                          hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
@@ -405,7 +428,7 @@ frame:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> D2022071… IFCB134     Strombidi…        2 34, 79               <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 6 more variables: timestamp &lt;dttm&gt;, date &lt;date&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   day &lt;int&gt;, time &lt;chr&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on class level</span></span>
 <span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                         sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
@@ -427,20 +450,14 @@ frame:</p>
 </h4>
 <p>Count the annotations in the MATLAB files, similar to
 <code>ifcb_summarize_png_data</code>:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize counts from MATLAB files</span></span>
-<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                                        class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
 <span>                                        skip_class <span class="op">=</span> <span class="st">"unclassified"</span>, <span class="co"># Or class ID</span></span>
-<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning: The `manual_folder` argument of `ifcb_extract_biovolumes()` is deprecated as of</span></span>
-<span><span class="co">## iRfcb 0.3.4.</span></span>
-<span><span class="co">## <span style="color: #00BBBB;">ℹ</span> Please use the `manual_files` argument instead.</span></span>
-<span><span class="co">## <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">## <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">## <span style="color: #555555;">generated.</span></span></span></code></pre>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print output</span></span>
+<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span>
+<span></span>
+<span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
 <span><span class="co">##   class                           n</span></span>
@@ -684,7 +701,8 @@ image reference library</a>:</p>
 <span><span class="co">## 6        67.86613    0.3332706      19.21560 0.6590909</span></span></code></pre>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
-<span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, multiblob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
+<span>                                         multiblob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print output of first 10 columns from the first sample in the list</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">multiblob_features</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
@@ -940,16 +958,16 @@ analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
-<span><span class="co">##   Analyzing and Processing Data from the Imaging FlowCytobot. R package</span></span>
-<span><span class="co">##   version 0.3.4. https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.3.5.</span></span>
+<span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   @Manual{,</span></span>
-<span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot},</span></span>
+<span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.4},</span></span>
+<span><span class="co">##     note = {R package version 0.3.5},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

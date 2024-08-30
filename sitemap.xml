@@ -13,6 +13,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/extract_parts.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/find_matching_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/find_matching_features.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/handle_missing_ferrybox_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/handle_missing_positions.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/iRfcb-package.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.html</loc></url>
@@ -24,6 +25,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_classified_images.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_pngs.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ferrybox_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_runtime.html</loc></url>

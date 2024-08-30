@@ -13,7 +13,7 @@ first name (genus name) of each taxa for classification."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,12 @@ first name (genus name) of each taxa for classification.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_is_diatom</span><span class="op">(</span><span class="va">taxa_list</span>, diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_is_diatom</span><span class="op">(</span></span>
+<span>  <span class="va">taxa_list</span>,</span>
+<span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
+<span>  max_retries <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  sleep_time <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -61,6 +66,16 @@ first name (genus name) of each taxa for classification.</p>
 <dt id="arg-diatom-class">diatom_class<a class="anchor" aria-label="anchor" href="#arg-diatom-class"></a></dt>
 <dd><p>A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 Default is "Bacillariophyceae".</p></dd>
+
+
+<dt id="arg-max-retries">max_retries<a class="anchor" aria-label="anchor" href="#arg-max-retries"></a></dt>
+<dd><p>An integer specifying the maximum number of attempts to retrieve WoRMS records in case of an error.
+Default is 3.</p></dd>
+
+
+<dt id="arg-sleep-time">sleep_time<a class="anchor" aria-label="anchor" href="#arg-sleep-time"></a></dt>
+<dd><p>A numeric value indicating the number of seconds to wait between retry attempts.
+Default is 10 seconds.</p></dd>
 
 </dl></div>
     <div class="section level2">
