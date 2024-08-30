@@ -27,7 +27,6 @@ Imports:
   ggplot2,
   readr,
   magrittr,
-  purrr,
   worrms,
   imager,
   R.matlab,
