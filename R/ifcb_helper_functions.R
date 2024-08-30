@@ -383,7 +383,7 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
     mutate(across(all_of(parameters), ~ coalesce(.x, get(paste0(cur_column(), "_ferrybox"))))) %>%
     select(timestamp, all_of(parameters))
 
-  return(missing_data)
+  missing_data
 }
 
 #' Extract the Class from the First Row of Each worms_records Tibble
