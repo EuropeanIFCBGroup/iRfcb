@@ -1,10 +1,12 @@
-library(testthat)
-library(reticulate)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(fs)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(reticulate)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(fs)
+  library(iRfcb)
+})
 
 test_that("ifcb_psd works correctly", {
   # Create a temporary directory

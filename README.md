@@ -1,4 +1,4 @@
-# I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the Imaging FlowCytobot
+# I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB
 
 [![R-CMD-check](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)

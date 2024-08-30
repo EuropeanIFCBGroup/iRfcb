@@ -1,9 +1,10 @@
-library(testthat)
-library(magrittr)
-library(purrr)
-library(stringr)
-library(worrms)
-library(mockery)
+suppressWarnings({
+  library(testthat)
+  library(magrittr)
+  library(stringr)
+  library(worrms)
+  library(mockery)
+})
 
 # Mock wm_records_names to return predefined results
 mock_wm_records_names <- function(names, marine_only) {
@@ -63,5 +64,5 @@ test_that("ifcb_is_diatom handles errors from wm_records_names gracefully", {
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 
   # Call the function and check for error handling
-  expect_error(ifcb_is_diatom(taxa_list), "Error occurred while retrieving worms records: API error")
+  expect_error(ifcb_is_diatom(taxa_list), "Error occurred while retrieving worms records after 3 attempts: API error")
 })

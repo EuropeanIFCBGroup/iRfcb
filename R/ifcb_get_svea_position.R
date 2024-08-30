@@ -2,6 +2,12 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 
 #' Get GPS Coordinates from Ferrybox Data Based on Timestamps
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated as it has been replaced by the more general \code{ifcb_get_ferrybox_data}
+#' function.
+#'
 #' This is an internal SMHI function that reads .txt files from a specified folder containing ferrybox data,
 #' filters them based on a specified ship name (default is "SveaFB" for R/V Svea), and extracts
 #' GPS coordinates for timestamps (nearest minute) falling within the date ranges defined in the file names.
@@ -21,15 +27,23 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #'                            "2016-08-10 11:35:59 UTC"))
 #'
 #' result <- ifcb_get_svea_position(timestamps, ferrybox_folder)
+#' # ->
+#' result <- ifcb_get_ferrybox_data(timestamps, ferrybox_folder)
+#'
 #' print(result)
 #' }
 #'
 #' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join
 #' @importFrom magrittr %>%
 #' @importFrom lubridate round_date ymd_hms floor_date ceiling_date
+#' @importFrom lifecycle deprecate_warn
 #'
+#' @keywords internal
 #' @export
 ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB") {
+
+  lifecycle::deprecate_warn("0.3.5", "ifcb_get_svea_position()", "ifcb_get_ferrybox_data()")
+
   # Validate inputs
   if (!inherits(timestamps, "POSIXct")) {
     stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
@@ -58,9 +72,9 @@ ifcb_get_svea_position <- function(timestamps, ferrybox_folder, ship = "SveaFB")
   ferrybox_files_df <- ferrybox_files_df %>%
     dplyr::mutate(
       date_from = as.POSIXct(substr(regmatches(ferrybox_files, gregexpr("\\d{14}", ferrybox_files))[[1]][1], 1, 14),
-                                        format = "%Y%m%d%H%M%S", tz = "UTC"),
+                             format = "%Y%m%d%H%M%S", tz = "UTC"),
       date_to = as.POSIXct(substr(regmatches(ferrybox_files, gregexpr("\\d{14}", ferrybox_files))[[1]][2], 1, 14),
-                                      format = "%Y%m%d%H%M%S", tz = "UTC")
+                           format = "%Y%m%d%H%M%S", tz = "UTC")
     ) %>%
     dplyr::ungroup()
 

@@ -1,7 +1,9 @@
 # Load the necessary packages
-library(testthat)
-library(sf)
-library(ggplot2)
+suppressWarnings({
+  library(testthat)
+  library(sf)
+  library(ggplot2)
+})
 
 # Load the function ifcb_which_basin
 # source("path_to_function/ifcb_which_basin.R")  # Uncomment and specify the correct path if needed

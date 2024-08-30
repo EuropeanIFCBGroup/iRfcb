@@ -1,7 +1,9 @@
-library(testthat)
-library(zip)
-library(dplyr)
-library(lubridate)
+suppressWarnings({
+  library(testthat)
+  library(zip)
+  library(dplyr)
+  library(lubridate)
+})
 
 test_that("ifcb_zip_matlab works correctly", {
   # Create a temporary directory

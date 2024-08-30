@@ -1,5 +1,7 @@
-library(testthat)
-library(lifecycle)
+suppressWarnings({
+  library(testthat)
+  library(lifecycle)
+})
 
 # Mock feature files creation
 setup_test_files <- function(base_path) {
