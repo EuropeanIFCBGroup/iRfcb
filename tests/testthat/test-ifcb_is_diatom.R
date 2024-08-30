@@ -1,6 +1,5 @@
 library(testthat)
 library(magrittr)
-library(purrr)
 library(stringr)
 library(worrms)
 library(mockery)
