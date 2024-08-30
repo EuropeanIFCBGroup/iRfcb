@@ -2,13 +2,13 @@ utils::globalVariables(c("longitude", "latitude", "in_basin"))
 #' Check if Points are in a Specific Sea Basin
 #'
 #' This function checks if vectors of latitude and longitude points are within a user-supplied sea basin.
-#' The Baltic Sea (including Öresund) basins are included as a pre-packaged shapefile in the `iRfcb` package.
+#' The Baltic Sea basins are included as a pre-packaged shapefile in the `iRfcb` package.
 #'
 #' @param latitudes A numeric vector of latitude points.
 #' @param longitudes A numeric vector of longitude points.
 #' @param plot A boolean indicating whether to plot the points and the sea basin. Default is FALSE.
 #' @param shape_file The absolute path to a custom polygon shapefile in WGS84 (EPSG:4326) that represents the specific sea basin.
-#'                   Default is a land-buffered shapefile of the Baltic Sea basins (including Öresund), included in the `iRfcb` package.
+#'                   Default is a land-buffered shapefile of the Baltic Sea basins, included in the `iRfcb` package.
 #'
 #' @return A logical vector indicating whether each point is within the specified sea basin, or a plot with the points and basins if `plot = TRUE`.
 #'
@@ -71,7 +71,7 @@ ifcb_is_in_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
     plot_obj <- ggplot() +
       geom_sf(data = basins, fill = "lightblue", color = "black", alpha = 0.5) +
       geom_sf(data = points_sf, aes(color = as.factor(labels)), size = 2) +
-      scale_color_manual(values = c("TRUE" = "red", "FALSE" = "blue")) +
+      scale_color_manual(values = c("TRUE" = "blue", "FALSE" = "red")) +
       labs(title = ifelse(is.null(shape_file), "Points in land-buffered Baltic Sea Basins", "Points in basin"),
            color = "In Basin") +
       ylim(c(min(latitudes)-1, max(latitudes)+1)) +

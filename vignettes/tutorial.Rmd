@@ -247,7 +247,7 @@ print(points_in_the_baltic)
 ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
 ```
 
-This function reads a land-buffered shapefile of the Baltic Sea Basin (including Öresund) from the 'iRfcb' package by default, or a user-supplied shapefile if provided.
+This function reads a land-buffered shapefile of the Baltic Sea Basin from the 'iRfcb' package by default, or a user-supplied shapefile if provided.
 
 #### Find missing positions from RV Svea Ferrybox
 
