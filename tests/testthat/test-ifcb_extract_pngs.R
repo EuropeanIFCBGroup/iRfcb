@@ -1,5 +1,7 @@
-library(testthat)
-library(imager)
+suppressWarnings({
+  library(testthat)
+  library(imager)
+})
 
 test_that("ifcb_extract_pngs works correctly", {
   # Define paths to the test data

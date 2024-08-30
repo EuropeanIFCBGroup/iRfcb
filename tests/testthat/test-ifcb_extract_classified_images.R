@@ -1,5 +1,7 @@
-library(testthat)
-library(R.matlab)
+suppressWarnings({
+  library(testthat)
+  library(R.matlab)
+})
 
 test_that("ifcb_extract_classified_images works correctly with default parameters", {
   # Create a temporary directory

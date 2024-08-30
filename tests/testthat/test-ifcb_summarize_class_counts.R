@@ -1,7 +1,9 @@
-library(testthat)
-library(lubridate)
-library(stringr)
-library(R.matlab)
+suppressWarnings({
+  library(testthat)
+  library(lubridate)
+  library(stringr)
+  library(R.matlab)
+})
 
 test_that("ifcb_summarize_class_counts works correctly", {
   # Define paths to the test data

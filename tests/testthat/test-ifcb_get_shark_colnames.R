@@ -1,5 +1,5 @@
 # Load the testthat package
-library(testthat)
+suppressWarnings(library(testthat))
 
 # Define the test for the ifcb_get_shark_colnames function
 test_that("ifcb_get_shark_colnames reads the shark column names correctly", {

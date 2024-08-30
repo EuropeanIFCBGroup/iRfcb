@@ -1,5 +1,7 @@
-library(testthat)
-library(fs)
+suppressWarnings({
+  library(testthat)
+  library(fs)
+})
 
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
   # Setup test environment

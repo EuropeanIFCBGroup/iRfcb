@@ -1,8 +1,10 @@
-library(testthat)
-library(magrittr)
-library(stringr)
-library(worrms)
-library(mockery)
+suppressWarnings({
+  library(testthat)
+  library(magrittr)
+  library(stringr)
+  library(worrms)
+  library(mockery)
+})
 
 # Mock wm_records_names to return predefined results
 mock_wm_records_names <- function(names, marine_only) {

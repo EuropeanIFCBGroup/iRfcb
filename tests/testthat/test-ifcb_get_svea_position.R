@@ -1,6 +1,8 @@
-library(testthat)
-library(dplyr)
-library(lubridate)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(lubridate)
+})
 
 # Helper function to create a temporary ferrybox file with specified content
 create_temp_ferrybox_file <- function(file_path, content) {
@@ -34,7 +36,7 @@ test_that("ifcb_get_svea_position works correctly with valid inputs", {
   test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39", "2022-05-22 00:30:51"), tz = "UTC")
 
   # Run the function
-  result <- ifcb_get_svea_position(test_timestamps, temp_dir)
+  result <- suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir))
 
   # Verify the structure and content of the result
   expect_s3_class(result, "data.frame")
@@ -58,7 +60,7 @@ test_that("ifcb_get_svea_position handles missing ferrybox folder", {
   test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with a non-existent folder
-  expect_error(ifcb_get_svea_position(test_timestamps, "non_existent_folder"),
+  expect_error(suppressWarnings(ifcb_get_svea_position(test_timestamps, "non_existent_folder")),
                "The specified ferrybox folder does not exist.")
 })
 
@@ -70,7 +72,7 @@ test_that("ifcb_get_svea_position handles no ferrybox files in folder", {
   test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with an empty folder
-  expect_error(ifcb_get_svea_position(test_timestamps, temp_dir),
+  expect_error(suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir)),
                "No .txt files found in the specified ferrybox folder.")
 
   # Clean up temporary files
@@ -95,7 +97,7 @@ test_that("ifcb_get_svea_position handles no matching ship name", {
   test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function with a ship name that doesn't match
-  expect_error(ifcb_get_svea_position(test_timestamps, temp_dir),
+  expect_error(suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir)),
                "No ferrybox files matching the specified ship name were found.")
 
   # Clean up temporary files
@@ -111,7 +113,7 @@ test_that("ifcb_get_svea_position handles mistyped timestamps", {
   test_timestamps <- "This is not a timestamp"
 
   # Run the function with an empty folder
-  expect_error(ifcb_get_svea_position(test_timestamps, temp_dir),
+  expect_error(suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir)),
                "The 'timestamps' argument must be a vector of POSIXct timestamps.")
 
   # Clean up temporary files
@@ -135,7 +137,7 @@ test_that("ifcb_get_svea_position handles empty ferrybox files", {
   test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
 
   # Run the function
-  expect_error(result <- ifcb_get_svea_position(test_timestamps, temp_dir),
+  expect_error(result <- suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir)),
                  "No valid ferrybox data could be read from the filtered files.")
 
   # Clean up temporary files
@@ -164,7 +166,7 @@ test_that("ifcb_get_svea_position handles no matching GPS data", {
   test_timestamps <- as.POSIXct("2023-01-01 00:00:00", tz = "UTC")
 
   # Run the function
-  expect_error(result <- ifcb_get_svea_position(test_timestamps, temp_dir),
+  expect_error(result <- suppressWarnings(ifcb_get_svea_position(test_timestamps, temp_dir)),
                "No ferrybox files contain data within the provided timestamps.")
 
   # Clean up temporary files

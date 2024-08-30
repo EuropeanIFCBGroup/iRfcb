@@ -1,6 +1,8 @@
-library(testthat)
-library(dplyr)
-library(lifecycle)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(lifecycle)
+})
 
 # Define the path to the test data zip file
 zip_path <- test_path("test_data/test_data.zip")

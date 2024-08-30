@@ -1,7 +1,9 @@
-library(testthat)
-library(reticulate)
-library(mockery)
-library(iRfcb)
+suppressWarnings({
+  library(testthat)
+  library(reticulate)
+  library(mockery)
+  library(iRfcb)
+})
 
 test_that("ifcb_py_install creates and uses the virtual environment", {
   # Mock the virtualenv_create function

@@ -1,6 +1,8 @@
-library(testthat)
-library(dplyr)
-library(lubridate)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(lubridate)
+})
 
 # Helper function to create a temporary ferrybox file with specified content
 create_temp_ferrybox_file <- function(file_path, content) {

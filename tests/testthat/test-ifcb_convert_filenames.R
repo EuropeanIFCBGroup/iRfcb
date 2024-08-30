@@ -1,8 +1,10 @@
 # Load the necessary packages
-library(testthat)
-library(dplyr)
-library(stringr)
-library(lubridate)
+suppressWarnings({
+  library(testthat)
+  library(dplyr)
+  library(stringr)
+  library(lubridate)
+})
 
 # Source the functions ifcb_convert_filenames, read_hdr_file, and extract_parts
 # source("path_to_functions/your_functions.R")  # Uncomment and specify the correct path if needed
