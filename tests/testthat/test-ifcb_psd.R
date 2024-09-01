@@ -1,13 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(reticulate)
-  library(dplyr)
-  library(tidyr)
-  library(ggplot2)
-  library(fs)
-  library(iRfcb)
-})
-
 test_that("ifcb_psd works correctly", {
   # Create a temporary directory
   temp_dir <- tempdir()
@@ -54,7 +44,7 @@ test_that("ifcb_psd works correctly", {
 
       # Move the file to the subfolder
       new_file_path <- file.path(date_folder, file_name)
-      file_move(file_path, new_file_path)
+      fs::file_move(file_path, new_file_path)
     }
   }
 
@@ -71,7 +61,7 @@ test_that("ifcb_psd works correctly", {
   venv_dir <- "~/virtualenvs/iRfcb-test"
 
   # Install a temporary virtual environment
-  if (virtualenv_exists(venv_dir)) {
+  if (reticulate::virtualenv_exists(venv_dir)) {
     reticulate::use_virtualenv(venv_dir, required = TRUE)
   } else {
     reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))

@@ -1,13 +1,3 @@
-# Load the necessary packages
-suppressWarnings({
-  library(testthat)
-  library(sf)
-  library(ggplot2)
-})
-
-# Load the function ifcb_which_basin
-# source("path_to_function/ifcb_which_basin.R")  # Uncomment and specify the correct path if needed
-
 # Define example latitude and longitude vectors for testing
 latitudes <- c(55.337, 54.729, 56.311, 57.975)
 longitudes <- c(12.674, 14.643, 12.237, 10.637)
@@ -16,7 +6,6 @@ longitudes <- c(12.674, 14.643, 12.237, 10.637)
 expected_basins <- c("13 - Arkona Basin", "12 - Bornholm Basin",
                      "16 - Kattegat","17 - Skagerrak")
 
-# Test ifcb_which_basin function
 test_that("ifcb_which_basin correctly identifies basins", {
   # Call the function
   result <- ifcb_which_basin(latitudes, longitudes)

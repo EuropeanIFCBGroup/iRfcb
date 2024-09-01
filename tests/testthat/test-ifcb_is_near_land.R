@@ -1,10 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(sf)
-  library(terra)
-  library(zip)
-})
-
 test_that("ifcb_is_near_land works correctly", {
   # Define test latitudes and longitudes
   latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338, NA, 60.0)

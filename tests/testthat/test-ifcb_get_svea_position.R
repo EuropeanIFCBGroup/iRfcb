@@ -1,23 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(dplyr)
-  library(lubridate)
-})
-
-# Helper function to create a temporary ferrybox file with specified content
-create_temp_ferrybox_file <- function(file_path, content) {
-  writeLines(content, file_path)
-}
-
-# Helper function to handle missing positions
-handle_missing_positions <- function(output, ferrybox_position, rounding_func, lat_col, lon_col) {
-  output %>%
-    mutate(timestamp_minute = rounding_func(timestamp, unit = "minute")) %>%
-    left_join(ferrybox_position, by = "timestamp_minute") %>%
-    rename(!!lat_col := ferrybox_latitude, !!lon_col := ferrybox_longitude) %>%
-    select(timestamp, !!lat_col, !!lon_col)
-}
-
 test_that("ifcb_get_svea_position works correctly with valid inputs", {
   # Create a temporary directory
   temp_dir <- tempdir()

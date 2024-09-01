@@ -1,14 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(reticulate)
-  library(R.matlab)
-  library(iRfcb)
-})
-# Helper function to create a temporary .mat file with a named classlist object
-create_temp_mat_file <- function(file_path, classlist) {
-  writeMat(file_path, classlist = classlist) # Ensure 'classlist' is named
-}
-
 test_that("ifcb_correct_annotation updates class IDs correctly", {
   # # Skip the test if Python environment is not available
   # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
@@ -23,13 +12,6 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
         files = "test_data/manual/D20220712T210855_IFCB134.mat",
         exdir = manual_folder,
         junkpaths = TRUE)
-
-  # # Create a sample .mat classlist file
-  # sample_classlist <- matrix(c(1, 2, 2, 2, 3, 2, 4, 2), ncol = 2)
-  # sample_mat_file <- file.path(manual_folder, "D20220712T210855_IFCB134.mat")
-  # sample_mat_file2 <- file.path(manual_folder, "D20220712T222710_IFCB134.mat")
-  # create_temp_mat_file(sample_mat_file, sample_classlist)
-  # create_temp_mat_file(sample_mat_file2, sample_classlist)
 
   # Create a correction file
   correction_file <- tempfile()
@@ -47,7 +29,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
   venv_dir <- "~/virtualenvs/iRfcb-test"
 
   # Install a temporary virtual environment
-  if (virtualenv_exists(venv_dir)) {
+  if (reticulate::virtualenv_exists(venv_dir)) {
     reticulate::use_virtualenv(venv_dir, required = TRUE)
   } else {
     reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))

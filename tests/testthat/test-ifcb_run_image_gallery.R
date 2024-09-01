@@ -1,8 +1,3 @@
-suppressWarnings({
-  library(shinytest2)
-  library(testthat)
-})
-
 test_that("ifcb_run_image_gallery launches the Shiny app", {
   # Set up a temporary directory for the Shiny app
   app_dir <- system.file("shiny", "ifcb_image_gallery", package = "iRfcb")
@@ -12,7 +7,7 @@ test_that("ifcb_run_image_gallery launches the Shiny app", {
   }
 
   # Initialize the Shiny app tester
-  app <- AppDriver$new(app_dir, shiny_args = list(display.mode = "normal"))
+  app <- shinytest2::AppDriver$new(app_dir, shiny_args = list(display.mode = "normal"))
 
   # Ensure the app is running by checking its title
   expect_true(app$get_text("title") == "IFCB image gallery", info = "Shiny app should have a title")

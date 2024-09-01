@@ -1,9 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(sf)
-  library(ggplot2)
-})
-
 test_that("ifcb_is_in_basin works with default Baltic Sea shapefile", {
   # Define example latitude and longitude vectors
   latitudes <- c(55.337, 54.729, 56.311, 57.975, 59.123)

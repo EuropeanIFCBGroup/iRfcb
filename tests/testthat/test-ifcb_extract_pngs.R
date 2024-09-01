@@ -1,8 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(imager)
-})
-
 test_that("ifcb_extract_pngs works correctly", {
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
@@ -37,8 +32,8 @@ test_that("ifcb_extract_pngs works correctly", {
     expect_true(file.exists(file), info = paste("File does not exist:", file))
 
     # Optionally, read the PNG file and verify its content
-    img <- load.image(file)
-    expect_true(is.cimg(img), info = paste("File is not a valid image:", file))
+    img <- imager::load.image(file)
+    expect_true(imager::is.cimg(img), info = paste("File is not a valid image:", file))
   }
 
   # Cleanup temporary files

@@ -1,9 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(R.matlab)
-  library(iRfcb)
-})
-
 test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a MAT file", {
   # Define the path to the example .mat file included in the iRfcb package
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
@@ -38,7 +32,7 @@ test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
   empty_mat_file <- file.path(temp_dir, "empty_test_file.mat")
 
   # Create an empty .mat file
-  writeMat(empty_mat_file, x = list())
+  R.matlab::writeMat(empty_mat_file, x = list())
 
   # Ensure the empty .mat file is created
   expect_true(file.exists(empty_mat_file), info = "Empty .mat file should be created")

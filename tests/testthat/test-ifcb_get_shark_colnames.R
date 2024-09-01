@@ -1,7 +1,3 @@
-# Load the testthat package
-suppressWarnings(library(testthat))
-
-# Define the test for the ifcb_get_shark_colnames function
 test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
 
   # Expected column names (Replace these with the actual column names from your shark_col.txt file)
@@ -28,8 +24,4 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
 
   # Check that the column names are as expected
   expect_equal(colnames(shark_colnames), expected_colnames)
-
-  # Optionally, you can also check the contents if needed
-  # expected_data <- data.frame(Column1 = c(...), Column2 = c(...), Column3 = c(...))
-  # expect_equal(shark_colnames, expected_data)
 })

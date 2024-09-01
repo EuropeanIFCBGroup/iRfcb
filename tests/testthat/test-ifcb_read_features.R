@@ -1,29 +1,6 @@
-suppressWarnings({
-  library(testthat)
-  library(lifecycle)
-})
-
-# Mock feature files creation
-setup_test_files <- function(base_path) {
-  if (!dir.exists(base_path)) {
-    dir.create(base_path, recursive = TRUE)
-  }
-
-  # Create mock CSV files
-  write.csv(data.frame(A = 1:5, B = 6:10), file = file.path(base_path, "D20230316T101514.csv"), row.names = FALSE)
-  write.csv(data.frame(C = 1:5, D = 6:10), file = file.path(base_path, "D20230316T101515_multiblob.csv"), row.names = FALSE)
-  write.csv(data.frame(E = 1:5, F = 6:10), file = file.path(base_path, "D20230316T101516.csv"), row.names = FALSE)
-}
-
-# Remove mock feature files after tests
-cleanup_test_files <- function(base_path) {
-  unlink(base_path, recursive = TRUE)
-}
-
 # Path to temporary test folder
 test_feature_folder <- tempdir()
 
-# Test ifcb_read_features
 test_that("ifcb_read_features reads all feature files correctly", {
   setup_test_files(test_feature_folder)
 
@@ -79,7 +56,7 @@ test_that("ifcb_read_features returns named list of data frames", {
 test_that("ifcb_read_features handles deprecated function correctly", {
   setup_test_files(test_feature_folder)
 
-  expect_deprecated(ifcb_read_features(feature_folder = test_feature_folder))
+  lifecycle::expect_deprecated(ifcb_read_features(feature_folder = test_feature_folder))
 
   features <- suppressWarnings(ifcb_read_features(feature_folder = test_feature_folder))
 

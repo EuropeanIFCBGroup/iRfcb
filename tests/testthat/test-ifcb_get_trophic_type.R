@@ -1,10 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(dplyr)
-  library(readr)
-  library(iRfcb)
-})
-
 test_that("ifcb_get_trophic_type correctly retrieves trophic types for a list of taxa", {
   # Define the taxa list for testing
   taxa_list <- c("Acanthoceras zachariasii", "Nodularia spumigena", "Acanthoica quattrospina", "Noctiluca", "Gymnodiniales")

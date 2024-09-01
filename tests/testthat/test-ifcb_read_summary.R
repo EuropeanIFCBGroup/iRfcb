@@ -1,5 +1,3 @@
-suppressWarnings(library(testthat))
-
 # Define the path to the test .mat file
 summary_file_path <- system.file("exdata/example_summary.mat", package = "iRfcb")
 
@@ -44,22 +42,5 @@ test_that("ifcb_read_summary handles non-existent file gracefully", {
   # Call the function and expect an error
   expect_error(suppressWarnings(ifcb_read_summary(non_existent_file)))
 })
-
-# test_that("ifcb_read_summary handles different thresholds correctly", {
-#   # Call the function with different thresholds
-#   summary_data_opt <- ifcb_read_summary(summary_file_path, hdr_directory = hdr_directory_path, biovolume = TRUE, threshold = "opt")
-#   summary_data_adhoc <- ifcb_read_summary(summary_file_path, hdr_directory = hdr_directory_path, biovolume = TRUE, threshold = "adhoc")
-#   summary_data_none <- ifcb_read_summary(summary_file_path, hdr_directory = hdr_directory_path, biovolume = TRUE, threshold = "none")
-#
-#   # Check that the returned objects are data frames
-#   expect_is(summary_data_opt, "data.frame")
-#   expect_is(summary_data_adhoc, "data.frame")
-#   expect_is(summary_data_none, "data.frame")
-#
-#   # Check that the data frames have non-zero rows
-#   expect_gt(nrow(summary_data_opt), 0)
-#   expect_gt(nrow(summary_data_adhoc), 0)
-#   expect_gt(nrow(summary_data_none), 0)
-# })
 
 unlink(exdir)
