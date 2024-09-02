@@ -182,11 +182,23 @@ extract_parts <- function(filename) {
 #' Load iRfcb Python Environment on Package Load
 #'
 #' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
-#'virtualenv
+#'
 #' @param ... Additional arguments passed to the function.
-#' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
-.onLoad <- function(..., envname = "~/.virtualenvs/iRfcb") {
-  use_virtualenv(envname, required = FALSE)
+#'
+#' @importFrom reticulate virtualenv_list use_virtualenv virtualenv_root
+.onLoad <- function(...) {
+  # List available virtual environments in the default virtualenv root
+  venvs <- reticulate::virtualenv_list()
+
+  # Find the iRfcb virtual environment
+  irfcb_venvs <- venvs[grepl("iRfcb", venvs)]
+
+  # Construct the full path to the environment and activate it
+  envname <- file.path(reticulate::virtualenv_root(), irfcb_venvs[1])
+
+  if (dir.exists(envname)) {
+    reticulate::use_virtualenv(envname, required = FALSE)
+  }
 }
 
 #' Summarize TreeBagger Classifier Results
