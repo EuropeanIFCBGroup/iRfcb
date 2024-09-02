@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
+          - {os: macos-latest,   r: 'release', python: '3.10'}
+          - {os: windows-latest, r: 'release', python: '3.10'}
+          - {os: ubuntu-latest,   r: 'devel', python: '3.10', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release', python: '3.10'}
+          - {os: ubuntu-latest,   r: 'oldrel-1', python: '3.10'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -42,6 +42,10 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.config.python }}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
@@ -51,6 +55,24 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install --cask xquartz
+
+      - name: setup iRfcb venv
+        shell: Rscript {0}
+        run: |
+
+          library(reticulate)
+
+          path_to_venv <- virtualenv_create(
+            envname = "~/.virtualenvs/iRfcb",
+            python = Sys.which("python"), # placed on PATH by the setup-python action
+            packages = c(
+              "scipy", "pandas", "matplotlib"
+            )
+          )
+
+          writeLines(
+            paste0("RETICULATE_PYTHON=", virtualenv_python(path_to_venv)),
+            Sys.getenv("GITHUB_ENV"))
 
       - uses: r-lib/actions/check-r-package@v2
         with:
