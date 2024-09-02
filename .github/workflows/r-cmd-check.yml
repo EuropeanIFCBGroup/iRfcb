@@ -21,11 +21,11 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: 'release', python: '3.10'}
-          - {os: windows-latest, r: 'release', python: '3.10'}
-          - {os: ubuntu-latest,   r: 'devel', python: '3.10', http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'release', python: '3.10'}
-          - {os: ubuntu-latest,   r: 'oldrel-1', python: '3.10'}
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-1'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -44,7 +44,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.config.python }}
+          python-version: '3.12'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
