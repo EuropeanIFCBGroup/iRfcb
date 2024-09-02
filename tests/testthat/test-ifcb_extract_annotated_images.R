@@ -15,6 +15,17 @@ test_that("ifcb_extract_annotated_images works correctly", {
   class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
   out_folder <- file.path(temp_dir, "output_images")
 
+  # Expect warning
+  expect_warning(ifcb_extract_annotated_images(
+    manual_folder = manual_folder,
+    class2use_file = class2use_file,
+    roi_folder = roi_folder,
+    out_folder = out_folder,
+    skip_class = NULL,
+    verbose = FALSE
+  ), "ROI file for sample D20220712T210855_IFCB134 not found. Skipping this sample."
+  )
+
   # Remove unnecessary file
   file.remove(file.path(manual_folder, "D20220712T210855_IFCB134.mat"))
 
@@ -41,6 +52,28 @@ test_that("ifcb_extract_annotated_images works correctly", {
   # Verify that the output directory contains the extracted images
   extracted_images <- list.files(out_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
   expect_true(length(extracted_images) > 0)
+
+  # Test error handling
+  expect_error(ifcb_extract_annotated_images(
+    manual_folder = "non-exisiting-folder",
+    class2use_file = class2use_file,
+    roi_folder = roi_folder,
+    out_folder = out_folder,
+    skip_class = NULL,
+    verbose = FALSE
+  ), "No manual files found in the specified directory."
+  )
+
+  # Test error handling
+  expect_error(ifcb_extract_annotated_images(
+    manual_folder = manual_folder,
+    class2use_file = class2use_file,
+    roi_folder = roi_folder,
+    out_folder = out_folder,
+    skip_class = "non-exisiting-class",
+    verbose = FALSE
+  ), "None of the class names provided in skip_class were found in class2use."
+  )
 
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)

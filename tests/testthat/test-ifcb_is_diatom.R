@@ -40,5 +40,5 @@ test_that("ifcb_is_diatom handles errors from wm_records_names gracefully", {
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 
   # Call the function and check for error handling
-  expect_error(ifcb_is_diatom(taxa_list, max_retries = 1, sleep_time = 1), "Error occurred while retrieving worms records after 1 attempts: API error")
+  expect_error(ifcb_is_diatom(taxa_list, max_retries = 3, sleep_time = 1), "Error occurred while retrieving worms records after 3 attempts: API error")
 })
