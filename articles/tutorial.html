@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -198,7 +198,7 @@ Before running the PSD quality check, ensure the necessary Python
 environment is set up and activated:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path to virtual environment</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/virtualenvs/iRfcb-test"</span> <span class="co"># Or your preferred venv path</span></span>
+<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
 <span></span>
 <span><span class="co"># Install python virtual environment</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
@@ -345,8 +345,8 @@ specifically to phytoplankton from the Baltic Sea.</p>
 <span><span class="fu"><a href="../reference/ifcb_is_in_basin.html">ifcb_is_in_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="tutorial_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 <p>This function reads a land-buffered shapefile of the Baltic Sea Basin
-(including Öresund) from the ‘iRfcb’ package by default, or a
-user-supplied shapefile if provided.</p>
+from the ‘iRfcb’ package by default, or a user-supplied shapefile if
+provided.</p>
 </div>
 <div class="section level4">
 <h4 id="find-missing-positions-from-rv-svea-ferrybox">Find missing positions from RV Svea Ferrybox<a class="anchor" aria-label="anchor" href="#find-missing-positions-from-rv-svea-ferrybox"></a>
@@ -924,29 +924,35 @@ delivery format.</p>
 <span><span class="co">##  [3] SAMPLING_PLATFORM         PROJ                     </span></span>
 <span><span class="co">##  [5] ORDERER                   SHIPC                    </span></span>
 <span><span class="co">##  [7] CRUISE_NO                 DATE_TIME                </span></span>
-<span><span class="co">##  [9] SDATE                     TIMEZONE                 </span></span>
-<span><span class="co">## [11] STIME                     LATIT                    </span></span>
+<span><span class="co">##  [9] SDATE                     STIME                    </span></span>
+<span><span class="co">## [11] TIMEZONE                  LATIT                    </span></span>
 <span><span class="co">## [13] LONGI                     POSYS                    </span></span>
-<span><span class="co">## [15] WADEP                     MSTAT                    </span></span>
-<span><span class="co">## [17] MPROG                     MNDEP                    </span></span>
-<span><span class="co">## [19] MXDEP                     SLABO                    </span></span>
-<span><span class="co">## [21] ACKR_SMP                  SMTYP                    </span></span>
-<span><span class="co">## [23] PDMET                     SMVOL                    </span></span>
-<span><span class="co">## [25] METFP                     IFCBNO                   </span></span>
-<span><span class="co">## [27] SMPNO                     LATNM                    </span></span>
-<span><span class="co">## [29] SFLAG                     TRPHY                    </span></span>
-<span><span class="co">## [31] APHIA_ID                  IMAGE_VERIFICATION       </span></span>
-<span><span class="co">## [33] COUNT                     ABUND                    </span></span>
-<span><span class="co">## [35] BIOVOL                    C_CONC                   </span></span>
-<span><span class="co">## [37] QFLAG                     COEFF                    </span></span>
-<span><span class="co">## [39] CLASS_NAME                CLASS_PD                 </span></span>
-<span><span class="co">## [41] CLASS_PR                  CLASS_PM                 </span></span>
+<span><span class="co">## [15] WADEP                     MPROG                    </span></span>
+<span><span class="co">## [17] MNDEP                     MXDEP                    </span></span>
+<span><span class="co">## [19] SLABO                     ACKR_SMP                 </span></span>
+<span><span class="co">## [21] SMTYP                     PDMET                    </span></span>
+<span><span class="co">## [23] SMVOL                     METFP                    </span></span>
+<span><span class="co">## [25] IFCBNO                    SMPNO                    </span></span>
+<span><span class="co">## [27] LATNM                     SFLAG                    </span></span>
+<span><span class="co">## [29] TRPHY                     APHIA_ID                 </span></span>
+<span><span class="co">## [31] IMAGE_VERIFICATION        COUNT                    </span></span>
+<span><span class="co">## [33] ABUND                     BIOVOL                   </span></span>
+<span><span class="co">## [35] C_CONC                    QFLAG                    </span></span>
+<span><span class="co">## [37] COEFF                     CLASS_NAME               </span></span>
+<span><span class="co">## [39] CLASS_F1                  UNCLASSIFIED_COUNTS      </span></span>
+<span><span class="co">## [41] UNCLASSIFIED_ABUNDANCE    UNCLASSIFIED_VOLUME      </span></span>
 <span><span class="co">## [43] METOA                     COUNTPROG                </span></span>
 <span><span class="co">## [45] ALABO                     ACKR_ANA                 </span></span>
 <span><span class="co">## [47] ANADATE                   METDC                    </span></span>
 <span><span class="co">## [49] TRAINING_SET              TRAINING_SET_ANNOTATED_BY</span></span>
 <span><span class="co">## [51] CLASSIFIER_CREATED_BY     CLASSIFIER_USED          </span></span>
 <span><span class="co">## [53] MANUAL_QC_DATE            PRE_FILTER_SIZE          </span></span>
+<span><span class="co">## [55] PH_FB                     CHL_FB                   </span></span>
+<span><span class="co">## [57] CDOM_FB                   PHYC_FB                  </span></span>
+<span><span class="co">## [59] PHER_FB                   WATERFLOW_FB             </span></span>
+<span><span class="co">## [61] TURB_FB                   PCO2_FB                  </span></span>
+<span><span class="co">## [63] TEMP_FB                   PSAL_FB                  </span></span>
+<span><span class="co">## [65] OSAT_FB                   DOXY_FB                  </span></span>
 <span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
 <p>This concludes the tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation. Happy
@@ -958,7 +964,7 @@ analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
-<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.3.5.</span></span>
+<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.3.6.</span></span>
 <span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -967,7 +973,7 @@ analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.5},</span></span>
+<span><span class="co">##     note = {R package version 0.3.6},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
