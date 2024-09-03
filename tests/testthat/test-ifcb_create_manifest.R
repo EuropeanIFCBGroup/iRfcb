@@ -1,21 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(fs)
-  library(zip)
-})
-
-# Define the setup function
-setup_mock_directory <- function() {
-  temp_dir <- tempdir()  # Use tempdir() to create a temporary directory
-  test_data_zip <- test_path("test_data/test_data.zip")
-
-  # Unzip the test data into the temporary directory
-  unzip(test_data_zip, exdir = temp_dir)
-
-  temp_dir
-}
-
-# Define test cases
 test_that("ifcb_create_manifest creates MANIFEST.txt correctly", {
   # Setup mock directory
   temp_dir <- setup_mock_directory()

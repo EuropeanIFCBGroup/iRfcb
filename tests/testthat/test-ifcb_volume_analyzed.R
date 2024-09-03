@@ -1,5 +1,3 @@
-suppressWarnings(library(testthat))
-
 # Directory to extract files
 exdir <- tempdir()
 

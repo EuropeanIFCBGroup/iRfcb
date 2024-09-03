@@ -1,9 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(R.matlab)
-  library(iRfcb)
-})
-
 test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file", {
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 

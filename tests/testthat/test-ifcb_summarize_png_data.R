@@ -1,8 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(dplyr)
-})
-
 # Extract test data and define paths
 zip_path <- test_path("test_data/test_data.zip")
 temp_dir <- tempdir()

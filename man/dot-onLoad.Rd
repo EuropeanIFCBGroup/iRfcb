@@ -4,14 +4,11 @@
 \alias{.onLoad}
 \title{Load iRfcb Python Environment on Package Load}
 \usage{
-.onLoad(..., envname = "~/.virtualenvs/iRfcb")
+.onLoad(...)
 }
 \arguments{
 \item{...}{Additional arguments passed to the function.}
-
-\item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
 }
 \description{
 This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
-virtualenv
 }

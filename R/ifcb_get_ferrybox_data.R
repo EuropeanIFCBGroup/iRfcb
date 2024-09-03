@@ -177,15 +177,9 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   output <- output %>%
     mutate(across(all_of(parameters), as.numeric))
 
-  if (latitude_param %in% parameters) {
-    output <- output %>%
-      rename(gpsLatitude = latitude_param)
-  }
-
-  if (longitude_param %in% parameters) {
-    output <- output %>%
-      rename(gpsLongitude = longitude_param)
-  }
+  # Check if latitude_param and longitude_param are in parameters and rename accordingly
+  names(output)[names(output) == latitude_param] <- ifelse(latitude_param %in% parameters, "gpsLatitude", names(output)[names(output) == latitude_param])
+  names(output)[names(output) == longitude_param] <- ifelse(longitude_param %in% parameters, "gpsLongitude", names(output)[names(output) == longitude_param])
 
   return(output)
 }

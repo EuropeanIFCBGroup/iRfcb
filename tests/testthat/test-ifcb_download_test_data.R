@@ -1,8 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(fs)
-})
-
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
   # Setup test environment
   temp_dir <- tempdir()
@@ -12,7 +7,7 @@ test_that("ifcb_download_test_data downloads and unzips files correctly", {
   temp_dir <- file.path(temp_dir, "temp")
 
   # Call the function to test error handling
-  expect_error(ifcb_download_test_data(temp_dir, figshare_article = "Non-valid-article"), "Download failed after 5 attempts.")
+  expect_error(ifcb_download_test_data(temp_dir, figshare_article = "Non-valid-article", max_retries = 2, sleep_time = 1), "Download failed after 2 attempts.")
 
   # Call the function to download and unzip test data
   ifcb_download_test_data(temp_dir)

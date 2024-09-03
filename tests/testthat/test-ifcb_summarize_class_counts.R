@@ -1,10 +1,3 @@
-suppressWarnings({
-  library(testthat)
-  library(lubridate)
-  library(stringr)
-  library(R.matlab)
-})
-
 test_that("ifcb_summarize_class_counts works correctly", {
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
@@ -33,14 +26,6 @@ test_that("ifcb_summarize_class_counts works correctly", {
   expect_type(summary_data$mdateTB, "double")
   expect_type(summary_data$filelistTB, "character")
   expect_type(summary_data$classpath_generic, "character")
-
-  # # Check the adhocthresh elements if they exist
-  # if (!is.null(summary_data$classcountTB_above_adhocthresh)) {
-  #   expect_type(summary_data$classcountTB_above_adhocthresh, "matrix")
-  # }
-  # if (!is.null(summary_data$adhocthresh)) {
-  #   expect_type(summary_data$adhocthresh, "numeric")
-  # }
 
   # Additional checks for dimensions and values
   expect_equal(nrow(summary_data$classcountTB), length(summary_data$filelistTB))

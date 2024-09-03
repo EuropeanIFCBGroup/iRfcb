@@ -1,32 +1,8 @@
-suppressWarnings({
-  library(testthat)
-  library(magrittr)
-  library(stringr)
-  library(worrms)
-  library(mockery)
-})
-
-# Mock wm_records_names to return predefined results
-mock_wm_records_names <- function(names, marine_only) {
-  records <- list(
-    Nitzschia = list(class = "Bacillariophyceae"),
-    Chaetoceros = list(class = "Bacillariophyceae"),
-    Dinophysis = list(class = "Dinophyceae"),
-    Thalassiosira = list(class = "Bacillariophyceae")
-  )
-  lapply(names, function(name) records[[name]])
-}
-
-# Mocking the extract_class function to return the class from the mocked records
-mock_extract_class <- function(record) {
-  record$class
-}
-
 test_that("ifcb_is_diatom correctly identifies diatoms", {
   # Mock the wm_records_names function
-  stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
+  mockery::stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
   # Mock the extract_class function
-  stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
+  mockery::stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
 
   # Define the taxa list for testing
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
@@ -41,9 +17,9 @@ test_that("ifcb_is_diatom correctly identifies diatoms", {
 
 test_that("ifcb_is_diatom handles taxa names with different formats", {
   # Mock the wm_records_names function
-  stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
+  mockery::stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
   # Mock the extract_class function
-  stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
+  mockery::stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
 
   # Define the taxa list with different formats
   taxa_list <- c("Nitzschia spp.", "Chaetoceros sp.", "Dinophysis-like", "Thalassiosira single cell")
@@ -58,11 +34,11 @@ test_that("ifcb_is_diatom handles taxa names with different formats", {
 
 test_that("ifcb_is_diatom handles errors from wm_records_names gracefully", {
   # Mock wm_records_names to throw an error
-  stub(ifcb_is_diatom, 'wm_records_names', function(names, marine_only) { stop("API error") })
+  mockery::stub(ifcb_is_diatom, 'wm_records_names', function(names, marine_only) { stop("API error") })
 
   # Define the taxa list for testing
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 
   # Call the function and check for error handling
-  expect_error(ifcb_is_diatom(taxa_list), "Error occurred while retrieving worms records after 3 attempts: API error")
+  expect_error(ifcb_is_diatom(taxa_list, max_retries = 3, sleep_time = 1), "Error occurred while retrieving worms records after 3 attempts: API error")
 })
