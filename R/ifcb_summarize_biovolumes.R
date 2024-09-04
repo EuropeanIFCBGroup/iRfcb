@@ -22,7 +22,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
 #'     Use \code{mat_folder} instead.
 #'
 #' @return A data frame summarizing aggregated biovolume and carbon content per class per sample.
-#'   Columns include 'sample', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
+#'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
 #'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'.
 #'
 #' @details This function performs the following steps:

@@ -21,7 +21,7 @@ utils::globalVariables("biovolume")
 #'     `r lifecycle::badge("deprecated")`
 #'     Use \code{mat_folder} instead.
 #'
-#' @return A data frame containing sample, roi_number, class, biovolume_um3, and computed carbon_pg.
+#' @return A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
 #'
 #' @details
 #' The function combines biovolume data extracted from feature files with class
