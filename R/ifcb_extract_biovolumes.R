@@ -166,6 +166,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
       # Create a data frame with sample, roi_number, and class information
       temp_df <- data.frame(
         sample = str_replace(basename(matching_mat[class]), "_class_v\\d+.mat", ""),
+        classifier = temp$classifierName,
         roi_number = temp$roinum,
         class = if (threshold == "opt") {
           unlist(temp$TBclass.above.threshold)

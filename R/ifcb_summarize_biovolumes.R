@@ -82,7 +82,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
 
   # Step 2: Aggregate biovolumes and carbon content by sample and class
   biovolume_aggregated <- biovolumes %>%
-    group_by(sample, class) %>%
+    group_by(sample, classifier, class) %>%
     summarise(counts = n(),
               biovolume_mm3 = sum(biovolume_um3 * 10^-9, na.rm = TRUE),  # Convert from um3 to mm3
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug
