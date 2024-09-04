@@ -153,6 +153,8 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
     names(class_df)[2] <- "roi_number"
 
+    class_df$classifier <- NA
+
   } else {
     # Loop through matching classes
     for (class in seq_along(matching_mat)) {
