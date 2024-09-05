@@ -1,4 +1,4 @@
-utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
+utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "."))
 #' Summarize Biovolumes and Carbon Content from IFCB Data
 #'
 #' This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
@@ -22,7 +22,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
 #'     Use \code{mat_folder} instead.
 #'
 #' @return A data frame summarizing aggregated biovolume and carbon content per class per sample.
-#'   Columns include 'sample', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
+#'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
 #'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'.
 #'
 #' @details This function performs the following steps:
@@ -82,7 +82,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
 
   # Step 2: Aggregate biovolumes and carbon content by sample and class
   biovolume_aggregated <- biovolumes %>%
-    group_by(sample, class) %>%
+    group_by(sample, classifier, class) %>%
     summarise(counts = n(),
               biovolume_mm3 = sum(biovolume_um3 * 10^-9, na.rm = TRUE),  # Convert from um3 to mm3
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug

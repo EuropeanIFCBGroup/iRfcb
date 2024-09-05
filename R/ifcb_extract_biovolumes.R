@@ -21,7 +21,7 @@ utils::globalVariables("biovolume")
 #'     `r lifecycle::badge("deprecated")`
 #'     Use \code{mat_folder} instead.
 #'
-#' @return A data frame containing sample, roi_number, class, biovolume_um3, and computed carbon_pg.
+#' @return A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
 #'
 #' @details
 #' The function combines biovolume data extracted from feature files with class
@@ -153,6 +153,8 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
     names(class_df)[2] <- "roi_number"
 
+    class_df$classifier <- NA
+
   } else {
     # Loop through matching classes
     for (class in seq_along(matching_mat)) {
@@ -166,6 +168,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
       # Create a data frame with sample, roi_number, and class information
       temp_df <- data.frame(
         sample = str_replace(basename(matching_mat[class]), "_class_v\\d+.mat", ""),
+        classifier = temp$classifierName,
         roi_number = temp$roinum,
         class = if (threshold == "opt") {
           unlist(temp$TBclass.above.threshold)
