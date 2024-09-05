@@ -1,4 +1,4 @@
-utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "."))
+utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "."))
 #' Summarize Biovolumes and Carbon Content from IFCB Data
 #'
 #' This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
