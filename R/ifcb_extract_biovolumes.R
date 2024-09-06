@@ -14,6 +14,8 @@ utils::globalVariables("biovolume")
 #' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
 #' @param threshold Threshold for selecting class information ("opt" or other, default is "opt").
 #' @param multiblob A logical indicating whether to include multiblob features. Default is FALSE.
+#' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
+#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
 #' @param feature_folder
 #'     `r lifecycle::badge("deprecated")`
 #'     Use \code{feature_files} instead.
@@ -49,7 +51,11 @@ utils::globalVariables("biovolume")
 #' @export
 #'
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
-ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE, feature_folder = deprecated(), class_folder = deprecated()) {
+ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL,
+                                    micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
+                                    threshold = "opt", multiblob = FALSE,
+                                    feature_recursive = TRUE, mat_recursive = TRUE,
+                                    feature_folder = deprecated(), class_folder = deprecated()) {
 
   # Warn the user if feature_folder is used
   if (lifecycle::is_present(feature_folder)) {
@@ -73,11 +79,11 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
-    feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = TRUE)
+    feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = feature_recursive)
   }
 
   # List mat files
-  mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = TRUE)
+  mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = mat_recursive)
 
   if (length(mat_files) == 0) {
     stop("No class data files found")

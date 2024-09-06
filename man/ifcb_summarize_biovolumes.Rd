@@ -12,6 +12,9 @@ ifcb_summarize_biovolumes(
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
   threshold = "opt",
+  feature_recursive = TRUE,
+  mat_recursive = TRUE,
+  hdr_recursive = TRUE,
   class_folder = deprecated()
 )
 }
@@ -29,6 +32,12 @@ ifcb_summarize_biovolumes(
 \item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
 
 \item{threshold}{Threshold for classification (default: "opt").}
+
+\item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
+
+\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
+
+\item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
 
 \item{class_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{mat_folder} instead.}

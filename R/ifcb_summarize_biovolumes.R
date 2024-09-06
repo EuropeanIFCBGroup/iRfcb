@@ -17,6 +17,9 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
 #' @param threshold Threshold for classification (default: "opt").
+#' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
+#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
+#' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
 #' @param class_folder
 #'     `r lifecycle::badge("deprecated")`
 #'     Use \code{mat_folder} instead.
@@ -46,7 +49,11 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
-ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL, hdr_folder = NULL, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", class_folder = deprecated()) {
+ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL,
+                                      hdr_folder = NULL, micron_factor = 1 / 3.4,
+                                      diatom_class = "Bacillariophyceae", threshold = "opt",
+                                      feature_recursive = TRUE, mat_recursive = TRUE, hdr_recursive = TRUE,
+                                      class_folder = deprecated()) {
 
   # Warn the user if class_folder is used
   if (lifecycle::is_present(class_folder)) {
@@ -58,27 +65,15 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
     mat_folder <- class_folder
   }
 
-  # List mat files
-  mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = TRUE)
-
-  if (length(mat_files) == 0) {
-    stop("No MAT files found")
-  }
-
-  # Check if files are manually classified
-  is_manual <- "class2use.manual" %in% ifcb_get_mat_names(mat_files[1])
-
-  if (is_manual && is.null(class2use_file)) {
-    stop("class2use must be specified when extracting manual biovolume data")
-  }
-
   # Step 1: Extract biovolumes and carbon content from feature and class files
   biovolumes <- ifcb_extract_biovolumes(feature_files = feature_folder,
                                         mat_folder = mat_folder,
                                         class2use_file = class2use_file,
                                         micron_factor = micron_factor,
                                         diatom_class = diatom_class,
-                                        threshold = threshold)
+                                        threshold = threshold,
+                                        feature_recursive = feature_recursive,
+                                        mat_recursive = mat_recursive)
 
   # Step 2: Aggregate biovolumes and carbon content by sample and class
   biovolume_aggregated <- biovolumes %>%
@@ -90,8 +85,8 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
 
   # Step 3: Optionally incorporate volume data from HDR files if provided
   if (!is.null(hdr_folder)) {
-    mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = TRUE)
-    hdr_files <- list.files(hdr_folder, pattern = "D.*\\.hdr", full.names = TRUE, recursive = TRUE)
+    mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = mat_recursive)
+    hdr_files <- list.files(hdr_folder, pattern = "D.*\\.hdr", full.names = TRUE, recursive = hdr_recursive)
 
     # Extract sample names from HDR and class files using a general regular expression
     hdr_sample_names <- sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files)
