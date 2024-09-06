@@ -86,7 +86,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
   mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = mat_recursive)
 
   if (length(mat_files) == 0) {
-    stop("No class data files found")
+    stop("No MAT files found")
   }
 
   # Check if files are manually classified
