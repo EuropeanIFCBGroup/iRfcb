@@ -12,6 +12,7 @@
 #'        Default is 3.
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
 #'        Default is 10 seconds.
+#' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
 #'
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
 #'
@@ -24,7 +25,7 @@
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
-ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10) {
+ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE) {
 
   # Clean the taxa list
   taxa_list_clean <- taxa_list %>%
@@ -34,10 +35,19 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
     trimws()
 
   # Retrieve WoRMS records
-  worms_records <- retrieve_worms_records(word(taxa_list_clean, 1), max_retries, sleep_time)
+  worms_data <- retrieve_worms_records(taxa_names = word(taxa_list_clean, 1),
+                                       max_retries = max_retries,
+                                       sleep_time = sleep_time,
+                                       marine_only = marine_only)
 
-  # Extract classes
-  classes <- sapply(worms_records, extract_class) # Helper function
+  # Extract classes with error handling for missing data
+  classes <- sapply(worms_data, function(record) {
+    if (!is.null(record)) {
+      extract_class(record)
+    } else {
+      NA
+    }
+  })
 
   # Create the dataframe with taxa_list_clean and classes
   result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = classes, stringsAsFactors = FALSE)

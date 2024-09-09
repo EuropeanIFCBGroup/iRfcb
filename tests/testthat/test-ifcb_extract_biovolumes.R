@@ -54,7 +54,7 @@ test_that("ifcb_extract_biovolumes handles empty directories", {
   expect_error(ifcb_extract_biovolumes(empty_feature_dir, class_folder), "No feature data files found")
 
   # Run the function with empty class directory and expect an error
-  expect_error(ifcb_extract_biovolumes(feature_folder, empty_class_dir), "No class data files found")
+  expect_error(ifcb_extract_biovolumes(feature_folder, empty_class_dir), "No MAT files found")
 })
 
 test_that("ifcb_extract_biovolumes handles invalid directories gracefully", {

@@ -452,17 +452,18 @@ extract_aphia_id <- function(record) {
 #' @param taxa_names A character vector of taxa names to retrieve records for.
 #' @param max_retries An integer specifying the maximum number of attempts to retrieve records.
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
+#' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
 #'
 #' @return A list of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
 #'
 #' @importFrom worrms wm_records_names
-retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10) {
+retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE) {
   attempt <- 1
   worms_records <- NULL
 
   while(attempt <= max_retries) {
     tryCatch({
-      worms_records <- wm_records_names(taxa_names, marine_only = FALSE)
+      worms_records <- wm_records_names(taxa_names, marine_only = marine_only)
       if (!is.null(worms_records)) break
     }, error = function(err) {
       if (attempt == max_retries) {
@@ -476,5 +477,5 @@ retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10)
     attempt <- attempt + 1
   }
 
-  return(worms_records)
+  worms_records
 }

@@ -10,8 +10,11 @@ ifcb_extract_biovolumes(
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  marine_only = FALSE,
   threshold = "opt",
   multiblob = FALSE,
+  feature_recursive = TRUE,
+  mat_recursive = TRUE,
   feature_folder = deprecated(),
   class_folder = deprecated()
 )
@@ -27,9 +30,15 @@ ifcb_extract_biovolumes(
 
 \item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
 
+\item{marine_only}{Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.}
+
 \item{threshold}{Threshold for selecting class information ("opt" or other, default is "opt").}
 
 \item{multiblob}{A logical indicating whether to include multiblob features. Default is FALSE.}
+
+\item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
+
+\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
 
 \item{feature_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{feature_files} instead.}

@@ -20,7 +20,7 @@ create_temp_ferrybox_file <- function(file_path, content) {
 }
 
 # Mock the helper function to simulate WoRMS data retrieval
-mocked_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10) {
+mocked_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE) {
   # Simulated data
   records <- list(
     list(scientificname = "Nitzschia", class = "Bacillariophyceae"),
