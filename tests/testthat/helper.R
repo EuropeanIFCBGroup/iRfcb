@@ -19,20 +19,26 @@ create_temp_ferrybox_file <- function(file_path, content) {
   writeLines(content, file_path)
 }
 
-# Mock wm_records_names to return predefined results
-mock_wm_records_names <- function(names, marine_only) {
+# Mock the helper function to simulate WoRMS data retrieval
+mocked_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10) {
+  # Simulated data
   records <- list(
-    Nitzschia = list(class = "Bacillariophyceae"),
-    Chaetoceros = list(class = "Bacillariophyceae"),
-    Dinophysis = list(class = "Dinophyceae"),
-    Thalassiosira = list(class = "Bacillariophyceae")
+    list(scientificname = "Nitzschia", class = "Bacillariophyceae"),
+    list(scientificname = "Chaetoceros", class = "Bacillariophyceae"),
+    list(scientificname = "Dinophysis", class = "Dinophyceae"),
+    list(scientificname = "Thalassiosira", class = "Bacillariophyceae")
   )
-  lapply(names, function(name) records[[name]])
+
+  records[match(taxa_names, sapply(records, function(x) x$scientificname))]
 }
 
-# Mocking the extract_class function to return the class from the mocked records
-mock_extract_class <- function(record) {
+mocked_extract_class <- function(record) {
   record$class
+}
+
+# Mock wm_records_names to simulate an error
+mocked_wm_records_names_error <- function(taxa_names, marine_only = FALSE) {
+  stop("Simulated retrieval error")
 }
 
 # Mock feature files creation

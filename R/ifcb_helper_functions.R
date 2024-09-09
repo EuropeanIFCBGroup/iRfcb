@@ -443,3 +443,38 @@ extract_aphia_id <- function(record) {
     record$AphiaID[1]
   }
 }
+
+#' Retrieve WoRMS Records with Retry Mechanism
+#'
+#' This helper function attempts to retrieve WoRMS records using the provided taxa names.
+#' It retries the operation if an error occurs, up to a specified number of attempts.
+#'
+#' @param taxa_names A character vector of taxa names to retrieve records for.
+#' @param max_retries An integer specifying the maximum number of attempts to retrieve records.
+#' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
+#'
+#' @return A list of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
+#'
+#' @importFrom worrms wm_records_names
+retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10) {
+  attempt <- 1
+  worms_records <- NULL
+
+  while(attempt <= max_retries) {
+    tryCatch({
+      worms_records <- wm_records_names(taxa_names, marine_only = FALSE)
+      if (!is.null(worms_records)) break
+    }, error = function(err) {
+      if (attempt == max_retries) {
+        stop("Error occurred while retrieving WoRMS records after ", max_retries, " attempts: ", conditionMessage(err))
+      } else {
+        message("Attempt ", attempt, " failed: ", conditionMessage(err), " - Retrying...")
+        Sys.sleep(sleep_time)
+      }
+    })
+
+    attempt <- attempt + 1
+  }
+
+  return(worms_records)
+}

@@ -21,7 +21,6 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom stringr word
-#' @importFrom worrms wm_records_names
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
@@ -34,26 +33,8 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
     gsub("\\s+", " ", .) %>%
     trimws()
 
-  # Initialize variables
-  worms_records <- NULL
-  attempt <- 1
-
-  # Retrieve worms records with retry mechanism
-  while(attempt <= max_retries) {
-    tryCatch({
-      worms_records <- wm_records_names(word(taxa_list_clean, 1), marine_only = FALSE)
-      if (!is.null(worms_records)) break  # Exit the loop if successful
-    }, error = function(err) {
-      if (attempt == max_retries) {
-        stop("Error occurred while retrieving worms records after ", max_retries, " attempts: ", conditionMessage(err))
-      } else {
-        message("Attempt ", attempt, " failed: ", conditionMessage(err), " - Retrying...")
-        Sys.sleep(sleep_time)  # Pause before retrying
-      }
-    })
-
-    attempt <- attempt + 1
-  }
+  # Retrieve WoRMS records
+  worms_records <- retrieve_worms_records(word(taxa_list_clean, 1), max_retries, sleep_time)
 
   # Extract classes
   classes <- sapply(worms_records, extract_class) # Helper function
