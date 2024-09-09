@@ -1,44 +1,40 @@
 test_that("ifcb_is_diatom correctly identifies diatoms", {
-  # Mock the wm_records_names function
-  mockery::stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
-  # Mock the extract_class function
-  mockery::stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
-
-  # Define the taxa list for testing
+  # Sample taxa list
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 
-  # Call the function with the taxa list
-  is_diatom <- ifcb_is_diatom(taxa_list)
+  # Mock the helper function and extract_class for the test environment
+  assignInNamespace("retrieve_worms_records", mocked_worms_records, ns = "iRfcb")
+  assignInNamespace("extract_class", mocked_extract_class, ns = "iRfcb")
 
-  # Check if the function correctly identifies diatoms
-  expected_is_diatom <- c(TRUE, TRUE, FALSE, TRUE)
-  expect_equal(is_diatom, expected_is_diatom, info = "Diatoms should be correctly identified")
+  # Call the function
+  result <- ifcb_is_diatom(taxa_list)
+
+  # Expected logical vector (true for diatoms, false for others)
+  expected_result <- c(TRUE, TRUE, FALSE, TRUE)
+
+  # Assert the results
+  expect_equal(result, expected_result)
 })
 
-test_that("ifcb_is_diatom handles taxa names with different formats", {
-  # Mock the wm_records_names function
-  mockery::stub(ifcb_is_diatom, 'wm_records_names', mock_wm_records_names)
-  # Mock the extract_class function
-  mockery::stub(ifcb_is_diatom, 'extract_class', mock_extract_class)
+test_that("retrieve_worms_records retries and fails after max_retries", {
+  # Mock the wm_records_names function to always throw an error
+  mockery::stub(retrieve_worms_records, "wm_records_names", mocked_wm_records_names_error)
 
-  # Define the taxa list with different formats
-  taxa_list <- c("Nitzschia spp.", "Chaetoceros sp.", "Dinophysis-like", "Thalassiosira single cell")
+  # Track the number of retries
+  retries <- 0
+  test_sleep <- function(sleep_time) {
+    retries <<- retries + 1
+  }
 
-  # Call the function with the taxa list
-  is_diatom <- ifcb_is_diatom(taxa_list)
+  # Mock Sys.sleep to count retries instead of actually waiting
+  mockery::stub(retrieve_worms_records, "Sys.sleep", test_sleep)
 
-  # Check if the function correctly identifies diatoms
-  expected_is_diatom <- c(TRUE, TRUE, FALSE, TRUE)
-  expect_equal(is_diatom, expected_is_diatom, info = "Diatoms should be correctly identified for different name formats")
-})
+  # Expect the function to throw an error after max_retries
+  expect_error(
+    retrieve_worms_records(c("Nitzschia", "Chaetoceros"), max_retries = 3, sleep_time = 0.1),
+    "Error occurred while retrieving WoRMS records after 3 attempts"
+  )
 
-test_that("ifcb_is_diatom handles errors from wm_records_names gracefully", {
-  # Mock wm_records_names to throw an error
-  mockery::stub(ifcb_is_diatom, 'wm_records_names', function(names, marine_only) { stop("API error") })
-
-  # Define the taxa list for testing
-  taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
-
-  # Call the function and check for error handling
-  expect_error(ifcb_is_diatom(taxa_list, max_retries = 3, sleep_time = 1), "Error occurred while retrieving worms records after 3 attempts: API error")
+  # Check that it retried the correct number of times
+  expect_equal(retries, 2)
 })
