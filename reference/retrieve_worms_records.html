@@ -9,7 +9,7 @@ It retries the operation if an error occurs, up to a specified number of attempt
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,12 @@ It retries the operation if an error occurs, up to a specified number of attempt
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retrieve_worms_records</span><span class="op">(</span><span class="va">taxa_names</span>, max_retries <span class="op">=</span> <span class="fl">3</span>, sleep_time <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">retrieve_worms_records</span><span class="op">(</span></span>
+<span>  <span class="va">taxa_names</span>,</span>
+<span>  max_retries <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  sleep_time <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -58,6 +63,10 @@ It retries the operation if an error occurs, up to a specified number of attempt
 
 <dt id="arg-sleep-time">sleep_time<a class="anchor" aria-label="anchor" href="#arg-sleep-time"></a></dt>
 <dd><p>A numeric value indicating the number of seconds to wait between retry attempts.</p></dd>
+
+
+<dt id="arg-marine-only">marine_only<a class="anchor" aria-label="anchor" href="#arg-marine-only"></a></dt>
+<dd><p>Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.</p></dd>
 
 </dl></div>
     <div class="section level2">
