@@ -35,10 +35,10 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
     trimws()
 
   # Retrieve WoRMS records
-  worms_data <- iRfcb:::retrieve_worms_records(taxa_names = word(taxa_list_clean, 1),
-                                               max_retries = max_retries,
-                                               sleep_time = sleep_time,
-                                               marine_only = marine_only)
+  worms_data <- retrieve_worms_records(taxa_names = word(taxa_list_clean, 1),
+                                       max_retries = max_retries,
+                                       sleep_time = sleep_time,
+                                       marine_only = marine_only)
 
   # Extract classes with error handling for missing data
   classes <- sapply(worms_data, function(record) {
