@@ -10,6 +10,7 @@ ifcb_extract_biovolumes(
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  marine_only = FALSE,
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
@@ -28,6 +29,8 @@ ifcb_extract_biovolumes(
 \item{micron_factor}{Conversion factor for biovolume to cubic microns. Default is 1 / 3.4.}
 
 \item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
+
+\item{marine_only}{Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.}
 
 \item{threshold}{Threshold for selecting class information ("opt" or other, default is "opt").}
 

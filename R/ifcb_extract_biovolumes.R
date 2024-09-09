@@ -12,6 +12,7 @@ utils::globalVariables("biovolume")
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable (default NULL).
 #' @param micron_factor Conversion factor for biovolume to cubic microns. Default is 1 / 3.4.
 #' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
+#' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
 #' @param threshold Threshold for selecting class information ("opt" or other, default is "opt").
 #' @param multiblob A logical indicating whether to include multiblob features. Default is FALSE.
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
@@ -53,7 +54,7 @@ utils::globalVariables("biovolume")
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
 ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL,
                                     micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
-                                    threshold = "opt", multiblob = FALSE,
+                                    marine_only = FALSE, threshold = "opt", multiblob = FALSE,
                                     feature_recursive = TRUE, mat_recursive = TRUE,
                                     feature_folder = deprecated(), class_folder = deprecated()) {
 
@@ -208,7 +209,9 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
   # Determine if each class is a diatom
   unique_classes <- unique(biovolume_df$class)
-  is_diatom <- data.frame(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes, diatom_class = diatom_class))
+  is_diatom <- data.frame(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
+                                                                             diatom_class = diatom_class,
+                                                                             marine_only = marine_only))
   biovolume_df <- left_join(biovolume_df, is_diatom, by = "class")
 
   # Filter rows where is_diatom$is_diatom is NA

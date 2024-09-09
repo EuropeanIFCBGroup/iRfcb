@@ -8,7 +8,8 @@ ifcb_is_diatom(
   taxa_list,
   diatom_class = "Bacillariophyceae",
   max_retries = 3,
-  sleep_time = 10
+  sleep_time = 10,
+  marine_only = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ Default is 3.}
 
 \item{sleep_time}{A numeric value indicating the number of seconds to wait between retry attempts.
 Default is 10 seconds.}
+
+\item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
 }
 \value{
 A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.

@@ -4,7 +4,12 @@
 \alias{retrieve_worms_records}
 \title{Retrieve WoRMS Records with Retry Mechanism}
 \usage{
-retrieve_worms_records(taxa_names, max_retries = 3, sleep_time = 10)
+retrieve_worms_records(
+  taxa_names,
+  max_retries = 3,
+  sleep_time = 10,
+  marine_only = FALSE
+)
 }
 \arguments{
 \item{taxa_names}{A character vector of taxa names to retrieve records for.}
@@ -12,6 +17,8 @@ retrieve_worms_records(taxa_names, max_retries = 3, sleep_time = 10)
 \item{max_retries}{An integer specifying the maximum number of attempts to retrieve records.}
 
 \item{sleep_time}{A numeric value indicating the number of seconds to wait between retry attempts.}
+
+\item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
 }
 \value{
 A list of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.

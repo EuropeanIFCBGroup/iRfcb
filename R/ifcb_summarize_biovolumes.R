@@ -16,6 +16,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param hdr_folder Path to the folder containing HDR files (optional).
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
+#' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
 #' @param threshold Threshold for classification (default: "opt").
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
@@ -51,7 +52,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @export
 ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL,
                                       hdr_folder = NULL, micron_factor = 1 / 3.4,
-                                      diatom_class = "Bacillariophyceae", threshold = "opt",
+                                      diatom_class = "Bacillariophyceae", marine_only = FALSE, threshold = "opt",
                                       feature_recursive = TRUE, mat_recursive = TRUE, hdr_recursive = TRUE,
                                       class_folder = deprecated()) {
 
@@ -71,6 +72,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
                                         class2use_file = class2use_file,
                                         micron_factor = micron_factor,
                                         diatom_class = diatom_class,
+                                        marine_only = marine_only,
                                         threshold = threshold,
                                         feature_recursive = feature_recursive,
                                         mat_recursive = mat_recursive)

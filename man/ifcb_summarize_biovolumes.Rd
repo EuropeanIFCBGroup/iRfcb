@@ -11,6 +11,7 @@ ifcb_summarize_biovolumes(
   hdr_folder = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  marine_only = FALSE,
   threshold = "opt",
   feature_recursive = TRUE,
   mat_recursive = TRUE,
@@ -30,6 +31,8 @@ ifcb_summarize_biovolumes(
 \item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
 \item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
+
+\item{marine_only}{Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.}
 
 \item{threshold}{Threshold for classification (default: "opt").}
 
