@@ -8,6 +8,7 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).
+#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when `manual_files` is a folder. Default is FALSE
 #' @param manual_folder
 #'    `r lifecycle::badge("deprecated")`
 #'    Use \code{manual_files} instead.
@@ -34,7 +35,7 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", manual_folder = deprecated()) {
+ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE, manual_folder = deprecated()) {
   if (!sum_level %in% c("class", "sample", "roi")) {
     stop("sum_level should either be `class`, `roi` or `sample`")
   }
@@ -51,7 +52,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(manual_files) == 1 && file.info(manual_files)$isdir) {
-    manual_files <- list.files(manual_files, pattern = "D.*\\.mat", full.names = TRUE, recursive = TRUE)
+    manual_files <- list.files(manual_files, pattern = "D.*\\.mat", full.names = TRUE, recursive = mat_recursive)
   }
 
   # Get the class2use variable from the specified file
