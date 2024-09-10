@@ -92,7 +92,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
     sum <- taxa_list %>%
       mutate(sample = tools::file_path_sans_ext(basename(file))) %>%
       left_join(lookup_table, by = "manual") %>%
-      mutate(class = ifelse(is.na(name), as.character(manual), name)) %>%
+      mutate(class = as.character(ifelse(is.na(name), as.character(manual), name))) %>%
       select(sample, `roi number`, class)
 
     if (sum_level %in% c("class", "sample")) {
