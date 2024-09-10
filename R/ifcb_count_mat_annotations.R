@@ -8,7 +8,7 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @param class2use_file A character string specifying the path to the file containing the class2use variable.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).
-#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when `manual_files` is a folder. Default is FALSE
+#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when `manual_files` is a folder. Default is FALSE.
 #' @param manual_folder
 #'    `r lifecycle::badge("deprecated")`
 #'    Use \code{manual_files} instead.
