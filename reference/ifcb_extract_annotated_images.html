@@ -13,7 +13,7 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,9 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 <span>  <span class="va">roi_folder</span>,</span>
 <span>  <span class="va">out_folder</span>,</span>
 <span>  skip_class <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  manual_recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  roi_recursive <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,6 +85,14 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A logical value indicating whether to print progress messages. Default is TRUE.</p></dd>
+
+
+<dt id="arg-manual-recursive">manual_recursive<a class="anchor" aria-label="anchor" href="#arg-manual-recursive"></a></dt>
+<dd><p>Logical. If TRUE, the function will search for MATLAB files recursively within the <code>manual_folder</code>. Default is FALSE.</p></dd>
+
+
+<dt id="arg-roi-recursive">roi_recursive<a class="anchor" aria-label="anchor" href="#arg-roi-recursive"></a></dt>
+<dd><p>Logical. If TRUE, the function will search for data files recursively within the <code>roi_folder</code> (if provided). Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
