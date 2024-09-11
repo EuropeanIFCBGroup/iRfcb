@@ -9,6 +9,7 @@ ifcb_count_mat_annotations(
   class2use_file,
   skip_class = NULL,
   sum_level = "class",
+  mat_recursive = FALSE,
   manual_folder = deprecated()
 )
 }
@@ -20,6 +21,8 @@ ifcb_count_mat_annotations(
 \item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
 
 \item{sum_level}{A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).}
+
+\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively when \code{manual_files} is a folder. Default is FALSE.}
 
 \item{manual_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{manual_files} instead.}

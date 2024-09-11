@@ -14,6 +14,9 @@
 #' @param email_address The email address to be included in the README file for contact information.
 #' @param version Optionally, the version number to be included in the README file.
 #' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
+#' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
+#' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
+#' @param data_recursive Logical. If TRUE, the function will search for data files recursively within the `data_folder` (if provided). Default is TRUE.
 #'
 #' @details This function performs the following operations:
 #' \itemize{
@@ -48,19 +51,20 @@
 #' @seealso \code{\link{ifcb_zip_pngs}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_filename,
                             data_folder = NULL, readme_file = NULL, matlab_readme_file = NULL,
-                            email_address = "", version = "", print_progress = TRUE) {
+                            email_address = "", version = "", print_progress = TRUE,
+                            feature_recursive = TRUE, manual_recursive = FALSE, data_recursive = TRUE) {
   # Print message to indicate starting listing files
   message("Listing all files...")
 
   # List all .mat files in the specified folder (excluding subfolders)
-  mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = FALSE)
+  mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = manual_recursive)
 
   # List all feature files in the specified folder (including subfolders)
-  feature_files <- list.files(features_folder, pattern = "\\.csv$", full.names = TRUE, recursive = TRUE)
+  feature_files <- list.files(features_folder, pattern = "\\.csv$", full.names = TRUE, recursive = feature_recursive)
 
   # If data_folder is provided, list all data files in the specified folder (including subfolders)
   if (!is.null(data_folder)) {
-    data_files <- list.files(data_folder, pattern = "\\.(roi|adc|hdr)$", full.names = TRUE, recursive = TRUE)
+    data_files <- list.files(data_folder, pattern = "\\.(roi|adc|hdr)$", full.names = TRUE, recursive = data_recursive)
   } else {
     data_files <- NULL
   }
@@ -180,7 +184,9 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     current_date <- Sys.Date()
 
     # Summarize the number of images by class
-    files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = "unclassified")
+    files_df <- ifcb_count_mat_annotations(manual_folder, class2use_file,
+                                           skip_class = "unclassified",
+                                           mat_recursive = manual_recursive)
 
     # Arrange by n
     files_df <- arrange(files_df, desc(n))

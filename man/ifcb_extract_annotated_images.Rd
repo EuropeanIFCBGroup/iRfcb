@@ -10,7 +10,9 @@ ifcb_extract_annotated_images(
   roi_folder,
   out_folder,
   skip_class = NA,
-  verbose = TRUE
+  verbose = TRUE,
+  manual_recursive = FALSE,
+  roi_recursive = TRUE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ ifcb_extract_annotated_images(
 \item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
+
+\item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
+
+\item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.

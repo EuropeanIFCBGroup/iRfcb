@@ -12,6 +12,8 @@ utils::globalVariables(c("name", "manual"))
 #' @param out_folder A character string specifying the output directory where the extracted images will be saved.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
+#' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
+#' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
 #'
 #' @importFrom R.matlab readMat
 #' @importFrom tools file_path_sans_ext
@@ -32,10 +34,12 @@ utils::globalVariables(c("name", "manual"))
 #'   skip_class = 1
 #' )
 #' }
-ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder, skip_class = NA, verbose = TRUE) {
+ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder,
+                                          skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
+                                          roi_recursive = TRUE) {
 
   # Get the list of classified files
-  manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = FALSE)
+  manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
 
   if (length(manualfiles) == 0) {
     stop("No manual files found in the specified directory.")
@@ -51,7 +55,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
     manual.mat <- readMat(file)
 
     # Get the list of ROI files matching the sample
-    roifiles <- list.files(roi_folder, pattern = ".roi$", full.names = TRUE, recursive = TRUE)
+    roifiles <- list.files(roi_folder, pattern = ".roi$", full.names = TRUE, recursive = roi_recursive)
     roifilename <- roifiles[grepl(sample, roifiles)]
 
     if (length(roifilename) == 0) {

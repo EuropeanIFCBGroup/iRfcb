@@ -14,7 +14,10 @@ ifcb_zip_matlab(
   matlab_readme_file = NULL,
   email_address = "",
   version = "",
-  print_progress = TRUE
+  print_progress = TRUE,
+  feature_recursive = TRUE,
+  manual_recursive = FALSE,
+  data_recursive = TRUE
 )
 }
 \arguments{
@@ -37,6 +40,12 @@ ifcb_zip_matlab(
 \item{version}{Optionally, the version number to be included in the README file.}
 
 \item{print_progress}{A logical value indicating whether to print progress bar. Default is TRUE.}
+
+\item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
+
+\item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
+
+\item{data_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{data_folder} (if provided). Default is TRUE.}
 }
 \description{
 This function creates a zip archive containing specified files and directories for manually
