@@ -63,7 +63,6 @@ reference:
   - '`find_matching_data`'
   - '`find_matching_features`'
   - '`handle_missing_ferrybox_data`'
-  - '`handle_missing_positions`'
   - '`print_progress`'
   - '`read_hdr_file`'
   - '`retrieve_worms_records`'
