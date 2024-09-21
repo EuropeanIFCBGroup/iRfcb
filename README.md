@@ -31,13 +31,23 @@ Some functions in `iRfcb` require Python. You can download Python from the offic
 
 ## Documentation and Tutorials
 
+### Reference
+
+For a detailed overview of all available `iRfcb` functions, please visit the reference section:
+
+- [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
+
 ### Tutorial
+
+Explore the key features and capabilities of `iRfcb` through the tutorial:
 
 - [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html)
 
-### Reference
+### Example Useage
 
-- [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
+`iRfcb` is designed for integration into IFCB data processing pipelines. For an example, see its implementation in the following project:
+
+- [SMHI Data Pipeline](https://github.com/nodc-sweden/ifcb-data-pipeline)
 
 ## Repository
 
