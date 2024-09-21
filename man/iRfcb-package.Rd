@@ -6,6 +6,8 @@
 \alias{iRfcb-package}
 \title{iRfcb: I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A comprehensive suite of tools for managing and analyzing data from the Imaging FlowCytobot (IFCB).
 }
 \seealso{

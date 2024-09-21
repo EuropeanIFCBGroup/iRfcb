@@ -33,7 +33,6 @@ reference:
   - '`ifcb_get_mat_variable`'
   - '`ifcb_get_runtime`'
   - '`ifcb_get_shark_colnames`'
-  - '`ifcb_get_svea_position`'
   - '`ifcb_get_trophic_type`'
   - '`ifcb_is_diatom`'
   - '`ifcb_is_in_basin`'
