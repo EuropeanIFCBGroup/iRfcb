@@ -5,10 +5,6 @@
 #'
 #' @param feature_files A path to a folder containing feature files or a character vector of file paths.
 #' @param multiblob Logical indicating whether to filter for multiblob files (default: FALSE).
-#' @param feature_folder
-#'    `r lifecycle::badge("deprecated")`
-#'
-#'    Use \code{feature_files} instead.
 #'
 #' @return A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
 #'   The list is named with the base names of the feature files.
@@ -27,20 +23,9 @@
 #'
 #' @importFrom utils read.csv
 #' @importFrom stats setNames
-#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
-ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, feature_folder = deprecated()) {
-
-  # Warn the user if feature_folder is used
-  if (lifecycle::is_present(feature_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(feature_folder = )", "iRfcb::ifcb_extract_biovolumes(feature_files = )")
-
-    # Deal with the deprecated argument for compatibility
-    feature_files <- feature_folder
-  }
+ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {

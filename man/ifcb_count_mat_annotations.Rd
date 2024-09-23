@@ -9,8 +9,7 @@ ifcb_count_mat_annotations(
   class2use_file,
   skip_class = NULL,
   sum_level = "class",
-  mat_recursive = FALSE,
-  manual_folder = deprecated()
+  mat_recursive = FALSE
 )
 }
 \arguments{
@@ -23,9 +22,6 @@ ifcb_count_mat_annotations(
 \item{sum_level}{A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).}
 
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively when \code{manual_files} is a folder. Default is FALSE.}
-
-\item{manual_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{manual_files} instead.}
 }
 \value{
 A data frame with the total count of images per class, roi or per sample.

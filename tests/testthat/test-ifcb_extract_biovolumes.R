@@ -79,13 +79,6 @@ test_that("ifcb_extract_biovolumes calculates carbon content correctly for diato
   expect_true(all(non_diatom_rows$carbon_pg > 0))
 })
 
-test_that("ifcb_extract_biovolumes handles deprecated arguments", {
-
-  lifecycle::expect_deprecated(ifcb_extract_biovolumes(feature_files = feature_folder, class_folder = class_folder))
-
-  lifecycle::expect_deprecated(ifcb_extract_biovolumes(feature_folder = feature_folder, mat_folder = class_folder))
-})
-
 test_that("ifcb_extract_biovolumes manual data correctly", {
 
   expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use must be specified when extracting manual biovolume data")

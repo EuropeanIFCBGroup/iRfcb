@@ -14,9 +14,7 @@ ifcb_extract_biovolumes(
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
-  mat_recursive = TRUE,
-  feature_folder = deprecated(),
-  class_folder = deprecated()
+  mat_recursive = TRUE
 )
 }
 \arguments{
@@ -36,15 +34,9 @@ ifcb_extract_biovolumes(
 
 \item{multiblob}{A logical indicating whether to include multiblob features. Default is FALSE.}
 
-\item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
+\item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within when \code{feature_files} is a folder. Default is TRUE.}
 
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
-
-\item{feature_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{feature_files} instead.}
-
-\item{class_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{mat_folder} instead.}
 }
 \value{
 A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
