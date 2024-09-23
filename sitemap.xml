@@ -7,6 +7,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/authors.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/index.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/create_package_manifest.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/defunct.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/dot-onLoad.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/extract_aphia_id.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/extract_class.html</loc></url>
@@ -14,7 +15,6 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/find_matching_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/find_matching_features.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/handle_missing_ferrybox_data.html</loc></url>
-<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/handle_missing_positions.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/iRfcb-package.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.html</loc></url>
@@ -30,7 +30,6 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_runtime.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.html</loc></url>
-<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_svea_position.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_trophic_type.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.html</loc></url>
