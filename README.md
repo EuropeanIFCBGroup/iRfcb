@@ -1,4 +1,4 @@
-# I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB
+# I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB <a href="https://europeanifcbgroup.github.io/iRfcb/"><img src="man/figures/logo.png" align="right" height="139" alt="iRfcb website" /></a>
 
 [![R-CMD-check](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
@@ -31,13 +31,23 @@ Some functions in `iRfcb` require Python. You can download Python from the offic
 
 ## Documentation and Tutorials
 
+### Reference
+
+For a detailed overview of all available `iRfcb` functions, please visit the reference section:
+
+- [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
+
 ### Tutorial
+
+Explore the key features and capabilities of `iRfcb` through the tutorial:
 
 - [iRfcb Tutorial](https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html)
 
-### Reference
+### Example Useage
 
-- [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html)
+`iRfcb` is designed for integration into IFCB data processing pipelines. For an example, see its implementation in the following project:
+
+- [SMHI Data Pipelines](https://github.com/nodc-sweden/ifcb-data-pipeline)
 
 ## Repository
 

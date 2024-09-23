@@ -15,8 +15,7 @@ ifcb_summarize_biovolumes(
   threshold = "opt",
   feature_recursive = TRUE,
   mat_recursive = TRUE,
-  hdr_recursive = TRUE,
-  class_folder = deprecated()
+  hdr_recursive = TRUE
 )
 }
 \arguments{
@@ -41,9 +40,6 @@ ifcb_summarize_biovolumes(
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
 
 \item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
-
-\item{class_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{mat_folder} instead.}
 }
 \value{
 A data frame summarizing aggregated biovolume and carbon content per class per sample.

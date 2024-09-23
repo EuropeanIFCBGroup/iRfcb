@@ -15,14 +15,8 @@ utils::globalVariables("biovolume")
 #' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
 #' @param threshold Threshold for selecting class information ("opt" or other, default is "opt").
 #' @param multiblob A logical indicating whether to include multiblob features. Default is FALSE.
-#' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
+#' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within when `feature_files` is a folder. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
-#' @param feature_folder
-#'     `r lifecycle::badge("deprecated")`
-#'     Use \code{feature_files} instead.
-#' @param class_folder
-#'     `r lifecycle::badge("deprecated")`
-#'     Use \code{mat_folder} instead.
 #'
 #' @return A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
 #'
@@ -47,7 +41,6 @@ utils::globalVariables("biovolume")
 #' @importFrom R.matlab readMat
 #' @importFrom dplyr left_join mutate case_when select
 #' @importFrom stringr str_replace
-#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
 #'
@@ -55,28 +48,7 @@ utils::globalVariables("biovolume")
 ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL,
                                     micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
                                     marine_only = FALSE, threshold = "opt", multiblob = FALSE,
-                                    feature_recursive = TRUE, mat_recursive = TRUE,
-                                    feature_folder = deprecated(), class_folder = deprecated()) {
-
-  # Warn the user if feature_folder is used
-  if (lifecycle::is_present(feature_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(feature_folder = )", "iRfcb::ifcb_extract_biovolumes(feature_files = )")
-
-    # Deal with the deprecated argument for compatibility
-    feature_files <- feature_folder
-  }
-
-  # Warn the user if class_folder is used
-  if (lifecycle::is_present(class_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(class_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_folder = )")
-
-    # Deal with the deprecated argument for compatibility
-    mat_folder <- class_folder
-  }
+                                    feature_recursive = TRUE, mat_recursive = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {

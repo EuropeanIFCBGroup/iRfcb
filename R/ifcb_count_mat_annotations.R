@@ -9,9 +9,6 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when `manual_files` is a folder. Default is FALSE.
-#' @param manual_folder
-#'    `r lifecycle::badge("deprecated")`
-#'    Use \code{manual_files} instead.
 #'
 #' @return A data frame with the total count of images per class, roi or per sample.
 #' @export
@@ -19,7 +16,6 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @importFrom R.matlab readMat
 #' @importFrom dplyr filter left_join mutate select group_by summarise bind_rows pull n
 #' @importFrom tools file_path_sans_ext
-#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @examples
 #' \dontrun{
@@ -35,19 +31,9 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE, manual_folder = deprecated()) {
+ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE) {
   if (!sum_level %in% c("class", "sample", "roi")) {
     stop("sum_level should either be `class`, `roi` or `sample`")
-  }
-
-  # Warn the user if class_folder is used
-  if (lifecycle::is_present(manual_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(manual_folder = )", "iRfcb::ifcb_extract_biovolumes(manual_files = )")
-
-    # Deal with the deprecated argument for compatibility
-    manual_files <- manual_folder
   }
 
   # Check if feature_files is a single folder path or a vector of file paths

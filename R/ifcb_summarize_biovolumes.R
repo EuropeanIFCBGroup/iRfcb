@@ -21,9 +21,6 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
 #' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
-#' @param class_folder
-#'     `r lifecycle::badge("deprecated")`
-#'     Use \code{mat_folder} instead.
 #'
 #' @return A data frame summarizing aggregated biovolume and carbon content per class per sample.
 #'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
@@ -47,24 +44,12 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'
 #' @importFrom dplyr group_by summarise left_join
 #' @importFrom magrittr %>%
-#' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
 ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file = NULL,
                                       hdr_folder = NULL, micron_factor = 1 / 3.4,
                                       diatom_class = "Bacillariophyceae", marine_only = FALSE, threshold = "opt",
-                                      feature_recursive = TRUE, mat_recursive = TRUE, hdr_recursive = TRUE,
-                                      class_folder = deprecated()) {
-
-  # Warn the user if class_folder is used
-  if (lifecycle::is_present(class_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.3.4", "iRfcb::ifcb_extract_biovolumes(class_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_folder = )")
-
-    # Deal with the deprecated argument for compatibility
-    mat_folder <- class_folder
-  }
+                                      feature_recursive = TRUE, mat_recursive = TRUE, hdr_recursive = TRUE) {
 
   # Step 1: Extract biovolumes and carbon content from feature and class files
   biovolumes <- ifcb_extract_biovolumes(feature_files = feature_folder,

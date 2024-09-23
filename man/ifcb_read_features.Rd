@@ -4,20 +4,12 @@
 \alias{ifcb_read_features}
 \title{Read Feature Files from a Specified Folder or File Paths}
 \usage{
-ifcb_read_features(
-  feature_files = NULL,
-  multiblob = FALSE,
-  feature_folder = deprecated()
-)
+ifcb_read_features(feature_files = NULL, multiblob = FALSE)
 }
 \arguments{
 \item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
 \item{multiblob}{Logical indicating whether to filter for multiblob files (default: FALSE).}
-
-\item{feature_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-
-Use \code{feature_files} instead.}
 }
 \value{
 A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
