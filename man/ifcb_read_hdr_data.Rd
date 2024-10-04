@@ -4,14 +4,23 @@
 \alias{ifcb_read_hdr_data}
 \title{Reads HDR Data from IFCB HDR Files}
 \usage{
-ifcb_read_hdr_data(hdr_folder, gps_only = FALSE, verbose = TRUE)
+ifcb_read_hdr_data(
+  hdr_files,
+  gps_only = FALSE,
+  verbose = TRUE,
+  hdr_folder = deprecated()
+)
 }
 \arguments{
-\item{hdr_folder}{A character string specifying the path to the directory containing the .hdr files.}
+\item{hdr_files}{A character string specifying the path to feature files or a folder path.}
 
 \item{gps_only}{A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
+
+\item{hdr_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Use \code{hdr_files} instead.}
 }
 \value{
 A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
@@ -29,4 +38,5 @@ print(hdr_data)
 gps_data <- ifcb_read_hdr_data("path/to/data", gps_only = TRUE)
 print(gps_data)
 }
+
 }
