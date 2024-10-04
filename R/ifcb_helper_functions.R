@@ -423,3 +423,24 @@ retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10,
 
   worms_records
 }
+
+#' Extract Features and Add Sample Names
+#'
+#' This helper function adds the sample name as a column in the feature dataframe.
+#' It assumes that the sample name is embedded in the filename, and this function strips unnecessary parts of the filename.
+#'
+#' @param sample_name Character. The name of the sample, typically derived from the feature file name.
+#' @param feature_data Dataframe. The feature data associated with the sample.
+#'
+#' @return A dataframe with the sample name added as a column.
+#'
+#' @examples
+#' \dontrun{
+#' sample_name <- "sample_001_fea_v2.csv"
+#' feature_data <- data.frame(roi_number = 1:10, feature_value = rnorm(10))
+#' result <- extract_features(sample_name, feature_data)
+#' }
+extract_features <- function(sample_name, feature_data) {
+  feature_data$sample <- gsub("_fea_v2.csv", "", sample_name)
+  return(feature_data)
+}
