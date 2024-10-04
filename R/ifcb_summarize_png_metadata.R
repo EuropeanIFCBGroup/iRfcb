@@ -39,7 +39,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
     hdr_data <- ifcb_read_hdr_data(hdr_files_selected, verbose = FALSE)
   } else {
     hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
-                           day = NA, time = NA, ifcb_number = NA)
+                           month = NA, day = NA, time = NA, ifcb_number = NA)
   }
 
   if (!is.null(feature_folder)) {
@@ -61,7 +61,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
 
   # Join image_df, hdr_data, and features_df based on 'sample' and 'roi_number'
   joined_df <- image_df %>%
-    left_join(hdr_data, by = c("sample", "timestamp", "date", "year", "day", "time", "ifcb_number")) %>%
+    left_join(hdr_data, by = c("sample", "timestamp", "date", "year", "month", "day", "time", "ifcb_number")) %>%
     left_join(features_df, by = c("sample", "roi" = "roi_number"))
 
   return(joined_df)
