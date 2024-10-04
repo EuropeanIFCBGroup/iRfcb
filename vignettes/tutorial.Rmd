@@ -288,14 +288,14 @@ head(ferrybox_data)
 Summarize counts of annotated images at the sample and class levels. The 'hdr_folder' can be included to add GPS positions to the sample data frame:
 ```{r}
 # Summarise counts on sample level
-png_per_sample <- ifcb_summarize_png_data(png_folder = "data/png",
+png_per_sample <- ifcb_summarize_png_counts(png_folder = "data/png",
                                           hdr_folder = "data/data",
                                           sum_level = "sample")
 
 head(png_per_sample)
 
 # Summarise counts on class level
-png_per_class <- ifcb_summarize_png_data(png_folder = "data/png",
+png_per_class <- ifcb_summarize_png_counts(png_folder = "data/png",
                                          sum_level = "class")
 
 # Print output
@@ -304,7 +304,7 @@ head(png_per_class)
 
 #### MATLAB Files
 
-Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_data`:
+Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_counts`:
 ```{r}
 # Summarize counts from MATLAB files
 mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
@@ -396,7 +396,7 @@ ifcb_extract_annotated_images(manual_folder = "data/manual",
 Verify that the corrections have been applied:
 ```{r}
 # Summarize new counts after correction
-png_per_class <- ifcb_summarize_png_data(png_folder = "data/extracted_images",
+png_per_class <- ifcb_summarize_png_counts(png_folder = "data/extracted_images",
                                          sum_level = "class")
 
 # Print output
