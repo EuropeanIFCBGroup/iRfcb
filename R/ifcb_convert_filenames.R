@@ -33,7 +33,9 @@ ifcb_convert_filenames <- function(filenames) {
   timestamps_list <- lapply(filenames, extract_parts) # Helper function
   timestamps <- do.call(bind_rows, timestamps_list)
 
-  timestamps <- suppressMessages(type_convert(timestamps))
+  if (nrow(timestamps) > 0) {
+    timestamps <- suppressMessages(type_convert(timestamps))
+  }
 
   timestamps
 }
