@@ -27,8 +27,10 @@
 ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_folder = NULL) {
 
   # Get list of images and extract sample names
-  image <- basename(list.files(png_folder, pattern = "D.*\\.png", recursive = TRUE))
-  image_df <- data.frame(image, ifcb_convert_filenames(image))
+  image_paths <- list.files(png_folder, pattern = "D.*\\.png", recursive = TRUE)
+  image <- basename(image_paths)
+  subfolder <- basename(dirname(file_path))
+  image_df <- data.frame(image, subfolder, ifcb_convert_filenames(image))
   samples <- unique(image_df$sample)
 
   if (!is.null(hdr_folder)) {
