@@ -36,7 +36,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
     hdr_files <- list.files(hdr_folder, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
     hdr_file_names <- tools::file_path_sans_ext(basename(hdr_files))
     hdr_files_selected <- hdr_files[sapply(hdr_file_names, function(file_name) any(grepl(file_name, samples)))]
-    hdr_data <- ifcb_read_hdr_data(hdr_files_selected)
+    hdr_data <- ifcb_read_hdr_data(hdr_files_selected, verbose = FALSE)
   } else {
     hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
                            day = NA, time = NA, ifcb_number = NA)
@@ -56,7 +56,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
     }))
 
   } else {
-    features_df <- data.frame(sample = NA, roi = NA)
+    features_df <- data.frame(sample = NA, roi_number = NA)
   }
 
   # Join image_df, hdr_data, and features_df based on 'sample' and 'roi_number'
