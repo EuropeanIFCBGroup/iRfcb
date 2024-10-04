@@ -47,7 +47,7 @@ Explore the key features and capabilities of `iRfcb` through the tutorial:
 
 `iRfcb` is designed for integration into IFCB data processing pipelines. For an example, see its implementation in the following project:
 
-- [SMHI Data Pipelines](https://github.com/nodc-sweden/ifcb-data-pipeline)
+- [Example Data Pipelines](https://github.com/nodc-sweden/ifcb-data-pipeline)
 
 ## Repository
 
