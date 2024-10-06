@@ -16,10 +16,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' ifcb_path <- Sys.getenv("ifcb_path")
-#' png_folder <- file.path(ifcb_path, "png_images/Baltic")
-#' feature_folder <- file.path(ifcb_path, "features")
-#' hdr_folder <- file.path(ifcb_path, "data")
+#' png_folder <- "path/to/pngs"
+#' feature_folder <- "path/to/features"
+#' hdr_folder <- "path/to/hdr_data"
 #' result_df <- ifcb_summarize_png_metadata(png_folder, feature_folder, hdr_folder)
 #' }
 #'
@@ -28,6 +27,11 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
 
   # Get list of images and extract sample names
   image_paths <- list.files(png_folder, pattern = "D.*\\.png", recursive = TRUE)
+
+  if (length(image_paths) == 0) {
+    stop("No PNG files found in ", png_folder)
+  }
+
   image <- basename(image_paths)
   subfolder <- basename(dirname(image_paths))
   image_df <- data.frame(image, subfolder, ifcb_convert_filenames(image))
@@ -36,9 +40,18 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
   if (!is.null(hdr_folder)) {
     # List and filter hdr files based on samples
     hdr_files <- list.files(hdr_folder, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
-    hdr_file_names <- tools::file_path_sans_ext(basename(hdr_files))
-    hdr_files_selected <- hdr_files[sapply(hdr_file_names, function(file_name) any(grepl(file_name, samples)))]
-    hdr_data <- ifcb_read_hdr_data(hdr_files_selected, verbose = FALSE)
+
+    if (length(hdr_files) == 0) {
+      warning("No HDR files found in ", hdr_folder)
+
+      hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
+                             month = NA, day = NA, time = NA, ifcb_number = NA)
+    } else {
+      hdr_file_names <- tools::file_path_sans_ext(basename(hdr_files))
+      hdr_files_selected <- hdr_files[sapply(hdr_file_names, function(file_name) any(grepl(file_name, samples)))]
+      hdr_data <- ifcb_read_hdr_data(hdr_files_selected, verbose = FALSE)
+    }
+
   } else {
     hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
                            month = NA, day = NA, time = NA, ifcb_number = NA)
@@ -47,15 +60,23 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
   if (!is.null(feature_folder)) {
     # List and filter feature files based on samples
     feature_files <- list.files(feature_folder, pattern = "\\.csv$", recursive = TRUE, full.names = TRUE)
-    feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
-    feature_file_names <- sub("(^[^_]+_[^_]+)_.*", "\\1", feature_file_names)
-    feature_files_selected <- feature_files[sapply(feature_file_names, function(file_name) any(grepl(file_name, samples)))]
-    features <- ifcb_read_features(feature_files_selected, multiblob = FALSE)
 
-    # Combine all features into a single dataframe
-    features_df <- bind_rows(lapply(names(features), function(sample_name) {
-      extract_features(sample_name, features[[sample_name]])
-    }))
+    if (length(feature_files) == 0) {
+      warning("No feature files found in ", feature_folder)
+
+      features_df <- data.frame(sample = NA, roi_number = NA)
+
+    } else {
+      feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
+      feature_file_names <- sub("(^[^_]+_[^_]+)_.*", "\\1", feature_file_names)
+      feature_files_selected <- feature_files[sapply(feature_file_names, function(file_name) any(grepl(file_name, samples)))]
+      features <- ifcb_read_features(feature_files_selected, multiblob = FALSE)
+
+      # Combine all features into a single dataframe
+      features_df <- bind_rows(lapply(names(features), function(sample_name) {
+        extract_features(sample_name, features[[sample_name]])
+      }))
+    }
 
   } else {
     features_df <- data.frame(sample = NA, roi_number = NA)

@@ -10,7 +10,8 @@ ifcb_zip_pngs(
   readme_file = NULL,
   email_address = "",
   version = "",
-  print_progress = TRUE
+  print_progress = TRUE,
+  include_txt = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ ifcb_zip_pngs(
 \item{version}{Optional version information to include in the README file.}
 
 \item{print_progress}{A logical value indicating whether to print progress bar. Default is TRUE.}
+
+\item{include_txt}{A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.}
 }
 \value{
 This function does not return any value; it creates a zip archive and potentially a README file.

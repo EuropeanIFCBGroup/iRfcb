@@ -27,10 +27,9 @@ useful when preparing metadata files for an Ecotaxa submission.
 }
 \examples{
 \dontrun{
-ifcb_path <- Sys.getenv("ifcb_path")
-png_folder <- file.path(ifcb_path, "png_images/Baltic")
-feature_folder <- file.path(ifcb_path, "features")
-hdr_folder <- file.path(ifcb_path, "data")
+png_folder <- "path/to/pngs"
+feature_folder <- "path/to/features"
+hdr_folder <- "path/to/hdr_data"
 result_df <- ifcb_summarize_png_metadata(png_folder, feature_folder, hdr_folder)
 }
 
