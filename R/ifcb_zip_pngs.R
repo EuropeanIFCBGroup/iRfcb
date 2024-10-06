@@ -8,6 +8,7 @@
 #' @param email_address Optional email address to include in the README file.
 #' @param version Optional version information to include in the README file.
 #' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
+#' @param include_txt A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.
 #'
 #' @return This function does not return any value; it creates a zip archive and potentially a README file.
 #'
@@ -32,7 +33,7 @@
 #' @importFrom lubridate year
 #' @seealso \code{\link{ifcb_zip_matlab}}
 ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "",
-                          version = "", print_progress = TRUE) {
+                          version = "", print_progress = TRUE, include_txt = FALSE) {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE)
 
@@ -48,8 +49,12 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
   # Iterate over each subdirectory
   for (i in seq_along(subdirs)) {
-    # List all .png files in the subdirectory
-    png_files <- list.files(subdirs[i], pattern = "\\.png$", full.names = TRUE)
+    # List all files in the subdirectory
+    if (include_txt) {
+      png_files <- list.files(subdirs[i], pattern = "\\.(png|txt|tsv|csv)$", full.names = TRUE)
+    } else {
+      png_files <- list.files(subdirs[i], pattern = "\\.png$", full.names = TRUE)
+    }
 
     # If there are any .png files, add the subdirectory to the list
     if (length(png_files) > 0) {

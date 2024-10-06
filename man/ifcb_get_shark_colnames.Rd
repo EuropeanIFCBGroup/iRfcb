@@ -7,15 +7,16 @@
 ifcb_get_shark_colnames()
 }
 \value{
-A data frame containing the shark column names.
+A data frame containing the SHARK column names.
 }
 \description{
 This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
 These columns are used for submitting IFCB data to \url{https://sharkweb.smhi.se/}.
 }
 \examples{
-\dontrun{
 shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
 }
+\seealso{
+\code{\link{ifcb_get_shark_example}}
 }
