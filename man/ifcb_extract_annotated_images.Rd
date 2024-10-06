@@ -12,7 +12,8 @@ ifcb_extract_annotated_images(
   skip_class = NA,
   verbose = TRUE,
   manual_recursive = FALSE,
-  roi_recursive = TRUE
+  roi_recursive = TRUE,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ ifcb_extract_annotated_images(
 \item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
 
 \item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
+
+\item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.

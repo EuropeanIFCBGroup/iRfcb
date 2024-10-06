@@ -9,6 +9,7 @@
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
+#' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #'
 #' @return This function is called for its side effects: it writes PNG images to a directory.
 #'
@@ -24,7 +25,7 @@
 #' @export
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL, verbose = TRUE) {
+ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL, verbose = TRUE, overwrite = FALSE) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(out_folder, taxaname)
@@ -66,7 +67,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
       pngname <- paste0(tools::file_path_sans_ext(basename(roi_file)), "_", sprintf("%05d", num), ".png")
       pngfile <- file.path(outpath, pngname)
 
-      if (!file.exists(pngfile)) {
+      if (!file.exists(pngfile) || overwrite) {
         seek(fid, startbyte[count])
         img_data <- readBin(fid, raw(), n = x[count] * y[count])  # Read img pixels as raw
         img_matrix <- matrix(as.integer(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array

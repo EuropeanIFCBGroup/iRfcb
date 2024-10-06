@@ -14,6 +14,7 @@ utils::globalVariables(c("name", "manual"))
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
+#' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #'
 #' @importFrom R.matlab readMat
 #' @importFrom tools file_path_sans_ext
@@ -36,7 +37,7 @@ utils::globalVariables(c("name", "manual"))
 #' }
 ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder,
                                           skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
-                                          roi_recursive = TRUE) {
+                                          roi_recursive = TRUE, overwrite = FALSE) {
 
   # Get the list of classified files
   manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
@@ -105,7 +106,8 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                         out_folder = out_folder,
                         ROInumbers = taxa.list_ix$`roi number`,
                         taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_"),
-                        verbose = verbose
+                        verbose = verbose,
+                        overwrite = overwrite
                         )
     }
   }
