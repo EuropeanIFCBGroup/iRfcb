@@ -29,7 +29,8 @@ test_that("ifcb_create_manifest creates MANIFEST.txt correctly", {
     "features/D20220522T003051_IFCB134_fea_v2.csv [8,356 bytes]",
     "manual/D20220522T003051_IFCB134.mat [10,872 bytes]",
     "manual/D20220712T210855_IFCB134.mat [15,216 bytes]",
-    "png/Cryptomonadales/D20230810T113059_IFCB134_04108.png [3,280 bytes]"
+    "png/Cryptomonadales/D20230810T113059_IFCB134_04108.png [3,280 bytes]",
+    "png2/Mesodinium_rubrum/D20220522T003051_IFCB134_00003.png [9,697 bytes]"
   )
 
   # Check if the content matches the expected content
@@ -67,7 +68,8 @@ test_that("ifcb_create_manifest excludes existing MANIFEST.txt when specified", 
     "features/D20220522T003051_IFCB134_fea_v2.csv [8,356 bytes]",
     "manual/D20220522T003051_IFCB134.mat [10,872 bytes]",
     "manual/D20220712T210855_IFCB134.mat [15,216 bytes]",
-    "png/Cryptomonadales/D20230810T113059_IFCB134_04108.png [3,280 bytes]"
+    "png/Cryptomonadales/D20230810T113059_IFCB134_04108.png [3,280 bytes]",
+    "png2/Mesodinium_rubrum/D20220522T003051_IFCB134_00003.png [9,697 bytes]"
   )
 
   # Check if the content matches the expected content
@@ -95,5 +97,5 @@ test_that("ifcb_create_manifest includes existing MANIFEST.txt when specified", 
   expect_true(any(grepl("MANIFEST.txt", manifest_content)))
 
   # Check that all elements are in the file
-  expect_length(manifest_content, 14)
+  expect_length(manifest_content, 15)
 })
