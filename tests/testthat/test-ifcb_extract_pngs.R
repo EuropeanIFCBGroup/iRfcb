@@ -22,6 +22,7 @@ test_that("ifcb_extract_pngs works correctly", {
 
   # Call the function to extract PNG images
   ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = FALSE)
+  ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = TRUE)
 
   # Check that the expected PNG files are created
   expected_files <- c(
