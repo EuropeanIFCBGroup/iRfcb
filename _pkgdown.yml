@@ -69,7 +69,8 @@ reference:
   - '`handle_missing_ferrybox_data`'
   - '`print_progress`'
   - '`read_hdr_file`'
-  - '`retrieve_worms_records`'
+  - '`retrieve_worms_records`'.Rd
+  - '`split_large_zip`'
   - '`summarize_TBclass`'
   - '`truncate_folder_name`'
   - '`vol2C_lgdiatom`'

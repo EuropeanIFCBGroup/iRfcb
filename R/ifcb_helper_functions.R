@@ -444,3 +444,135 @@ extract_features <- function(sample_name, feature_data) {
   feature_data$sample <- gsub("_fea_v2.csv", "", sample_name)
   return(feature_data)
 }
+
+#' Split Large Zip File into Smaller Parts
+#'
+#' This helper function takes an existing zip file, extracts its contents,
+#' and splits it into smaller zip files without splitting subfolders.
+#'
+#' @param zip_file The path to the large zip file.
+#' @param max_size The maximum size (in MB) for each split zip file. Default is 500 MB.
+#' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.
+#'
+#' @return This function does not return any value; it creates multiple smaller zip files.
+#'
+#' @examples
+#' \dontrun{
+#' # Split an existing zip file into parts of up to 500 MB
+#' split_large_zip("large_file.zip", max_size = 500)
+#' }
+#'
+split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
+
+  # Convert zip_file to an absolute path
+  zip_file <- normalizePath(zip_file, winslash = "/")
+
+  # Check if the zip file exists
+  if (!file.exists(zip_file)) {
+    stop("The specified zip file does not exist")
+  }
+
+  # Check the size of the zip file
+  zip_file_size <- file.info(zip_file)$size
+
+  # Convert max_size to bytes
+  max_size_bytes <- max_size * 1024 * 1024  # Convert MB to bytes
+
+  # Step 0: Check if the zip file is smaller than max_size
+  if (zip_file_size <= max_size_bytes) {
+    if (!quiet) {
+      cat("The zip file is already smaller than the specified max size (", max_size, " MB).\n", sep = "")
+    }
+    return(invisible(NULL))
+  }
+
+  # Step 1: Unzip the large file
+  unzip_dir <- file.path(tempdir(), "split_zip_temp")
+  dir.create(unzip_dir, showWarnings = FALSE)
+  utils::unzip(zip_file, exdir = unzip_dir)
+
+  # Step 2: Get list of subfolders and their sizes
+  subfolder_info <- list.dirs(unzip_dir, recursive = TRUE, full.names = TRUE)
+
+  # Exclude the root directory to prevent including all files
+  root_dir <- normalizePath(unzip_dir, winslash = "/")
+  subfolder_info <- normalizePath(subfolder_info, winslash = "/")  # Normalize paths to use forward slashes
+  subfolder_info <- subfolder_info[subfolder_info != root_dir]
+
+  # Now, get the files and sizes for each subfolder
+  subfolder_files <- lapply(subfolder_info, function(folder) {
+    list.files(folder, recursive = TRUE, full.names = TRUE)
+  })
+
+  subfolder_sizes <- sapply(subfolder_files, function(files) {
+    sum(file.info(files)$size)
+  })
+
+  # Step 3: Remove the base directory (with drive letter) from the paths
+  strip_drive_letter <- function(paths, base_dir) {
+    # Ensure base_dir is normalized with forward slashes
+    base_dir <- normalizePath(base_dir, winslash = "/")
+
+    # Normalize the file paths to use forward slashes
+    normalized_paths <- normalizePath(paths, winslash = "/")
+
+    # Remove the base directory from each path, leaving the relative path
+    relative_paths <- sub(paste0("^", base_dir, "/"), "", normalized_paths)
+
+    return(relative_paths)
+  }
+
+  base_dir <- normalizePath(unzip_dir, winslash = "/")
+  relative_subfolder_files <- lapply(subfolder_files, function(files) {
+    strip_drive_letter(files, base_dir)
+  })
+
+  # Step 4: Group subfolders into zip files without splitting them
+  group_subfolders_into_zips <- function(subfolder_files, subfolder_sizes, max_size) {
+    groups <- list()
+    current_group <- list()
+    current_size <- 0
+
+    for (i in seq_along(subfolder_files)) {
+      # Check if adding the current subfolder will exceed the size limit
+      if (current_size + subfolder_sizes[i] > max_size && current_size > 0) {
+        # Save the current group and start a new one
+        groups[[length(groups) + 1]] <- current_group
+        current_group <- list()
+        current_size <- 0
+      }
+
+      # Add the current subfolder to the group
+      current_group <- c(current_group, subfolder_files[[i]])
+      current_size <- current_size + subfolder_sizes[i]
+    }
+
+    # Add the last group if it contains any subfolders
+    if (length(current_group) > 0) {
+      groups[[length(groups) + 1]] <- current_group
+    }
+
+    return(groups)
+  }
+
+  # Step 5: Set max zip size and group subfolders
+  max_zip_size <- 500 * 1024 * 1024  # 500 MB in bytes
+  subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_zip_size)
+
+  # Step 6: Create smaller zip files with grouped subfolders
+  for (i in seq_along(subfolder_groups)) {
+    zipfile_name <- paste0(tools::file_path_sans_ext(zip_file), "_part_", i, ".zip")
+
+    # Flatten the list of files for the current group
+    files_to_zip <- unlist(subfolder_groups[[i]])
+
+    # Zip the group into a new zip file
+    zip::zip(zipfile_name, files = files_to_zip, root = root_dir)
+  }
+
+  unlink(unzip_dir, recursive = TRUE)
+
+  if (!quiet) {
+    cat("Successfully created", length(subfolder_groups), "smaller zip files.\n")
+  }
+}

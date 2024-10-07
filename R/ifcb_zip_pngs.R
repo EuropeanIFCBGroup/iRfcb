@@ -1,6 +1,7 @@
 #' Zip PNG Folders
 #'
 #' This function zips directories containing .png files and optionally includes README and MANIFEST files.
+#' It can also split the resulting zip file into smaller parts if it exceeds a specified size.
 #'
 #' @param png_folder The directory containing subdirectories with .png files.
 #' @param zip_filename The name of the zip file to create.
@@ -9,8 +10,10 @@
 #' @param version Optional version information to include in the README file.
 #' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
 #' @param include_txt A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.
+#' @param split_zip A logical value indicating whether to split the zip file into smaller parts if its size exceeds `max_size`. Default is FALSE.
+#' @param max_size The maximum size (in MB) for the zip file before it gets split. Only used if `split_zip` is TRUE. Default is 500 MB.
 #'
-#' @return This function does not return any value; it creates a zip archive and potentially a README file.
+#' @return This function does not return any value; it creates a zip archive and optionally splits it into smaller files if specified.
 #'
 #' @export
 #'
@@ -31,9 +34,11 @@
 #' @importFrom stringr str_extract
 #' @importFrom dplyr arrange count
 #' @importFrom lubridate year
+#'
 #' @seealso \code{\link{ifcb_zip_matlab}}
 ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "",
-                          version = "", print_progress = TRUE, include_txt = FALSE) {
+                          version = "", print_progress = TRUE, include_txt = FALSE,
+                          split_zip = FALSE, max_size = 500) {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE)
 
@@ -153,6 +158,15 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     }
 
     zip::zipr(zipfile = zip_filename, files = files_to_zip)
+
+    # Check zip file size and split only if necessary
+    zip_file_size <- file.info(zip_filename)$size / (1024 * 1024)
+
+    if (split_zip && zip_file_size > max_size) {
+      message(zip_filename, " is larger than ", max_size, " MB. Splitting the zip file into smaller parts...")
+      split_large_zip(zip_filename, max_size)
+    }
+
     message("Zip archive created successfully.")
   } else {
     message("No directories with .png files found.")
