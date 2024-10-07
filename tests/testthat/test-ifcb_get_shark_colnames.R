@@ -25,3 +25,15 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
   # Check that the column names are as expected
   expect_equal(colnames(shark_colnames), expected_colnames)
 })
+
+test_that("ifcb_get_shark_colnames reads the minimal shark column names correctly", {
+
+  # Call the function
+  shark_colnames <- ifcb_get_shark_colnames(minimal = TRUE)
+
+  # Check that the result is a data frame
+  expect_true(is.data.frame(shark_colnames))
+
+  # Check that the column names are as expected
+  expect_equal(ncol(shark_colnames), 33)
+})
