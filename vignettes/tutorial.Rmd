@@ -419,7 +419,7 @@ image_metadata <- ifcb_summarize_png_metadata(png_folder = "data/extracted_image
 head(image_metadata)[1:10]
 ```
 
-The output can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html) to produce metadata files suitable for submitting images to [Ecotaxa](https://ecotaxa.obs-vlfr.fr/).
+The output can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html) to produce metadata files suitable for submitting images to [EcoTaxa](https://ecotaxa.obs-vlfr.fr/).
 
 #### PNG Directory
 
@@ -587,17 +587,17 @@ print(trophic_type)
 
 ## SHARK export
 
-This function is used by SMHI to map IFCB data into the [SHARK](https://sharkweb.smhi.se/hamta-data/) standard data delivery format.
+This function is used by SMHI to map IFCB data into the [SHARK](https://sharkweb.smhi.se/hamta-data/) standard data delivery format. An example submission is also provided in `iRfcb`.
 
 ```{r}
-# Load example stored from `iRfcb`
-shark_example <- ifcb_get_shark_example()
-
 # Get column names from example
 shark_colnames <- ifcb_get_shark_colnames()
 
 # Print column names
 print(shark_colnames)
+
+# Load example stored from `iRfcb`
+shark_example <- ifcb_get_shark_example()
 
 # Print first ten columns of the SHARK data submission example
 head(shark_example)[1:10]

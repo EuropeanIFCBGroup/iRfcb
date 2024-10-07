@@ -4,19 +4,33 @@
 \alias{ifcb_get_ecotaxa_example}
 \title{Get Ecotaxa Column Names}
 \usage{
-ifcb_get_ecotaxa_example()
+ifcb_get_ecotaxa_example(example = "ifcb")
+}
+\arguments{
+\item{example}{A character string specifying which example EcoTaxa metadata file to load.
+Options are:
+\describe{
+\item{"minimal"}{Loads a minimal example, for fully manual entry.}
+\item{"full_unknown"}{Loads a full featured example, with unknown objects only.}
+\item{"full_classified"}{Loads a full featured example, with already classified objects.}
+\item{"ifcb"}{(Default) Loads a full IFCB-specific dataset used for EcoTaxa submissions.}
+}}
 }
 \value{
-A data frame containing Ecotaxa example metadata.
+A data frame containing EcoTaxa example metadata.
 }
 \description{
-This function reads an example Ecotaxa metadata file included in the \code{iRfcb} package.
-The example file originates from \url{https://github.com/VirginieSonnet/IFCBdatabaseToEcotaxa}
-These columns are used for submitting IFCB data to \url{https://ecotaxa.obs-vlfr.fr/}.
+This function reads an example EcoTaxa metadata file included in the \code{iRfcb} package.
+}
+\details{
+This function loads different types of EcoTaxa metadata examples
+based on the user's need. The examples include a minimal template for manual data entry,
+as well as fully featured datasets with or without classified objects. The default is
+an IFCB-specific example, originating from \url{https://github.com/VirginieSonnet/IFCBdatabaseToEcotaxa}.
+The example headers can used when submitting data from Imaging FlowCytobot (IFCB)
+instruments to EcoTaxa at \url{https://ecotaxa.obs-vlfr.fr/}.
 }
 \examples{
-\dontrun{
 ecotaxa_example <- ifcb_get_ecotaxa_example()
 print(ecotaxa_example)
-}
 }
