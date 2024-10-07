@@ -456,6 +456,9 @@ extract_features <- function(sample_name, feature_data) {
 #'
 #' @return This function does not return any value; it creates multiple smaller zip files.
 #'
+#' @importFrom zip zip unzip
+#' @importFrom tools file_path_sans_ext
+#'
 #' @examples
 #' \dontrun{
 #' # Split an existing zip file into parts of up to 500 MB
@@ -489,7 +492,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   # Step 1: Unzip the large file
   unzip_dir <- file.path(tempdir(), "split_zip_temp")
   dir.create(unzip_dir, showWarnings = FALSE)
-  utils::unzip(zip_file, exdir = unzip_dir)
+  unzip(zip_file, exdir = unzip_dir)
 
   # Step 2: Get list of subfolders and their sizes
   subfolder_info <- list.dirs(unzip_dir, recursive = TRUE, full.names = TRUE)
