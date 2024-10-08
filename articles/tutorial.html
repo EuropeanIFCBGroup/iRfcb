@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -294,8 +294,8 @@ longitudes):</p>
 <span><span class="co">## 6 2023-03-14 2023     3  14 00:38:36     IFCB134     FALSE</span></span></code></pre>
 <p>For more accurate determination, a detailed coastline .shp file may
 be required (e.g. the <a href="https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon" class="external-link">EEA
-Coastline Polygon</a>). Refer to the help pages of
-<code>ifcb_is_near_land</code> for further information.</p>
+Coastline Polygon</a>). Refer to the help pages of <a href="../reference/ifcb_is_near_land.html"><code>ifcb_is_near_land</code></a>
+for further information.</p>
 </div>
 <div class="section level4">
 <h4 id="check-which-sub-basin-an-ifcb-sample-is-from">Check which sub-basin an IFCB sample is from<a class="anchor" aria-label="anchor" href="#check-which-sub-basin-an-ifcb-sample-is-from"></a>
@@ -381,9 +381,10 @@ D20220522T000439_IFCB134.</p>
 <div class="section level4">
 <h4 id="find-contextual-ferrybox-data-from-rv-svea">Find contextual ferrybox data from RV Svea<a class="anchor" aria-label="anchor" href="#find-contextual-ferrybox-data-from-rv-svea"></a>
 </h4>
-<p>The <code>ifcb_get_ferrybox_data</code> function can also be used to
-extract additional ferrybox parameters, such as temperature (parameter
-number 8180) and salinity (parameter number 8181).</p>
+<p>The <a href="../reference/ifcb_get_ferrybox_data.html"><code>ifcb_get_ferrybox_data</code></a>
+function can also be used to extract additional ferrybox parameters,
+such as temperature (parameter number 8180) and salinity (parameter
+number 8181).</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get salinity and temperature from ferrybox data</span></span>
 <span><span class="va">ferrybox_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data</a></span><span class="op">(</span><span class="va">gps_data</span><span class="op">$</span><span class="va">timestamp</span>, </span>
@@ -416,7 +417,7 @@ The ‘hdr_folder’ can be included to add GPS positions to the sample data
 frame:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on sample level</span></span>
-<span><span class="va">png_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
+<span><span class="va">png_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                          hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                                          sum_level <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></span>
 <span></span>
@@ -435,7 +436,7 @@ frame:</p>
 <span><span class="co">## <span style="color: #949494;">#   day &lt;int&gt;, time &lt;chr&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on class level</span></span>
-<span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
+<span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                         sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
@@ -453,8 +454,7 @@ frame:</p>
 <div class="section level4">
 <h4 id="matlab-files">MATLAB Files<a class="anchor" aria-label="anchor" href="#matlab-files"></a>
 </h4>
-<p>Count the annotations in the MATLAB files, similar to
-<code>ifcb_summarize_png_data</code>:</p>
+<p>Count the annotations in the MATLAB files, similar to <a href="../reference/ifcb_summarize_png_counts.html"><code>ifcb_summarize_png_counts</code></a>:</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize counts from MATLAB files</span></span>
 <span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -487,7 +487,7 @@ gallery.</p>
 </div>
 <p>Individual images can be selected and a list of selected images can
 be downloaded as a ‘correction_file’. This file can be used to correct
-.mat annotations below using the <code>ifcb_correct_annotation</code>
+.mat annotations below using the <a href="../reference/ifcb_correct_annotation.html"><code>ifcb_correct_annotation</code></a>
 function.</p>
 </div>
 <div class="section level4">
@@ -562,8 +562,8 @@ category:</p>
 <p>Verify that the corrections have been applied:</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
-<span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_data.html">ifcb_summarize_png_data</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>                                         sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
+<span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
+<span>                                           sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">png_per_class</span><span class="op">)</span></span></code></pre></div>
@@ -582,24 +582,61 @@ category:</p>
 <h2 id="prepare-annotated-images-for-publication">Prepare Annotated Images for Publication<a class="anchor" aria-label="anchor" href="#prepare-annotated-images-for-publication"></a>
 </h2>
 <div class="section level4">
+<h4 id="summarize-image-metadata">Summarize Image Metadata<a class="anchor" aria-label="anchor" href="#summarize-image-metadata"></a>
+</h4>
+<p>This function gather feature and hdr data for every image in the
+<code>png_folder</code>.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Summarize image metadata from feature and hdr files</span></span>
+<span><span class="va">image_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
+<span>                                              feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
+<span>                                              hdr_folder <span class="op">=</span> <span class="st">"data/data"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print the first ten columns of output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">image_metadata</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##                                image                 subfolder</span></span>
+<span><span class="co">## 1 D20230915T093804_IFCB134_02133.png       Amphidnium-like_051</span></span>
+<span><span class="co">## 2 D20230810T113059_IFCB134_00952.png Chaetoceros_spp_chain_018</span></span>
+<span><span class="co">## 3 D20230810T113059_IFCB134_02303.png Chaetoceros_spp_chain_018</span></span>
+<span><span class="co">## 4 D20230915T091133_IFCB134_00057.png Chaetoceros_spp_chain_018</span></span>
+<span><span class="co">## 5 D20230915T093804_IFCB134_00507.png Chaetoceros_spp_chain_018</span></span>
+<span><span class="co">## 6 D20230915T093804_IFCB134_00689.png Chaetoceros_spp_chain_018</span></span>
+<span><span class="co">##                     sample           timestamp       date year month day</span></span>
+<span><span class="co">## 1 D20230915T093804_IFCB134 2023-09-15 09:38:04 2023-09-15 2023     9  15</span></span>
+<span><span class="co">## 2 D20230810T113059_IFCB134 2023-08-10 11:30:59 2023-08-10 2023     8  10</span></span>
+<span><span class="co">## 3 D20230810T113059_IFCB134 2023-08-10 11:30:59 2023-08-10 2023     8  10</span></span>
+<span><span class="co">## 4 D20230915T091133_IFCB134 2023-09-15 09:11:33 2023-09-15 2023     9  15</span></span>
+<span><span class="co">## 5 D20230915T093804_IFCB134 2023-09-15 09:38:04 2023-09-15 2023     9  15</span></span>
+<span><span class="co">## 6 D20230915T093804_IFCB134 2023-09-15 09:38:04 2023-09-15 2023     9  15</span></span>
+<span><span class="co">##       time ifcb_number</span></span>
+<span><span class="co">## 1 09:38:04     IFCB134</span></span>
+<span><span class="co">## 2 11:30:59     IFCB134</span></span>
+<span><span class="co">## 3 11:30:59     IFCB134</span></span>
+<span><span class="co">## 4 09:11:33     IFCB134</span></span>
+<span><span class="co">## 5 09:38:04     IFCB134</span></span>
+<span><span class="co">## 6 09:38:04     IFCB134</span></span></code></pre>
+<p>The output can be mapped with the headers in <a href="../reference/ifcb_get_ecotaxa_example.html"><code>ifcb_get_ecotaxa_example</code></a>
+to produce metadata files suitable for submitting images to <a href="https://ecotaxa.obs-vlfr.fr/" class="external-link">EcoTaxa</a>.</p>
+</div>
+<div class="section level4">
 <h4 id="png-directory-1">PNG Directory<a class="anchor" aria-label="anchor" href="#png-directory-1"></a>
 </h4>
 <p>Prepare the PNG directory for publication as a zip-archive, similar
 to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
 image reference library</a> (Torstensson et al. 2024):</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip"</span>,</span>
+<span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
 <span>              readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
 <span>                                        package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
 <span>              email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
 <span>              version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
 <span>              print_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Creating README file...</span></span></code></pre>
-<pre><code><span><span class="co">## Creating MANIFEST.txt...</span></span></code></pre>
-<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
-<pre><code><span><span class="co">## Zip archive created successfully.</span></span></code></pre>
+<pre><code><span><span class="co">## Creating README file...</span></span>
+<span><span class="co">## Creating MANIFEST.txt...</span></span>
+<span><span class="co">## Creating zip archive...</span></span>
+<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/ifcb_annotated_images_corrected.zip</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="matlab-directory">MATLAB Directory<a class="anchor" aria-label="anchor" href="#matlab-directory"></a>
@@ -607,12 +644,12 @@ image reference library</a> (Torstensson et al. 2024):</p>
 <p>Prepare the MATLAB directory for publication as a zip-archive,
 similar to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
 image reference library</a>:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
 <span>                class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                zip_filename <span class="op">=</span> <span class="st">"data/zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip"</span>,</span>
+<span>                zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_matlab_files_corrected.zip"</span>,</span>
 <span>                data_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
 <span>                                          package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
@@ -621,21 +658,21 @@ image reference library</a>:</p>
 <span>                email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
 <span>                version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
 <span>                print_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Listing all files...</span></span></code></pre>
-<pre><code><span><span class="co">## Copying manual files...</span></span></code></pre>
-<pre><code><span><span class="co">## Copying feature files...</span></span></code></pre>
-<pre><code><span><span class="co">## Copying data files...</span></span></code></pre>
-<pre><code><span><span class="co">## Copying class2use file...</span></span></code></pre>
-<pre><code><span><span class="co">## Creating README file...</span></span></code></pre>
-<pre><code><span><span class="co">## Creating MANIFEST.txt...</span></span></code></pre>
-<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
-<pre><code><span><span class="co">## Zip archive created successfully.</span></span></code></pre>
+<pre><code><span><span class="co">## Listing all files...</span></span>
+<span><span class="co">## Copying manual files...</span></span>
+<span><span class="co">## Copying feature files...</span></span>
+<span><span class="co">## Copying data files...</span></span>
+<span><span class="co">## Copying class2use file...</span></span>
+<span><span class="co">## Creating README file...</span></span>
+<span><span class="co">## Creating MANIFEST.txt...</span></span>
+<span><span class="co">## Creating zip archive...</span></span>
+<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/ifcb_matlab_files_corrected.zip</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="create-manifest-txt">Create MANIFEST.txt<a class="anchor" aria-label="anchor" href="#create-manifest-txt"></a>
 </h4>
 <p>Create a manifest file for the zip packages:</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create MANIFEST.txt of the zip folder content</span></span>
 <span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip/"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip//MANIFEST.txt</span></span></code></pre>
@@ -648,7 +685,7 @@ image reference library</a>:</p>
 <h4 id="extract-classified-results-from-a-sample">Extract Classified Results from a Sample<a class="anchor" aria-label="anchor" href="#extract-classified-results-from-a-sample"></a>
 </h4>
 <p>Extract classified results from a sample:</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract all classified images from a sample</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230810T113059_IFCB134"</span>,</span>
 <span>                               classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -684,7 +721,7 @@ image reference library</a>:</p>
 <h4 id="read-feature-data">Read feature data<a class="anchor" aria-label="anchor" href="#read-feature-data"></a>
 </h4>
 <p>Read all feature files (.csv) from a folder:</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read feature files from a folder</span></span>
 <span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023/"</span><span class="op">)</span></span>
 <span></span>
@@ -704,7 +741,7 @@ image reference library</a>:</p>
 <span><span class="co">## 4        88.58696    0.3299815      27.17497 0.7671958</span></span>
 <span><span class="co">## 5       265.49548    0.9016151      70.71076 0.7933333</span></span>
 <span><span class="co">## 6        67.86613    0.3332706      19.21560 0.6590909</span></span></code></pre>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
 <span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
 <span>                                         multiblob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -730,7 +767,7 @@ image reference library</a>:</p>
 <h4 id="read-a-summary-file">Read a Summary File<a class="anchor" aria-label="anchor" href="#read-a-summary-file"></a>
 </h4>
 <p>Read a summary file:</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a MATLAB summary file generated by `countcells_allTBnew_user_training`</span></span>
 <span><span class="va">summary_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_summary.html">ifcb_read_summary</a></span><span class="op">(</span><span class="st">"data/classified/2023/summary/summary_allTB_2023.mat"</span>,</span>
 <span>                                  biovolume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -739,14 +776,14 @@ image reference library</a>:</p>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">summary_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 12</span></span></span>
-<span><span class="co">##   sample      timestamp           date        year month   day time  ifcb_number</span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230810T… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11:3… IFCB134    </span></span>
+<span><span class="co">##   sample   timestamp           date        year month   day time     ifcb_number</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;time&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   counts_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -762,9 +799,9 @@ Biovolumes are converted to carbon according to Menden-Deuer and Lessard
 conversion factors are applied to diatoms and non-diatom protist. If
 provided, it also incorporates sample volume data from HDR files to
 compute biovolume and carbon content per liter of sample. See details in
-the help pages for <code>ifcb_summarize_biovolumes</code> and
-<code>ifcb_extract_biovolumes</code>.</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
+and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>.</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
 <span>                                            mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -785,7 +822,7 @@ the help pages for <code>ifcb_summarize_biovolumes</code> and
 <span><span class="co">## Scrippsiella_group</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -804,13 +841,13 @@ the help pages for <code>ifcb_summarize_biovolumes</code> and
 <h4 id="summarize-counts-biovolumes-and-carbon-content-from-manually-annotated-ifcb-data">Summarize counts, biovolumes and carbon content from manually
 annotated IFCB data<a class="anchor" aria-label="anchor" href="#summarize-counts-biovolumes-and-carbon-content-from-manually-annotated-ifcb-data"></a>
 </h4>
-<p>The <code>ifcb_summarize_biovolumes</code> function can also be used
-to calculate aggregated biovolumes and carbon content from manually
-annotated Imaging FlowCytobot (IFCB) image data. See details in the help
-pages for <code>ifcb_summarize_biovolumes</code>,
-<code>ifcb_extract_biovolumes</code> and
-<code>ifcb_count_mat_annotations</code>.</p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<p>The <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
+function can also be used to calculate aggregated biovolumes and carbon
+content from manually annotated Imaging FlowCytobot (IFCB) image data.
+See details in the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>,
+<a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>
+and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_annotations</code></a>.</p>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
 <span>                                                   mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -844,7 +881,7 @@ pages for <code>ifcb_summarize_biovolumes</code>,
 <span><span class="co">## Tripos_furca</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -872,10 +909,10 @@ Marine Species (WoRMS), and checks if they belong to the specified
 diatom class. The function only uses the first name (genus name) of each
 taxa for classification. This function can be useful for converting
 biovolumes to carbon according to Menden-Deuer and Lessard (2000). See
-<code>iRfcb:::vol2C_nondiatom</code> and
-<code>iRfcb:::vol2C_lgdiatom</code> for carbon calculations (not
-included in NAMESPACE).</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<a href="../reference/vol2C_nondiatom.html"><code>iRfcb:::vol2C_nondiatom</code></a>
+and <a href="(../reference/vol2C_lgdiatom.html)"><code>iRfcb:::vol2C_lgdiatom</code></a>
+for carbon calculations (not included in NAMESPACE).</p>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
@@ -900,7 +937,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h4>
 <p>This function takes a list of taxa names and matches them with the
 <code>SMHI Trophic Type</code> list used in <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
 <span>               <span class="st">"Nodularia spumigena"</span>,</span>
@@ -920,9 +957,10 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 <h2 id="shark-export">SHARK export<a class="anchor" aria-label="anchor" href="#shark-export"></a>
 </h2>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
-delivery format.</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Load column names stored from `iRfcb`</span></span>
+delivery format. An example submission is also provided in
+<code>iRfcb</code>.</p>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get column names from example</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print column names</span></span>
@@ -961,9 +999,29 @@ delivery format.</p>
 <span><span class="co">## [63] TEMP_FB                   PSAL_FB                  </span></span>
 <span><span class="co">## [65] OSAT_FB                   DOXY_FB                  </span></span>
 <span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load example stored from `iRfcb`</span></span>
+<span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_example.html">ifcb_get_shark_example</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print first ten columns of the SHARK data submission example</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">##   MYEAR                  STATN SAMPLING_PLATFORM              PROJ ORDERER</span></span>
+<span><span class="co">## 1  2022 RV_FB_D20220713T175838              IFCB IFCB, DTO, JERICO    SMHI</span></span>
+<span><span class="co">## 2  2022 RV_FB_D20220713T175838              IFCB IFCB, DTO, JERICO    SMHI</span></span>
+<span><span class="co">## 3  2022 RV_FB_D20220713T175838              IFCB IFCB, DTO, JERICO    SMHI</span></span>
+<span><span class="co">## 4  2022 RV_FB_D20220713T175838              IFCB IFCB, DTO, JERICO    SMHI</span></span>
+<span><span class="co">## 5  2022 RV_FB_D20220713T175838            SveaFB IFCB, DTO, JERICO    SMHI</span></span>
+<span><span class="co">##   SHIPC CRUISE_NO   DATE_TIME      SDATE    STIME</span></span>
+<span><span class="co">## 1  77SE        12 2,02207E+13 2022-07-13 17:58:38</span></span>
+<span><span class="co">## 2  77SE        12 2,02207E+13 2022-07-13 17:58:38</span></span>
+<span><span class="co">## 3  77SE        12 2,02207E+13 2022-07-13 17:58:38</span></span>
+<span><span class="co">## 4  77SE        12 2,02207E+13 2022-07-13 17:58:38</span></span>
+<span><span class="co">## 5  77SE        12 2,02207E+13 2022-07-13 17:58:38</span></span></code></pre>
 <p>This concludes the tutorial for the <code>iRfcb</code> package. For
-more detailed information, refer to the package documentation. Happy
-analyzing!</p>
+more detailed information, refer to the package documentation. See how
+data pipelines can be constructed using <code>iRfcb</code> in the
+following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
+Project</a>. Happy analyzing!</p>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -972,7 +1030,7 @@ analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
 <span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version</span></span>
-<span><span class="co">##   0.3.10. https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   0.3.11. https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -980,7 +1038,7 @@ analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.10},</span></span>
+<span><span class="co">##     note = {R package version 0.3.11},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
