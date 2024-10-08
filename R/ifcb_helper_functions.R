@@ -562,6 +562,10 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   max_zip_size <- 500 * 1024 * 1024  # 500 MB in bytes
   subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_zip_size)
 
+
+  # Vector to store the names of the created zip files
+  created_zip_files <- character()
+
   # Step 6: Create smaller zip files with grouped subfolders
   for (i in seq_along(subfolder_groups)) {
     zipfile_name <- paste0(tools::file_path_sans_ext(zip_file), "_part_", i, ".zip")
@@ -571,11 +575,15 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 
     # Zip the group into a new zip file
     zip::zip(zipfile_name, files = files_to_zip, root = root_dir)
+
+    # Add the created zipfile to the list
+    created_zip_files <- c(created_zip_files, zipfile_name)
   }
 
   unlink(unzip_dir, recursive = TRUE)
 
   if (!quiet) {
-    cat("Successfully created", length(subfolder_groups), "smaller zip files.\n")
+    cat("Successfully created", length(subfolder_groups), "smaller zip files:\n")
+    cat(paste(created_zip_files, collapse = "\n"), "\n")
   }
 }

@@ -17,7 +17,8 @@ ifcb_zip_matlab(
   print_progress = TRUE,
   feature_recursive = TRUE,
   manual_recursive = FALSE,
-  data_recursive = TRUE
+  data_recursive = TRUE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ ifcb_zip_matlab(
 \item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
 
 \item{data_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{data_folder} (if provided). Default is TRUE.}
+
+\item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.}
 }
 \description{
 This function creates a zip archive containing specified files and directories for manually

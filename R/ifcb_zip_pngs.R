@@ -12,6 +12,7 @@
 #' @param include_txt A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.
 #' @param split_zip A logical value indicating whether to split the zip file into smaller parts if its size exceeds `max_size`. Default is FALSE.
 #' @param max_size The maximum size (in MB) for the zip file before it gets split. Only used if `split_zip` is TRUE. Default is 500 MB.
+#' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.
 #'
 #' @return This function does not return any value; it creates a zip archive and optionally splits it into smaller files if specified.
 #'
@@ -38,7 +39,7 @@
 #' @seealso \code{\link{ifcb_zip_matlab}}
 ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "",
                           version = "", print_progress = TRUE, include_txt = FALSE,
-                          split_zip = FALSE, max_size = 500) {
+                          split_zip = FALSE, max_size = 500, quiet = FALSE) {
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE)
 
@@ -73,17 +74,21 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     }
 
     # Update the progress bar
-    if (print_progress) {
+    if (print_progress & !quiet) {
       print_progress(i, total_subdirs) # Helper function
     }
   }
 
   # Print a new line after the progress bar is complete
-  cat("\n")
+  if (print_progress & !quiet) {
+    cat("\n")
+  }
 
   # If readme_file is provided, update it
   if (!is.null(readme_file)) {
-    message("Creating README file...")
+    if (!quiet) {
+      cat("Creating README file...")
+    }
 
     # Read the template README.md content
     readme_content <- readLines(readme_file, encoding = "UTF-8")
@@ -142,7 +147,9 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
     if (!is.null(readme_file)) {
       # Print message to indicate creating of MANIFEST.txt
-      message("Creating MANIFEST.txt...")
+      if (!quiet) {
+        cat("Creating MANIFEST.txt...")
+      }
 
       # Create a manifest for the zip package
       create_package_manifest(files_to_zip, manifest_path = file.path(temp_dir, "MANIFEST.txt"), temp_dir) # Helper function
@@ -151,23 +158,30 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     }
 
     # Print message to indicate starting zip creation
-    message("Creating zip archive...")
+    if (!quiet) {
+      cat("Creating zip archive...")
+    }
 
     if (!dir.exists(dirname(zip_filename))) {
       dir.create(dirname(zip_filename))
     }
 
     zip::zipr(zipfile = zip_filename, files = files_to_zip)
+    if (!quiet) {
+      cat("Zip archive created successfully:", normalizePath(zip_filename, winslash = "/"))
+    }
 
     # Check zip file size and split only if necessary
     zip_file_size <- file.info(zip_filename)$size / (1024 * 1024)
 
     if (split_zip && zip_file_size > max_size) {
-      message(zip_filename, " is larger than ", max_size, " MB. Splitting the zip file into smaller parts...")
-      split_large_zip(zip_filename, max_size)
+      if (!quiet) {
+        cat(zip_filename, "is larger than", max_size, "MB. Splitting the zip file into smaller parts...")
+      }
+
+      split_large_zip(zip_filename, max_size, quiet)
     }
 
-    message("Zip archive created successfully.")
   } else {
     message("No directories with .png files found.")
   }
