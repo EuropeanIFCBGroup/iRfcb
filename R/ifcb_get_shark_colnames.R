@@ -1,4 +1,3 @@
-utils::globalVariables(".data")
 #' Get Shark Column Names
 #'
 #' This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
@@ -26,14 +25,14 @@ ifcb_get_shark_colnames <- function(minimal = FALSE) {
   shark_example <- read.table(system.file("exdata/shark_col.txt", package = "iRfcb"), sep = "\t", header = TRUE)
 
   if (minimal) {
-    shark_example <- dplyr::select(shark_example,
-                                   .data$MYEAR, .data$STATN, .data$PROJ, .data$ORDERER, .data$SHIPC,
-                                   .data$SDATE, .data$STIME, .data$LATIT, .data$LONGI, .data$POSYS,
-                                   .data$MNDEP, .data$MXDEP, .data$SLABO, .data$ACKR_SMP, .data$SMTYP,
-                                   .data$SMVOL, .data$IFCBNO, .data$SMPNO, .data$LATNM, .data$SFLAG,
-                                   .data$TRPHY, .data$IMAGE_VERIFICATION, .data$COUNT, .data$QFLAG,
-                                   .data$COEFF, .data$CLASS_F1, .data$UNCLASSIFIED_COUNTS, .data$METOA,
-                                   .data$ALABO, .data$ACKR_ANA, .data$ANADATE, .data$METDC, .data$CLASSIFIER_USED)
+    columns <- c("MYEAR", "STATN", "PROJ", "ORDERER", "SHIPC", "SDATE", "STIME",
+                 "LATIT", "LONGI", "POSYS", "MNDEP", "MXDEP", "SLABO", "ACKR_SMP",
+                 "SMTYP", "SMVOL", "IFCBNO", "SMPNO", "LATNM", "SFLAG", "TRPHY",
+                 "IMAGE_VERIFICATION", "COUNT", "QFLAG", "COEFF", "CLASS_F1",
+                 "UNCLASSIFIED_COUNTS", "METOA", "ALABO", "ACKR_ANA", "ANADATE",
+                 "METDC", "CLASSIFIER_USED")
+
+    shark_example <- dplyr::select(shark_example, dplyr::all_of(columns))
   }
 
   # Return empty dataframe
