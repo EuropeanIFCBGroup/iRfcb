@@ -35,5 +35,5 @@ test_that("ifcb_get_shark_colnames reads the minimal shark column names correctl
   expect_true(is.data.frame(shark_colnames))
 
   # Check that the column names are as expected
-  expect_equal(ncol(shark_colnames), 33)
+  expect_equal(ncol(shark_colnames), 35)
 })
