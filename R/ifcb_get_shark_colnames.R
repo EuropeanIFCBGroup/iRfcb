@@ -1,3 +1,4 @@
+utils::globalVariables(".data")
 #' Get Shark Column Names
 #'
 #' This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
