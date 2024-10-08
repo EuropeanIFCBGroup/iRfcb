@@ -11,7 +11,11 @@
 #' @param out_folder A character string specifying the directory to save the extracted images.
 #' @param taxa A character string specifying the taxa to extract. Default is "All".
 #' @param threshold A character string specifying the threshold to use ("none", "opt", "adhoc"). Default is "opt".
+#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
+#' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
+#'
 #' @return No return value, called for side effects. Extracts and saves taxa images to a directory.
+#'
 #' @examples
 #' \dontrun{
 #' # Define the parameters
@@ -34,7 +38,9 @@ ifcb_extract_classified_images <- function(sample,
                                            roi_folder,
                                            out_folder,
                                            taxa = "All",
-                                           threshold = "opt") {
+                                           threshold = "opt",
+                                           verbose = TRUE,
+                                           overwrite = FALSE) {
 
   # Get the list of classified files and find the one matching the sample
   classifiedfiles <- list.files(classified_folder, pattern="mat$", full.names = TRUE, recursive = TRUE)
@@ -80,10 +86,12 @@ ifcb_extract_classified_images <- function(sample,
         taxa.list.ix <- taxa.list[taxa.list$V1 == taxon, ]
 
         ifcb_extract_pngs(
-          roifilename,
-          out_folder,
-          as.numeric(taxa.list.ix$ROI),
-          taxon
+          roi_file = roifilename,
+          out_folder = out_folder,
+          ROInumbers = as.numeric(taxa.list.ix$ROI),
+          taxaname = taxon,
+          verbose = verbose,
+          overwrite = overwrite
         )
       }, error = function(e) {
         cat("Error occurred while processing taxon", taxon, ":", conditionMessage(e), "\n")

@@ -1,10 +1,5 @@
 #' Summarize Image Counts by Class and Sample
 #'
-#' `r lifecycle::badge("deprecated")`
-#'
-#' This function was deprecated as it has been replaced by a function with a more accurate
-#' name: \code{ifcb_summarize_png_counts}.
-#'
 #' This function summarizes the number of images per class for each sample and timestamps,
 #' and optionally retrieves GPS positions, and IFCB information using `ifcb_read_hdr_data` and `ifcb_convert_filenames` functions.
 #'
@@ -17,11 +12,8 @@
 #'
 #' @importFrom dplyr group_by summarise bind_rows arrange n first
 #' @importFrom lubridate date year month day
-#' @importFrom lifecycle deprecate_warn
 #'
 #' @export
-#' @keywords internal
-#'
 #' @seealso \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
 #'
 #' @examples
@@ -41,23 +33,20 @@
 #' hdr_folder <- "path/to/hdr_folder" # This folder should contain corresponding .hdr files
 #'
 #' # Summarize by sample
-#' summary_sample <- ifcb_summarize_png_data(png_folder,
+#' summary_sample <- ifcb_summarize_png_counts(png_folder,
 #'                                           hdr_folder,
 #'                                           sum_level = "sample",
 #'                                           verbose = TRUE)
 #' print(summary_sample)
 #'
 #' # Summarize by class
-#' summary_class <- ifcb_summarize_png_data(png_folder,
+#' summary_class <- ifcb_summarize_png_counts(png_folder,
 #'                                          hdr_folder,
 #'                                          sum_level = "class",
 #'                                          verbose = TRUE)
 #' print(summary_class)
 #' }
-ifcb_summarize_png_data <- function(png_folder, hdr_folder = NULL, sum_level = "sample", verbose = TRUE) {
-
-  lifecycle::deprecate_warn("0.3.11", "ifcb_summarize_png_data()", "ifcb_summarize_png_counts()")
-
+ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level = "sample", verbose = TRUE) {
   # List all subdirectories (classes) directly under the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE, full.names = FALSE)
 

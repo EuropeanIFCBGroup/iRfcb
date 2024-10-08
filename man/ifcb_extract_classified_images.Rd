@@ -10,7 +10,9 @@ ifcb_extract_classified_images(
   roi_folder,
   out_folder,
   taxa = "All",
-  threshold = "opt"
+  threshold = "opt",
+  verbose = TRUE,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ ifcb_extract_classified_images(
 \item{taxa}{A character string specifying the taxa to extract. Default is "All".}
 
 \item{threshold}{A character string specifying the threshold to use ("none", "opt", "adhoc"). Default is "opt".}
+
+\item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
+
+\item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
 }
 \value{
 No return value, called for side effects. Extracts and saves taxa images to a directory.

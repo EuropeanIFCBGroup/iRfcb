@@ -12,9 +12,9 @@ on.exit({
   unlink(temp_dir, recursive = TRUE)
 }, add = TRUE)
 
-test_that("ifcb_summarize_png_data works correctly with sample data", {
+test_that("ifcb_summarize_png_counts works correctly with sample data", {
   # Run the function with summarization level "sample"
-  summary_sample <- suppressWarnings(ifcb_summarize_png_data(png_folder, hdr_folder, sum_level = "sample", verbose = TRUE))
+  summary_sample <- ifcb_summarize_png_counts(png_folder, hdr_folder, sum_level = "sample", verbose = TRUE)
 
   # Check that the returned object is a data frame
   expect_s3_class(summary_sample, "data.frame")
@@ -36,7 +36,7 @@ test_that("ifcb_summarize_png_data works correctly with sample data", {
   expect_equal(summary_sample$n_images[1], expected_n_images)
 
   # Run the function with summarization level "class"
-  summary_class <- suppressWarnings(ifcb_summarize_png_data(png_folder, hdr_folder, sum_level = "class", verbose = TRUE))
+  summary_class <- ifcb_summarize_png_counts(png_folder, hdr_folder, sum_level = "class", verbose = TRUE)
 
   # Check that the returned object is a data frame
   expect_s3_class(summary_sample, "data.frame")
@@ -57,7 +57,7 @@ test_that("ifcb_summarize_png_data works correctly with sample data", {
   expect_equal(summary_class$n_images[1], expected_n_images_class)
 })
 
-test_that("ifcb_summarize_png_data handles empty directories gracefully", {
+test_that("ifcb_summarize_png_counts handles empty directories gracefully", {
   # Define empty directories for png and hdr
   empty_png_dir <- file.path(temp_dir, "empty_png")
   empty_hdr_dir <- file.path(temp_dir, "empty_hdr")
@@ -66,24 +66,24 @@ test_that("ifcb_summarize_png_data handles empty directories gracefully", {
   dir.create(empty_hdr_dir)
 
   # Run the function with empty png directory and expect an error
-  suppressWarnings(expect_error(ifcb_summarize_png_data(empty_png_dir, hdr_folder, sum_level = "sample", verbose = TRUE), "No subdirectories found in the PNG folder"))
+  expect_error(ifcb_summarize_png_counts(empty_png_dir, hdr_folder, sum_level = "sample", verbose = TRUE), "No subdirectories found in the PNG folder")
 
   # Run the function with empty hdr directory and expect an error
-  suppressWarnings(expect_error(suppressWarnings(ifcb_summarize_png_data(png_folder, empty_hdr_dir, sum_level = "sample", verbose = TRUE), "No HDR data found")))
+  expect_error(ifcb_summarize_png_counts(png_folder, empty_hdr_dir, sum_level = "sample", verbose = TRUE), "No HDR data found")
 })
 
-test_that("ifcb_summarize_png_data handles invalid directories gracefully", {
+test_that("ifcb_summarize_png_counts handles invalid directories gracefully", {
   # Define invalid directories for png and hdr
   invalid_png_dir <- file.path(temp_dir, "invalid_png")
   invalid_hdr_dir <- file.path(temp_dir, "invalid_hdr")
 
   # Run the function with invalid directories and expect an error
-  expect_error(suppressWarnings(ifcb_summarize_png_data(invalid_png_dir, invalid_hdr_dir, sum_level = "sample", verbose = TRUE)))
+  expect_error(ifcb_summarize_png_counts(invalid_png_dir, invalid_hdr_dir, sum_level = "sample", verbose = TRUE))
 })
 
-test_that("ifcb_summarize_png_data calculates n_images correctly for different classes", {
+test_that("ifcb_summarize_png_counts calculates n_images correctly for different classes", {
   # Use test data to check specific calculations
-  summary_class <- suppressWarnings(ifcb_summarize_png_data(png_folder, hdr_folder, sum_level = "class", verbose = TRUE))
+  summary_class <- ifcb_summarize_png_counts(png_folder, hdr_folder, sum_level = "class", verbose = TRUE)
 
   # Check if n_images are calculated correctly for each class
   # Replace the following expected values with the actual expected values from your test data

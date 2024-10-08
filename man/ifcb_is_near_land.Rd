@@ -45,7 +45,8 @@ will be considered small and removed, if remove_small_islands is set to TRUE. De
 Logical vector indicating whether each position is near land.
 }
 \description{
-Determines whether given positions are near land based on a buffered coastline.
+Determines whether given positions are near land based on a coastline shape file.
+The Natural Earth 1:50m land vectors are included as default shapefile in \code{iRfcb}.
 }
 \details{
 This function calculates a buffered area around the coastline and checks if

@@ -1,4 +1,4 @@
-test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
+test_that("ifcb_get_shark_example reads the shark column names correctly", {
 
   # Expected column names (Replace these with the actual column names from your shark_col.txt file)
   expected_colnames <- c("MYEAR","STATN","SAMPLING_PLATFORM","PROJ",
@@ -17,23 +17,14 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
                          "TEMP_FB","PSAL_FB","OSAT_FB","DOXY_FB")
 
   # Call the function
-  shark_colnames <- ifcb_get_shark_colnames()
+  shark_colnames <- ifcb_get_shark_example()
 
   # Check that the result is a data frame
   expect_true(is.data.frame(shark_colnames))
 
   # Check that the column names are as expected
   expect_equal(colnames(shark_colnames), expected_colnames)
-})
 
-test_that("ifcb_get_shark_colnames reads the minimal shark column names correctly", {
-
-  # Call the function
-  shark_colnames <- ifcb_get_shark_colnames(minimal = TRUE)
-
-  # Check that the result is a data frame
-  expect_true(is.data.frame(shark_colnames))
-
-  # Check that the column names are as expected
-  expect_equal(ncol(shark_colnames), 35)
+  # Check that the dataframe contains 5 rows
+  expect_equal(nrow(shark_colnames), 5)
 })

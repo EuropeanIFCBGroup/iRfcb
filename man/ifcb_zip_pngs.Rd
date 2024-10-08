@@ -10,7 +10,11 @@ ifcb_zip_pngs(
   readme_file = NULL,
   email_address = "",
   version = "",
-  print_progress = TRUE
+  print_progress = TRUE,
+  include_txt = FALSE,
+  split_zip = FALSE,
+  max_size = 500,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -25,12 +29,21 @@ ifcb_zip_pngs(
 \item{version}{Optional version information to include in the README file.}
 
 \item{print_progress}{A logical value indicating whether to print progress bar. Default is TRUE.}
+
+\item{include_txt}{A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.}
+
+\item{split_zip}{A logical value indicating whether to split the zip file into smaller parts if its size exceeds \code{max_size}. Default is FALSE.}
+
+\item{max_size}{The maximum size (in MB) for the zip file before it gets split. Only used if \code{split_zip} is TRUE. Default is 500 MB.}
+
+\item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.}
 }
 \value{
-This function does not return any value; it creates a zip archive and potentially a README file.
+This function does not return any value; it creates a zip archive and optionally splits it into smaller files if specified.
 }
 \description{
 This function zips directories containing .png files and optionally includes README and MANIFEST files.
+It can also split the resulting zip file into smaller parts if it exceeds a specified size.
 }
 \examples{
 \dontrun{

@@ -1,6 +1,7 @@
 #' Determine if Positions are Near Land
 #'
-#' Determines whether given positions are near land based on a buffered coastline.
+#' Determines whether given positions are near land based on a coastline shape file.
+#' The Natural Earth 1:50m land vectors are included as default shapefile in `iRfcb`.
 #'
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions.

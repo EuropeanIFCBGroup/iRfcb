@@ -202,7 +202,7 @@ gps_data$near_land <- ifcb_is_near_land(gps_data$gpsLatitude,
 head(gps_data)
 ```
 
-For more accurate determination, a detailed coastline .shp file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of `ifcb_is_near_land` for further information.
+For more accurate determination, a detailed coastline .shp file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of [`ifcb_is_near_land`](../reference/ifcb_is_near_land.html) for further information.
 
 #### Check which sub-basin an IFCB sample is from
 
@@ -267,7 +267,7 @@ head(positions)
 
 #### Find contextual ferrybox data from RV Svea
 
-The `ifcb_get_ferrybox_data` function can also be used to extract additional ferrybox parameters, such as temperature (parameter number 8180) and salinity (parameter number 8181). 
+The [`ifcb_get_ferrybox_data`](../reference/ifcb_get_ferrybox_data.html) function can also be used to extract additional ferrybox parameters, such as temperature (parameter number 8180) and salinity (parameter number 8181). 
 
 ```{r}
 # Get salinity and temperature from ferrybox data
@@ -288,14 +288,14 @@ head(ferrybox_data)
 Summarize counts of annotated images at the sample and class levels. The 'hdr_folder' can be included to add GPS positions to the sample data frame:
 ```{r}
 # Summarise counts on sample level
-png_per_sample <- ifcb_summarize_png_data(png_folder = "data/png",
+png_per_sample <- ifcb_summarize_png_counts(png_folder = "data/png",
                                           hdr_folder = "data/data",
                                           sum_level = "sample")
 
 head(png_per_sample)
 
 # Summarise counts on class level
-png_per_class <- ifcb_summarize_png_data(png_folder = "data/png",
+png_per_class <- ifcb_summarize_png_counts(png_folder = "data/png",
                                          sum_level = "class")
 
 # Print output
@@ -304,7 +304,7 @@ head(png_per_class)
 
 #### MATLAB Files
 
-Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_data`:
+Count the annotations in the MATLAB files, similar to [`ifcb_summarize_png_counts`](../reference/ifcb_summarize_png_counts.html):
 ```{r}
 # Summarize counts from MATLAB files
 mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
@@ -326,7 +326,7 @@ ifcb_run_image_gallery()
 
 ![image_gallery](figures/image_gallery.png)
 
-Individual images can be selected and a list of selected images can be downloaded as a 'correction_file'. This file can be used to correct .mat annotations below using the `ifcb_correct_annotation` function.
+Individual images can be selected and a list of selected images can be downloaded as a 'correction_file'. This file can be used to correct .mat annotations below using the [`ifcb_correct_annotation`](../reference/ifcb_correct_annotation.html) function.
 
 #### Correct .mat Files After Checking Images in the App
 
@@ -396,8 +396,8 @@ ifcb_extract_annotated_images(manual_folder = "data/manual",
 Verify that the corrections have been applied:
 ```{r}
 # Summarize new counts after correction
-png_per_class <- ifcb_summarize_png_data(png_folder = "data/extracted_images",
-                                         sum_level = "class")
+png_per_class <- ifcb_summarize_png_counts(png_folder = "data/extracted_images",
+                                           sum_level = "class")
 
 # Print output
 head(png_per_class)
@@ -405,13 +405,30 @@ head(png_per_class)
 
 ## Prepare Annotated Images for Publication
 
+#### Summarize Image Metadata
+
+This function gather feature and hdr data for every image in the `png_folder`.
+
+```{r}
+# Summarize image metadata from feature and hdr files
+image_metadata <- ifcb_summarize_png_metadata(png_folder = "data/extracted_images",
+                                              feature_folder = "data/features",
+                                              hdr_folder = "data/data")
+
+# Print the first ten columns of output
+head(image_metadata)[1:10]
+```
+
+The output can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html) to produce metadata files suitable for submitting images to [EcoTaxa](https://ecotaxa.obs-vlfr.fr/).
+
 #### PNG Directory
 
 Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024):
+
 ```{r}
 # Create zip-archive
 ifcb_zip_pngs(png_folder = "data/extracted_images",
-              zip_filename = "data/zip/smhi_ifcb_skagerrak_kattegat_annotated_images_corrected.zip",
+              zip_filename = "data/zip/ifcb_annotated_images_corrected.zip",
               readme_file = system.file("exdata/README-template.md", 
                                         package = "iRfcb"), # Template icluded in `iRfcb`
               email_address = "tutorial@test.com",
@@ -422,12 +439,13 @@ ifcb_zip_pngs(png_folder = "data/extracted_images",
 #### MATLAB Directory
 
 Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
+
 ```{r}
 # Create zip-archive
 ifcb_zip_matlab(manual_folder = "data/manual",
                 features_folder = "data/features",
                 class2use_file = "data/config/class2use.mat",
-                zip_filename = "data/zip/smhi_ifcb_skagerrak_kattegat_matlab_files_corrected.zip",
+                zip_filename = "data/zip/ifcb_matlab_files_corrected.zip",
                 data_folder = "data/data",
                 readme_file = system.file("exdata/README-template.md", 
                                           package = "iRfcb"), # Template icluded in `iRfcb`
@@ -497,7 +515,7 @@ head(summary_data)
 
 #### Summarize counts, biovolumes and carbon content from classified IFCB data
 
-This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes` and `ifcb_extract_biovolumes`.
+This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB) samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual regions of interest (ROI), where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from HDR files to compute biovolume and carbon content per liter of sample. See details in the help pages for [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) and [`ifcb_extract_biovolumes`](../reference/ifcb_extract_biovolumes.html).
 
 ```{r}
 # Summarize biovolume data using IFCB data from classified data folder
@@ -514,7 +532,7 @@ head(biovolume_data)
 
 #### Summarize counts, biovolumes and carbon content from manually annotated IFCB data
 
-The `ifcb_summarize_biovolumes` function can also be used to calculate aggregated biovolumes and carbon content from manually annotated Imaging FlowCytobot (IFCB) image data. See details in the help pages for `ifcb_summarize_biovolumes`, `ifcb_extract_biovolumes` and `ifcb_count_mat_annotations`.
+The [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) function can also be used to calculate aggregated biovolumes and carbon content from manually annotated Imaging FlowCytobot (IFCB) image data. See details in the help pages for [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html), [`ifcb_extract_biovolumes`](../reference/ifcb_extract_biovolumes.html) and [`ifcb_count_mat_annotations`](../reference/ifcb_count_mat_annotations.html).
 
 ```{r}
 # Summarize biovolume data using IFCB data from manual data folder
@@ -529,12 +547,11 @@ manual_biovolume_data <- ifcb_summarize_biovolumes(feature_folder = "data/featur
 head(manual_biovolume_data)
 ```
 
-
 ## Taxonomical Data
 
 #### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See `iRfcb:::vol2C_nondiatom` and `iRfcb:::vol2C_lgdiatom` for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`iRfcb:::vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`iRfcb:::vol2C_lgdiatom`]((../reference/vol2C_lgdiatom.html)) for carbon calculations (not included in NAMESPACE).
 
 ```{r}
 # Read class2use file
@@ -570,17 +587,23 @@ print(trophic_type)
 
 ## SHARK export
 
-This function is used by SMHI to map IFCB data into the [SHARK](https://sharkweb.smhi.se/hamta-data/) standard data delivery format.
+This function is used by SMHI to map IFCB data into the [SHARK](https://sharkweb.smhi.se/hamta-data/) standard data delivery format. An example submission is also provided in `iRfcb`.
 
 ```{r}
-# Load column names stored from `iRfcb`
+# Get column names from example
 shark_colnames <- ifcb_get_shark_colnames()
 
 # Print column names
 print(shark_colnames)
+
+# Load example stored from `iRfcb`
+shark_example <- ifcb_get_shark_example()
+
+# Print first ten columns of the SHARK data submission example
+head(shark_example)[1:10]
 ```
 
-This concludes the tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation. Happy analyzing!
+This concludes the tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation. See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ```{r, include=FALSE}
 # Clean up

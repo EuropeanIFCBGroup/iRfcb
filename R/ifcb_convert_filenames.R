@@ -13,6 +13,7 @@
 #'
 #' @importFrom stringr str_extract str_remove_all
 #' @importFrom lubridate ymd_hms
+#' @importFrom readr type_convert
 #' @importFrom dplyr bind_rows
 #' @importFrom tools file_path_sans_ext
 #'
@@ -31,6 +32,10 @@ ifcb_convert_filenames <- function(filenames) {
   # Apply the extraction function to all filenames and combine results
   timestamps_list <- lapply(filenames, extract_parts) # Helper function
   timestamps <- do.call(bind_rows, timestamps_list)
+
+  if (nrow(timestamps) > 0) {
+    timestamps <- suppressMessages(type_convert(timestamps))
+  }
 
   timestamps
 }

@@ -41,6 +41,29 @@ test_that("ifcb_zip_pngs works correctly", {
     expect_true(basename(file) %in% basename(zip_contents$filename))
   }
 
+  # Run the function with split_zip
+  ifcb_zip_pngs(png_folder,
+                zip_filename,
+                readme_file = readme_file,
+                email_address = "test@example.com",
+                version = "1.0",
+                print_progress = TRUE,
+                split_zip = TRUE,
+                max_size = 0.0000001)
+
+  # Verify that the zip file was created
+  expect_true(file.exists(paste0(tools::file_path_sans_ext(zip_filename), "_part_1.zip")))
+
+  # Run the function with split_zip and a large max_size
+  ifcb_zip_pngs(png_folder,
+                zip_filename,
+                readme_file = readme_file,
+                email_address = "test@example.com",
+                version = "1.0",
+                print_progress = TRUE,
+                split_zip = TRUE,
+                max_size = 500)
+
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })

@@ -42,8 +42,15 @@ test_that("ifcb_which_basin correctly handles a custom shapefile", {
 
   # Test a different shape-file
   custom_shape_file <- file.path(exdir, "baltic_sea_buffered.shp")
+  custom_shape_file_4324 <- file.path(exdir, "baltic_sea_buffered_4324.shp")
+
+  # Change the CRS
+  custom_shape <- sf::st_read(custom_shape_file)
+  custom_shape <- sf::st_transform(custom_shape, 4324)
+  sf::st_write(custom_shape, custom_shape_file_4324)
 
   # Run the test
+  expect_warning(ifcb_which_basin(latitudes, longitudes, shape_file = custom_shape_file_4324))
   result <- ifcb_which_basin(latitudes, longitudes, shape_file = custom_shape_file)
 
   # Check that the result is a character vector

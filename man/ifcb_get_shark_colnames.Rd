@@ -4,18 +4,28 @@
 \alias{ifcb_get_shark_colnames}
 \title{Get Shark Column Names}
 \usage{
-ifcb_get_shark_colnames()
+ifcb_get_shark_colnames(minimal = FALSE)
+}
+\arguments{
+\item{minimal}{A logical value indicating whether to load only the minimal set of column names required for data submission to SHARK. Default is FALSE.}
 }
 \value{
-A data frame containing the shark column names.
+An empty data frame containing the SHARK column names.
 }
 \description{
 This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
 These columns are used for submitting IFCB data to \url{https://sharkweb.smhi.se/}.
 }
+\details{
+For a detailed example of a data submission, see \code{\link{ifcb_get_shark_example}}.
+}
 \examples{
-\dontrun{
 shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
+
+shark_colnames_minimal <- ifcb_get_shark_colnames(minimal = TRUE)
+print(shark_colnames_minimal)
 }
+\seealso{
+\code{\link{ifcb_get_shark_example}}
 }

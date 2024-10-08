@@ -1,14 +1,17 @@
 test_that("ifcb_run_image_gallery launches the Shiny app", {
-  # Set up a temporary directory for the Shiny app
+  # Mock shiny::runApp to avoid launching the actual app
+  mock_runApp <- mockery::mock()
+
+  # Replace shiny::runApp with the mock
+  mockery::stub(ifcb_run_image_gallery, "shiny::runApp", mock_runApp)
+
+  # Call the function and ensure it runs without errors
+  expect_silent(ifcb_run_image_gallery())
+
+  # Verify that shiny::runApp was called
+  mockery::expect_called(mock_runApp, 1)
+
+  # Additional tests can still check app directory setup and other logic
   app_dir <- system.file("shiny", "ifcb_image_gallery", package = "iRfcb")
-
-  if (app_dir == "") {
-    skip("Shiny app directory not found. Skipping test.")
-  }
-
-  # Initialize the Shiny app tester
-  app <- shinytest2::AppDriver$new(app_dir, shiny_args = list(display.mode = "normal"))
-
-  # Ensure the app is running by checking its title
-  expect_true(app$get_text("title") == "IFCB image gallery", info = "Shiny app should have a title")
+  expect_false(app_dir == "")
 })
