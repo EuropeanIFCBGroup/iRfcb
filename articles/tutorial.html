@@ -818,7 +818,6 @@ pages for <code>ifcb_summarize_biovolumes</code>,
 <span>                                                   hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                                                   micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
 <span>                                                   diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Attempt 1 failed: Error in the HTTP2 framing layer - Retrying...</span></span></code></pre>
 <pre><code><span><span class="co">## INFO: The following classes are considered NOT diatoms for carbon calculations:</span></span>
 <span><span class="co">## Amphidnium-like</span></span>
 <span><span class="co">## Ciliophora</span></span>
@@ -845,7 +844,7 @@ pages for <code>ifcb_summarize_biovolumes</code>,
 <span><span class="co">## Tripos_furca</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -876,7 +875,7 @@ biovolumes to carbon according to Menden-Deuer and Lessard (2000). See
 <code>iRfcb:::vol2C_nondiatom</code> and
 <code>iRfcb:::vol2C_lgdiatom</code> for carbon calculations (not
 included in NAMESPACE).</p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
@@ -901,7 +900,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h4>
 <p>This function takes a list of taxa names and matches them with the
 <code>SMHI Trophic Type</code> list used in <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
 <span>               <span class="st">"Nodularia spumigena"</span>,</span>
@@ -922,7 +921,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h2>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
 delivery format.</p>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load column names stored from `iRfcb`</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
