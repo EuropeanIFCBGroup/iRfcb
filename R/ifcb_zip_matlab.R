@@ -57,7 +57,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
                             quiet = FALSE) {
   # Print message to indicate starting listing files
   if (!quiet) {
-    cat("Listing all files...")
+    cat("Listing all files...\n")
   }
 
   # List all .mat files in the specified folder (excluding subfolders)
@@ -92,7 +92,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   # Print message to indicate starting copying manual files
   if (!quiet) {
-    cat("Copying manual files...")
+    cat("Copying manual files...\n")
   }
 
   # Copy .mat files to the manual directory
@@ -111,7 +111,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   # Print message to indicate starting copying feature files
   if (!quiet) {
-    cat("Copying feature files...")
+    cat("Copying feature files...\n")
   }
 
   # Total number of mat files to process
@@ -140,13 +140,15 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   }
 
   # Print a new line after the progress bar is complete
-  cat("\n")
+  if (print_progress & !quiet) {
+    cat("\n")
+  }
 
   # If data_folder is provided, copy data files
   if (!is.null(data_files)) {
     # Print message to indicate starting copying data files
     if (!quiet) {
-      cat("Copying data files...")
+      cat("Copying data files...\n")
     }
 
     # Total number of mat files to process
@@ -175,12 +177,14 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     }
 
     # Print a new line after the progress bar is complete
-    cat("\n")
+    if (print_progress & !quiet) {
+      cat("\n")
+    }
   }
 
   # Copy the class2use file to the config directory and rename it to class2use.mat
   if (!quiet) {
-    cat("Copying class2use file...")
+    cat("Copying class2use file...\n")
   }
 
   file.copy(class2use_file, file.path(config_dir, "class2use.mat"), overwrite = TRUE)
@@ -188,7 +192,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   # If readme_file is provided, update it
   if (!is.null(readme_file)) {
     if (!quiet) {
-      cat("Creating README file...")
+      cat("Creating README file...\n")
     }
 
     # Read the template README.md content
@@ -257,7 +261,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   # Print message to indicate creating of MANIFEST.txt
   if (!quiet) {
-    cat("Creating MANIFEST.txt...")
+    cat("Creating MANIFEST.txt...\n")
   }
 
   # Create a manifest for the zip package
@@ -265,7 +269,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   # Print message to indicate starting zip creation
   if (!quiet) {
-    cat("Creating zip archive...")
+    cat("Creating zip archive...\n")
   }
 
   if (!dir.exists(dirname(zip_filename))) {
@@ -274,7 +278,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
 
   zipr(zipfile = zip_filename, files = files_to_zip)
   if (!quiet) {
-    cat("Zip archive created successfully:", normalizePath(zip_filename, winslash = "/"))
+    cat("Zip archive created successfully:", normalizePath(zip_filename, winslash = "/"), "\n")
   }
 
   # Clean up temporary directories
