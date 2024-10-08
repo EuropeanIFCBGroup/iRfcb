@@ -442,7 +442,7 @@ retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10,
 #' }
 extract_features <- function(sample_name, feature_data) {
   feature_data$sample <- gsub("_fea_v2.csv", "", sample_name)
-  return(feature_data)
+  feature_data
 }
 
 #' Split Large Zip File into Smaller Parts
@@ -522,7 +522,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
     # Remove the base directory from each path, leaving the relative path
     relative_paths <- sub(paste0("^", base_dir, "/"), "", normalized_paths)
 
-    return(relative_paths)
+    relative_paths
   }
 
   base_dir <- normalizePath(unzip_dir, winslash = "/")
@@ -555,7 +555,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
       groups[[length(groups) + 1]] <- current_group
     }
 
-    return(groups)
+    groups
   }
 
   # Step 5: Set max zip size and group subfolders
