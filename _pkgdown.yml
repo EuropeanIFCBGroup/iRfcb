@@ -34,6 +34,7 @@ reference:
   - '`ifcb_get_mat_variable`'
   - '`ifcb_get_runtime`'
   - '`ifcb_get_shark_colnames`'
+  - '`ifcb_get_shark_example`'
   - '`ifcb_get_trophic_type`'
   - '`ifcb_is_diatom`'
   - '`ifcb_is_in_basin`'
@@ -69,7 +70,7 @@ reference:
   - '`handle_missing_ferrybox_data`'
   - '`print_progress`'
   - '`read_hdr_file`'
-  - '`retrieve_worms_records`'.Rd
+  - '`retrieve_worms_records`'
   - '`split_large_zip`'
   - '`summarize_TBclass`'
   - '`truncate_folder_name`'
