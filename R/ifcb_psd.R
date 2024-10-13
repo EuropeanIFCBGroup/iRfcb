@@ -40,6 +40,9 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'
 #' @examples
 #' \dontrun{
+#' # Initialize the python session if not already set up
+#' ifcb_py_install()
+#'
 #' ifcb_psd(
 #'   feature_folder = 'path/to/features',
 #'   hdr_folder = 'path/to/hdr_data',

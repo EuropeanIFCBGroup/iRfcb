@@ -6,6 +6,7 @@ utils::globalVariables("replace_value_in_classlist")
 #'
 #' @details
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#'
 #' @param manual_folder A character string specifying the path to the folder containing MAT classlist files to be updated.
 #' @param out_folder A character string specifying the path to the folder where updated MAT classlist files will be saved.
 #' @param target_id The target class ID to be replaced.
@@ -17,6 +18,9 @@ utils::globalVariables("replace_value_in_classlist")
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @examples
 #' \dontrun{
+#' # Initialize a python session if not already set up
+#' ifcb_py_install()
+#'
 #' # Replace class ID 99 with 1 in .mat classlist files
 #' ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 #' }
