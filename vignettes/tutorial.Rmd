@@ -347,7 +347,7 @@ unclassified_id <- which(grepl("unclassified",
 # Correct the annotation with the output from the image gallery
 ifcb_correct_annotation(manual_folder = "data/manual",
                         out_folder = "data/manual",
-                        correction_file = "data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt",
+                        correction = "data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt",
                         correct_classid = unclassified_id)
 ```
 
