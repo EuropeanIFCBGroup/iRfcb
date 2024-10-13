@@ -5,7 +5,7 @@ bibentry(
                   email = "anders.torstensson@smhi.se", role = "aut",
                   comment = c(ORCID = "0000-0002-8283-656X")),
   year = "2024",
-  note = "R package version 0.3.11",
+  note = "R package version 0.3.12",
   url = "https://doi.org/10.5281/zenodo.12533225",
-  textVersion = paste("Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB. R package version 0.3.11. https://doi.org/10.5281/zenodo.12533225")
+  textVersion = paste("Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB. R package version 0.3.12. https://doi.org/10.5281/zenodo.12533225")
 )
