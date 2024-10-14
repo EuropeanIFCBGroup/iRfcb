@@ -403,6 +403,36 @@ png_per_class <- ifcb_summarize_png_counts(png_folder = "data/extracted_images",
 head(png_per_class)
 ```
 
+#### Annotate image
+
+Images can be batch annotated using the [`ifcb_write_manual_file`](../reference/ifcb_write_manual_file.html) function. If a manual file already exists for the sample, the ROI class list will be updated accordingly. If no file is found, a new .mat file will be created, with all unannotated ROIs marked as unclassified.
+
+```{r}
+# Summarize new counts after correction
+correction <- read.table("data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt", 
+                         header = TRUE)
+
+# Print images to be annotated
+print(correction$image_filename)
+
+# Re-annotate the images
+ifcb_write_manual_file(png_images = correction$image_filename,
+                       class = "Alexandrium_pseudogonyaulax",
+                       manual_folder = "data/manual",
+                       adc_folder = "data/data",
+                       class2use_file = "data/config/class2use.mat")
+
+# Summarize new counts after re-annotation
+mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
+                                        class2use_file = "data/config/class2use.mat",
+                                        skip_class = "unclassified",
+                                        sum_level = "class")
+
+# Print output
+head(mat_count)
+```
+
+
 ## Prepare Annotated Images for Publication
 
 #### Summarize Image Metadata
