@@ -412,10 +412,10 @@ Images can be batch annotated using the [`ifcb_write_manual_file`](../reference/
 correction <- read.table("data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt", 
                          header = TRUE)
 
-# Print images to be annotated
+# Print image names to be annotated
 print(correction$image_filename)
 
-# Re-annotate the images
+# Re-annotate the images that were moved to unclassified earlier in the tutorial
 ifcb_write_manual_file(png_images = correction$image_filename,
                        class = "Alexandrium_pseudogonyaulax",
                        manual_folder = "data/manual",
@@ -431,7 +431,6 @@ mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
 # Print output
 head(mat_count)
 ```
-
 
 ## Prepare Annotated Images for Publication
 
