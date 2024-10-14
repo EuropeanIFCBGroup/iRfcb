@@ -1,5 +1,6 @@
 #' Summarize Image Counts by Class and Sample
 #'
+#' @description
 #' `r lifecycle::badge("deprecated")`
 #'
 #' This function was deprecated as it has been replaced by a function with a more accurate
