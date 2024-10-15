@@ -9,6 +9,7 @@ ifcb_correct_annotation(
   out_folder,
   correction = NULL,
   correct_classid,
+  do_compression = TRUE,
   correction_file = deprecated()
 )
 }
@@ -21,6 +22,8 @@ ifcb_correct_annotation(
 If a file is provided, it should have a column named \code{image_filename}. If a character vector is provided, it will be treated as a direct list of image filenames.}
 
 \item{correct_classid}{An integer specifying the class ID to use for corrections.}
+
+\item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
 
 \item{correction_file}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{correction} instead.}

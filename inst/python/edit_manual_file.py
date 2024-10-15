@@ -1,6 +1,6 @@
 import scipy.io
 
-def edit_manual_file(input_file, output_file, row_numbers, new_value):
+def edit_manual_file(input_file, output_file, row_numbers, new_value, do_compression=True):
     # Load the MATLAB file
     mat_contents = scipy.io.loadmat(input_file)
 
@@ -13,4 +13,4 @@ def edit_manual_file(input_file, output_file, row_numbers, new_value):
         classlist[row_number - 1, 1] = new_value
 
     # Write the modified contents to a new MATLAB file
-    scipy.io.savemat(output_file, new_mat_contents)
+    scipy.io.savemat(output_file, new_mat_contents, do_compression=do_compression)

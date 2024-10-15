@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.io import savemat
 
-def create_and_save_mat_structure(classlist_length, class2use_manual, output_path, col2_value=1):
+def create_and_save_mat_structure(classlist_length, class2use_manual, output_path, col2_value=1, do_compression=True):
     """
     Creates a .mat structure with a specified classlist length, class2use_manual content,
     and a customizable value for column 2, then saves it to the provided output path.
@@ -11,6 +11,7 @@ def create_and_save_mat_structure(classlist_length, class2use_manual, output_pat
     - class2use_manual: list of strings, representing class names.
     - output_path: str, path to save the .mat file.
     - col2_value: int or float, value to fill in the second column of the classlist. Default is 1.
+    - do_compression: bool, whether to compress the .mat file. Default is False.
     
     Returns:
     - None, saves the structure as a .mat file at the specified path.
@@ -34,5 +35,5 @@ def create_and_save_mat_structure(classlist_length, class2use_manual, output_pat
         'default_class_original': np.array([["unclassified"]], dtype=object)
     }
     
-    # Save the structure to the specified output path
-    savemat(output_path, mat_structure)
+    # Save the structure to the specified output path with or without compression
+    savemat(output_path, mat_structure, do_compression=do_compression)

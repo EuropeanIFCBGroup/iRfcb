@@ -12,6 +12,7 @@ utils::globalVariables("replace_value_in_classlist")
 #' @param target_id The target class ID to be replaced.
 #' @param new_id The new class ID to replace the target ID.
 #' @param column_index An integer value specifying which classlist column to edit. Default is 1 (manual).
+#' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #'
 #' @return This function does not return any value; it updates the classlist files in the specified directory.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
@@ -26,7 +27,7 @@ utils::globalVariables("replace_value_in_classlist")
 #' }
 #' @importFrom reticulate source_python
 #' @export
-ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1) {
+ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1, do_compression = TRUE) {
 
   # Import the Python function
   source_python(system.file("python", "replace_value_in_classlist.py", package = "iRfcb"))
@@ -57,7 +58,8 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
       file_path_out,  # Ensure correct output file path
       as.integer(target_id),
       as.integer(new_id),
-      as.integer(column_index)
+      as.integer(column_index),
+      do_compression
     )
   }
 }

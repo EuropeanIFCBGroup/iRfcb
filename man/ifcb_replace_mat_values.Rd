@@ -9,7 +9,8 @@ ifcb_replace_mat_values(
   out_folder,
   target_id,
   new_id,
-  column_index = 1
+  column_index = 1,
+  do_compression = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ ifcb_replace_mat_values(
 \item{new_id}{The new class ID to replace the target ID.}
 
 \item{column_index}{An integer value specifying which classlist column to edit. Default is 1 (manual).}
+
+\item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
 }
 \value{
 This function does not return any value; it updates the classlist files in the specified directory.

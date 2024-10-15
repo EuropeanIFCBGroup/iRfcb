@@ -12,7 +12,8 @@ ifcb_annotate_batch(
   class2use_file,
   manual_output = NULL,
   manual_recursive = FALSE,
-  unclassified_id = 1
+  unclassified_id = 1,
+  do_compression = TRUE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ ifcb_annotate_batch(
 \item{manual_recursive}{A logical value indicating whether to search recursively within \code{manual_folder} for \code{.mat} files. Default is \code{FALSE}.}
 
 \item{unclassified_id}{An integer specifying the class ID to use for unclassified regions of interest (ROIs) when creating new manual \code{.mat} files. Default is \code{1}.}
+
+\item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
 }
 \value{
 The function does not return a value. It creates or updates \code{.mat} files in the \code{manual_folder} to

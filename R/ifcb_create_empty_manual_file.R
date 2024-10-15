@@ -8,6 +8,7 @@ utils::globalVariables("create_and_save_mat_structure")
 #' @param class2use Character vector. The names of the classes to include in the `class2use_manual` field of the MAT file.
 #' @param output_file Character. The path where the output MAT file will be saved.
 #' @param unclassified_id Integer. The value to use in the second column of the class list. Default is 1.
+#' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #'
 #' @details
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
@@ -35,7 +36,7 @@ utils::globalVariables("create_and_save_mat_structure")
 #' @importFrom reticulate source_python
 #'
 #' @export
-ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, unclassified_id = 1) {
+ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, unclassified_id = 1, do_compression = TRUE) {
 
   # Import the Python function
   source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
@@ -44,5 +45,6 @@ ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, un
   create_and_save_mat_structure(as.integer(roi_length),
                                 as.character(class2use),
                                 output_file,
-                                as.integer(unclassified_id))
+                                as.integer(unclassified_id),
+                                do_compression)
 }

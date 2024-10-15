@@ -8,7 +8,8 @@ ifcb_create_empty_manual_file(
   roi_length,
   class2use,
   output_file,
-  unclassified_id = 1
+  unclassified_id = 1,
+  do_compression = TRUE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ ifcb_create_empty_manual_file(
 \item{output_file}{Character. The path where the output MAT file will be saved.}
 
 \item{unclassified_id}{Integer. The value to use in the second column of the class list. Default is 1.}
+
+\item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
 }
 \value{
 No return value. This function is called for its side effects.

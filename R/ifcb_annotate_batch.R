@@ -12,6 +12,7 @@
 #' @param manual_output A character string specifying the path to the folder where updated or newly created `.mat` classlist files will be saved. If not provided, the `manual_folder` path will be used by default.
 #' @param manual_recursive A logical value indicating whether to search recursively within `manual_folder` for `.mat` files. Default is `FALSE`.
 #' @param unclassified_id An integer specifying the class ID to use for unclassified regions of interest (ROIs) when creating new manual `.mat` files. Default is `1`.
+#' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #'
 #' @details
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
@@ -55,7 +56,8 @@
 #'
 #' @export
 ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, class2use_file,
-                                   manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1) {
+                                manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1,
+                                do_compression = TRUE) {
 
   # Ensure that manual folder exists
   if (!dir.exists(manual_folder)) {
@@ -105,7 +107,8 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
       ifcb_correct_annotation(manual_folder,
                               manual_output,
                               annotations_sample$image_filename,
-                              as.integer(class))
+                              as.integer(class),
+                              do_compression = do_compression)
     } else {
       # Sample doesn't have a manual file, so we create one
       sample_info <- ifcb_convert_filenames(sample_name)
@@ -124,16 +127,18 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
       rois <- nrow(adcdata)
 
       # Create an unclassifed manual file
-      ifcb_create_empty_manual_file(as.integer(rois),
-                                    as.character(class2use),
-                                    file.path(manual_output, paste0(sample_name, ".mat")),
-                                    as.integer(unclassified_id))
+      ifcb_create_empty_manual_file(roi_length = as.integer(rois),
+                                    class2use = as.character(class2use),
+                                    output_file = file.path(manual_output, paste0(sample_name, ".mat")),
+                                    unclassified_id = as.integer(unclassified_id),
+                                    do_compression = do_compression)
 
       # Apply corrections to the new manual file
       ifcb_correct_annotation(manual_folder,
                               manual_output,
                               annotations_sample$image_filename,
-                              as.integer(class))
+                              as.integer(class),
+                              do_compression = do_compression)
     }
   }
 }

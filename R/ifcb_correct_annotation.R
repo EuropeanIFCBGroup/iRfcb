@@ -11,6 +11,7 @@ utils::globalVariables("edit_manual_file")
 #' @param correction Either a character string specifying the path to the correction file, or a character vector containing image filenames to be corrected.
 #'   If a file is provided, it should have a column named `image_filename`. If a character vector is provided, it will be treated as a direct list of image filenames.
 #' @param correct_classid An integer specifying the class ID to use for corrections.
+#' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #' @param correction_file
 #'    `r lifecycle::badge("deprecated")`
 #'    Use \code{correction} instead.
@@ -55,7 +56,7 @@ utils::globalVariables("edit_manual_file")
 #' @importFrom lifecycle is_present deprecate_warn deprecated
 #'
 #' @export
-ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL, correct_classid, correction_file = deprecated()) {
+ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL, correct_classid, do_compression = TRUE, correction_file = deprecated()) {
 
   # Warn the user if class_folder is used
   if (lifecycle::is_present(correction_file)) {
@@ -106,7 +107,8 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
       file.path(manual_folder, paste0(filename, ".mat")),  # Ensure correct file path
       file.path(out_folder, paste0(filename, ".mat")),  # Ensure correct output file path
       roi_list,
-      correct_classid
+      correct_classid,
+      do_compression
     )
   }
 }
