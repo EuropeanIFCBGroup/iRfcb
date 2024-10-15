@@ -34,5 +34,5 @@ instruments to EcoTaxa at \url{https://ecotaxa.obs-vlfr.fr/}.
 ecotaxa_example <- ifcb_get_ecotaxa_example()
 
 # Print the first five columns
-tibble(ecotaxa_example)
+tidyr::tibble(ecotaxa_example)
 }
