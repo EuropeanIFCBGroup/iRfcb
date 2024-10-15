@@ -26,8 +26,7 @@ If sum_level is "class", returns a data frame with columns: class_name, n_images
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-}
-\details{
+
 This function was deprecated as it has been replaced by a function with a more accurate
 name: \code{ifcb_summarize_png_counts}.
 

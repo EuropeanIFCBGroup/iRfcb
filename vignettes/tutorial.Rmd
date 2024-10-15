@@ -347,7 +347,7 @@ unclassified_id <- which(grepl("unclassified",
 # Correct the annotation with the output from the image gallery
 ifcb_correct_annotation(manual_folder = "data/manual",
                         out_folder = "data/manual",
-                        correction_file = "data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt",
+                        correction = "data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt",
                         correct_classid = unclassified_id)
 ```
 
@@ -401,6 +401,35 @@ png_per_class <- ifcb_summarize_png_counts(png_folder = "data/extracted_images",
 
 # Print output
 head(png_per_class)
+```
+
+#### Annotate image
+
+Images can be batch annotated using the [`ifcb_write_manual_file`](../reference/ifcb_write_manual_file.html) function. If a manual file already exists for the sample, the ROI class list will be updated accordingly. If no file is found, a new .mat file will be created, with all unannotated ROIs marked as unclassified.
+
+```{r}
+# Summarize new counts after correction
+correction <- read.table("data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt", 
+                         header = TRUE)
+
+# Print image names to be annotated
+print(correction$image_filename)
+
+# Re-annotate the images that were moved to unclassified earlier in the tutorial
+ifcb_write_manual_file(png_images = correction$image_filename,
+                       class = "Alexandrium_pseudogonyaulax",
+                       manual_folder = "data/manual",
+                       adc_folder = "data/data",
+                       class2use_file = "data/config/class2use.mat")
+
+# Summarize new counts after re-annotation
+mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
+                                        class2use_file = "data/config/class2use.mat",
+                                        skip_class = "unclassified",
+                                        sum_level = "class")
+
+# Print output
+head(mat_count)
 ```
 
 ## Prepare Annotated Images for Publication
@@ -461,7 +490,7 @@ ifcb_zip_matlab(manual_folder = "data/manual",
 Create a manifest file for the zip packages:
 ```{r}
 # Create MANIFEST.txt of the zip folder content
-ifcb_create_manifest("data/zip/")
+ifcb_create_manifest("data/zip")
 ```
 
 ## Classified Results from MATLAB
@@ -551,7 +580,7 @@ head(manual_biovolume_data)
 
 #### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`iRfcb:::vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`iRfcb:::vol2C_lgdiatom`]((../reference/vol2C_lgdiatom.html)) for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from the World Register of Marine Species (WoRMS), and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`iRfcb:::vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`iRfcb:::vol2C_lgdiatom`](../reference/vol2C_lgdiatom.html) for carbon calculations (not included in NAMESPACE).
 
 ```{r}
 # Read class2use file

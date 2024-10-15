@@ -35,6 +35,9 @@ This function requires a python interpreter to be installed. The required python
 }
 \examples{
 \dontrun{
+# Initialize a python session if not already set up
+ifcb_py_install()
+
 # Replace class ID 99 with 1 in .mat classlist files
 ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 }
