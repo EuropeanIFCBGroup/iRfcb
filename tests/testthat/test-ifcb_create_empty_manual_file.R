@@ -1,4 +1,4 @@
-test_that("ifcb_create_empty_manual creates MAT file with correct parameters", {
+test_that("ifcb_create_empty_manual_file creates MAT file with correct parameters", {
   # Create a temporary virtual environment
   venv_dir <- "~/.virtualenvs/iRfcb"
 
@@ -13,7 +13,7 @@ test_that("ifcb_create_empty_manual creates MAT file with correct parameters", {
   output_file <- tempfile()
 
   # Call the function being tested
-  ifcb_create_empty_manual(
+  ifcb_create_empty_manual_file(
     roi_length = 100,
     class2use = c("unclassified", "Aphanizomenon_spp_filament"),
     output_file = output_file,

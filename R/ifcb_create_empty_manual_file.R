@@ -21,21 +21,21 @@ utils::globalVariables("create_and_save_mat_structure")
 #' ifcb_py_install()
 #'
 #' # Create a MAT file with 100 ROIs, using a vector of class names, and save it to "output.mat"
-#' ifcb_create_empty_manual(roi_length = 100,
-#'                          class2use = c("unclassified", "Aphanizomenon_spp_filament"),
-#'                          output_file = "output.mat")
+#' ifcb_create_empty_manual_file(roi_length = 100,
+#'                               class2use = c("unclassified", "Aphanizomenon_spp"),
+#'                               output_file = "output.mat")
 #'
 #' # Create a MAT file with a different unclassified_id
-#' ifcb_create_empty_manual(roi_length = 100,
-#'                          class2use = c("unclassified", "Aphanizomenon_spp_filament"),
-#'                          output_file = "output.mat",
-#'                          unclassified_id = 999)
+#' ifcb_create_empty_manual_file(roi_length = 100,
+#'                               class2use = c("unclassified", "Aphanizomenon_spp"),
+#'                               output_file = "output.mat",
+#'                               unclassified_id = 999)
 #' }
 #'
 #' @importFrom reticulate source_python
 #'
 #' @export
-ifcb_create_empty_manual <- function(roi_length, class2use, output_file, unclassified_id = 1) {
+ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, unclassified_id = 1) {
 
   # Import the Python function
   source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
