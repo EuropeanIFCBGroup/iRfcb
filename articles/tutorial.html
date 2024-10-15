@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -511,7 +511,7 @@ the ‘correction file’ with selected images:</p>
 <span><span class="co"># Correct the annotation with the output from the image gallery</span></span>
 <span><span class="fu"><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                        out_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                        correction_file <span class="op">=</span> <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
+<span>                        correction <span class="op">=</span> <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
 <span>                        correct_classid <span class="op">=</span> <span class="va">unclassified_id</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -577,6 +577,47 @@ category:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> Cryptomonadales                         245</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> Cylindrotheca_Nitzschia_longissima       47</span></span></code></pre>
 </div>
+<div class="section level4">
+<h4 id="annotate-image">Annotate image<a class="anchor" aria-label="anchor" href="#annotate-image"></a>
+</h4>
+<p>Images can be batch annotated using the <a href="../reference/ifcb_write_manual_file.html"><code>ifcb_write_manual_file</code></a>
+function. If a manual file already exists for the sample, the ROI class
+list will be updated accordingly. If no file is found, a new .mat file
+will be created, with all unannotated ROIs marked as unclassified.</p>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
+<span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>, </span>
+<span>                         header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print image names to be annotated</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "D20220712T210855_IFCB134_00164.png" "D20220712T222710_IFCB134_00044.png"</span></span></code></pre>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Re-annotate the images that were moved to unclassified earlier in the tutorial</span></span>
+<span><span class="fu"><a href="../reference/ifcb_write_manual_file.html">ifcb_write_manual_file</a></span><span class="op">(</span>png_images <span class="op">=</span> <span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span>,</span>
+<span>                       class <span class="op">=</span> <span class="st">"Alexandrium_pseudogonyaulax"</span>,</span>
+<span>                       manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>                       adc_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>                       class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Summarize new counts after re-annotation</span></span>
+<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>                                        class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>                                        skip_class <span class="op">=</span> <span class="st">"unclassified"</span>,</span>
+<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print output</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<span><span class="co">##   class                           n</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Alexandrium_pseudogonyaulax     2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Amphidnium-like                 1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_chain           6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Chaetoceros_spp_single_cell     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Ciliophora                     23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cryptomonadales               245</span></span></code></pre>
+</div>
 </div>
 <div class="section level2">
 <h2 id="prepare-annotated-images-for-publication">Prepare Annotated Images for Publication<a class="anchor" aria-label="anchor" href="#prepare-annotated-images-for-publication"></a>
@@ -586,7 +627,7 @@ category:</p>
 </h4>
 <p>This function gather feature and hdr data for every image in the
 <code>png_folder</code>.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize image metadata from feature and hdr files</span></span>
 <span><span class="va">image_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>                                              feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
@@ -624,7 +665,7 @@ to produce metadata files suitable for submitting images to <a href="https://eco
 <p>Prepare the PNG directory for publication as a zip-archive, similar
 to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
 image reference library</a> (Torstensson et al. 2024):</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
@@ -644,7 +685,7 @@ image reference library</a> (Torstensson et al. 2024):</p>
 <p>Prepare the MATLAB directory for publication as a zip-archive,
 similar to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
 image reference library</a>:</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
@@ -672,10 +713,10 @@ image reference library</a>:</p>
 <h4 id="create-manifest-txt">Create MANIFEST.txt<a class="anchor" aria-label="anchor" href="#create-manifest-txt"></a>
 </h4>
 <p>Create a manifest file for the zip packages:</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create MANIFEST.txt of the zip folder content</span></span>
-<span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip/"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip//MANIFEST.txt</span></span></code></pre>
+<span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip/MANIFEST.txt</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -685,7 +726,7 @@ image reference library</a>:</p>
 <h4 id="extract-classified-results-from-a-sample">Extract Classified Results from a Sample<a class="anchor" aria-label="anchor" href="#extract-classified-results-from-a-sample"></a>
 </h4>
 <p>Extract classified results from a sample:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract all classified images from a sample</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230810T113059_IFCB134"</span>,</span>
 <span>                               classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -721,7 +762,7 @@ image reference library</a>:</p>
 <h4 id="read-feature-data">Read feature data<a class="anchor" aria-label="anchor" href="#read-feature-data"></a>
 </h4>
 <p>Read all feature files (.csv) from a folder:</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read feature files from a folder</span></span>
 <span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023/"</span><span class="op">)</span></span>
 <span></span>
@@ -741,7 +782,7 @@ image reference library</a>:</p>
 <span><span class="co">## 4        88.58696    0.3299815      27.17497 0.7671958</span></span>
 <span><span class="co">## 5       265.49548    0.9016151      70.71076 0.7933333</span></span>
 <span><span class="co">## 6        67.86613    0.3332706      19.21560 0.6590909</span></span></code></pre>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
 <span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
 <span>                                         multiblob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -767,7 +808,7 @@ image reference library</a>:</p>
 <h4 id="read-a-summary-file">Read a Summary File<a class="anchor" aria-label="anchor" href="#read-a-summary-file"></a>
 </h4>
 <p>Read a summary file:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a MATLAB summary file generated by `countcells_allTBnew_user_training`</span></span>
 <span><span class="va">summary_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_summary.html">ifcb_read_summary</a></span><span class="op">(</span><span class="st">"data/classified/2023/summary/summary_allTB_2023.mat"</span>,</span>
 <span>                                  biovolume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -801,7 +842,7 @@ provided, it also incorporates sample volume data from HDR files to
 compute biovolume and carbon content per liter of sample. See details in
 the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
 and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
 <span>                                            mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -822,7 +863,7 @@ and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovo
 <span><span class="co">## Scrippsiella_group</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -847,7 +888,7 @@ content from manually annotated Imaging FlowCytobot (IFCB) image data.
 See details in the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>,
 <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>
 and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_annotations</code></a>.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
 <span>                                                   mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -856,6 +897,7 @@ and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_
 <span>                                                   micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
 <span>                                                   diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## INFO: The following classes are considered NOT diatoms for carbon calculations:</span></span>
+<span><span class="co">## Alexandrium_pseudogonyaulax</span></span>
 <span><span class="co">## Amphidnium-like</span></span>
 <span><span class="co">## Ciliophora</span></span>
 <span><span class="co">## Cryptomonadales</span></span>
@@ -881,7 +923,7 @@ and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_
 <span><span class="co">## Tripos_furca</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -892,7 +934,7 @@ and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> D20220522T000439_… <span style="color: #BB0000;">NA</span>         Stro…      1    0.000<span style="text-decoration: underline;">003</span>86  0.000<span style="text-decoration: underline;">504</span>        4.86</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> D20220522T000439_… <span style="color: #BB0000;">NA</span>         uncl…      1    0.000<span style="text-decoration: underline;">002</span>88  0.000<span style="text-decoration: underline;">384</span>        4.86</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> D20220522T003051_… <span style="color: #BB0000;">NA</span>         Meso…      2    0.000<span style="text-decoration: underline;">012</span>2   0.001<span style="text-decoration: underline;">55</span>         2.98</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20220712T210855_… <span style="color: #BB0000;">NA</span>         Stro…      2    0.000<span style="text-decoration: underline;">008</span>02  0.001<span style="text-decoration: underline;">03</span>         4.91</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20220712T210855_… <span style="color: #BB0000;">NA</span>         Alex…      1    0.000<span style="text-decoration: underline;">016</span>0   0.001<span style="text-decoration: underline;">91</span>         4.91</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: counts_per_liter &lt;dbl&gt;, biovolume_mm3_per_liter &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   carbon_ug_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -910,9 +952,9 @@ diatom class. The function only uses the first name (genus name) of each
 taxa for classification. This function can be useful for converting
 biovolumes to carbon according to Menden-Deuer and Lessard (2000). See
 <a href="../reference/vol2C_nondiatom.html"><code>iRfcb:::vol2C_nondiatom</code></a>
-and <a href="(../reference/vol2C_lgdiatom.html)"><code>iRfcb:::vol2C_lgdiatom</code></a>
+and <a href="../reference/vol2C_lgdiatom.html"><code>iRfcb:::vol2C_lgdiatom</code></a>
 for carbon calculations (not included in NAMESPACE).</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
@@ -937,7 +979,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h4>
 <p>This function takes a list of taxa names and matches them with the
 <code>SMHI Trophic Type</code> list used in <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
 <span>               <span class="st">"Nodularia spumigena"</span>,</span>
@@ -959,7 +1001,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
 delivery format. An example submission is also provided in
 <code>iRfcb</code>.</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get column names from example</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -999,7 +1041,7 @@ delivery format. An example submission is also provided in
 <span><span class="co">## [63] TEMP_FB                   PSAL_FB                  </span></span>
 <span><span class="co">## [65] OSAT_FB                   DOXY_FB                  </span></span>
 <span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load example stored from `iRfcb`</span></span>
 <span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_example.html">ifcb_get_shark_example</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -1030,7 +1072,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
 <span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version</span></span>
-<span><span class="co">##   0.3.11. https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   0.3.12. https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -1038,7 +1080,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.11},</span></span>
+<span><span class="co">##     note = {R package version 0.3.12},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

@@ -20,6 +20,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manifest.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_test_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.html</loc></url>
@@ -53,6 +54,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_which_basin.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_write_manual_file.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_matlab.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_pngs.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/index.html</loc></url>
