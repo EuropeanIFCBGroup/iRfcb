@@ -51,7 +51,8 @@ These <code>.mat</code> can be used with the code in the <code>ifcb-analysis</co
 <span>  <span class="va">class2use_file</span>,</span>
 <span>  manual_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  manual_recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  unclassified_id <span class="op">=</span> <span class="fl">1</span></span>
+<span>  unclassified_id <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  do_compression <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -89,6 +90,10 @@ These <code>.mat</code> can be used with the code in the <code>ifcb-analysis</co
 
 <dt id="arg-unclassified-id">unclassified_id<a class="anchor" aria-label="anchor" href="#arg-unclassified-id"></a></dt>
 <dd><p>An integer specifying the class ID to use for unclassified regions of interest (ROIs) when creating new manual <code>.mat</code> files. Default is <code>1</code>.</p></dd>
+
+
+<dt id="arg-do-compression">do_compression<a class="anchor" aria-label="anchor" href="#arg-do-compression"></a></dt>
+<dd><p>A logical value indicating whether to compress the .mat file. Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">
