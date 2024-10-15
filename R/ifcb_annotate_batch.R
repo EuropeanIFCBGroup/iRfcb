@@ -1,10 +1,10 @@
 #' Annotate IFCB Images with Specified Class
 #'
-#' This function creates or updates manual `.mat` classlist files with a user specified class, based on
-#' input vector of IFCB image names.
+#' This function creates or updates manual `.mat` classlist files with a user specified class in batch,
+#' based on input vector of IFCB image names.
 #' These `.mat` can be used with the code in the `ifcb-analysis` repository (Sosik and Olson 2007).
 #'
-#' @param png_images A character vector containing the names of the PNG images to be annotated.
+#' @param png_images A character vector containing the names of the PNG images to be annotated in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png, where XXX represent the IFCB number and ZZZZZ the roi number.
 #' @param class A character string or integer specifying the class name or class2use index to annotate the images with. If a string is provided, it is matched against the available classes in `class2use_file`.
 #' @param manual_folder A character string specifying the path to the folder containing the manual `.mat` classlist files.
 #' @param adc_folder A character string specifying the path to the base folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD). Each subfolder contains ADC files, which are used to determine the number of regions of interest (ROIs) for each sample when creating new manual `.mat` files.
@@ -30,7 +30,7 @@
 #' @return The function does not return a value. It creates or updates `.mat` files in the `manual_folder` to
 #' reflect the specified annotations.
 #'
-#' @seealso \code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_empty_manual}}
+#' @seealso \code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_empty_manual_file}}
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
@@ -40,7 +40,7 @@
 #' ifcb_py_install()
 #'
 #' # Annotate two png images with class "Nodularia_spumigena" and update or create manual files
-#' ifcb_write_manual_file(
+#' ifcb_annotate_batch(
 #'   png_images = c("D20230812T162908_IFCB134_01399.png",
 #'                  "D20230714T102127_IFCB134_00069.png"),
 #'   class = "Nodularia_spumigena",
@@ -54,7 +54,7 @@
 #' @importFrom tools file_path_sans_ext
 #'
 #' @export
-ifcb_write_manual_file <- function(png_images, class, manual_folder, adc_folder, class2use_file,
+ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, class2use_file,
                                    manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1) {
 
   # Ensure that manual folder exists
@@ -124,10 +124,10 @@ ifcb_write_manual_file <- function(png_images, class, manual_folder, adc_folder,
       rois <- nrow(adcdata)
 
       # Create an unclassifed manual file
-      ifcb_create_empty_manual(as.integer(rois),
-                               as.character(class2use),
-                               file.path(manual_output, paste0(sample_name, ".mat")),
-                               as.integer(unclassified_id))
+      ifcb_create_empty_manual_file(as.integer(rois),
+                                    as.character(class2use),
+                                    file.path(manual_output, paste0(sample_name, ".mat")),
+                                    as.integer(unclassified_id))
 
       # Apply corrections to the new manual file
       ifcb_correct_annotation(manual_folder,
