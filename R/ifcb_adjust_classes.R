@@ -11,7 +11,6 @@ utils::globalVariables("start_mc_adjust_classes_user_training")
 #'                      annotation files. The function will look for files starting with 'D' in this folder.
 #' @param do_compression A logical value indicating whether to apply compression to the output files.
 #'                       Defaults to TRUE.
-#'
 #' @return None
 #'
 #' @details
@@ -22,6 +21,10 @@ utils::globalVariables("start_mc_adjust_classes_user_training")
 #' \dontrun{
 #' ifcb_adjust_classes("C:/training/config/class2use", "C:/training/manual/2014/")
 #' }
+#'
+#' @export
+#'
+#' @importFrom reticulate source_python
 #'
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #'
