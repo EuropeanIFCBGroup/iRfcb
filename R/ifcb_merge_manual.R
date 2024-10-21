@@ -84,7 +84,7 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   ifcb_create_class2use(class2use_combined, class2use_file_output)
 
   if (!quiet) {
-    message("class2use file stored in", class2use_file_output)
+    message("class2use file stored in ", class2use_file_output)
   }
 
   # Get base and additions files
