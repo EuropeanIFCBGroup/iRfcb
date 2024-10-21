@@ -34,6 +34,9 @@ ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = 
   # Source the Python function
   source_python(system.file("python", "start_mc_adjust_classes_user_training.py", package = "iRfcb"))
 
+  # Remove .mat extension
+  class2use_file <- gsub(".mat", "", class2use_file)
+
   # Call the function in R
   start_mc_adjust_classes_user_training(class2use_file, manual_folder, do_compression=do_compression)
 }
