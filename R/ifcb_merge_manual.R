@@ -49,7 +49,7 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
                               quiet = FALSE) {
 
   # Check if Python is available
-  if (!py_available(initialize = FALSE)) {
+  if (!py_available(initialize = TRUE)) {
     stop("Python is not available. Please ensure Python is installed and accessible.")
   }
 
