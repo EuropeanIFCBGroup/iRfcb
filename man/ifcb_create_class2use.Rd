@@ -18,6 +18,10 @@ This function creates a \code{.mat} file containing a character vector of class 
 A class2use file can be used for manual annotation using the code in the \code{ifcb-analysis}
 repository (Sosik and Olson 2007).
 }
+\details{
+This function requires a python interpreter to be installed.
+The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+}
 \examples{
 \dontrun{
 # Example usage:

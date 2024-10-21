@@ -12,6 +12,10 @@ utils::globalVariables("save_class2use_to_mat")
 #' @importFrom reticulate source_python
 #' @export
 #'
+#' @details
+#' This function requires a python interpreter to be installed.
+#' The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#'
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
