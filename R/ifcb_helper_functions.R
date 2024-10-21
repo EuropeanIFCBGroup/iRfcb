@@ -587,3 +587,32 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
     cat(paste(created_zip_files, collapse = "\n"), "\n")
   }
 }
+#' Check Python and Required Modules Availability
+#'
+#' This helper function checks if Python is available and if the required Python module (e.g., `scipy`) is installed.
+#' It stops execution and raises an error if Python or the specified module is not available.
+#'
+#' @param module Character. Name of the Python module to check (default is "scipy").
+#' @param initialize Logical. Whether to initialize Python if not already initialized (default is TRUE).
+#'
+#' @return This function does not return a value. It stops execution if the required Python environment is not available.
+#'
+#' @importFrom reticulate py_available py_module_available
+#'
+#' @examples
+#' \dontrun{
+#' check_python_and_module("scipy") # Check for Python and 'scipy'
+#' }
+#'
+#' @export
+check_python_and_module <- function(module = "scipy", initialize = TRUE) {
+  # Check if Python is available
+  if (!py_available(initialize = initialize)) {
+    stop("Python is not available. Please ensure Python is installed and accessible, or see `ifcb_py_install`.")
+  }
+
+  # Check if the required Python module is available
+  if (!py_module_available(module)) {
+    stop(paste("Python package '", module, "' is not available. Please install '", module, "' in your Python environment, or see `ifcb_py_install`.", sep = ""))
+  }
+}

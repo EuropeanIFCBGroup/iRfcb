@@ -38,6 +38,9 @@ utils::globalVariables("create_and_save_mat_structure")
 #' @export
 ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, unclassified_id = 1, do_compression = TRUE) {
 
+  # Initialize python check
+  check_python_and_module()
+
   # Import the Python function
   source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
 

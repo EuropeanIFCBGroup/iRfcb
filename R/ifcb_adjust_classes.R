@@ -31,6 +31,9 @@ utils::globalVariables("start_mc_adjust_classes_user_training")
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = TRUE) {
 
+  # Initialize python check
+  check_python_and_module()
+
   # Source the Python function
   source_python(system.file("python", "start_mc_adjust_classes_user_training.py", package = "iRfcb"))
 

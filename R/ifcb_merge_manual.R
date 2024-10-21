@@ -29,8 +29,6 @@
 #' handling conflicts by using a temporary index system. It copies `.mat` files from both the base and
 #' additions folders into the output folder, while adjusting indices and and class names for the additions.
 #'
-#' @importFrom reticulate py_available py_module_available
-#'
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
@@ -48,15 +46,8 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
                               manual_folder_output, temp_index_offset = 50000,
                               quiet = FALSE) {
 
-  # Check if Python is available
-  if (!py_available(initialize = TRUE)) {
-    stop("Python is not available. Please ensure Python is installed and accessible.")
-  }
-
-  # Check if the scipy package is available in Python
-  if (!py_module_available("scipy")) {
-    stop("Python package 'scipy' is not available. Please install 'scipy' in your Python environment.")
-  }
+  # Initialize python check
+  check_python_and_module()
 
   # Check if base and additions files exist
   if (!file.exists(class2use_file_base) || !file.exists(class2use_file_additions)) {
@@ -93,7 +84,7 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   ifcb_create_class2use(class2use_combined, class2use_file_output)
 
   if (!quiet) {
-    cat("class2use file stored in", class2use_file_output)
+    message("class2use file stored in", class2use_file_output)
   }
 
   # Get base and additions files
