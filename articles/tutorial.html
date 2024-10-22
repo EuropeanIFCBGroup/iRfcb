@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.13</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,9 +85,9 @@ be installed (see in the sections below). You can download
 <div class="section level4">
 <h4 id="download-sample-data">Download Sample Data<a class="anchor" aria-label="anchor" href="#download-sample-data"></a>
 </h4>
-<p>To get started, download sample data from the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
-image reference library</a> (Torstensson et al. 2024) with the following
-function:</p>
+<p>To get started, download sample data from the <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link">SMHI IFCB
+Plankton Image Reference Library</a> (Torstensson et al. 2024) with the
+following function:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define data directory</span></span>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="st">"data"</span></span>
@@ -506,7 +506,8 @@ the ‘correction file’ with selected images:</p>
 <span>                         <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="co"># ifcb_py_install(envname = env_path) # If not already initialized</span></span>
+<span><span class="co"># env_path &lt;- "~/.virtualenvs/iRfcb"</span></span>
+<span><span class="co"># ifcb_py_install(envname = env_path)</span></span>
 <span></span>
 <span><span class="co"># Correct the annotation with the output from the image gallery</span></span>
 <span><span class="fu"><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -534,7 +535,8 @@ id 1):</p>
 <span>                         <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="co"># ifcb_py_install(envname = env_path) # If not already initialized</span></span>
+<span><span class="co"># env_path &lt;- "~/.virtualenvs/iRfcb"</span></span>
+<span><span class="co"># ifcb_py_install(envname = env_path)</span></span>
 <span></span>
 <span><span class="co"># Move all Alexandrium_pseudogonyaulax images to unclassified</span></span>
 <span><span class="fu"><a href="../reference/ifcb_replace_mat_values.html">ifcb_replace_mat_values</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -620,6 +622,49 @@ will be created, with all unannotated ROIs marked as unclassified.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="merge-manual-datasets">Merge Manual Datasets<a class="anchor" aria-label="anchor" href="#merge-manual-datasets"></a>
+</h2>
+<p>Datasets that have been manually annotated using the MATLAB code from
+the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link">ifcb-analysis</a>
+repository (Sosik and Olson 2007) can be merged using the <a href="../reference/ifcb_merge_manual.html"><code>ifcb_merge_manual</code></a>
+function. This is a wrapper function of the <a href="../reference/ifcb_create_class2use.html"><code>ifcb_create_class2use</code></a>,
+<a href="../reference/ifcb_replace_mat_values.html"><code>ifcb_replace_mat_values</code></a>
+and <a href="../reference/ifcb_adjust_classes.html"><code>ifcb_adjust_classes</code></a>
+functions.</p>
+<p>In this example, two datasets from the Swedish west coast are
+downloaded from the <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link">SMHI IFCB
+Plankton Image Reference Library (version 3)</a> (Torstensson et
+al. 2024) and combined into a single dataset. Please note that these
+datasets are large, and the downloading and merging processes may take
+considerable time.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Define data directories</span></span>
+<span><span class="va">skagerrak_kattegat_dir</span> <span class="op">&lt;-</span> <span class="st">"data_skagerrak_kattegat"</span></span>
+<span><span class="va">tangesund_dir</span> <span class="op">&lt;-</span> <span class="st">"data_tangesund"</span></span>
+<span><span class="va">merged_dir</span> <span class="op">&lt;-</span> <span class="st">"data_skagerrak_kattegat_tangesund_merged"</span></span>
+<span></span>
+<span><span class="co"># Download and extract Skagerrak-Kattegat data in the data folder</span></span>
+<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">skagerrak_kattegat_dir</span>,</span>
+<span>                        figshare_article <span class="op">=</span> <span class="st">"48158725"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Download and extract Tångesund data in the data folder</span></span>
+<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">tangesund_dir</span>,</span>
+<span>                        figshare_article <span class="op">=</span> <span class="st">"48158731"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Initialize the python session if not already set up</span></span>
+<span><span class="co"># env_path &lt;- "~/.virtualenvs/iRfcb"</span></span>
+<span><span class="co"># ifcb_py_install(envname = env_path)</span></span>
+<span></span>
+<span><span class="co"># Merge Skagerrak-Kattegat and Tångesund to a single dataset</span></span>
+<span><span class="fu"><a href="../reference/ifcb_merge_manual.html">ifcb_merge_manual</a></span><span class="op">(</span>class2use_file_base <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">skagerrak_kattegat_dir</span>, <span class="st">"config/class2use.mat"</span><span class="op">)</span>,</span>
+<span>                  class2use_file_additions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tangesund_dir</span>, <span class="st">"config/class2use.mat"</span><span class="op">)</span>,</span>
+<span>                  class2use_file_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">merged_dir</span>, <span class="st">"config/class2use.mat"</span><span class="op">)</span>,</span>
+<span>                  manual_folder_base <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">skagerrak_kattegat_dir</span>, <span class="st">"manual"</span><span class="op">)</span>,</span>
+<span>                  manual_folder_additions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">tangesund_dir</span>, <span class="st">"manual"</span><span class="op">)</span>,</span>
+<span>                  manual_folder_output <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">merged_dir</span>, <span class="st">"manual"</span><span class="op">)</span></span>
+<span>                  <span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="prepare-annotated-images-for-publication">Prepare Annotated Images for Publication<a class="anchor" aria-label="anchor" href="#prepare-annotated-images-for-publication"></a>
 </h2>
 <div class="section level4">
@@ -627,7 +672,7 @@ will be created, with all unannotated ROIs marked as unclassified.</p>
 </h4>
 <p>This function gather feature and hdr data for every image in the
 <code>png_folder</code>.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize image metadata from feature and hdr files</span></span>
 <span><span class="va">image_metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>                                              feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
@@ -664,8 +709,8 @@ to produce metadata files suitable for submitting images to <a href="https://eco
 </h4>
 <p>Prepare the PNG directory for publication as a zip-archive, similar
 to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
-image reference library</a> (Torstensson et al. 2024):</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+Image Reference Library</a> (Torstensson et al. 2024):</p>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
@@ -684,8 +729,8 @@ image reference library</a> (Torstensson et al. 2024):</p>
 </h4>
 <p>Prepare the MATLAB directory for publication as a zip-archive,
 similar to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
-image reference library</a>:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+Image Reference Library</a>:</p>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>                features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
@@ -713,7 +758,7 @@ image reference library</a>:</p>
 <h4 id="create-manifest-txt">Create MANIFEST.txt<a class="anchor" aria-label="anchor" href="#create-manifest-txt"></a>
 </h4>
 <p>Create a manifest file for the zip packages:</p>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create MANIFEST.txt of the zip folder content</span></span>
 <span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip/MANIFEST.txt</span></span></code></pre>
@@ -726,7 +771,7 @@ image reference library</a>:</p>
 <h4 id="extract-classified-results-from-a-sample">Extract Classified Results from a Sample<a class="anchor" aria-label="anchor" href="#extract-classified-results-from-a-sample"></a>
 </h4>
 <p>Extract classified results from a sample:</p>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract all classified images from a sample</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230810T113059_IFCB134"</span>,</span>
 <span>                               classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -762,7 +807,7 @@ image reference library</a>:</p>
 <h4 id="read-feature-data">Read feature data<a class="anchor" aria-label="anchor" href="#read-feature-data"></a>
 </h4>
 <p>Read all feature files (.csv) from a folder:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read feature files from a folder</span></span>
 <span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023/"</span><span class="op">)</span></span>
 <span></span>
@@ -782,7 +827,7 @@ image reference library</a>:</p>
 <span><span class="co">## 4        88.58696    0.3299815      27.17497 0.7671958</span></span>
 <span><span class="co">## 5       265.49548    0.9016151      70.71076 0.7933333</span></span>
 <span><span class="co">## 6        67.86613    0.3332706      19.21560 0.6590909</span></span></code></pre>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
 <span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
 <span>                                         multiblob <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -808,7 +853,7 @@ image reference library</a>:</p>
 <h4 id="read-a-summary-file">Read a Summary File<a class="anchor" aria-label="anchor" href="#read-a-summary-file"></a>
 </h4>
 <p>Read a summary file:</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a MATLAB summary file generated by `countcells_allTBnew_user_training`</span></span>
 <span><span class="va">summary_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_summary.html">ifcb_read_summary</a></span><span class="op">(</span><span class="st">"data/classified/2023/summary/summary_allTB_2023.mat"</span>,</span>
 <span>                                  biovolume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -842,7 +887,7 @@ provided, it also incorporates sample volume data from HDR files to
 compute biovolume and carbon content per liter of sample. See details in
 the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
 and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
 <span>                                            mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
@@ -863,7 +908,7 @@ and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovo
 <span><span class="co">## Scrippsiella_group</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -888,7 +933,7 @@ content from manually annotated Imaging FlowCytobot (IFCB) image data.
 See details in the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>,
 <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>
 and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_annotations</code></a>.</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
 <span>                                                   mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -923,7 +968,7 @@ and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_
 <span><span class="co">## Tripos_furca</span></span>
 <span><span class="co">## Tripos_lineatus</span></span>
 <span><span class="co">## unclassified</span></span></code></pre>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
@@ -954,7 +999,7 @@ biovolumes to carbon according to Menden-Deuer and Lessard (2000). See
 <a href="../reference/vol2C_nondiatom.html"><code>iRfcb:::vol2C_nondiatom</code></a>
 and <a href="../reference/vol2C_lgdiatom.html"><code>iRfcb:::vol2C_lgdiatom</code></a>
 for carbon calculations (not included in NAMESPACE).</p>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
@@ -979,7 +1024,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h4>
 <p>This function takes a list of taxa names and matches them with the
 <code>SMHI Trophic Type</code> list used in <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
 <span>               <span class="st">"Nodularia spumigena"</span>,</span>
@@ -1001,7 +1046,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://sharkweb.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
 delivery format. An example submission is also provided in
 <code>iRfcb</code>.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get column names from example</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -1041,7 +1086,7 @@ delivery format. An example submission is also provided in
 <span><span class="co">## [63] TEMP_FB                   PSAL_FB                  </span></span>
 <span><span class="co">## [65] OSAT_FB                   DOXY_FB                  </span></span>
 <span><span class="co">## &lt;0 rows&gt; (or 0-length row.names)</span></span></code></pre>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load example stored from `iRfcb`</span></span>
 <span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_example.html">ifcb_get_shark_example</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -1072,7 +1117,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2024). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
 <span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version</span></span>
-<span><span class="co">##   0.3.12. https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   0.3.13. https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -1080,7 +1125,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2024},</span></span>
-<span><span class="co">##     note = {R package version 0.3.12},</span></span>
+<span><span class="co">##     note = {R package version 0.3.13},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
@@ -1098,7 +1143,7 @@ Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.</li>
 classification of phytoplankton sampled with imaging-in-flow cytometry.
 Limnol. Oceanogr: Methods 5, 204–216.</li>
 <li>Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and
-Karlson, B. (2024). SMHI IFCB plankton image reference library.
+Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library.
 SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link uri">https://doi.org/10.17044/scilifelab.25883455.v3</a>
 </li>
 </ul>

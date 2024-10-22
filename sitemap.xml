@@ -6,6 +6,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/authors.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/index.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/check_python_and_module.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/create_package_manifest.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/defunct.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/dot-onLoad.html</loc></url>
@@ -17,10 +18,12 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/find_matching_features.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/handle_missing_ferrybox_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/iRfcb-package.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manifest.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_test_data.html</loc></url>
@@ -39,6 +42,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_near_land.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.html</loc></url>
