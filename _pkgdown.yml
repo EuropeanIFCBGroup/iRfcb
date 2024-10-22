@@ -19,9 +19,11 @@ articles:
 reference:
 - title: Main functions
   contents:
+  - '`ifcb_annotate_batch`'
   - '`ifcb_convert_filenames`'
   - '`ifcb_correct_annotation`'
   - '`ifcb_count_mat_annotations`'
+  - '`ifcb_create_empty_manual_file`'
   - '`ifcb_create_manifest`'
   - '`ifcb_download_test_data`'
   - '`ifcb_extract_annotated_images`'

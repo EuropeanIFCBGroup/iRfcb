@@ -1,6 +1,6 @@
 import scipy.io
 
-def replace_value_in_classlist(input_file, output_file, target_value, new_value, column_index = 1):
+def replace_value_in_classlist(input_file, output_file, target_value, new_value, column_index = 1, do_compression=True):
     """
     Replaces specified target values in a specific column of the classlist with a new value.
 
@@ -25,4 +25,4 @@ def replace_value_in_classlist(input_file, output_file, target_value, new_value,
     classlist[mask, column_index] = new_value
 
     # Write the modified contents to a new MATLAB file
-    scipy.io.savemat(output_file, new_mat_contents)
+    scipy.io.savemat(output_file, new_mat_contents, do_compression=do_compression)

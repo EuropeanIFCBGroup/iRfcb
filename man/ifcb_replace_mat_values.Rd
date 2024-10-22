@@ -9,7 +9,8 @@ ifcb_replace_mat_values(
   out_folder,
   target_id,
   new_id,
-  column_index = 1
+  column_index = 1,
+  do_compression = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ ifcb_replace_mat_values(
 \item{new_id}{The new class ID to replace the target ID.}
 
 \item{column_index}{An integer value specifying which classlist column to edit. Default is 1 (manual).}
+
+\item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
 }
 \value{
 This function does not return any value; it updates the classlist files in the specified directory.
@@ -35,6 +38,9 @@ This function requires a python interpreter to be installed. The required python
 }
 \examples{
 \dontrun{
+# Initialize a python session if not already set up
+ifcb_py_install()
+
 # Replace class ID 99 with 1 in .mat classlist files
 ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 }

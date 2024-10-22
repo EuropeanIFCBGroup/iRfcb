@@ -6,23 +6,28 @@ utils::globalVariables("replace_value_in_classlist")
 #'
 #' @details
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#'
 #' @param manual_folder A character string specifying the path to the folder containing MAT classlist files to be updated.
 #' @param out_folder A character string specifying the path to the folder where updated MAT classlist files will be saved.
 #' @param target_id The target class ID to be replaced.
 #' @param new_id The new class ID to replace the target ID.
 #' @param column_index An integer value specifying which classlist column to edit. Default is 1 (manual).
+#' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #'
 #' @return This function does not return any value; it updates the classlist files in the specified directory.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @examples
 #' \dontrun{
+#' # Initialize a python session if not already set up
+#' ifcb_py_install()
+#'
 #' # Replace class ID 99 with 1 in .mat classlist files
 #' ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 #' }
 #' @importFrom reticulate source_python
 #' @export
-ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1) {
+ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1, do_compression = TRUE) {
 
   # Import the Python function
   source_python(system.file("python", "replace_value_in_classlist.py", package = "iRfcb"))
@@ -53,7 +58,8 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
       file_path_out,  # Ensure correct output file path
       as.integer(target_id),
       as.integer(new_id),
-      as.integer(column_index)
+      as.integer(column_index),
+      do_compression
     )
   }
 }
