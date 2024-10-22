@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main, master]
 
-
 name: R-CMD-check
 
 permissions: read-all
@@ -42,6 +41,14 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Restore R package cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ runner.os == 'Windows' && 'C:/Users/runner/Documents/R/win-library' || '~/.R/library' }}
+          key: ${{ runner.os }}-${{ matrix.config.r }}-${{ hashFiles('**/*.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.config.r }}-
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
@@ -70,11 +77,20 @@ jobs:
             )
           )
 
+
+          Sys.setenv(RETICULATE_PYTHON = virtualenv_python(path_to_venv))
           writeLines(
-            paste0("RETICULATE_PYTHON=", virtualenv_python(path_to_venv)),
-            Sys.getenv("GITHUB_ENV"))
+                paste0("RETICULATE_PYTHON=", virtualenv_python(path_to_venv)),
+                Sys.getenv("GITHUB_ENV")
+          )
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      - name: Save R package cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ runner.os == 'Windows' && 'C:/Users/runner/Documents/R/win-library' || '~/.R/library' }}
+          key: ${{ runner.os }}-${{ matrix.config.r }}-${{ hashFiles('**/*.lock') }}
