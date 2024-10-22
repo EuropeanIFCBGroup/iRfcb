@@ -2,4 +2,7 @@
 *.R
 .virtualenvs/
 data/
+data_skagerrak_kattegat_tangesund_merged/
+data_skagerrak_kattegat/
+data_tangesund/
 zip/

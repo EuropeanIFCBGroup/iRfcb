@@ -59,6 +59,9 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
                                 manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1,
                                 do_compression = TRUE) {
 
+  # Initialize python check
+  check_python_and_module()
+
   # Ensure that manual folder exists
   if (!dir.exists(manual_folder)) {
     dir.create(manual_folder, recursive = TRUE)

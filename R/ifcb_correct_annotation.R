@@ -70,6 +70,9 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     stop("argument `correction` is missing, with no default")
   }
 
+  # Initialize python check
+  check_python_and_module()
+
   # Import the Python function
   source_python(system.file("python", "edit_manual_file.py", package = "iRfcb"))
 
