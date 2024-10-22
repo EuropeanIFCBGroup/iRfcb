@@ -7,6 +7,7 @@
 ifcb_merge_manual(
   class2use_file_base,
   class2use_file_additions,
+  class2use_file_output = NULL,
   manual_folder_base,
   manual_folder_additions,
   manual_folder_output,
@@ -21,6 +22,9 @@ The base set contains the original manual classifications that form the foundati
 \item{class2use_file_additions}{Character. Path to the \code{class2use} file of the additions manual classifications.
 The additions set contains extra or updated classifications that need to be merged with the base set.
 Only unique class labels from the additions set that are not already present in the base set will be included in the merge.}
+
+\item{class2use_file_output}{Character. Path where the merged \code{class2use} file will be saved.
+If \code{NULL}, the merged file will be stored in the same directory as \code{class2use_file_base}. Default is \code{NULL}.}
 
 \item{manual_folder_base}{Character. Path to the folder containing the base set of manual classification \code{.mat} files.}
 
@@ -51,13 +55,15 @@ When merging, unique class names from the additions set that are not present in 
 The function works by aligning the class labels from the additions set with those in the base set,
 handling conflicts by using a temporary index system. It copies \code{.mat} files from both the base and
 additions folders into the output folder, while adjusting indices and and class names for the additions.
+
+Note that the maximum limit for \code{uint16} is 65,535, so ensure that \code{temp_index_offset} remains below this value.
 }
 \examples{
 \dontrun{
 ifcb_merge_manual("path/to/class2use_base.mat", "path/to/class2use_additions.mat",
-                  "path/to/manual/base_folder", "path/to/manual/additions_folder",
-                  "path/to/manual/output_folder", temp_index_offset = 50000,
-                  quiet = FALSE)
+                  "path/to/class2use_combined.mat", "path/to/manual/base_folder",
+                  "path/to/manual/additions_folder", "path/to/manual/output_folder",
+                  temp_index_offset = 50000, quiet = FALSE)
 }
 
 }

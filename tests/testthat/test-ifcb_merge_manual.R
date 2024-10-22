@@ -46,7 +46,7 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   ifcb_replace_mat_values(manual_folder_additions, manual_folder_additions, 5, 128)
 
   # Merge the manual classification data from base and additions folders into the merged folder
-  ifcb_merge_manual(class2use_file, class2use_file_new, manual_folder, manual_folder_additions, manual_folder_merged)
+  ifcb_merge_manual(class2use_file, class2use_file_new, NULL, manual_folder, manual_folder_additions, manual_folder_merged)
 
   # Verify that the merged folder contains the correct number of files
   files_base <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE)
@@ -79,8 +79,8 @@ test_that("ifcb_merge_manual throws the correct error messages", {
   manual_folder_merged <- file.path(temp_dir, "test_data/manual_merged")
   class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
   class2use_file_new <- file.path(temp_dir, "test_data/config/class2use_new.mat")
-  no_class2use_file <- "not_a_path"
-  no_base_folder <- "not_a_path"
+  no_class2use_file <- file.path(temp_dir, "not_a_path")
+  no_base_folder <- file.path(temp_dir, "not_a_path")
   empty_folder <- file.path(temp_dir, "test_data/empty_folder")
 
   # Load existing classes from the class2use.mat file and add a new class
@@ -121,16 +121,16 @@ test_that("ifcb_merge_manual throws the correct error messages", {
   }
 
   # Check that errors are thrown when expected (invalid paths or empty folders)
-  expect_error(ifcb_merge_manual(no_class2use_file, class2use_file_new, manual_folder, manual_folder_additions, manual_folder_merged),
+  expect_error(ifcb_merge_manual(no_class2use_file, class2use_file_new, NULL, manual_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
                "Base or additions class2use file does not exist")
 
-  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, no_base_folder, manual_folder_additions, manual_folder_merged),
+  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, no_base_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
                "Base or additions manual folder does not exist")
 
-  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, empty_folder, manual_folder_additions, manual_folder_merged),
+  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, empty_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
                "No .mat files found in manual_folder_base")
 
-  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, manual_folder, empty_folder, manual_folder_merged),
+  expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, manual_folder, empty_folder, manual_folder_merged, quiet = TRUE),
                "No .mat files found in manual_folder_additions")
 
   # Clean up the temporary directory after the test

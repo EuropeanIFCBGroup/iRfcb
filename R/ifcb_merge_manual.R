@@ -9,6 +9,8 @@
 #' @param class2use_file_additions Character. Path to the `class2use` file of the additions manual classifications.
 #' The additions set contains extra or updated classifications that need to be merged with the base set.
 #' Only unique class labels from the additions set that are not already present in the base set will be included in the merge.
+#' @param class2use_file_output Character. Path where the merged `class2use` file will be saved.
+#' If `NULL`, the merged file will be stored in the same directory as `class2use_file_base`. Default is `NULL`.
 #' @param manual_folder_base Character. Path to the folder containing the base set of manual classification `.mat` files.
 #' @param manual_folder_additions Character. Path to the folder containing the additions set of manual classification `.mat` files.
 #' @param manual_folder_output Character. Path to the output folder where the merged classification files will be stored.
@@ -29,22 +31,24 @@
 #' handling conflicts by using a temporary index system. It copies `.mat` files from both the base and
 #' additions folders into the output folder, while adjusting indices and and class names for the additions.
 #'
+#' Note that the maximum limit for `uint16` is 65,535, so ensure that `temp_index_offset` remains below this value.
+#'
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @examples
 #' \dontrun{
 #' ifcb_merge_manual("path/to/class2use_base.mat", "path/to/class2use_additions.mat",
-#'                   "path/to/manual/base_folder", "path/to/manual/additions_folder",
-#'                   "path/to/manual/output_folder", temp_index_offset = 50000,
-#'                   quiet = FALSE)
+#'                   "path/to/class2use_combined.mat", "path/to/manual/base_folder",
+#'                   "path/to/manual/additions_folder", "path/to/manual/output_folder",
+#'                   temp_index_offset = 50000, quiet = FALSE)
 #' }
 #'
 #' @export
 ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
-                              manual_folder_base, manual_folder_additions,
-                              manual_folder_output, temp_index_offset = 50000,
-                              quiet = FALSE) {
+                              class2use_file_output = NULL, manual_folder_base,
+                              manual_folder_additions, manual_folder_output,
+                              temp_index_offset = 50000, quiet = FALSE) {
 
   # Initialize python check
   check_python_and_module()
@@ -77,8 +81,17 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   # Create temporary placeholder indices
   translation_df$temp_index <- translation_df$index_in_additions + temp_index_offset
 
-  # Create file path for the combined class2use file
-  class2use_file_output <- file.path(dirname(class2use_file_base), paste0("class2use_", basename(manual_folder_output), ".mat"))
+  if (is.null(class2use_file_output)) {
+    # Create file path for the combined class2use file
+    class2use_file_output <- file.path(dirname(class2use_file_base),
+                                       paste0("class2use_", basename(manual_folder_output), ".mat")
+                                       )
+  }
+
+  # Create dir for storing the new class2use file
+  if (!dir.exists(dirname(class2use_file_output))) {
+    dir.create(dirname(class2use_file_output), recursive = TRUE)
+  }
 
   # Create new class2use file
   ifcb_create_class2use(class2use_combined, class2use_file_output)
@@ -113,6 +126,11 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   # Filter translation data
   addition_translations <- translation_df[!is.na(translation_df$index_in_additions) & translation_df$index_in_additions != translation_df$rownumber, ]
 
+  if (!quiet) {
+    # Message indicating the number of indices being replaced
+    message(paste0("Replacing ", nrow(addition_translations), " class indices with temporary placeholders..."))
+  }
+
   # Replace index with placeholder index
   for (i in seq_len(nrow(addition_translations))) {
     ifcb_replace_mat_values(
@@ -120,6 +138,11 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
       addition_translations$index_in_additions[i],
       addition_translations$temp_index[i]
     )
+  }
+
+  if (!quiet) {
+    # Message indicating the number of indices being replaced
+    message(paste0("Replacing ", nrow(addition_translations), " class indices with updated values..."))
   }
 
   # Replace placeholder index with rownumber
@@ -136,6 +159,11 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
 
   if (!quiet) {
     message("Copied ", sum(copied_base), " base files to ", manual_folder_output)
+  }
+
+  # Message indicating the number of indices being replaced
+  if (!quiet) {
+    message(paste0("Adjusting class names in ", sum(copied_additions) + sum(copied_base), " files..."))
   }
 
   # Adjust the class names for all files
