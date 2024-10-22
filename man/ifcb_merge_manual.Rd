@@ -17,11 +17,11 @@ ifcb_merge_manual(
 }
 \arguments{
 \item{class2use_file_base}{Character. Path to the \code{class2use} file of the base manual classifications.
-The base set contains the original manual classifications that form the foundation for merging.}
+The base set contains the original manual classifications list that form the foundation for merging.}
 
 \item{class2use_file_additions}{Character. Path to the \code{class2use} file of the additions manual classifications.
-The additions set contains extra or updated classifications that need to be merged with the base set.
-Only unique class labels from the additions set that are not already present in the base set will be included in the merge.}
+The additions set contains additional classifications that need to be merged with the base set.
+Class labels from the \code{class2use_file_additions} that are not already included in the \code{class2use_file_base} will be added to generate the \code{class2use_file_output}.}
 
 \item{class2use_file_output}{Character. Path where the merged \code{class2use} file will be saved.
 If \code{NULL}, the merged file will be stored in the same directory as \code{class2use_file_base}. Default is \code{NULL}.}

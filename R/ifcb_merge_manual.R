@@ -5,10 +5,10 @@
 #' The merged `.mat` data can be used with the code in the `ifcb-analysis` repository (Sosik and Olson 2007).
 #'
 #' @param class2use_file_base Character. Path to the `class2use` file of the base manual classifications.
-#' The base set contains the original manual classifications that form the foundation for merging.
+#' The base set contains the original manual classifications list that form the foundation for merging.
 #' @param class2use_file_additions Character. Path to the `class2use` file of the additions manual classifications.
-#' The additions set contains extra or updated classifications that need to be merged with the base set.
-#' Only unique class labels from the additions set that are not already present in the base set will be included in the merge.
+#' The additions set contains additional classifications that need to be merged with the base set.
+#' Class labels from the `class2use_file_additions` that are not already included in the `class2use_file_base` will be added to generate the `class2use_file_output`.
 #' @param class2use_file_output Character. Path where the merged `class2use` file will be saved.
 #' If `NULL`, the merged file will be stored in the same directory as `class2use_file_base`. Default is `NULL`.
 #' @param manual_folder_base Character. Path to the folder containing the base set of manual classification `.mat` files.

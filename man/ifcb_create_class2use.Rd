@@ -34,5 +34,5 @@ ifcb_create_class2use(classes, "class2use_output.mat", do_compression = TRUE)
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_py_install}} \code{\link{ifcb_adjust_classes}} \url{https://github.com/hsosik/ifcb-analysis}
 }

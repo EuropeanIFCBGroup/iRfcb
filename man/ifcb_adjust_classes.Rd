@@ -20,9 +20,11 @@ Defaults to TRUE.}
 None
 }
 \description{
-This function adjusts the classifications in manual annotation files using a Python function.
+This function adjusts the classifications in manual annotation files based on a class2use file.
 It loads a specified class2use file and applies the adjustments to all relevant files in the
 specified manual folder. Optionally, it can also perform compression on the output files.
+This is the R equivalent function of \code{start_mc_adjust_classes_user_training} from the
+\verb{ifcb-analysis repository} (Sosik and Olson 2007).
 }
 \details{
 This function requires a python interpreter to be installed.
@@ -38,5 +40,5 @@ ifcb_adjust_classes("C:/training/config/class2use", "C:/training/manual/2014/")
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_py_install}} \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
 }
