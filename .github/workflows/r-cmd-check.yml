@@ -64,7 +64,7 @@ jobs:
 
           path_to_venv <- virtualenv_create(
             envname = "~/.virtualenvs/iRfcb",
-            python = Sys.getenv("pythonLocation"), # placed on PATH by the setup-python action
+            python = reticulate::install_python(version = "3.12"),
             packages = c(
               "scipy", "pandas", "matplotlib"
             )
