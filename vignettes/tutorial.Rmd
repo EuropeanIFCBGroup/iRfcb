@@ -27,7 +27,7 @@ library(iRfcb)
 
 #### Download Sample Data
 
-To get started, download sample data from the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) with the following function:
+To get started, download sample data from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) with the following function:
 ```{r}
 # Define data directory
 data_dir <- "data"
@@ -342,7 +342,8 @@ unclassified_id <- which(grepl("unclassified",
                          class2use))
 
 # Initialize the python session if not already set up
-# ifcb_py_install(envname = env_path) # If not already initialized
+# env_path <- "~/.virtualenvs/iRfcb"
+# ifcb_py_install(envname = env_path)
 
 # Correct the annotation with the output from the image gallery
 ifcb_correct_annotation(manual_folder = "data/manual",
@@ -369,7 +370,8 @@ unclassified_id <- which(grepl("unclassified",
                          class2use))
 
 # Initialize the python session if not already set up
-# ifcb_py_install(envname = env_path) # If not already initialized
+# env_path <- "~/.virtualenvs/iRfcb"
+# ifcb_py_install(envname = env_path)
 
 # Move all Alexandrium_pseudogonyaulax images to unclassified
 ifcb_replace_mat_values(manual_folder = "data/manual",
@@ -432,6 +434,46 @@ mat_count <- ifcb_count_mat_annotations(manual_files = "data/manual",
 head(mat_count)
 ```
 
+## Merge Manual Datasets
+
+Datasets that have been manually annotated using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007) can be merged using the [`ifcb_merge_manual`](../reference/ifcb_merge_manual.html) function. This is a wrapper function of the [`ifcb_create_class2use`](../reference/ifcb_create_class2use.html), [`ifcb_replace_mat_values`](../reference/ifcb_replace_mat_values.html) and [`ifcb_adjust_classes`](../reference/ifcb_adjust_classes.html) functions.
+
+In this example, two datasets from the Swedish west coast are downloaded from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024) and combined into a single dataset. Please note that these datasets are large, and the downloading and merging processes may take considerable time.
+
+```{r, eval=FALSE}
+# Define data directories
+skagerrak_kattegat_dir <- "data_skagerrak_kattegat"
+tangesund_dir <- "data_tangesund"
+merged_dir <- "data_skagerrak_kattegat_tangesund_merged"
+
+# Download and extract Skagerrak-Kattegat data in the data folder
+ifcb_download_test_data(dest_dir = skagerrak_kattegat_dir,
+                        figshare_article = "48158725")
+
+# Download and extract Tångesund data in the data folder
+ifcb_download_test_data(dest_dir = tangesund_dir,
+                        figshare_article = "48158731")
+
+# Initialize the python session if not already set up
+# env_path <- "~/.virtualenvs/iRfcb"
+# ifcb_py_install(envname = env_path)
+
+# Merge Skagerrak-Kattegat and Tångesund to a single dataset
+ifcb_merge_manual(class2use_file_base = file.path(skagerrak_kattegat_dir, 
+                                                  "config/class2use.mat"),
+                  class2use_file_additions = file.path(tangesund_dir, 
+                                                       "config/class2use.mat"),
+                  class2use_file_output = file.path(merged_dir, 
+                                                    "config/class2use.mat"),
+                  manual_folder_base = file.path(skagerrak_kattegat_dir, 
+                                                 "manual"),
+                  manual_folder_additions = file.path(tangesund_dir, 
+                                                      "manual"),
+                  manual_folder_output = file.path(merged_dir, 
+                                                   "manual")
+                  )
+```
+
 ## Prepare Annotated Images for Publication
 
 #### Summarize Image Metadata
@@ -452,7 +494,7 @@ The output can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../ref
 
 #### PNG Directory
 
-Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024):
+Prepare the PNG directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024):
 
 ```{r}
 # Create zip-archive
@@ -467,7 +509,7 @@ ifcb_zip_pngs(png_folder = "data/extracted_images",
 
 #### MATLAB Directory
 
-Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton image reference library](https://doi.org/10.17044/scilifelab.25883455):
+Prepare the MATLAB directory for publication as a zip-archive, similar to the files in the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455):
 
 ```{r}
 # Create zip-archive
@@ -651,4 +693,4 @@ citation("iRfcb")
 - Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
 - Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 - Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
-- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3
