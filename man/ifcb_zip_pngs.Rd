@@ -44,6 +44,7 @@ This function does not return any value; it creates a zip archive and optionally
 \description{
 This function zips directories containing .png files and optionally includes README and MANIFEST files.
 It can also split the resulting zip file into smaller parts if it exceeds a specified size.
+The zip archive can be used to submit IFCB data to repositories like in the SMHI IFCB Plankton Image Reference Library (Torstensson et al., 2024).
 }
 \examples{
 \dontrun{
@@ -58,6 +59,9 @@ ifcb_zip_pngs("path/to/images",
 ifcb_zip_pngs("path/to/images", "images.zip")
 }
 
+}
+\references{
+Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB Plankton Image Reference Library. SciLifeLab. Dataset. \doi{10.17044/scilifelab.25883455}
 }
 \seealso{
 \code{\link{ifcb_zip_matlab}}

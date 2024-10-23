@@ -2,7 +2,7 @@
 #'
 #' This function generates a MANIFEST.txt file listing all files in a specified folder and its subfolders,
 #' along with their sizes in bytes. The function can optionally exclude an existing MANIFEST.txt file from
-#' the generated list. A manifest may be useful when archiving images.
+#' the generated list. A manifest may be useful when archiving images in data repositories.
 #'
 #' @param folder_path A character string specifying the path to the folder whose files are to be listed.
 #' @param manifest_path A character string specifying the path and name of the MANIFEST.txt file to be created. Defaults to "folder_path/MANIFEST.txt".
