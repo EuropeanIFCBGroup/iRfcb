@@ -23,7 +23,7 @@ No return value, called for side effects. Creates a MANIFEST.txt file at the spe
 \description{
 This function generates a MANIFEST.txt file listing all files in a specified folder and its subfolders,
 along with their sizes in bytes. The function can optionally exclude an existing MANIFEST.txt file from
-the generated list. A manifest may be useful when archiving images.
+the generated list. A manifest may be useful when archiving images in data repositories.
 }
 \examples{
 \dontrun{

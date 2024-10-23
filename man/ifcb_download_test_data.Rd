@@ -23,7 +23,7 @@ By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is 
 }
 \description{
 This function downloads a zip archive containing MATLAB files from the \code{iRfcb}
-dataset available in the SMHI IFCB plankton image reference library (Torstensson et al. 2024),
+dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing iRfcb and for creating the tutorial vignette
 using \code{vignette("tutorial", package = "iRfcb")}
@@ -36,6 +36,6 @@ ifcb_download_test_data("data")
 
 }
 \references{
-Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB plankton image reference library. SciLifeLab. Dataset.
+Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB Plankton Image Reference Library. Version 3. SciLifeLab. Dataset.
 \doi{10.17044/scilifelab.25883455.v3}
 }

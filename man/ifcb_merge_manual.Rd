@@ -11,6 +11,7 @@ ifcb_merge_manual(
   manual_folder_base,
   manual_folder_additions,
   manual_folder_output,
+  do_compression = TRUE,
   temp_index_offset = 50000,
   quiet = FALSE
 )
@@ -32,12 +33,14 @@ If \code{NULL}, the merged file will be stored in the same directory as \code{cl
 
 \item{manual_folder_output}{Character. Path to the output folder where the merged classification files will be stored.}
 
+\item{do_compression}{A logical value indicating whether to compress the \code{.mat} file. Defaults to \code{TRUE}.}
+
 \item{temp_index_offset}{Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.}
 
 \item{quiet}{Logical. If \code{TRUE}, suppresses output messages. Default is \code{FALSE}.}
 }
 \value{
-No return value. Outputs the combined \code{class2use} file in the same folder as \code{class2use_file_base} is located,
+No return value. Outputs the combined \code{class2use} file in the same folder as \code{class2use_file_base} is located or at a user-specified location,
 and merged \code{.mat} files into the output folder.
 }
 \description{
@@ -63,7 +66,7 @@ Note that the maximum limit for \code{uint16} is 65,535, so ensure that \code{te
 ifcb_merge_manual("path/to/class2use_base.mat", "path/to/class2use_additions.mat",
                   "path/to/class2use_combined.mat", "path/to/manual/base_folder",
                   "path/to/manual/additions_folder", "path/to/manual/output_folder",
-                  temp_index_offset = 50000, quiet = FALSE)
+                  do_compression = TRUE, temp_index_offset = 50000, quiet = FALSE)
 }
 
 }

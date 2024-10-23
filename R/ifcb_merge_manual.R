@@ -14,10 +14,11 @@
 #' @param manual_folder_base Character. Path to the folder containing the base set of manual classification `.mat` files.
 #' @param manual_folder_additions Character. Path to the folder containing the additions set of manual classification `.mat` files.
 #' @param manual_folder_output Character. Path to the output folder where the merged classification files will be stored.
+#' @param do_compression A logical value indicating whether to compress the `.mat` file. Defaults to `TRUE`.
 #' @param temp_index_offset Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.
 #' @param quiet Logical. If `TRUE`, suppresses output messages. Default is `FALSE`.
 #'
-#' @return No return value. Outputs the combined `class2use` file in the same folder as `class2use_file_base` is located,
+#' @return No return value. Outputs the combined `class2use` file in the same folder as `class2use_file_base` is located or at a user-specified location,
 #'  and merged `.mat` files into the output folder.
 #'
 #' @details
@@ -41,14 +42,14 @@
 #' ifcb_merge_manual("path/to/class2use_base.mat", "path/to/class2use_additions.mat",
 #'                   "path/to/class2use_combined.mat", "path/to/manual/base_folder",
 #'                   "path/to/manual/additions_folder", "path/to/manual/output_folder",
-#'                   temp_index_offset = 50000, quiet = FALSE)
+#'                   do_compression = TRUE, temp_index_offset = 50000, quiet = FALSE)
 #' }
 #'
 #' @export
 ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
                               class2use_file_output = NULL, manual_folder_base,
                               manual_folder_additions, manual_folder_output,
-                              temp_index_offset = 50000, quiet = FALSE) {
+                              do_compression = TRUE, temp_index_offset = 50000, quiet = FALSE) {
 
   # Initialize python check
   check_python_and_module()
@@ -94,7 +95,7 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   }
 
   # Create new class2use file
-  ifcb_create_class2use(class2use_combined, class2use_file_output)
+  ifcb_create_class2use(class2use_combined, class2use_file_output, do_compression)
 
   if (!quiet) {
     message("class2use file stored in ", class2use_file_output)
@@ -136,7 +137,8 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
       addition_translations$index_in_additions[i],
-      addition_translations$temp_index[i]
+      addition_translations$temp_index[i],
+      do_compression = do_compression
     )
   }
 
@@ -150,7 +152,8 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
       addition_translations$temp_index[i],
-      addition_translations$rownumber[i]
+      addition_translations$rownumber[i],
+      do_compression = do_compression
     )
   }
 
@@ -167,5 +170,5 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   }
 
   # Adjust the class names for all files
-  ifcb_adjust_classes(class2use_file_output, manual_folder_output, do_compression = TRUE)
+  ifcb_adjust_classes(class2use_file_output, manual_folder_output, do_compression = do_compression)
 }
