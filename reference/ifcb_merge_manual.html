@@ -50,6 +50,7 @@ The merged <code>.mat</code> data can be used with the code in the <code>ifcb-an
 <span>  <span class="va">manual_folder_base</span>,</span>
 <span>  <span class="va">manual_folder_additions</span>,</span>
 <span>  <span class="va">manual_folder_output</span>,</span>
+<span>  do_compression <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  temp_index_offset <span class="op">=</span> <span class="fl">50000</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -87,6 +88,10 @@ If <code>NULL</code>, the merged file will be stored in the same directory as <c
 <dd><p>Character. Path to the output folder where the merged classification files will be stored.</p></dd>
 
 
+<dt id="arg-do-compression">do_compression<a class="anchor" aria-label="anchor" href="#arg-do-compression"></a></dt>
+<dd><p>A logical value indicating whether to compress the <code>.mat</code> file. Defaults to <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg-temp-index-offset">temp_index_offset<a class="anchor" aria-label="anchor" href="#arg-temp-index-offset"></a></dt>
 <dd><p>Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.</p></dd>
 
@@ -97,7 +102,7 @@ If <code>NULL</code>, the merged file will be stored in the same directory as <c
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>No return value. Outputs the combined <code>class2use</code> file in the same folder as <code>class2use_file_base</code> is located,
+    <p>No return value. Outputs the combined <code>class2use</code> file in the same folder as <code>class2use_file_base</code> is located or at a user-specified location,
 and merged <code>.mat</code> files into the output folder.</p>
     </div>
     <div class="section level2">
@@ -126,7 +131,7 @@ additions folders into the output folder, while adjusting indices and and class 
 <span class="r-in"><span><span class="fu">ifcb_merge_manual</span><span class="op">(</span><span class="st">"path/to/class2use_base.mat"</span>, <span class="st">"path/to/class2use_additions.mat"</span>,</span></span>
 <span class="r-in"><span>                  <span class="st">"path/to/class2use_combined.mat"</span>, <span class="st">"path/to/manual/base_folder"</span>,</span></span>
 <span class="r-in"><span>                  <span class="st">"path/to/manual/additions_folder"</span>, <span class="st">"path/to/manual/output_folder"</span>,</span></span>
-<span class="r-in"><span>                  temp_index_offset <span class="op">=</span> <span class="fl">50000</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  do_compression <span class="op">=</span> <span class="cn">TRUE</span>, temp_index_offset <span class="op">=</span> <span class="fl">50000</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
