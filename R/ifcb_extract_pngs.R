@@ -60,7 +60,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   })
 
   # Loop over ROIs and save PNG images
-  if (verbose) cat(paste("Writing", length(ROInumbers), "ROIs from", basename(roi_file), "to", outpath), "\n")
+  if (verbose) cat(paste("Writing", length(x[x > 0]), "ROIs from", basename(roi_file), "to", outpath), "\n")
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
