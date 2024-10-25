@@ -9,7 +9,7 @@ test_that("ifcb_get_shark_example reads the shark column names correctly", {
                          "IFCBNO","SMPNO","LATNM","SFLAG","TRPHY","APHIA_ID",
                          "IMAGE_VERIFICATION", "VERIFIED_BY", "COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
                          "CLASS_NAME","CLASS_F1","UNCLASSIFIED_COUNTS","UNCLASSIFIED_ABUNDANCE",
-                         "UNCLASSIFIED_VOLUME","METOA",
+                         "UNCLASSIFIED_VOLUME","METOA","ASSOCIATED_MEDIA",
                          "CLASSPROG","ALABO","ACKR_ANA","ANADATE","METDC",
                          "TRAINING_SET","TRAINING_SET_ANNOTATED_BY","CLASSIFIER_CREATED_BY",
                          "CLASSIFIER_USED","MANUAL_QC_DATE","PRE_FILTER_SIZE", "PH_FB",

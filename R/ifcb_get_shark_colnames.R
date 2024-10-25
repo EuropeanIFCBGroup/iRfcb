@@ -28,9 +28,9 @@ ifcb_get_shark_colnames <- function(minimal = FALSE) {
     columns <- c("MYEAR", "STATN", "PROJ", "ORDERER", "SHIPC", "SDATE", "STIME",
                  "LATIT", "LONGI", "POSYS", "MNDEP", "MXDEP", "SLABO", "ACKR_SMP",
                  "SMTYP", "SMVOL", "IFCBNO", "SMPNO", "LATNM", "SFLAG", "TRPHY",
-                 "IMAGE_VERIFICATION", "COUNT", "QFLAG", "COEFF", "CLASS_F1",
-                 "UNCLASSIFIED_COUNTS", "METOA", "CLASSPROG", "TRAINING_SET", "ALABO",
-                 "ACKR_ANA", "ANADATE", "METDC", "CLASSIFIER_USED")
+                 "IMAGE_VERIFICATION", "VERIFIED_BY", "COUNT", "QFLAG", "COEFF", "CLASS_F1",
+                 "UNCLASSIFIED_COUNTS", "METOA", "ASSOCIATED_MEDIA", "CLASSPROG", "TRAINING_SET",
+                 "ALABO", "ACKR_ANA", "ANADATE", "METDC", "CLASSIFIER_USED")
 
     shark_example <- dplyr::select(shark_example, dplyr::all_of(columns))
   }
