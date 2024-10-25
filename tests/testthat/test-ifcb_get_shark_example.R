@@ -10,7 +10,7 @@ test_that("ifcb_get_shark_example reads the shark column names correctly", {
                          "IMAGE_VERIFICATION","COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
                          "CLASS_NAME","CLASS_F1","UNCLASSIFIED_COUNTS","UNCLASSIFIED_ABUNDANCE",
                          "UNCLASSIFIED_VOLUME","METOA",
-                         "COUNTPROG","ALABO","ACKR_ANA","ANADATE","METDC",
+                         "CLASSPROG","ALABO","ACKR_ANA","ANADATE","METDC",
                          "TRAINING_SET","TRAINING_SET_ANNOTATED_BY","CLASSIFIER_CREATED_BY",
                          "CLASSIFIER_USED","MANUAL_QC_DATE","PRE_FILTER_SIZE", "PH_FB",
                          "CHL_FB","CDOM_FB","PHYC_FB","PHER_FB","WATERFLOW_FB","TURB_FB","PCO2_FB",
