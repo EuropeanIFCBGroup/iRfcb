@@ -5,7 +5,7 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
                          "SDATE","STIME","TIMEZONE","LATIT","LONGI",
                          "POSYS","WADEP","MPROG","MNDEP","MXDEP",
                          "SLABO","ACKR_SMP","SMTYP","PDMET","SMVOL","METFP",
-                         "IFCBNO","SMPNO","LATNM","SFLAG","TRPHY","APHIA_ID",
+                         "IFCBNO","SMPNO","LATNM","SFLAG","LATNM_SFLAG","TRPHY","APHIA_ID",
                          "IMAGE_VERIFICATION", "VERIFIED_BY", "COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
                          "CLASS_NAME","CLASS_F1","UNCLASSIFIED_COUNTS","UNCLASSIFIED_ABUNDANCE",
                          "UNCLASSIFIED_VOLUME","METOA", "ASSOCIATED_MEDIA",
