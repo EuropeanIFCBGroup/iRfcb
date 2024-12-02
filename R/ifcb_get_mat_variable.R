@@ -25,7 +25,7 @@
 #' @seealso \code{\link{ifcb_get_mat_names}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use") {
   # Read class information from the MAT file
-  class_info <- R.matlab::readMat(mat_file)
+  class_info <- suppressWarnings({R.matlab::readMat(mat_file)})
 
   # Check if the specified variable name exists in the MAT file
   if (!variable_name %in% names(class_info)) {

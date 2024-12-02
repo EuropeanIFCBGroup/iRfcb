@@ -1,6 +1,7 @@
 url: https://europeanifcbgroup.github.io/iRfcb/
 template:
   bootstrap: 5
+  light-switch: true
 
 navbar:
   left:

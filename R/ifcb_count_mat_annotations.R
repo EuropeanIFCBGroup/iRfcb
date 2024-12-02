@@ -63,9 +63,13 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   # Initialize an empty data frame to accumulate the results
   total_sum <- data.frame()
 
+  # Initialize a list to store all warnings
+  warning_list <- list()
+
   for (file in manual_files) {
     # Read the taxa list from the file
-    mat_data <- R.matlab::readMat(file)
+    mat_data <- suppressWarnings({R.matlab::readMat(file)})
+
     taxa_list <- as.data.frame(mat_data$classlist)  # Assuming readMat is used to read .mat files
 
     # Assign names to the columns in taxa_list
@@ -99,6 +103,13 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
     total_sum <- total_sum %>%
       group_by(class) %>%
       summarise(n = sum(n, na.rm = TRUE), .groups = 'drop')
+  }
+
+  # Display the number of warnings
+  num_warnings <- length(warning_list)
+
+  if (num_warnings > 0) {
+    message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
   }
 
   return(total_sum)
