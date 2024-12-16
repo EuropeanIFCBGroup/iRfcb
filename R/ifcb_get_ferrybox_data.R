@@ -1,4 +1,4 @@
-utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059', 'timestamp_minute_temp', 'time_difference'))
+utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059', 'timestamp_minute_temp', 'time_difference', 'n'))
 
 #' Retrieve Ferrybox Data for Specified Timestamps
 #'
@@ -185,8 +185,8 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   # Check for multiple rows per minute and issue a warning
   duplicate_rows <- output %>%
     dplyr::group_by(timestamp) %>%
-    dplyr::summarize(row_count = n()) %>%
-    dplyr::filter(row_count > 1)
+    dplyr::summarize(n = n()) %>%
+    dplyr::filter(n > 1)
 
   if (nrow(duplicate_rows) > 0) {
     warning("Multiple rows detected for the following minute timestamps: ",

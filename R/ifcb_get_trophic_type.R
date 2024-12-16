@@ -1,4 +1,4 @@
-utils::globalVariables(c("scientific_name", "n_distinct", "trophic_type"))
+utils::globalVariables(c("scientific_name", "trophic_type"))
 
 #' @title Get Trophic Type for a List of Plankton Taxa
 #' @description This function matches a specified list of taxa with a summarized list of trophic types
