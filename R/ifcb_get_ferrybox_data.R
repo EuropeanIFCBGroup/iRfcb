@@ -1,4 +1,4 @@
-utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059'))
+utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059', 'timestamp_minute_temp', 'time_difference', 'n'))
 
 #' Retrieve Ferrybox Data for Specified Timestamps
 #'
@@ -32,7 +32,7 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join bind_rows cur_column
+#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join bind_rows cur_column slice_min
 #' @importFrom magrittr %>%
 #' @importFrom lubridate round_date ymd_hms floor_date ceiling_date
 #' @importFrom tidyselect all_of contains
@@ -124,14 +124,16 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   # Extract and clean ferrybox position data
   ferrybox_position <- ferrybox_data %>%
     dplyr::mutate(
-      timestamp_minute = tryCatch({
+      timestamp_minute_temp = tryCatch({
         ymd_hms(as.numeric(ferrybox_data$`38059`), tz = "UTC")
       }, error = function(e) {
         stop("Error parsing ferrybox timestamp data.")
       })
     ) %>%
-    dplyr::mutate(timestamp_minute = lubridate::round_date(timestamp_minute, unit = "minute")) %>%
-    dplyr::select(all_of(c("timestamp_minute", parameters)))
+    dplyr::mutate(
+      timestamp_minute = lubridate::round_date(timestamp_minute_temp, unit = "minute"),
+      time_difference = abs(difftime(timestamp_minute_temp, timestamp_minute, units = "secs"))
+    )
 
   # Convert parameters to numeric where applicable
   ferrybox_position <- ferrybox_position %>%
@@ -145,6 +147,9 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   output <- data.frame(timestamp = timestamps) %>%
     mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
     left_join(ferrybox_position, by = "timestamp_minute") %>%
+    group_by(timestamp_minute) %>%
+    slice_min(time_difference, with_ties = FALSE) %>% # Select the row with the smallest time difference
+    ungroup() %>%
     select(timestamp, all_of(parameters))
 
   # Handle missing data using floor and ceiling rounding
@@ -176,6 +181,17 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   # Ensure all parameters are numeric
   output <- output %>%
     mutate(across(all_of(parameters), as.numeric))
+
+  # Check for multiple rows per minute and issue a warning
+  duplicate_rows <- output %>%
+    dplyr::group_by(timestamp) %>%
+    dplyr::summarize(n = n()) %>%
+    dplyr::filter(n > 1)
+
+  if (nrow(duplicate_rows) > 0) {
+    warning("Multiple rows detected for the following minute timestamps: ",
+            paste(duplicate_rows$timestamp, collapse = ", "))
+  }
 
   # Check if latitude_param and longitude_param are in parameters and rename accordingly
   names(output)[names(output) == latitude_param] <- ifelse(latitude_param %in% parameters, "gpsLatitude", names(output)[names(output) == latitude_param])
