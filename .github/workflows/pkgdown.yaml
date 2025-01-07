@@ -35,7 +35,7 @@ jobs:
           needs: website
 
       - name: Install remotes
-       run: |
+        run: |
           Rscript -e 'install.packages("remotes")'
 
       - name: Install non-CRAN package
