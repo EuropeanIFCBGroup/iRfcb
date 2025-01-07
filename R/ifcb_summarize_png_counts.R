@@ -10,9 +10,6 @@
 #' @return If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
 #'         If sum_level is "class", returns a data frame with columns: class_name, n_images.
 #'
-#' @importFrom dplyr group_by summarise bind_rows arrange n first
-#' @importFrom lubridate date year month day
-#'
 #' @export
 #' @seealso \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
 #'

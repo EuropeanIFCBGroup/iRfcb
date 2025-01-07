@@ -68,7 +68,6 @@ truncate_folder_name <- function(folder_name) {
 #' @param current An integer specifying the current progress.
 #' @param total An integer specifying the total steps for the process.
 #' @param bar_width An integer specifying the width of the progress bar. Default is 50.
-#' @importFrom utils flush.console
 print_progress <- function(current, total, bar_width = 50) {
   progress <- current / total
   complete <- round(progress * bar_width)
@@ -110,7 +109,6 @@ find_matching_data <- function(mat_file, data_files) {
 #'
 #' @param file A character string specifying the path to the HDR file.
 #' @return A data frame with columns: parameter, value, and file.
-#' @importFrom stats na.omit
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
   lines <- gsub("\\bN/A\\b", NA, lines)
@@ -131,7 +129,6 @@ read_hdr_file <- function(file) {
 #'
 #' @param filename A character string specifying the filename to extract parts from.
 #' @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
-#' @importFrom tools file_path_sans_ext
 extract_parts <- function(filename) {
 
   # Clean filename
@@ -185,7 +182,6 @@ extract_parts <- function(filename) {
 #'
 #' @param ... Additional arguments passed to the function.
 #'
-#' @importFrom reticulate virtualenv_list use_virtualenv virtualenv_root
 .onLoad <- function(...) {
   # List available virtual environments in the default virtualenv root
   venvs <- reticulate::virtualenv_list()
@@ -214,7 +210,6 @@ extract_parts <- function(filename) {
 #'   \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
 #'   \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
-#' @importFrom R.matlab readMat
 summarize_TBclass <- function(classfile, adhocthresh = NULL) {
   data <- readMat(classfile)
   class2useTB <- data$class2useTB
@@ -322,8 +317,6 @@ vol2C_nondiatom <- function(volume) {
 #'                                             round_timestamp)
 #' }
 #'
-#' @importFrom dplyr rename_with filter if_any mutate left_join select across coalesce
-#' @importFrom magrittr %>%
 #' @export
 handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, rounding_function) {
   # Ensure that the columns from ferrybox_data are present and rename them
@@ -390,6 +383,11 @@ extract_aphia_id <- function(record) {
 
 #' Retrieve WoRMS Records with Retry Mechanism
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#'
 #' This helper function attempts to retrieve WoRMS records using the provided taxa names.
 #' It retries the operation if an error occurs, up to a specified number of attempts.
 #'
@@ -397,31 +395,18 @@ extract_aphia_id <- function(record) {
 #' @param max_retries An integer specifying the maximum number of attempts to retrieve records.
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
 #' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
+#' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return A list of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
 #'
-#' @importFrom worrms wm_records_names
-retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE) {
-  attempt <- 1
-  worms_records <- NULL
+#' @keywords internal
+retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE, verbose = TRUE) {
 
-  while(attempt <= max_retries) {
-    tryCatch({
-      worms_records <- wm_records_names(taxa_names, marine_only = marine_only)
-      if (!is.null(worms_records)) break
-    }, error = function(err) {
-      if (attempt == max_retries) {
-        stop("Error occurred while retrieving WoRMS records after ", max_retries, " attempts: ", conditionMessage(err))
-      } else {
-        message("Attempt ", attempt, " failed: ", conditionMessage(err), " - Retrying...")
-        Sys.sleep(sleep_time)
-      }
-    })
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.4.0", "iRfcb::retrieve_worms_records()", "ifcb_match_taxa_names()")
 
-    attempt <- attempt + 1
-  }
-
-  worms_records
+  # Redirect function
+  ifcb_match_taxa_names(taxa_names = taxa_names, max_retries = max_retries, sleep_time = sleep_time, return_list = TRUE, marine_only = marine_only, verbose = verbose)
 }
 
 #' Extract Features and Add Sample Names
@@ -455,9 +440,6 @@ extract_features <- function(sample_name, feature_data) {
 #' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.
 #'
 #' @return This function does not return any value; it creates multiple smaller zip files.
-#'
-#' @importFrom zip zip unzip
-#' @importFrom tools file_path_sans_ext
 #'
 #' @examples
 #' \dontrun{
@@ -596,8 +578,6 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' @param initialize Logical. Whether to initialize Python if not already initialized (default is TRUE).
 #'
 #' @return This function does not return a value. It stops execution if the required Python environment is not available.
-#'
-#' @importFrom reticulate py_available py_module_available
 #'
 #' @examples
 #' \dontrun{

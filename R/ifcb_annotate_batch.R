@@ -51,9 +51,6 @@
 #' )
 #' }
 #'
-#' @importFrom dplyr filter
-#' @importFrom tools file_path_sans_ext
-#'
 #' @export
 ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, class2use_file,
                                 manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1,

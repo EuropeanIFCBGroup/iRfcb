@@ -13,19 +13,20 @@
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
 #'        Default is 10 seconds.
 #' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
+#' @param fuzzy A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.
+#' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
 #'
 #' @examples
+#' \dontrun{
 #' taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 #' ifcb_is_diatom(taxa_list)
-#'
-#' @importFrom magrittr %>%
-#' @importFrom stringr word
+#' }
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
-ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE) {
+ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE, fuzzy = TRUE, verbose = TRUE) {
 
   # Clean the taxa list
   taxa_list_clean <- taxa_list %>%
@@ -35,10 +36,13 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
     trimws()
 
   # Retrieve WoRMS records
-  worms_data <- retrieve_worms_records(taxa_names = word(taxa_list_clean, 1),
-                                       max_retries = max_retries,
-                                       sleep_time = sleep_time,
-                                       marine_only = marine_only)
+  worms_data <- ifcb_match_taxa_names(taxa_names = word(taxa_list_clean, 1),
+                                      max_retries = max_retries,
+                                      sleep_time = sleep_time,
+                                      marine_only = marine_only,
+                                      fuzzy = fuzzy,
+                                      return_list = TRUE,
+                                      verbose = verbose)
 
   # Extract classes with error handling for missing data
   classes <- sapply(worms_data, function(record) {

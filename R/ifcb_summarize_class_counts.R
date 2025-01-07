@@ -26,9 +26,6 @@
 #'                             'C:/work/IFCB/user_training_test_data/data/', 2014)
 #' }
 #'
-#' @importFrom lubridate ymd_hms
-#' @importFrom stringr str_replace
-#' @importFrom R.matlab readMat
 #' @export
 ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_range) {
   # Check whether hdr_folder is a URL

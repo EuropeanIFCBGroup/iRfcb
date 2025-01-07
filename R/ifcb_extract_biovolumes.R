@@ -17,6 +17,7 @@ utils::globalVariables("biovolume")
 #' @param multiblob A logical indicating whether to include multiblob features. Default is FALSE.
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within when `feature_files` is a folder. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
+#' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
 #'
@@ -38,17 +39,13 @@ utils::globalVariables("biovolume")
 #' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
-#' @importFrom R.matlab readMat
-#' @importFrom dplyr left_join mutate case_when select
-#' @importFrom stringr str_replace
-#'
 #' @export
 #'
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
 ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL,
                                     micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
                                     marine_only = FALSE, threshold = "opt", multiblob = FALSE,
-                                    feature_recursive = TRUE, mat_recursive = TRUE) {
+                                    feature_recursive = TRUE, mat_recursive = TRUE, verbose = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
@@ -78,8 +75,12 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
   # List matching feature files
   feature_files <- feature_files[extracted_dates %in% class_date_times]
 
+  if (verbose) {
+    cat("Reading feature files...\n")
+  }
+
   # Read feature files
-  features <- ifcb_read_features(feature_files, multiblob = multiblob)
+  features <- ifcb_read_features(feature_files, multiblob = multiblob, verbose = verbose)
 
   if (length(features) == 0) {
     stop("No feature data files found")
@@ -90,6 +91,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
   # Loop through each feature file
   for (file_name in names(features)) {
+
     file_data <- features[[file_name]]
 
     # Create a data frame with sample, roi_number, and biovolume
@@ -181,9 +183,15 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
   # Determine if each class is a diatom
   unique_classes <- unique(biovolume_df$class)
+
+  if (verbose) {
+    cat("Retrieving WoRMS records...\n")
+  }
+
   is_diatom <- data.frame(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
                                                                              diatom_class = diatom_class,
-                                                                             marine_only = marine_only))
+                                                                             marine_only = marine_only,
+                                                                             verbose = verbose))
   biovolume_df <- left_join(biovolume_df, is_diatom, by = "class")
 
   # Filter rows where is_diatom$is_diatom is NA
@@ -193,13 +201,13 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
   non_diatoms <- is_diatom[!is_diatom$is_diatom, "class"]
 
   # Print the classes with NA values
-  if (length(na_classes) > 0) {
+  if (length(na_classes) > 0 & verbose) {
     cat("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:\n")
     cat(sort(na_classes), sep = "\n")
   }
 
   # Print the classes that are non-Diatoms
-  if (length(non_diatoms) > 0) {
+  if (length(non_diatoms) > 0 & verbose) {
     cat("INFO: The following classes are considered NOT diatoms for carbon calculations:\n")
     cat(sort(non_diatoms), sep = "\n")
   }

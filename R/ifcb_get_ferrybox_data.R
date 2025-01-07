@@ -32,12 +32,6 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' print(result)
 #' }
 #'
-#' @importFrom dplyr filter rowwise mutate ungroup left_join rename select coalesce full_join bind_rows cur_column slice_min
-#' @importFrom magrittr %>%
-#' @importFrom lubridate round_date ymd_hms floor_date ceiling_date
-#' @importFrom tidyselect all_of contains
-#' @importFrom stringr str_remove
-#'
 #' @export
 ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("8002", "8003"), ship = "SveaFB", latitude_param = "8002", longitude_param = "8003") {
   # Validate inputs

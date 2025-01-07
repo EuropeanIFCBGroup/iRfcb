@@ -50,11 +50,6 @@ utils::globalVariables("edit_manual_file")
 #'                         99)
 #' }
 #'
-#' @importFrom reticulate source_python
-#' @importFrom stats aggregate
-#' @importFrom tools file_path_sans_ext
-#' @importFrom lifecycle is_present deprecate_warn deprecated
-#'
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL, correct_classid, do_compression = TRUE, correction_file = deprecated()) {
 

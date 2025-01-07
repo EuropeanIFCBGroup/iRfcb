@@ -45,10 +45,6 @@
 #'                  version = "1.0")
 #' }
 #'
-#' @importFrom zip zipr
-#' @importFrom stringr str_extract
-#' @importFrom dplyr count arrange desc n
-#'
 #' @export
 #'
 #' @references

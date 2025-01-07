@@ -11,12 +11,6 @@
 #' timestamps <- ifcb_convert_filenames(filenames)
 #' print(timestamps)
 #'
-#' @importFrom stringr str_extract str_remove_all
-#' @importFrom lubridate ymd_hms
-#' @importFrom readr type_convert
-#' @importFrom dplyr bind_rows
-#' @importFrom tools file_path_sans_ext
-#'
 #' @export
 ifcb_convert_filenames <- function(filenames) {
 

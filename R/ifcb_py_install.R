@@ -14,7 +14,6 @@
 #' # Install the iRfcb Python environment with additional packages
 #' ifcb_py_install(packages = c("numpy", "pandas"))
 #' }
-#' @importFrom reticulate virtualenv_create use_virtualenv
 #' @export
 ifcb_py_install <- function(..., envname = "~/.virtualenvs/iRfcb") {
   args <- list(...)

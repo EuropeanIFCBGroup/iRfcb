@@ -13,9 +13,6 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @return A data frame with the total count of images per class, roi or per sample.
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
-#' @importFrom R.matlab readMat
-#' @importFrom dplyr filter left_join mutate select group_by summarise bind_rows pull n
-#' @importFrom tools file_path_sans_ext
 #'
 #' @examples
 #' \dontrun{

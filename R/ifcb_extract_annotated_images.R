@@ -16,10 +16,6 @@ utils::globalVariables(c("name", "manual"))
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #'
-#' @importFrom R.matlab readMat
-#' @importFrom tools file_path_sans_ext
-#' @importFrom dplyr pull
-#'
 #' @return None. The function saves the extracted PNG images to the specified output directory.
 #'
 #' @export

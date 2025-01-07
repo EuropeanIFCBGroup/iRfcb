@@ -21,7 +21,6 @@
 #' # Extract specific ROI numbers from ROI file
 #' ifcb_extract_pngs("path/to/your_roi_file.roi", "output_directory", ROInumbers = c(1, 2, 3))
 #' }
-#' @importFrom imager as.cimg save.image
 #' @export
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.

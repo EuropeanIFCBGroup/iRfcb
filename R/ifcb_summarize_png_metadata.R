@@ -10,10 +10,6 @@
 #'
 #' @return A dataframe that joins image data, header data, and feature data based on the sample and roi number.
 #'
-#' @importFrom dplyr left_join select bind_rows
-#' @importFrom magrittr %>%
-#' @importFrom stringr str_replace_all
-#'
 #' @examples
 #' \dontrun{
 #' png_folder <- "path/to/pngs"
@@ -70,7 +66,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
       feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
       feature_file_names <- sub("(^[^_]+_[^_]+)_.*", "\\1", feature_file_names)
       feature_files_selected <- feature_files[sapply(feature_file_names, function(file_name) any(grepl(file_name, samples)))]
-      features <- ifcb_read_features(feature_files_selected, multiblob = FALSE)
+      features <- ifcb_read_features(feature_files_selected, multiblob = FALSE, verbose = FALSE)
 
       # Combine all features into a single dataframe
       features_df <- bind_rows(lapply(names(features), function(sample_name) {

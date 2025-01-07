@@ -9,9 +9,6 @@ utils::globalVariables(c("x", "y"))
 #' @param fits A data frame containing the fit parameters for the power curve (fits output from `ifcb_psd`), where each row represents a sample and the columns include the parameters `a`, `k`, and `R2`.
 #' @param start_fit The x-value threshold below which data should be excluded from the plot and fit.
 #'
-#' @importFrom ggplot2 ggplot aes geom_line stat_function annotate labs theme_minimal theme element_blank element_rect
-#' @importFrom dplyr filter
-#'
 #' @return A ggplot object representing the PSD plot for the sample.
 #' @export
 #'

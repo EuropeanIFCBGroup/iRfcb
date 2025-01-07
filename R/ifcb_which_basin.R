@@ -29,9 +29,6 @@ utils::globalVariables(c("longitude", "latitude"))
 #' # Plot the points and the basins
 #' ifcb_which_basin(latitudes, longitudes, plot = TRUE)
 #'
-#' @importFrom sf st_read st_transform st_as_sf st_crs st_within
-#' @importFrom zip unzip
-#' @importFrom ggplot2 ggplot geom_sf labs ylim xlim theme_minimal geom_text aes
 #' @export
 ifcb_which_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = NULL) {
 

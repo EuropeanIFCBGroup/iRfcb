@@ -11,11 +11,10 @@
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
+#' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB Plankton Image Reference Library. Version 3. SciLifeLab. Dataset.
 #' \doi{10.17044/scilifelab.25883455.v3}
-#'
-#' @importFrom curl curl_download new_handle
 #'
 #' @examples
 #' \dontrun{
@@ -24,7 +23,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10) {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, verbose = TRUE) {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -57,7 +56,9 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     attempts <- attempts + 1
 
     if (!success) {
-      message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
+      if (verbose) {
+        message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
+      }
 
       Sys.sleep(sleep_time)
     }
@@ -112,5 +113,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   file.copy(correction_file, dest_correction_file)
   file.copy(ferrybox_file, dest_ferrybox_file)
 
-  cat("Download and extraction complete.\n")
+  if (verbose) {
+    cat("Download and extraction complete.\n")
+  }
 }
