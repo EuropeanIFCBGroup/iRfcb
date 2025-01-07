@@ -4,12 +4,14 @@
 \alias{ifcb_read_features}
 \title{Read Feature Files from a Specified Folder or File Paths}
 \usage{
-ifcb_read_features(feature_files = NULL, multiblob = FALSE)
+ifcb_read_features(feature_files = NULL, multiblob = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
 \item{multiblob}{Logical indicating whether to filter for multiblob files (default: FALSE).}
+
+\item{verbose}{Logical. Whether to display progress information. Default is TRUE.}
 }
 \value{
 A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
