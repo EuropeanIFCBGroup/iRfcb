@@ -26,7 +26,12 @@ devtools::install_github("EuropeanIFCBGroup/iRfcb",
 ```
 
 Load the `iRfcb` and `dplyr` libraries:
-```{r, message=FALSE}
+```{r, eval=FALSE}
+library(iRfcb)
+library(dplyr) # For data wrangling
+```
+
+```{r, include=FALSE}
 library(iRfcb)
 library(dplyr) # For data wrangling
 ```

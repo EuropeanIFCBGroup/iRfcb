@@ -10,13 +10,13 @@ vignette: >
 
 ## Introduction
 
-This tutorial demonstrates how to create a Darwin Core Archive (DwC-A) from Imaging FlowCytobot (IFCB) results processed using MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). However, the code can be adapted to process classifications from other software platforms as well. The example below is based on a subset of manually annotated image data from the [SMHI IFCB Plankton Image Reference Library (version 3)](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024), and aligns with the *best practices* outlined by Martin-Cabrera et al. (2022).
+This tutorial demonstrates how to create a Darwin Core Archive (DwC-A) from Imaging FlowCytobot (IFCB) results processed using MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). However, the code can be adapted to process classifications from other machine learning algorithm as well. The example below is based on a subset of manually annotated image data from the [SMHI IFCB Plankton Image Reference Library (version 3)](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024), and aligns with the *best practices* outlined by Martin-Cabrera et al. (2022).
 
 The DwC-A is a widely accepted standard for sharing biodiversity data. It organizes data into structured tables, such as sampling events, occurrences, and extended measurement or facts (eMoF), which can be linked through unique identifiers. This standardized format facilitates data sharing, integration, and reuse across platforms, enabling interoperability with global biodiversity databases like the Global Biodiversity Information Facility ([GBIF](https://www.gbif.org/)), Ocean Biodiversity Information System ([OBIS](https://obis.org/)) and the European Marine Observation and Data Network Biology ([EMODNet Biology](https://emodnet.ec.europa.eu/en/biology)).
 
 By using the `iRfcb` package in combination with the [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/) package, this tutorial guides you through creating a sampling event-based DwC-A. The archive includes occurrence and eMoF tables, ensuring the IFCB results meet the requirements of major biodiversity repositories.
 
-With DwC-A, your data becomes part of a global ecosystem of interoperable datasets, contributing to biodiversity research and monitoring on an international scale. Standardized datasets like these enable diverse applications, such as the development of digital twins—virtual models of ecosystems used to simulate and predict environmental changes. This tutorial provides a reproducible workflow to help you prepare your IFCB data for submission to these large databases while adhering to international data standards, broadening its potential for innovative uses in biodiversity science.
+With DwC-A, your data can become part of a global ecosystem of interoperable datasets, contributing to biodiversity research and monitoring on an international scale. Standardized datasets like these enable diverse applications, such as the development of digital twins—virtual models of ecosystems used to simulate and predict environmental changes. This tutorial provides a reproducible workflow to help you prepare your IFCB data for submission to these large databases while adhering to international data standards, broadening its potential for innovative uses in biodiversity science.
 
 ## Getting Started
 
@@ -31,7 +31,15 @@ devtools::install_github(c("EuropeanIFCBGroup/iRfcb",
 ```
 
 Load the required libraries:
-```{r, message=FALSE}
+```{r, eval=FALSE}
+library(iRfcb)
+library(LivingNorwayR) # For DwC-A creation
+library(dplyr) # For data wrangling
+library(tidyr) # For data wrangling
+library(uuid) # For generating unique identifiers
+```
+
+```{r, include=FALSE}
 library(iRfcb)
 library(LivingNorwayR) # For DwC-A creation
 library(dplyr) # For data wrangling
@@ -115,16 +123,15 @@ Additionally, each Parent Event is associated with specific date ranges, which m
 ```{r}
 # Add a single parentEventID for all samples in the dataset
 data_event <- data_manual %>%
-  mutate(
-    parentEventID = uuid::UUIDgenerate(use.time = FALSE)
-  )
+  mutate(parentEventID = uuid::UUIDgenerate(use.time = FALSE))
 
-# Event Date for parentIDs
+# Event Date and info for parentEvents
 data_parent_event <- data_event  %>%
   group_by(parentEventID) %>%
   summarise(min = min(date), max=max(date),
             ifcb_number = unique(ifcb_number)) %>%
   mutate(eventID = parentEventID,
+         parentEventID = NA,
          eventType = "Project",
          datasetName = "iRfcb-DwC-A",
          eventDate = paste0(min, "/", max))  %>%
@@ -133,16 +140,21 @@ data_parent_event <- data_event  %>%
 
 ### Sample Events
 
-To organize our data effectively, we start by defining key event terms. These include general terms like **eventType** and **ownerInstitutionCode**. Each term represents specific metadata associated with the collected data. Below is the annotated R code that processes and structures the data into an event-focused format.
+To organize our data effectively, we start by defining key event terms. These include general terms like **eventType** and **ownerInstitutionCode**. **institutionID** for many European institutions can be retrieved from various registries, such as the [European Directory of Marine Organisations (EDMO)](https://edmo.seadatanet.org/). Each term represents specific metadata associated with the collected data. Below is the annotated R code that processes and structures the data into an event-focused format.
 
 ```{r}
 # Add metadata columns to the data
 data_event <- data_event %>%
   mutate(
-    # Defining the institution responsible for the data
+    # Defining the institution who own and are responsible for the data
     ownerInstitutionCode = "SMHI",
+    institutionID = "https://edmo.seadatanet.org/report/545",
+    institutionCode = "SMHI",
     
-    # Specifying the type of record, which is Event in this case
+    # Defining CC-BY data licence
+    license = "http://creativecommons.org/licenses/by/4.0/legalcodeY",
+    
+    # Specifying the type of record, which is Sample in this case
     eventType = "Sample",
     
     # Mapping existing date and time fields to standard terms
@@ -152,6 +164,8 @@ data_event <- data_event %>%
     # Adding geographical information
     decimalLatitude = gpsLatitude,
     decimalLongitude = gpsLongitude,
+    locality = NA, # The specific description of the place, if available
+    verbatimLocality = NA, # The original textual description of the place
     geodeticDatum = "EPSG:4326",
     countryCode = "SE",
     country = "Sweden",
@@ -174,10 +188,11 @@ data_event <- data_event %>%
 
 # Create a clean data frame with selected columns
 event_df <- data_event %>%
-  select(eventType, ownerInstitutionCode, parentEventID, eventID,
-    samplingProtocol, sampleSizeValue, sampleSizeUnit, eventDate, eventTime,
-    year, month, day, country, countryCode, decimalLatitude, decimalLongitude,
-    geodeticDatum, minimumDepthInMeters, maximumDepthInMeters) %>%
+  select(eventType, ownerInstitutionCode, institutionCode, institutionID,  
+         parentEventID, eventID, license, samplingProtocol, sampleSizeValue, 
+         sampleSizeUnit, eventDate, eventTime, year, month, day, country, 
+         countryCode, decimalLatitude, decimalLongitude, geodeticDatum, 
+         locality, verbatimLocality, minimumDepthInMeters, maximumDepthInMeters) %>%
   mutate(eventDate = as.character(eventDate)) %>%
   # Ensure rows are unique
   distinct()
@@ -223,9 +238,7 @@ data_occurrences <- data_event %>%
     identificationVerificationStatus = "ValidatedByHuman", # Indicate that the images have been validated
     identificationReferences = "https://github.com/hsosik/ifcb-analysis/wiki/Instructions-for-manual-annotation-of-images",
     identifiedBy = "John Doe", # Indicate who validated the image
-    associatedMedia = "https://ecotaxa.obs-vlfr.fr/prj/14392", # Link to images (if available)
-    organismQuantity = counts,  # Represents the number of organisms observed  
-    organismQuantityType = "individuals"  # Specifies the type of quantity being recorded  
+    associatedMedia = "https://ecotaxa.obs-vlfr.fr/prj/14392" # Link to images (if available)
   )  
 ```
 
@@ -271,7 +284,7 @@ class_names <- worms_records %>%
   mutate(class_name = taxa_names, class_clean = taxa_names_clean)
 ```
 
-The **scientificName** and **vernacularName** fields are populated using the cleaned taxonomic names and the original class names, respectively.
+The **scientificName** and **verbatimIdentification** fields are populated using the cleaned taxonomic names and the original class names, respectively.
 
 ```{r}
 data_occurrences <- data_occurrences %>% 
@@ -281,7 +294,7 @@ data_occurrences <- data_occurrences %>%
                                   class_clean, 
                                   scientificname),
          scientificNameAuthorship = authority,
-         vernacularName = class_name,
+         verbatimIdentification = class_name,
          scientificNameID = lsid,
          taxonRank = rank,
          occurrenceStatus = "present")
@@ -292,11 +305,11 @@ The final Occurrence table includes all relevant fields for DwC-A formatting.
 ```{r}
 # Select relevant fields
 occurrence_df <- data_occurrences %>% 
-  select(type, collectionCode, basisOfRecord, occurrenceID, organismQuantity, 
-         organismQuantityType, occurrenceStatus, identificationVerificationStatus, 
-         identificationReferences, identifiedBy, associatedMedia, eventID, eventDate, 
-         scientificName, scientificNameAuthorship, scientificNameID, kingdom, phylum, 
-         class, order, family, genus, vernacularName, taxonRank)
+  select(occurrenceID, occurrenceStatus, collectionCode, type, basisOfRecord,
+         identificationVerificationStatus, identificationReferences, 
+         identifiedBy, associatedMedia, eventID, eventDate, scientificName, 
+         scientificNameAuthorship, scientificNameID, taxonRank, kingdom, 
+         phylum, class, order, family, genus, verbatimIdentification)
 
 # Print the final table as tibble
 tibble(occurrence_df)
@@ -312,58 +325,55 @@ GBIF_Occurrence <- initializeGBIFOccurrence(occurrence_df,
 
 ## eMoF Extension
 
-The eMoF table allows us to capture any additional measurements and facts associated with occurrences, such as biological or environmental measurements. For IFCB data, we can include information such as counts, abundance, biovolume concentration, and carbon content. These measurements provide essential context for understanding the ecological significance of the observations.
+The eMoF table allows us to capture any additional measurements and facts associated with occurrences, such as biological or environmental measurements associated with the events (samples) or the occurrences. For IFCB data, we can include information such as counts, abundance, biovolume concentration, and carbon content. These measurements provide essential context for understanding the ecological significance of the observations.
 
 First, we generate a unique measurementID for each row using the `uuid::UUIDgenerate` function to ensure traceability.
 
 ```{r}
-# Generate unique measurement IDs for each occurrence
-data_occurrence_emof <- data_occurrences %>% 
-  mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE))
+# Create a dataset for occurrences (no modifications made here)
+data_occurrence_emof <- data_occurrences
 
-# Generate unique measurement IDs for each event
+# Add placeholder for occurrence IDs in the event dataset
 data_event_emof <- data_event %>% 
-  mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE),
-         occurrenceID = NA,)
+  mutate(occurrenceID = NA)
 
-# Generate unique measurement IDs for each parent event
+# Add placeholders for occurrence IDs and specify instrument type in the parent event dataset
 data_parent_emof <- data_parent_event %>% 
-  mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE),
-         occurrenceID = NA,
+  mutate(occurrenceID = NA,
          instrument = "IFCB")
 ```
 
 Next, we extract the necessary columns from the dataset that will be used in the eMoF table. This includes the measurement ID, associated event and occurrence IDs, and key IFCB-derived measurements such as counts, abundance, biovolume, and carbon concentration.
 
 ```{r}
-# Select the relevant columns for occurrence eMoF
+# Convert biovolume units and select the relevant columns for occurrence eMoF
 data_occurrence_emof <- data_occurrence_emof %>% 
-  select(measurementID, parentEventID, eventID, occurrenceID,
-         counts, counts_per_liter, biovolume_mm3_per_liter, carbon_ug_per_liter)
+  mutate(biovolume_um3_per_liter = biovolume_mm3_per_liter * 10^9) %>%
+  select(parentEventID, eventID, occurrenceID, counts, 
+         counts_per_liter, biovolume_um3_per_liter, carbon_ug_per_liter)
 
 # Select the relevant columns for parentEvent eMoF
 data_parent_emof <- data_parent_emof %>%
-  select(measurementID, parentEventID, eventID, occurrenceID, instrument, ifcb_number)
+  select(parentEventID, eventID, occurrenceID, instrument, ifcb_number)
 
 # Select the relevant columns for event eMoF
 data_event_emof <- data_event_emof %>% 
-  select(measurementID, parentEventID, eventID, occurrenceID, ml_analyzed) %>%
-  distinct()
+  select(parentEventID, eventID, occurrenceID, ml_analyzed)
 ```
 
-The table needs to be transformed into a "long format," where all measurements are placed into a single column called **measurementType**, with their corresponding values in **measurementValue.** This is done using the `pivot_longer` function.
+The table needs to be transformed into a "long format," where all measurements are placed into a single column called **measurementType**, with their corresponding values in **measurementValue**. This is done using the `pivot_longer` function.
 
-We also standardize the measurement types to align with controlled vocabularies (e.g., "Abundance," "Biovolume concentration") for better compatibility with global biodiversity standards.
+We also standardize the measurement types to align with controlled vocabularies (e.g., *Abundance*, *Biovolume concentration*) for better compatibility with global biodiversity standards.
 
 ```{r}
 # Pivot and standardize occurrence measurements
 data_occurrence_emof <- data_occurrence_emof %>% 
-  pivot_longer(cols = c(counts, counts_per_liter, biovolume_mm3_per_liter, carbon_ug_per_liter), 
+  pivot_longer(cols = c(counts, counts_per_liter, biovolume_um3_per_liter, carbon_ug_per_liter), 
                names_to = "measurementType",
                values_to = "measurementValue") %>% 
   drop_na(measurementValue) %>%
   mutate(measurementType = gsub("counts_per_liter", "Abundance", measurementType)) %>%
-  mutate(measurementType = gsub("biovolume_mm3_per_liter", "Biovolume concentration", measurementType)) %>%
+  mutate(measurementType = gsub("biovolume_um3_per_liter", "Biovolume concentration", measurementType)) %>%
   mutate(measurementType = gsub("carbon_ug_per_liter", "Carbon content", measurementType)) %>%
   mutate(measurementType = gsub("counts", "Count", measurementType)) %>%
   mutate(measurementValue = as.character(measurementValue))
@@ -384,8 +394,10 @@ data_parent_emof <- data_parent_emof %>%
   mutate(measurementType = gsub("instrument", "Imaging instrument name", measurementType)) %>%
   mutate(measurementType = gsub("ifcb_number", "Instrument identification number", measurementType))
 
-# Combine all standardized measurements into a single dataset
-data_emof <- bind_rows(data_parent_emof, data_event_emof, data_occurrence_emof)
+# Combine all standardized measurements into a single dataset and add unique measurementIDs
+data_emof <- bind_rows(data_parent_emof, data_event_emof, data_occurrence_emof) %>%
+  rowwise() %>%
+  mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE))
 ```
 
 To ensure data interoperability, we match each measurement type with its corresponding controlled vocabulary terms from the [NERC Vocabulary Server](https://vocab.nerc.ac.uk/). This includes assigning **measurementTypeID**, **measurementUnit**, and **measurementUnitID** for each **measurementType**.
@@ -408,15 +420,15 @@ nerc_vocab <- data.frame(
                         "http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/",
                         "http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/",
                         rep(NA, 2)),
-  measurementUnit = c("Individual per analysed sample fraction", 
+  measurementUnit = c("Dimensionless", 
                       "Individual per litre", 
-                      "Cubic millimetres per litre", 
+                      "Cubic micrometres per litre", 
                       "Micrograms per litre",
                       "Millilitres",
                       rep(NA, 2)),
   measurementUnitID = c("http://vocab.nerc.ac.uk/collection/P06/current/UUUU/",
                         "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/",
+                        "http://vocab.nerc.ac.uk/collection/P06/current/CUPL/",
                         "http://vocab.nerc.ac.uk/collection/P06/current/UGPL/",
                         "http://vocab.nerc.ac.uk/collection/P06/current/VVML/",
                         rep(NA, 2)))

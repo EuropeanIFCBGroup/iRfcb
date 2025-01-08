@@ -28,7 +28,11 @@ devtools::install_github("EuropeanIFCBGroup/iRfcb",
 ```
 
 Load the `iRfcb` library:
-```{r}
+```{r, eval=FALSE}
+library(iRfcb)
+```
+
+```{r, include=FALSE}
 library(iRfcb)
 ```
 

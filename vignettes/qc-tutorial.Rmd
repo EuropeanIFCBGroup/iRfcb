@@ -33,7 +33,12 @@ devtools::install_github("EuropeanIFCBGroup/iRfcb",
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
 Load the `iRfcb` and `ggplot2` libraries:
-```{r}
+```{r, eval=FALSE}
+library(iRfcb)
+library(ggplot2)
+```
+
+```{r, include=FALSE}
 library(iRfcb)
 library(ggplot2)
 ```

@@ -26,7 +26,14 @@ devtools::install_github("EuropeanIFCBGroup/iRfcb",
 ```
 
 Load the required libraries:
-```{r, message=FALSE}
+```{r, eval=FALSE}
+library(iRfcb)
+library(dplyr) # For data wrangling
+library(readr) # For creating .tsv files
+library(lubridate) # For handling dates
+```
+
+```{r, include=FALSE}
 library(iRfcb)
 library(dplyr) # For data wrangling
 library(readr) # For creating .tsv files
