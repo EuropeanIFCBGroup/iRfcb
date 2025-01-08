@@ -327,8 +327,6 @@ GBIF_Occurrence <- initializeGBIFOccurrence(occurrence_df,
 
 The eMoF table allows us to capture any additional measurements and facts associated with occurrences, such as biological or environmental measurements associated with the events (samples) or the occurrences. For IFCB data, we can include information such as counts, abundance, biovolume concentration, and carbon content. These measurements provide essential context for understanding the ecological significance of the observations.
 
-First, we generate a unique measurementID for each row using the `uuid::UUIDgenerate` function to ensure traceability.
-
 ```{r}
 # Create a dataset for occurrences (no modifications made here)
 data_occurrence_emof <- data_occurrences
@@ -349,16 +347,17 @@ Next, we extract the necessary columns from the dataset that will be used in the
 # Convert biovolume units and select the relevant columns for occurrence eMoF
 data_occurrence_emof <- data_occurrence_emof %>% 
   mutate(biovolume_um3_per_liter = biovolume_mm3_per_liter * 10^9) %>%
-  select(parentEventID, eventID, occurrenceID, counts, 
+  select(eventID, parentEventID, occurrenceID, counts, 
          counts_per_liter, biovolume_um3_per_liter, carbon_ug_per_liter)
 
 # Select the relevant columns for parentEvent eMoF
 data_parent_emof <- data_parent_emof %>%
-  select(parentEventID, eventID, occurrenceID, instrument, ifcb_number)
+  select(eventID, parentEventID, occurrenceID, instrument, ifcb_number)
 
 # Select the relevant columns for event eMoF
 data_event_emof <- data_event_emof %>% 
-  select(parentEventID, eventID, occurrenceID, ml_analyzed)
+  select(eventID, parentEventID, occurrenceID, ml_analyzed) %>%
+  distinct()
 ```
 
 The table needs to be transformed into a "long format," where all measurements are placed into a single column called **measurementType**, with their corresponding values in **measurementValue**. This is done using the `pivot_longer` function.
@@ -394,7 +393,7 @@ data_parent_emof <- data_parent_emof %>%
   mutate(measurementType = gsub("instrument", "Imaging instrument name", measurementType)) %>%
   mutate(measurementType = gsub("ifcb_number", "Instrument identification number", measurementType))
 
-# Combine all standardized measurements into a single dataset and add unique measurementIDs
+# Combine all standardized measurements into a single dataset and add unique measurementIDs for each measurment
 data_emof <- bind_rows(data_parent_emof, data_event_emof, data_occurrence_emof) %>%
   rowwise() %>%
   mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE))
@@ -433,10 +432,11 @@ nerc_vocab <- data.frame(
                         "http://vocab.nerc.ac.uk/collection/P06/current/VVML/",
                         rep(NA, 2)))
 
-# Merge the data with NERC vocabularies
+# Merge the data with NERC vocabularies and relocate columns
 emof_df <- data_emof %>%
   left_join(nerc_vocab, by = "measurementType") %>%
-  relocate(measurementTypeID, .after = measurementType)
+  relocate(measurementTypeID, .after = measurementType) %>%
+  relocate(measurementID, .before = 1)
 
 # Print the final table as tibble
 tibble(emof_df)
