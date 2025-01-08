@@ -224,7 +224,9 @@ The Occurrence table captures information about individual organisms or observat
 
 ### Annotated Code: Define Occurrence Data
 
-Each row of the IFCB data is considered an occurrence.
+Each row of the IFCB data is considered an occurrence. The following code transforms the data into an occurrence table, adding essential fields such as **type**, **collectionCode**, **occurrenceID**, **basisOfRecord**, **identificationVerificationStatus**, **identificationReferences**, **identifiedBy**, and **associatedMedia**. These fields provide context and provenance information for each occurrence. 
+
+Links to raw images can be included in **associatedMedia**. These links may point to resources such as the IFCB Dashboard, Ecotaxa, or other image archives. Learn how to prepare images for Ecotaxa using `iRfcb` in this  [tutorial](../articles/ecotaxa-tutorial.html), or how to export images to an [image repository](../articles/image-export-tutorial.html).
 
 ```{r}
 # Create an occurrence table by transforming event data and adding fields
@@ -232,7 +234,7 @@ data_occurrences <- data_event %>%
   rowwise() %>%  
   mutate(  
     type = "StillImage",  # Specifies the record type as an image  
-    collectionCode = "iRfcb IFCB Test Dataset",  # Provides a collection identifier  
+    collectionCode = "iRfcb",  # Provides a collection identifier  
     occurrenceID = uuid::UUIDgenerate(use.time = FALSE),  # Generates a unique identifier for each occurrence  
     basisOfRecord = "MachineObservation", # Indicates the data was recorded by a machine  
     identificationVerificationStatus = "ValidatedByHuman", # Indicate that the images have been validated
@@ -305,9 +307,9 @@ The final Occurrence table includes all relevant fields for DwC-A formatting.
 ```{r}
 # Select relevant fields
 occurrence_df <- data_occurrences %>% 
-  select(occurrenceID, occurrenceStatus, collectionCode, type, basisOfRecord,
-         identificationVerificationStatus, identificationReferences, 
-         identifiedBy, associatedMedia, eventID, eventDate, scientificName, 
+  select(occurrenceID, eventID, eventDate, occurrenceStatus, collectionCode, 
+         type, basisOfRecord, identificationVerificationStatus, 
+         identificationReferences, identifiedBy, associatedMedia, scientificName, 
          scientificNameAuthorship, scientificNameID, taxonRank, kingdom, 
          phylum, class, order, family, genus, verbatimIdentification)
 
