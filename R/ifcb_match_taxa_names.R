@@ -36,7 +36,7 @@ ifcb_match_taxa_names <- function(taxa_names, fuzzy = TRUE, best_match_only = TR
   # Set up progress bar
   if (verbose) {pb <- txtProgressBar(min = 0, max = length(taxa_names), style = 3)}
 
-  no_content_messages <- c()  # Store "No content" messages
+  no_content_messages <- NULL  # Store "No content" messages
 
   for (i in seq_along(taxa_names)) {
     attempt <- 1
