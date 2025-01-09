@@ -5,17 +5,23 @@ template:
 
 navbar:
   left:
-    - text: "Tutorial"
-      href: articles/tutorial.html
+    - text: "Tutorials"
+      href: articles/index.html
+      menu:
+        - text: "iRfcb Introduction"
+          href: articles/a-general-tutorial.html
+        - text: "Quality Control of IFCB Data"
+          href: articles/qc-tutorial.html
+        - text: "Handling MATLAB Results"
+          href: articles/matlab-tutorial.html
+        - text: "Creating a DwC-A from IFCB Data"
+          href: articles/dwca-tutorial.html
+        - text: "Sharing Annotated IFCB Images"
+          href: articles/image-export-tutorial.html
+        - text: "Prepare IFCB Images for EcoTaxa"
+          href: articles/ecotaxa-tutorial.html
     - text: "Reference"
       href: reference/index.html
-
-articles:
-- title: All vignettes
-  desc: ~
-  contents: '`tutorial`'
-  toc: true
-  toc_depth: 1
 
 reference:
 - title: Main functions
@@ -44,6 +50,7 @@ reference:
   - '`ifcb_is_diatom`'
   - '`ifcb_is_in_basin`'
   - '`ifcb_is_near_land`'
+  - '`ifcb_match_taxa_names`'
   - '`ifcb_merge_manual`'
   - '`ifcb_psd`'
   - '`ifcb_psd_plot`'

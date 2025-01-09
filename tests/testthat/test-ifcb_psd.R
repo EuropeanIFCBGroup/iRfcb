@@ -84,7 +84,7 @@ test_that("ifcb_psd works correctly", {
     missing_cells = 0.7,
     biomass = 1000,
     bloom = 5,
-    humidity = NULL
+    humidity = 99
   )
 
   # Verify that the output list contains data, fits, and flags

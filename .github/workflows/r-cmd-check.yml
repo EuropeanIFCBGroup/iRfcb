@@ -51,6 +51,14 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Install remotes
+        run: |
+          Rscript -e 'install.packages("remotes")'
+
+      - name: Install non-CRAN package
+        run: |
+          Rscript -e 'remotes::install_github("LivingNorway/LivingNorwayR")'
+
       - name: Install XQuartz on macOS
         if: runner.os == 'macOS'
         run: |
@@ -60,4 +68,4 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-          
+

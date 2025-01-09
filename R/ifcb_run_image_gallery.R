@@ -10,7 +10,6 @@
 #' view only the selected images.
 #'
 #' @import shiny
-#' @importFrom base64enc dataURI
 #' @export
 #'
 #' @examples

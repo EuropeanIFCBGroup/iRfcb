@@ -9,7 +9,6 @@ utils::globalVariables("save_class2use_to_mat")
 #' @param filename A string specifying the output file path (with `.mat` extension).
 #' @param do_compression A logical value indicating whether to compress the `.mat` file. Defaults to `TRUE`.
 #'
-#' @importFrom reticulate source_python
 #' @export
 #'
 #' @details

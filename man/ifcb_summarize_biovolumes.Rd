@@ -15,7 +15,8 @@ ifcb_summarize_biovolumes(
   threshold = "opt",
   feature_recursive = TRUE,
   mat_recursive = TRUE,
-  hdr_recursive = TRUE
+  hdr_recursive = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ ifcb_summarize_biovolumes(
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
 
 \item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
+
+\item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 A data frame summarizing aggregated biovolume and carbon content per class per sample.

@@ -32,11 +32,6 @@
 #' ifcb_zip_pngs("path/to/images", "images.zip")
 #' }
 #'
-#' @importFrom zip zipr
-#' @importFrom stringr str_extract
-#' @importFrom dplyr arrange count
-#' @importFrom lubridate year
-#'
 #' @references
 #' Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB Plankton Image Reference Library. SciLifeLab. Dataset. \doi{10.17044/scilifelab.25883455}
 #'

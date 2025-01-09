@@ -33,8 +33,6 @@ utils::globalVariables("create_and_save_mat_structure")
 #'                               unclassified_id = 999)
 #' }
 #'
-#' @importFrom reticulate source_python
-#'
 #' @export
 ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, unclassified_id = 1, do_compression = TRUE) {
 

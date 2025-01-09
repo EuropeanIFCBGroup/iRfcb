@@ -14,7 +14,8 @@ ifcb_extract_biovolumes(
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
-  mat_recursive = TRUE
+  mat_recursive = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ ifcb_extract_biovolumes(
 \item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within when \code{feature_files} is a folder. Default is TRUE.}
 
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
+
+\item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.

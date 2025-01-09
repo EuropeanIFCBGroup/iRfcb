@@ -25,7 +25,6 @@ utils::globalVariables("replace_value_in_classlist")
 #' # Replace class ID 99 with 1 in .mat classlist files
 #' ifcb_replace_mat_values("output/manual", "output/manual", 99, 1, column_index = 1)
 #' }
-#' @importFrom reticulate source_python
 #' @export
 ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id, column_index = 1, do_compression = TRUE) {
 

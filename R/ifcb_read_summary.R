@@ -11,9 +11,6 @@ utils::globalVariables(c("gpsLatitude", "gpsLongitude", "type", "value", "counts
 #' @param biovolume A logical indicating whether the file contains biovolume data. Default is FALSE.
 #' @param threshold A character string specifying the threshold type for counts and biovolume. Options are "opt" (default), "adhoc", and "none".
 #' @return A data frame containing the summary information including file list, volume analyzed, species counts, optionally biovolume, and other metadata.
-#' @importFrom R.matlab readMat
-#' @importFrom dplyr mutate filter left_join relocate coalesce select
-#' @importFrom tidyr pivot_longer pivot_wider
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.

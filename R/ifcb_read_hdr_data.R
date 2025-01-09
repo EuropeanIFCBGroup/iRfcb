@@ -23,11 +23,6 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 #' print(gps_data)
 #' }
 #'
-#' @importFrom dplyr mutate select
-#' @importFrom tidyr pivot_wider
-#' @importFrom readr type_convert cols col_character
-#' @importFrom lifecycle is_present deprecate_warn deprecated
-#'
 #' @export
 ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_folder = deprecated()) {
 
@@ -47,9 +42,19 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   }
 
   if (verbose) cat("Found", length(hdr_files), ".hdr files.\n")
+  if (verbose) pb <- txtProgressBar(min = 0, max = length(hdr_files), style = 3)
 
   # Read all files into a list of data frames using a helper function
-  all_hdr_data_list <- lapply(hdr_files, read_hdr_file) # Helper function to read individual HDR files
+  all_hdr_data_list <- lapply(seq_along(hdr_files), function(i) {
+    # Update the progress bar
+    if (verbose) setTxtProgressBar(pb, i)
+
+    # Call the helper function
+    read_hdr_file(hdr_files[[i]])
+  })
+
+  # Close the progress bar
+  if (verbose) close(pb)
 
   # Combine all data frames into one
   hdr_data <- do.call(rbind, all_hdr_data_list)

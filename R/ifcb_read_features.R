@@ -5,6 +5,7 @@
 #'
 #' @param feature_files A path to a folder containing feature files or a character vector of file paths.
 #' @param multiblob Logical indicating whether to filter for multiblob files (default: FALSE).
+#' @param verbose Logical. Whether to display progress information. Default is TRUE.
 #'
 #' @return A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
 #'   The list is named with the base names of the feature files.
@@ -21,11 +22,8 @@
 #' features <- ifcb_read_features(c("path/to/file1.csv", "path/to/file2.csv"))
 #' }
 #'
-#' @importFrom utils read.csv
-#' @importFrom stats setNames
-#'
 #' @export
-ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE) {
+ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, verbose = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
@@ -42,9 +40,22 @@ ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE) {
   # Initialize a named list to hold the data frames
   feature <- setNames(vector("list", length(feature_files)), basename(feature_files))
 
+  n_features <- length(feature_files)
+
+  # Set up the progress bar
+  if (verbose & n_features > 0) {pb <- txtProgressBar(min = 0, max = n_features, style = 3)}
+
   # Loop through each file and store its contents in the feature list
   for (i in seq_along(feature_files)) {
+    # Update progress bar
+    if (verbose & n_features > 0) {setTxtProgressBar(pb, i)}
+
     feature[[basename(feature_files[i])]] <- read.csv(feature_files[i])
+  }
+
+  # Close the progress bar
+  if (verbose & n_features > 0) {
+    close(pb)
   }
 
   return(feature)

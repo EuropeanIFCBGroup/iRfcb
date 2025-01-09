@@ -10,8 +10,7 @@
 #' @param hdrOnly_flag An optional flag indicating whether to skip ADC file estimation (default is FALSE).
 #' @param flowrate Milliliters per minute for syringe pump (default is 0.25).
 #' @return A numeric vector containing the estimated sample volume analyzed for each header file.
-#' @importFrom utils read.table
-#' @importFrom R.matlab readMat
+#'
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}

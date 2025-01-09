@@ -30,6 +30,7 @@ print(classes)
 class2useTB <- ifcb_get_mat_variable("path/to/classified/sample.mat", "class2useTB")
 print(class2useTB)
 }
+
 }
 \references{
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.

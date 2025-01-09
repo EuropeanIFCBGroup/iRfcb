@@ -7,9 +7,6 @@ utils::globalVariables(c("scientific_name", "trophic_type"))
 #' @param taxa_list A character vector of scientific names for which trophic types are to be retrieved.
 #' @param print_complete_list Logical, if TRUE, prints the complete list of summarized trophic types.
 #'
-#' @importFrom dplyr group_by summarize filter %>% n_distinct
-#' @importFrom readr read_delim
-#'
 #' @details
 #' If there are multiple trophic types for a scientific name (i.e. AU and HT size classes),
 #' the summarized trophic type is "NS".
@@ -43,8 +40,14 @@ ifcb_get_trophic_type <- function(taxa_list = NULL, print_complete_list = FALSE)
     warning("Both taxa_list and print_complete_list are provided. Only the taxa_list results will be returned.")
   }
 
+  # Create a temp dir
+  exdir <- tempdir()
+
+  # Unzip trophic_type list in tempdir
+  unzip(system.file("exdata", "trophictype_smhi.zip", package = "iRfcb"), exdir = exdir)
+
   # Read the TSV file into a data frame
-  df <- read_delim(system.file("exdata/trophictype_smhi.txt", package = "iRfcb"), show_col_types = FALSE)
+  df <- read_delim(file.path(exdir, "trophictype_smhi.txt"), show_col_types = FALSE)
 
   # Summarize unique trophic types for each scientific_name
   summarized_df <- df %>%

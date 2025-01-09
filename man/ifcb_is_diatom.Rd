@@ -9,7 +9,9 @@ ifcb_is_diatom(
   diatom_class = "Bacillariophyceae",
   max_retries = 3,
   sleep_time = 10,
-  marine_only = FALSE
+  marine_only = FALSE,
+  fuzzy = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ Default is 3.}
 Default is 10 seconds.}
 
 \item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
+
+\item{fuzzy}{A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.}
+
+\item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
@@ -36,8 +42,10 @@ and checks if they belong to the specified diatom class. The function only uses 
 first name (genus name) of each taxa for classification.
 }
 \examples{
+\dontrun{
 taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 ifcb_is_diatom(taxa_list)
+}
 
 }
 \seealso{
