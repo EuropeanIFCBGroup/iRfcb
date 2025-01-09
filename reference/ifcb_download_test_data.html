@@ -15,7 +15,7 @@ using vignette("tutorial", package = "iRfcb")'><meta property="og:image" content
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,10 +23,19 @@ using vignette("tutorial", package = "iRfcb")'><meta property="og:image" content
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/tutorial.html">Tutorial</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+    <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
+    <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
+    <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
+    <li><a class="dropdown-item" href="../articles/image-export-tutorial.html">Sharing Annotated IFCB Images</a></li>
+    <li><a class="dropdown-item" href="../articles/ecotaxa-tutorial.html">Prepare IFCB Images for EcoTaxa</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -41,7 +50,7 @@ using vignette("tutorial", package = "iRfcb")'><meta property="og:image" content
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Download Test IFCB Data</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/R/ifcb_download_test_data.R" class="external-link"><code>R/ifcb_download_test_data.R</code></a></small>
       <div class="d-none name"><code>ifcb_download_test_data.Rd</code></div>
     </div>
 
@@ -50,7 +59,7 @@ using vignette("tutorial", package = "iRfcb")'><meta property="og:image" content
 dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing iRfcb and for creating the tutorial vignette
-using <code><a href="../articles/tutorial.html">vignette("tutorial", package = "iRfcb")</a></code></p>
+using <code><a href="https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html">vignette("tutorial", package = "iRfcb")</a></code></p>
     </div>
 
     <div class="section level2">
@@ -59,7 +68,8 @@ using <code><a href="../articles/tutorial.html">vignette("tutorial", package = "
 <span>  <span class="va">dest_dir</span>,</span>
 <span>  figshare_article <span class="op">=</span> <span class="st">"48158716"</span>,</span>
 <span>  max_retries <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  sleep_time <span class="op">=</span> <span class="fl">10</span></span>
+<span>  sleep_time <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -82,6 +92,10 @@ By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is 
 
 <dt id="arg-sleep-time">sleep_time<a class="anchor" aria-label="anchor" href="#arg-sleep-time"></a></dt>
 <dd><p>The sleep time between download attempts, in seconds. Default is 10.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>A logical indicating whether to print progress messages. Default is TRUE.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -13,7 +13,7 @@ first name (genus name) of each taxa for classification."><meta property="og:ima
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.15</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,10 +21,19 @@ first name (genus name) of each taxa for classification."><meta property="og:ima
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/tutorial.html">Tutorial</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+    <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
+    <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
+    <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
+    <li><a class="dropdown-item" href="../articles/image-export-tutorial.html">Sharing Annotated IFCB Images</a></li>
+    <li><a class="dropdown-item" href="../articles/ecotaxa-tutorial.html">Prepare IFCB Images for EcoTaxa</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch"><li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
@@ -39,7 +48,7 @@ first name (genus name) of each taxa for classification."><meta property="og:ima
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Identify Diatoms in Taxa List</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/R/ifcb_is_diatom.R" class="external-link"><code>R/ifcb_is_diatom.R</code></a></small>
       <div class="d-none name"><code>ifcb_is_diatom.Rd</code></div>
     </div>
 
@@ -57,7 +66,9 @@ first name (genus name) of each taxa for classification.</p>
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
 <span>  max_retries <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  sleep_time <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  fuzzy <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,6 +98,14 @@ Default is 10 seconds.</p></dd>
 <dt id="arg-marine-only">marine_only<a class="anchor" aria-label="anchor" href="#arg-marine-only"></a></dt>
 <dd><p>Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.</p></dd>
 
+
+<dt id="arg-fuzzy">fuzzy<a class="anchor" aria-label="anchor" href="#arg-fuzzy"></a></dt>
+<dd><p>A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>A logical indicating whether to print progress messages. Default is TRUE.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -99,9 +118,10 @@ Default is 10 seconds.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nitzschia_sp"</span>, <span class="st">"Chaetoceros_sp"</span>, <span class="st">"Dinophysis_norvegica"</span>, <span class="st">"Thalassiosira_sp"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nitzschia_sp"</span>, <span class="st">"Chaetoceros_sp"</span>, <span class="st">"Dinophysis_norvegica"</span>, <span class="st">"Thalassiosira_sp"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ifcb_is_diatom</span><span class="op">(</span><span class="va">taxa_list</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE FALSE  TRUE</span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

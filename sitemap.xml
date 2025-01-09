@@ -2,8 +2,14 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/404.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/LICENSE-text.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/LICENSE.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/a-general-tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/dwca-tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/index.html</loc></url>
-<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/matlab-tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/metadata-template.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/qc-tutorial.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/authors.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/index.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/check_python_and_module.html</loc></url>
@@ -42,6 +48,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_near_land.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.html</loc></url>
