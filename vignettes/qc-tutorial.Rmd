@@ -102,7 +102,7 @@ psd <- ifcb_psd(feature_folder = "data/features/2023",
 
 ```{r, include=FALSE}
 # Define path to virtual environment
-env_path <- "~/virtualenvs/iRfcb" # Or your preferred venv path
+env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path) 
