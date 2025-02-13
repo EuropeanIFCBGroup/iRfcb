@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette demonstrates how to prepare annotated Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. The workflow assumes that Regions of Interest (ROIs) have been annotated using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit unclassified or automatically classified images.
+This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. This tutorial covers the export of both unclassifie raw IFCB images and annotated Regions of Interest (ROIs) using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit automatically classified images using the [`ifcb_extract_classified_images`](../reference/ifcb_extract_classified_images.html) function.
 
 EcoTaxa is a web application widely used for hosting, classifying, and exporting images of individual objects, particularly in plankton imaging. It leverages machine learning to assign names based on a universal taxonomy and produces ecological data in standardized formats for scientific applications. To submit images, accompanying metadata is required, which can be generated using the `iRfcb` package.
 
@@ -68,9 +68,76 @@ if (!dir.exists(data_dir)) {
 }
 ```
 
-## Extract Annotated Images
+## Unannotated Images
+
+This example demonstrates how to prepare a single unannotated IFCB sample for submission to EcoTaxa as a zip-archive.
+
+### Extract Images
+
+Extract all ROIs from a sample as `.jpg` images:
+
+```{r}
+# Define path to sample that you wish to prepare for a EcoTaxa submission
+sample_path <- "data/data/2023/D20230314/D20230314T003836_IFCB134"
+
+# Extract .png images
+ifcb_extract_pngs(paste0(sample_path, ".roi"))
+```
+
+### Summarize Image Metadata
+
+Extract image metadata from the `.jpg` directory:
+```{r}
+# Extract image metadata
+metadata_sample <- ifcb_summarize_png_metadata(sample_path)
+```
+
+### Map EcoTaxa Headers
+
+The image metadata are mapped to the Ecotaxa metadata headers that are required when submitting data to EcoTaxa. In this example, a minimal dataset is used, containing only the image name. More comprehensive headers can be specified through the arguments of [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html).
+
+```{r}
+# Get the minimal EcoTaxa metadata header names
+ecotaxa_minimal_headers <- ifcb_get_ecotaxa_example("minimal")[0,]
+
+# Create a data frame with empty rows matching the length of data
+ecotaxa_minimal_headers[1:nrow(metadata_sample),] <- NA
+
+# Map metadata to Ecotaxa headers
+ecotaxa_minimal <- ecotaxa_minimal_headers %>%
+  mutate(img_file_name = metadata_sample$image,
+         object_id = tools::file_path_sans_ext(metadata_sample$image))
+```
+
+###  Generate EcoTaxa TSV and ZIP Files
+
+The metadata for all images in the subfolder are stored in a `.tsv` file, and a zipped archive is prepared for submission to EcoTaxa.
+
+```{r}
+# Write metadata tsv file
+write_tsv(ecotaxa_minimal,
+          file.path(
+            sample_path,
+            paste0("ecotaxa_D20230314T003836_IFCB134.tsv")),
+          na = "")
+
+# Create zip-archive
+ifcb_zip_pngs(png_folder = "data/data/2023/D20230314/",
+              zip_filename = "data/zip/D20230314T003836_IFCB134_ecotaxa.zip",
+              include_txt = TRUE, # To include the metadata text-files in the archive
+              split_zip = TRUE,
+              max_size = 500,
+              print_progress = FALSE)
+```
+
+## Annotated Images
+
+This example demonstrates how to prepare a dataset of annotated images for submission to EcoTaxa using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007).
+
+### Extract Annotated Images
 
 Extract annotated ROIs as `.jpg` images in subfolders for each class, skipping the **unclassified** (class id 1) category:
+
 ```{r}
 # Extract .png images
 ifcb_extract_annotated_images(manual_folder = "data/manual",
@@ -81,7 +148,7 @@ ifcb_extract_annotated_images(manual_folder = "data/manual",
                               verbose = FALSE) # Do not print messages
 ```
 
-## Summarize Image Metadata
+### Summarize Image Metadata
 
 This section demonstrates how to gather and summarize metadata for images in the `png_folder` by combining data from feature and `.hdr` files. Additionally, it retrieves the analysis date and time for each sample based on `.mat` file creation dates and appends this information to the summarized dataset.
 
@@ -107,7 +174,7 @@ metadata <- metadata %>%
   left_join(analysis_date, by = "sample")
 ```
 
-## Taxonomic Data Cleaning and Retrieval
+### Taxonomic Data Cleaning and Retrieval
 
 Class names often contain unnecessary or inconsistent information. These names need to be cleaned before mapping them to higher taxonomic levels using external sources like [WoRMS](https://www.marinespecies.org/). The following code demonstrates how to clean class names and retrieve taxonomic details from WoRMS, such as **AphiaID**.
 
@@ -154,7 +221,7 @@ metadata <- metadata %>%
   left_join(class_names, by = "subfolder")
 ```
 
-## Map EcoTaxa Headers
+### Map EcoTaxa Headers
 
 The metadata can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html) to produce metadata files suitable for submitting images to EcoTaxa. The example below is comprehensive and includes several feature fields. For a simpler dataset, minimal fields can be retrieved using `ifcb_get_ecotaxa_example(example = "minimal")`.
 
@@ -472,7 +539,7 @@ ecotaxa_metadata <- ecotaxa_headers %>%
     )
 ```
 
-## Generate EcoTaxa TSV Files
+### Generate EcoTaxa TSV Files
 
 This section demonstrates how to generate `.tsv` files containing metadata for each class subfolder. These files are essential for uploading data into EcoTaxa. Each `.tsv` file is written to its respective class subfolder and includes the relevant metadata for that class.
 
@@ -508,7 +575,7 @@ for (i in seq_along(unique(ecotaxa_metadata$object_annotation_hierarchy))) {
 }
 ```
 
-## Creating a Zip Archive for EcoTaxa
+### Creating a Zip Archive for EcoTaxa
 
 Prepare the PNG directory for publication by creating a zip archive, ready for upload through the EcoTaxa web interface. Note that the web interface has a maximum file size limit of 500 MB. To accommodate this limitation, the zip archive can be split into multiple files by setting `split_zip` to `TRUE` and specifying the `max_size` parameter in megabytes.
 
@@ -538,6 +605,7 @@ citation("iRfcb")
 ```{r, include=FALSE}
 # Clean up
 unlink(file.path(data_dir, "extracted_images"), recursive = TRUE)
+unlink(sample_path, recursive = TRUE)
 ```
 
 ## References
