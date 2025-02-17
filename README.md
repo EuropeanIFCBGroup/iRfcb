@@ -23,7 +23,7 @@ You can install the package from GitHub using the `devtools` package:
 
 ```r
 # install.packages("devtools")
-devtools::install_github("EuropeanIFCBGroup/iRfcb", dependencies = TRUE)
+devtools::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
 Some functions in `iRfcb` require Python. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For more details, please visit the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/).

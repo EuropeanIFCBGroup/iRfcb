@@ -2,7 +2,6 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom base64enc dataURI
 #' @importFrom curl curl_download new_handle
 #' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
 #'   filter first full_join group_by if_any left_join mutate n n_distinct
@@ -11,7 +10,7 @@
 #' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text
 #'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
 #'   annotate
-#' @importFrom imager as.cimg save.image
+#' @importFrom png writePNG
 #' @importFrom lifecycle deprecate_warn deprecated is_present
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
 #'   year ymd_hms

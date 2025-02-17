@@ -8,6 +8,7 @@
 #' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #'
@@ -24,7 +25,7 @@
 #' @export
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL, verbose = TRUE, overwrite = FALSE) {
+ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL, gamma = 1, verbose = TRUE, overwrite = FALSE) {
   # Create output directory if needed
   if (!is.null(taxaname)) {
     outpath <- file.path(out_folder, taxaname)
@@ -53,7 +54,6 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   tryCatch({
     fid <- file(roi_file, "rb")
   }, error = function(e) {
-    # Handle the error
     cat("An error occurred:", conditionMessage(e), "\n")
     NULL
   })
@@ -71,17 +71,18 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
         img_data <- readBin(fid, raw(), n = x[count] * y[count])  # Read img pixels as raw
         img_matrix <- matrix(as.integer(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array
 
-        # Correct orientation: Rotate 90 degrees counterclockwise
-        img_matrix <- t(img_matrix)  # Rotate 90 degrees counterclockwise
-
         tryCatch({
-          # Convert matrix to image object
-          img_matrix <- imager::as.cimg(img_matrix)
+          # Normalize pixel values to [0,1] using min-max scaling
+          img_matrix <- (img_matrix - min(img_matrix)) / (max(img_matrix) - min(img_matrix))
 
-          # Write ROI in PNG format
-          imager::save.image(img_matrix, pngfile)
+          # Apply gamma correction only if gamma != 1
+          if (gamma != 1) {
+            img_matrix <- img_matrix^gamma
+          }
+
+          # Save using png::writePNG
+          png::writePNG(img_matrix, pngfile)
         }, error = function(e) {
-          # Handle the error
           cat("An error occurred:", conditionMessage(e), "\n")
         })
       } else {
