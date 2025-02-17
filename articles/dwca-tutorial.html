@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -126,12 +126,11 @@ for innovative uses in biodiversity science.</p>
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>You can install the <code>iRfcb</code> and <code>LivingNorwayR</code>
-packages from GitHub using the <code>devtools</code> package:</p>
+packages from GitHub using the <code>remotes</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EuropeanIFCBGroup/iRfcb"</span>,</span>
-<span>                           <span class="st">"LivingNorway/LivingNorwayR"</span><span class="op">)</span>,</span>
-<span>                         dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EuropeanIFCBGroup/iRfcb"</span>,</span>
+<span>                           <span class="st">"LivingNorway/LivingNorwayR"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Load the required libraries:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span>
@@ -334,16 +333,16 @@ combine the Event and Parent Event tables into a single data frame.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 26</span></span></span>
 <span><span class="co">##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               9ff54f… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 9ff54f7c-1ee0-4… a3764c… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 9ff54f7c-1ee0-4… 8c6357… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 9ff54f7c-1ee0-4… d89781… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 9ff54f7c-1ee0-4… 74882a… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 9ff54f7c-1ee0-4… ca9f64… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 9ff54f7c-1ee0-4… 2014a9… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 9ff54f7c-1ee0-4… a53069… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 9ff54f7c-1ee0-4… a5b21b… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 9ff54f7c-1ee0-4… 199b0b… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               5cb818… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 5cb818c7-42e0-4… 3420e3… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 5cb818c7-42e0-4… b81ac6… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 5cb818c7-42e0-4… 58f06c… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 5cb818c7-42e0-4… 6c4691… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 5cb818c7-42e0-4… d20dde… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 5cb818c7-42e0-4… 9b269f… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 5cb818c7-42e0-4… ead23c… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 5cb818c7-42e0-4… e7fe90… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 5cb818c7-42e0-4… a37db5… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 20 more variables: institutionCode &lt;chr&gt;, institutionID &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   license &lt;chr&gt;, samplingProtocol &lt;chr&gt;, sampleSizeValue &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   sampleSizeUnit &lt;chr&gt;, eventTime &lt;time&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;, day &lt;int&gt;,</span></span></span>
@@ -492,16 +491,16 @@ formatting.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 101 × 22</span></span></span>
 <span><span class="co">##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type </span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> b1db0266-741e-4927-… a3764c… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 74a55780-926d-40e0-… a3764c… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> d3f3dc58-8ca9-4a9b-… a3764c… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> f713ddc8-300f-4454-… a3764c… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 8c2b93f6-6c71-45a6-… 8c6357… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> ce02ee0d-7160-48a0-… d89781… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 66492228-25f5-48ca-… d89781… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> f6c7ec6c-b8a0-4b48-… d89781… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 3fa780f3-0708-45d1-… 74882a… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 64a88313-c598-4d81-… 74882a… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 1da9a8e8-9ecf-40de-… 3420e3… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 2e6a7930-849d-44ff-… 3420e3… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 4c7ec703-cb28-42c8-… 3420e3… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 7b271800-0598-4eff-… 3420e3… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 7f3bf642-e343-4bbd-… b81ac6… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 834ed03a-0060-454e-… 58f06c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 6d882a10-b062-4858-… 58f06c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 81fa6c2e-e4ac-4c88-… 58f06c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> a3458115-109a-40f9-… 6c4691… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 90ac0fd4-0a66-48df-… 6c4691… 2022-07-12 present          iRfcb          Stil…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 91 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: basisOfRecord &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   identificationVerificationStatus &lt;chr&gt;, identificationReferences &lt;chr&gt;,</span></span></span>
@@ -651,16 +650,16 @@ for each <strong>measurementType</strong>.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 415 × 10</span></span></span>
 <span><span class="co">##    measurementID              eventID parentEventID occurrenceID measurementType</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> a19d44cb-90a6-402a-9e7b-8… 9ff54f… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 578dc749-685f-4d3b-bb9e-c… 9ff54f… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 47e986d9-a507-4162-b1d2-c… a3764c… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 0424974e-6216-439c-8de0-c… 8c6357… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 11161dc0-fd1d-4d5e-9359-2… d89781… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 72020b74-d08b-489d-870b-6… 74882a… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> c5e41ab1-fd57-49d0-954b-8… ca9f64… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 1b3fafab-e5fc-4e45-b405-8… 2014a9… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 415e87f9-aa90-45de-926f-6… a53069… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 360b4f52-e951-40e7-89e3-a… a5b21b… 9ff54f7c-1ee… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 6c0c7f18-126f-4cab-bb66-9… 5cb818… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 4b520558-0e54-4895-9964-4… 5cb818… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 0b618230-70fb-4d93-bc78-b… 3420e3… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> f4b21ef4-e55f-4d21-9f23-a… b81ac6… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> b6c89f53-d46b-468d-a101-9… 58f06c… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 8817bf9b-72f3-44db-8b9c-6… 6c4691… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 84ea95cf-cfda-4fae-b4e5-f… d20dde… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 8f076640-8338-4e6f-8aaf-f… 9b269f… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 26372959-915a-41f7-8e78-0… ead23c… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> e9daeff5-5bef-410b-acfd-4… e7fe90… 5cb818c7-42e… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 405 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: measurementTypeID &lt;chr&gt;, measurementValue &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   measurementValueID &lt;chr&gt;, measurementUnit &lt;chr&gt;, measurementUnitID &lt;chr&gt;</span></span></span></code></pre>
@@ -730,7 +729,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
-<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.4.0.</span></span>
+<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.4.1.</span></span>
 <span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -739,7 +738,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.0},</span></span>
+<span><span class="co">##     note = {R package version 0.4.1},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
