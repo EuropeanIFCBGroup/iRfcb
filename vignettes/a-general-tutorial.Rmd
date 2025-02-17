@@ -21,8 +21,7 @@ This tutorial serves as an introduction to the core functionalities of `iRfcb`, 
 You can install the package from GitHub using the `devtools` package:
 ```{r, eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("EuropeanIFCBGroup/iRfcb",
-                         dependencies = TRUE)
+devtools::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
 Load the `iRfcb` and `dplyr` libraries:
@@ -70,7 +69,7 @@ timestamps <- ifcb_convert_filenames(filenames)
 # Print result
 print(timestamps)
 ```
-If the filename includes ROI numbers (e.g., in an extracted `.jpg` image), a separate column, `roi`, will be added to the output.
+If the filename includes ROI numbers (e.g., in an extracted `.png` image), a separate column, `roi`, will be added to the output.
 
 ```{r}
 # Example sample names
@@ -134,12 +133,13 @@ head(multiblob_features[[1]])[,1:10]
 
 ## Extract Images from ROI files
 
-IFCB images stored in `.roi` files can be extracted as `.jpg` files using the `iRfcb` package, as demonstrated below.
+IFCB images stored in `.roi` files can be extracted as `.png` files using the `iRfcb` package, as demonstrated below.
 
-Extract all images from a sample using the [`ifcb_extract_pngs`](../reference/ifcb_extract_pngs.html) function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file.
+Extract all images from a sample using the [`ifcb_extract_pngs`](../reference/ifcb_extract_pngs.html) function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file. The `gamma` can be adjusted to enhance image contrast.
 ```{r}
 # All ROIs in sample
-ifcb_extract_pngs("data/data/2023/D20230314/D20230314T001205_IFCB134.roi")
+ifcb_extract_pngs("data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+                  gamma = 1) # Default gamma value
 ```
 
 Extract specific ROIs:

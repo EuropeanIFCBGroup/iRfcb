@@ -21,8 +21,7 @@ EcoTaxa is a web application widely used for hosting, classifying, and exporting
 You can install the package from GitHub using the `devtools` package:
 ```{r, eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("EuropeanIFCBGroup/iRfcb",
-                         dependencies = TRUE)
+devtools::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
 Load the required libraries:
@@ -68,13 +67,13 @@ if (!dir.exists(data_dir)) {
 }
 ```
 
-## Unannotated Images
+## Unclassified Images
 
-This example demonstrates how to prepare a single unannotated IFCB sample for submission to EcoTaxa as a zip-archive.
+This example demonstrates how to prepare a single IFCB sample for submission to EcoTaxa as a zip-archive.
 
 ### Extract Images
 
-Extract all ROIs from a sample as `.jpg` images:
+Extract all ROIs from a sample as `.png` images:
 
 ```{r}
 # Define path to sample that you wish to prepare for a EcoTaxa submission
@@ -86,7 +85,7 @@ ifcb_extract_pngs(paste0(sample_path, ".roi"))
 
 ### Summarize Image Metadata
 
-Extract image metadata from the `.jpg` directory:
+Extract image metadata from the `.png` directory:
 ```{r}
 # Extract image metadata
 metadata_sample <- ifcb_summarize_png_metadata(sample_path)
@@ -132,11 +131,11 @@ ifcb_zip_pngs(png_folder = "data/data/2023/D20230314/",
 
 ## Annotated Images
 
-This example demonstrates how to prepare a dataset of annotated images for submission to EcoTaxa using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007).
+This example demonstrates how to prepare a dataset of manually annotated images for submission to EcoTaxa. The annotations were generated using MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007).
 
 ### Extract Annotated Images
 
-Extract annotated ROIs as `.jpg` images in subfolders for each class, skipping the **unclassified** (class id 1) category:
+Extract annotated ROIs as `.png` images in subfolders for each class, skipping the **unclassified** (class id 1) category:
 
 ```{r}
 # Extract .png images

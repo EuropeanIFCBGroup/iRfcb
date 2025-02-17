@@ -26,8 +26,7 @@ You can install the `iRfcb` and `LivingNorwayR` packages from GitHub using the `
 ```{r, eval=FALSE}
 # install.packages("devtools")
 devtools::install_github(c("EuropeanIFCBGroup/iRfcb",
-                           "LivingNorway/LivingNorwayR"),
-                         dependencies = TRUE)
+                           "LivingNorway/LivingNorwayR"))
 ```
 
 Load the required libraries:
