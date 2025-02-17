@@ -20,10 +20,10 @@ Additionally, this vignette shows how users of the [ifcb-analysis](https://githu
 
 ### Installation
 
-You can install the package from GitHub using the `devtools` package:
+You can install the package from GitHub using the `remotes` package:
 ```{r, eval=FALSE}
-# install.packages("devtools")
-devtools::install_github("EuropeanIFCBGroup/iRfcb")
+# install.packages("remotes")
+remotes::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
 Load the `iRfcb` library:
