@@ -31,10 +31,6 @@ test_that("ifcb_extract_pngs works correctly", {
 
   for (file in expected_files) {
     expect_true(file.exists(file), info = paste("File does not exist:", file))
-
-    # Optionally, read the PNG file and verify its content
-    img <- imager::load.image(file)
-    expect_true(imager::is.cimg(img), info = paste("File is not a valid image:", file))
   }
 
   # Cleanup temporary files

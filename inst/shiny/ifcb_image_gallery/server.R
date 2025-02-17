@@ -1,5 +1,6 @@
 # Define server logic
 server <- function(input, output, session) {
+  shiny::addResourcePath("session", tempdir())
   images <- reactiveVal(NULL)
   current_page <- reactiveVal(1)
   images_per_page <- reactiveVal(20)
@@ -43,17 +44,28 @@ server <- function(input, output, session) {
       return(tags$p("No images found in the specified directory."))
     }
 
+    temp_dir <- file.path(tempdir(), "shiny_images")
+    dir.create(temp_dir, showWarnings = FALSE, recursive = TRUE)
+
     start_index <- (current_page() - 1) * as.numeric(images_per_page()) + 1
     end_index <- min(current_page() * as.numeric(images_per_page()), length(images()))
 
     tags$div(
       lapply(images()[start_index:end_index], function(image) {
-        encoded_image <- base64enc::dataURI(file = image, mime = "image/png")
         filename <- basename(image)
+        temp_image_path <- file.path(temp_dir, filename)
+
+        if (!file.exists(temp_image_path)) {
+          file.copy(image, temp_image_path, overwrite = TRUE)
+        }
+
+        # Construct the proper src path for Shiny to serve
+        image_url <- paste0("session/shiny_images/", filename)
+
         style <- ifelse(filename %in% clicked_images(), "color: red;", "color: black;")
         tags$div(
-          tags$img(src = encoded_image,
-                   style = "margin: 10px; cursor: pointer;",
+          tags$img(src = image_url,
+                   style = "margin: 10px; cursor: pointer; max-width: 200px;",
                    onclick = paste0("Shiny.setInputValue('clicked_image', '", filename, "')")),
           tags$p(filename, id = filename,
                  style = paste("margin: 5px 10px; font-weight: bold;", style))

@@ -9,6 +9,7 @@ ifcb_extract_pngs(
   out_folder = dirname(roi_file),
   ROInumbers = NULL,
   taxaname = NULL,
+  gamma = 1,
   verbose = TRUE,
   overwrite = FALSE
 )
@@ -21,6 +22,8 @@ ifcb_extract_pngs(
 \item{ROInumbers}{An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.}
 
 \item{taxaname}{An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.}
+
+\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 
