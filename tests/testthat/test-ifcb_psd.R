@@ -58,7 +58,7 @@ test_that("ifcb_psd works correctly", {
   expect_true(dir.exists(hdr_folder))
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {

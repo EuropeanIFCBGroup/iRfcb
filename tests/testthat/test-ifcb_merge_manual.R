@@ -21,7 +21,7 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   class2use <- c(class2use_addition, class2use)
 
   # Create and set up a virtual environment for Python dependencies (iRfcb)
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
   if (reticulate::virtualenv_exists(venv_dir)) {
     reticulate::use_virtualenv(venv_dir, required = TRUE)
   } else {
@@ -89,7 +89,7 @@ test_that("ifcb_merge_manual throws the correct error messages", {
   class2use <- c(class2use_addition, class2use)
 
   # Create and set up a virtual environment for Python dependencies (iRfcb)
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
   if (reticulate::virtualenv_exists(venv_dir)) {
     reticulate::use_virtualenv(venv_dir, required = TRUE)
   } else {

@@ -140,8 +140,8 @@ ifcb_download_test_data(dest_dir = tangesund_dir,
                         figshare_article = "48158731")
 
 # Initialize the python session if not already set up
-# env_path <- "~/.virtualenvs/iRfcb"
-# ifcb_py_install(envname = env_path)
+env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
+ifcb_py_install(envname = env_path)
 
 # Merge Skagerrak-Kattegat and Tångesund to a single dataset
 ifcb_merge_manual(class2use_file_base = file.path(skagerrak_kattegat_dir, "config/class2use.mat"),

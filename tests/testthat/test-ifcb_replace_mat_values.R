@@ -14,7 +14,7 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   column_index <- 0 # Python uses 0-based indexing
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {

@@ -26,7 +26,7 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
             file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {
@@ -98,7 +98,7 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
             file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {

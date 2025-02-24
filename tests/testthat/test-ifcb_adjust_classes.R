@@ -23,7 +23,7 @@ test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
   class2use <- c(class2use, class2use_addition) # Combine old and new class
 
   # Create a temporary virtual environment if it doesn't exist
-  venv_dir <- "~/.virtualenvs/iRfcb" # Path to the virtual environment
+  venv_dir <- file.path(tempdir(), "iRfcb") # Path to the virtual environment
 
   # Check if the virtual environment exists, if not create it and install dependencies
   if (reticulate::virtualenv_exists(venv_dir)) {
