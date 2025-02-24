@@ -1,6 +1,6 @@
 test_that("ifcb_volume_analyzed_from_adc correctly calculates the volume analyzed", {
   # Directory to extract files
-  exdir <- tempdir()
+  exdir <- file.path(tempdir(), "ifcb_volume_analyzed_from_adc")
 
   # Extract the files
   unzip(test_path("test_data/test_data.zip"),

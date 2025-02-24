@@ -1,6 +1,6 @@
 # Extract test data and define paths
 zip_path <- test_path("test_data/test_data.zip")
-temp_dir <- tempdir()
+temp_dir <- file.path(tempdir(), "ifcb_summarize_png_counts")
 unzip(zip_path, exdir = temp_dir)
 
 # Define paths to the unzipped folders

@@ -1,9 +1,7 @@
 test_that("ifcb_annotate_batch creates and updates mat files as expected", {
-  # # Skip the test if Python environment is not available
-  # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
 
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual_folder")
   out_folder <- file.path(tempdir(), "out")
   new_folder <- file.path(tempdir(), "new")
   dir.create(out_folder, showWarnings = FALSE)
@@ -24,17 +22,6 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
 
   file.copy(file.path(manual_folder, "D20220522T003051_IFCB134.adc"),
             file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Create a new file
   ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
@@ -75,7 +62,7 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
   # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
 
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual_folder")
   out_folder <- file.path(tempdir(), "out")
   new_folder <- file.path(tempdir(), "new")
   dir.create(out_folder, showWarnings = FALSE)
@@ -96,17 +83,6 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
 
   file.copy(file.path(manual_folder, "D20220522T003051_IFCB134.adc"),
             file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Expect error for non exisiting class2use file
   expect_error(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",

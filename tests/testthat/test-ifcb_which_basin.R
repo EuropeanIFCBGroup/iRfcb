@@ -35,7 +35,7 @@ test_that("ifcb_which_basin returns a ggplot object when plot = TRUE", {
 
 test_that("ifcb_which_basin correctly handles a custom shapefile", {
   # Directory to extract files
-  exdir <- tempdir()  # Temporary directory
+  exdir <- file.path(tempdir(), "ifcb_which_basin")  # Temporary directory
 
   # Extract the files
   unzip(system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb"), exdir = exdir)

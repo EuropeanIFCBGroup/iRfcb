@@ -5,7 +5,7 @@ create_temp_mat_file <- function(file_path, classlist) {
 
 # Define the setup function
 setup_mock_directory <- function() {
-  temp_dir <- tempdir()  # Use tempdir() to create a temporary directory
+  temp_dir <- file.path(tempdir(), "mock_dir")  # Use tempdir() to create a temporary directory
   test_data_zip <- test_path("test_data/test_data.zip")
 
   # Unzip the test data into the temporary directory

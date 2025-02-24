@@ -1,7 +1,7 @@
 test_that("ifcb_count_mat_annotations works correctly", {
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_count_mat_annotations")
   unzip(test_data_zip, exdir = temp_dir)
 
   # Define the paths for the manual folder and the class2use file

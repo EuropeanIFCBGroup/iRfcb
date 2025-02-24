@@ -4,7 +4,7 @@ test_that("ifcb_is_near_land works correctly", {
   longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174, 15.0, NA)
 
   # Directory to extract files
-  exdir <- tempdir()  # Temporary directory
+  exdir <- file.path(tempdir(), "ifcb_is_near_land")  # Temporary directory
 
   # Extract the files
   unzip(system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb"), exdir = exdir)

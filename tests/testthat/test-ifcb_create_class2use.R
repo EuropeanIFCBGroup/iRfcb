@@ -4,17 +4,6 @@ test_that("ifcb_create_class2use creates .mat file correctly", {
   classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
   filename <- tempfile(fileext = ".mat")  # Create a temporary file for the test
 
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
-
   # Call the function
   ifcb_create_class2use(classes, filename, do_compression = TRUE)
 

@@ -1,9 +1,7 @@
 test_that("ifcb_correct_annotation updates class IDs correctly", {
-  # # Skip the test if Python environment is not available
-  # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
 
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
   dir.create(out_folder, showWarnings = FALSE)
 
@@ -24,17 +22,6 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
   # Expected new class ID
   correct_classid <- 99
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
@@ -75,7 +62,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
 test_that("ifcb_correct_annotation works with character vector input", {
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
   dir.create(out_folder, showWarnings = FALSE)
 
@@ -130,7 +117,7 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
 
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
   dir.create(out_folder, showWarnings = FALSE)
 
@@ -151,17 +138,6 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
 
   # Expected new class ID
   correct_classid <- 99
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
@@ -196,11 +172,9 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
 })
 
 test_that("ifcb_correct_annotation handles errors gracefully", {
-  # # Skip the test if Python environment is not available
-  # skip_if_not(py_available(initialize = TRUE), "Python environment is not available")
 
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
   dir.create(out_folder, showWarnings = FALSE)
 
@@ -212,17 +186,6 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
 
   # Expected new class ID
   correct_classid <- 99
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
@@ -257,7 +220,6 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
                "argument `correction` is missing, with no default")
 
   # Clean up the temporary virtual environment
-  # unlink(venv_dir, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
   unlink(manual_folder, recursive = TRUE)
   unlink(file.path(manual_folder, "D20220712T210855_IFCB134.mat"))

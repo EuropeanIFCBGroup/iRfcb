@@ -1,6 +1,6 @@
 test_that("ifcb_extract_classified_images works correctly with default parameters", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
 
   # Define the path to the test data zip file
   test_data_zip <- test_path("test_data/test_data.zip")
@@ -43,7 +43,7 @@ test_that("ifcb_extract_classified_images works correctly with default parameter
 })
 
 test_that("ifcb_extract_classified_images works correctly with specific taxa", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
   unzip(test_data_zip, exdir = temp_dir)
@@ -77,7 +77,7 @@ test_that("ifcb_extract_classified_images works correctly with specific taxa", {
 })
 
 test_that("ifcb_extract_classified_images handles missing classified file gracefully", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
   unzip(test_data_zip, exdir = temp_dir)
@@ -110,7 +110,7 @@ test_that("ifcb_extract_classified_images handles missing classified file gracef
 })
 
 test_that("ifcb_extract_classified_images handles multiple classified files gracefully", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
   unzip(test_data_zip, exdir = temp_dir)
@@ -142,7 +142,7 @@ test_that("ifcb_extract_classified_images handles multiple classified files grac
 })
 
 test_that("ifcb_extract_classified_images works correctly with different thresholds", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
   unzip(test_data_zip, exdir = temp_dir)
@@ -179,7 +179,7 @@ test_that("ifcb_extract_classified_images works correctly with different thresho
 })
 
 test_that("ifcb_extract_classified_images handles missing roi files gracefully", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
   unzip(test_data_zip, exdir = temp_dir)

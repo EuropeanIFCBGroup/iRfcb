@@ -1,6 +1,6 @@
 test_that("ifcb_psd works correctly", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_psd")
 
   # Define the path to the test data zip file
   test_data_zip <- test_path("test_data/test_data.zip")
@@ -56,17 +56,6 @@ test_that("ifcb_psd works correctly", {
   # Ensure the test data directories exist
   expect_true(dir.exists(feature_folder))
   expect_true(dir.exists(hdr_folder))
-
-  # Create a temporary virtual environment
-  venv_dir <- file.path(tempdir(), "iRfcb")
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Run the function
   result <- ifcb_psd(

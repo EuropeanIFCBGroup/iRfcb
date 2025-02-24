@@ -1,6 +1,6 @@
 test_that("ifcb_extract_annotated_images works correctly", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_annotated_images")
 
   # Define the path to the test data zip file
   test_data_zip <- test_path("test_data/test_data.zip")

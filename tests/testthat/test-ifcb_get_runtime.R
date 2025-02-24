@@ -1,7 +1,11 @@
 test_that("ifcb_get_runtime correctly extracts runtime and inhibittime from a local header file", {
   # Create a temporary header file with sample content
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_runtime")
   temp_hdr_file <- file.path(temp_dir, "test_header.hdr")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   hdr_content <- "
     runtime: 123.45
@@ -23,8 +27,12 @@ test_that("ifcb_get_runtime correctly extracts runtime and inhibittime from a lo
 
 test_that("ifcb_get_runtime handles missing fields gracefully", {
   # Create a temporary header file with missing fields
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_runtime")
   temp_hdr_file <- file.path(temp_dir, "test_header_missing_fields.hdr")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   hdr_content <- "
     runtime: 123.45

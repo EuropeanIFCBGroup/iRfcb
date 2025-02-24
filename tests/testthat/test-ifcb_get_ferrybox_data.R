@@ -1,6 +1,10 @@
 test_that("ifcb_get_ferrybox_data works correctly with valid inputs", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   # Path to the example ferrybox file
   example_file <- system.file("exdata/example_ferrybox.txt", package = "iRfcb")
@@ -46,7 +50,11 @@ test_that("ifcb_get_ferrybox_data handles missing ferrybox folder", {
 
 test_that("ifcb_get_ferrybox_data handles no ferrybox files in folder", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   # Define test timestamps
   test_timestamps <- as.POSIXct("2022-05-22 00:04:39", tz = "UTC")
@@ -61,7 +69,11 @@ test_that("ifcb_get_ferrybox_data handles no ferrybox files in folder", {
 
 test_that("ifcb_get_ferrybox_data handles no matching ship name", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   # Path to the example ferrybox file
   example_file <- system.file("exdata/example_ferrybox.txt", package = "iRfcb")
@@ -86,7 +98,11 @@ test_that("ifcb_get_ferrybox_data handles no matching ship name", {
 
 test_that("ifcb_get_ferrybox_data handles mistyped timestamps", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
 
   # Define test timestamps
   test_timestamps <- "This is not a timestamp"
@@ -101,7 +117,7 @@ test_that("ifcb_get_ferrybox_data handles mistyped timestamps", {
 
 test_that("ifcb_get_ferrybox_data handles empty ferrybox files", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
 
   if(!dir.exists(temp_dir)) {
     dir.create(temp_dir, recursive = TRUE)
@@ -125,7 +141,7 @@ test_that("ifcb_get_ferrybox_data handles empty ferrybox files", {
 
 test_that("ifcb_get_ferrybox_data handles no matching GPS data", {
   # Create a temporary directory
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_ferrybox_data")
 
   if(!dir.exists(temp_dir)) {
     dir.create(temp_dir, recursive = TRUE)

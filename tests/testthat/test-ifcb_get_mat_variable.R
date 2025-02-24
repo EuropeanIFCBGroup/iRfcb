@@ -28,7 +28,7 @@ test_that("ifcb_get_mat_variable handles missing variable gracefully", {
 
 test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
   # Create a temporary directory and file for the test
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_get_mat_variable")
   empty_mat_file <- file.path(temp_dir, "empty_test_file.mat")
 
   # Create an empty .mat file

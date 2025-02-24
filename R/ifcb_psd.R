@@ -71,6 +71,9 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
 
+  # Initialize python check
+  check_python_and_module()
+
   source_python(system.file("python", "psd.py", package = "iRfcb"))
 
   # Create a Bin object
