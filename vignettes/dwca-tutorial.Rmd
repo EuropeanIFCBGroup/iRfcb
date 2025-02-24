@@ -26,7 +26,7 @@ You can install the `iRfcb` and `LivingNorwayR` packages from GitHub using the `
 ```{r, eval=FALSE}
 # install.packages("remotes")
 remotes::install_github(c("EuropeanIFCBGroup/iRfcb",
-                           "LivingNorway/LivingNorwayR"))
+                          "LivingNorway/LivingNorwayR"))
 ```
 
 Load the required libraries:
@@ -40,7 +40,12 @@ library(uuid) # For generating unique identifiers
 
 ```{r, include=FALSE}
 library(iRfcb)
-library(LivingNorwayR) # For DwC-A creation
+# Check if LivingNorwayR is available, and load it conditionally
+if (requireNamespace("LivingNorwayR", quietly = TRUE)) {
+  library(LivingNorwayR)
+} else {
+  message("LivingNorwayR is not available, skipping related code.")
+}
 library(dplyr) # For data wrangling
 library(tidyr) # For data wrangling
 library(uuid) # For generating unique identifiers
@@ -231,7 +236,7 @@ tibble(event_df)
 
 The final stage is to initialise an event object in the `livingNorwayR` package - this will be used later to build the DwC compliant data package.
 
-```{r}
+```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 GBIF_Event <- initializeGBIFEvent(event_df, 
                                   idColumnInfo = "eventID", 
                                   nameAutoMap = TRUE)
@@ -348,7 +353,7 @@ tibble(occurrence_df)
 
 The occurrence data is initialized for GBIF submission using the `initializeGBIFOccurrence` function, which maps fields automatically based on the specified column.
 
-```{r}
+```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 GBIF_Occurrence <- initializeGBIFOccurrence(occurrence_df, 
                                             idColumnInfo = "occurrenceID", 
                                             nameAutoMap = TRUE)
@@ -478,7 +483,7 @@ tibble(mof_df)
 
 Finally, the extended measurement or fact table is prepared for GBIF by initializing the dataset in a compatible format using the `initializeGBIFMeasurementOrFact` function. The measurement IDs are used as unique identifiers, and columns are mapped automatically.
 
-```{r}
+```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 GBIF_MoF <- initializeGBIFMeasurementOrFact(mof_df, 
                                             idColumnInfo = "measurementID", 
                                             nameAutoMap = TRUE)
@@ -494,7 +499,7 @@ To create metadata for the IFCB dataset in a standardized format, we use the `in
 
 Here, we create the metadata starting with a Markdown file ([`metadata-template.rmd`](../articles/metadata-template.html)), which will be rendered into an EML-compliant XML file for GBIF submission:
 
-```{r}
+```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 # Initialize DwC metadata using a R Markdown template
 GBIF_Metadata <- initializeDwCMetadata("metadata-template.rmd", 
                                        fileType = "rmarkdown")
@@ -506,7 +511,7 @@ In this step, the finalized tables (`GBIF_Event`, `GBIF_Occurrence`, and `GBIF_M
 
 Here is the code for initializing and exporting the DwC-A:
 
-```{r}
+```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 # Initialize the DwC-A
 dwca_archive <- initializeDwCArchive(GBIF_Event, 
                                      list(GBIF_Occurrence, GBIF_MoF), 
