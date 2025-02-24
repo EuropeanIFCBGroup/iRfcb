@@ -26,7 +26,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
   correct_classid <- 99
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {
@@ -153,7 +153,7 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   correct_classid <- 99
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {
@@ -214,7 +214,7 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
   correct_classid <- 99
 
   # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
+  venv_dir <- file.path(tempdir(), "iRfcb")
 
   # Install a temporary virtual environment
   if (reticulate::virtualenv_exists(venv_dir)) {

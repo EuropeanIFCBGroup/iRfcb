@@ -15,7 +15,7 @@
 #' ifcb_py_install(packages = c("numpy", "pandas"))
 #' }
 #' @export
-ifcb_py_install <- function(..., envname = "~/.virtualenvs/iRfcb") {
+ifcb_py_install <- function(..., envname = ".virtualenvs/iRfcb") {
   args <- list(...)
 
   if ("packages" %in% names(args)) {
