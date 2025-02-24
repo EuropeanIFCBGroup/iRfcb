@@ -4,7 +4,7 @@
 \alias{ifcb_py_install}
 \title{Install iRfcb Python Environment}
 \usage{
-ifcb_py_install(..., envname = "~/.virtualenvs/iRfcb")
+ifcb_py_install(..., envname = ".virtualenvs/iRfcb")
 }
 \arguments{
 \item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
