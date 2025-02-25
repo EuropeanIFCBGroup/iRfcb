@@ -6,6 +6,9 @@ test_that("ifcb_is_diatom correctly identifies diatoms", {
   assignInNamespace("ifcb_match_taxa_names", mocked_worms_records, ns = "iRfcb")
   assignInNamespace("extract_class", mocked_extract_class, ns = "iRfcb")
 
+  # Check for internet connection and skip the test if offline
+  skip_if_offline()
+
   # Call the function
   result <- ifcb_is_diatom(taxa_list)
 
