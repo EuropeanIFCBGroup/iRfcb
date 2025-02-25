@@ -78,7 +78,7 @@ ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
                                classified_folder = "data/classified",
                                roi_folder = "data/data",
                                out_folder = "data/classified_images",
-                               taxa = "All", # or specify a particular taxa
+                               taxa = "Tripos_lineatus", # A specific taxa or "All"
                                threshold = "opt") # or specify another threshold
 ```
 
@@ -245,10 +245,6 @@ ap_id <- which(grepl("Alexandrium_pseudogonyaulax",
 # Find the class id of unclassified
 unclassified_id <- which(grepl("unclassified",
                          class2use))
-
-# Initialize the python session if not already set up
-# env_path <- file.path(tempdir(), "iRfcb")
-# ifcb_py_install(envname = env_path)
 
 # Move all Alexandrium_pseudogonyaulax images to unclassified
 ifcb_replace_mat_values(manual_folder = "data/manual",
