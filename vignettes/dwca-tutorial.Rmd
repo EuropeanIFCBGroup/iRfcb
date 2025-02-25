@@ -518,8 +518,10 @@ dwca_archive <- initializeDwCArchive(GBIF_Event,
                                      GBIF_Metadata)
 
 # Export the archive as a zip file
-dwca_archive$exportAsDwCArchive(file.path(data_dir, "iRfcb-DwC-A.zip"))
+dwca_archive$exportAsDwCArchive(file.path("files", "iRfcb-DwC-A.zip"))
 ```
+
+The finalized DwC-A can be downloaded as a [zip archive](https://github.com/EuropeanIFCBGroup/iRfcb/raw/main/vignettes/files/iRfcb-DwC-A.zip).
 
 This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html), and the [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/) documentation. See how more complex data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
