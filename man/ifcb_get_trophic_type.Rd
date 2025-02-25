@@ -14,6 +14,7 @@ ifcb_get_trophic_type(taxa_list = NULL, print_complete_list = FALSE)
 \value{
 A character vector of trophic types corresponding to the scientific names in \code{taxa_list},
 or a data frame containing all taxa and trophic types available in the \verb{SMHI Trophic Type} list.
+The available trophic types are autotrophic (AU), heterotrophic (HT), mixotrophic (MX) or not specified (NS).
 }
 \description{
 This function matches a specified list of taxa with a summarized list of trophic types

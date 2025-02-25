@@ -13,6 +13,7 @@ utils::globalVariables(c("scientific_name", "trophic_type"))
 #'
 #' @return A character vector of trophic types corresponding to the scientific names in \code{taxa_list},
 #' or a data frame containing all taxa and trophic types available in the `SMHI Trophic Type` list.
+#' The available trophic types are autotrophic (AU), heterotrophic (HT), mixotrophic (MX) or not specified (NS).
 #'
 #' @examples
 #' # Example usage:
