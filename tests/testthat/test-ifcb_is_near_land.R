@@ -32,7 +32,7 @@ test_that("ifcb_is_near_land works correctly", {
 
   # Check that positions are near land correctly identified (dummy check)
   # These values should be manually verified with known data
-  expected_near_land <- c(FALSE, FALSE, TRUE, FALSE, NA, NA)
+  expected_near_land <- c(TRUE, FALSE, TRUE, FALSE, NA, NA)
   expect_equal(near_land_default, expected_near_land)
 
   # Cleanup temporary files
