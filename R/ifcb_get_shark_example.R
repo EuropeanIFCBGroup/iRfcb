@@ -12,7 +12,7 @@
 #' shark_example <- ifcb_get_shark_example()
 #'
 #' # Print example as tibble
-#' tidyr::tibble(shark_example)
+#' dplyr::tibble(shark_example)
 ifcb_get_shark_example <- function() {
   shark_example <- read.table(system.file("exdata/shark_col.txt", package = "iRfcb"),
                               sep = "\t",

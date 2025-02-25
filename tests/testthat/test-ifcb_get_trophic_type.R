@@ -15,7 +15,7 @@ test_that("ifcb_get_trophic_type prints complete list when print_complete_list i
   complete_list <- ifcb_get_trophic_type(print_complete_list = TRUE)
 
   # Expected data frame
-  expected_df <- tibble(
+  expected_df <- dplyr::tibble(
     scientific_name = c("Acanthoceras zachariasii", "Nodularia spumigena", "Acanthoica quattrospina", "Noctiluca", "Gymnodiniales"),
     trophic_type = c("AU", "AU", "MX", "HT", "NS")
   )

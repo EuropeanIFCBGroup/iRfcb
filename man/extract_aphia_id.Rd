@@ -19,9 +19,9 @@ If the tibble is empty, it returns NA.
 }
 \examples{
 # Example usage:
-record <- tibble::tibble(AphiaID = c(12345, 67890))
+record <- dplyr::tibble(AphiaID = c(12345, 67890))
 iRfcb:::extract_aphia_id(record)
 
-empty_record <- tibble::tibble(AphiaID = numeric(0))
+empty_record <- dplyr::tibble(AphiaID = numeric(0))
 iRfcb:::extract_aphia_id(empty_record)
 }

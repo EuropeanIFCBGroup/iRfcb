@@ -20,12 +20,10 @@
 #' @importFrom R.matlab readMat
 #' @importFrom sf st_area st_as_sf st_as_sfc st_bbox st_crs st_geometry_type
 #'   st_intersection st_intersects st_make_valid st_read st_transform
-#'   st_union st_within st_wrap_dateline
+#'   st_union st_within st_wrap_dateline st_buffer
 #' @importFrom stats aggregate median na.omit setNames
 #' @importFrom stringr str_extract str_remove str_remove_all str_replace
 #'   str_replace_all word
-#' @importFrom terra buffer vect
-#' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
 #' @importFrom utils flush.console read.csv read.table setTxtProgressBar txtProgressBar

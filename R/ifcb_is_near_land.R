@@ -108,9 +108,7 @@ ifcb_is_near_land <- function(latitudes,
   land_utm <- st_transform(land, crs = utm_epsg)
 
   # Create a buffered shape around the coastline in meters (specified distance)
-  l_buffer <- terra::vect(land_utm)
-  terra::crs(l_buffer) <- utm_epsg
-  l_buffer <- terra::buffer(l_buffer, width = distance) %>% st_as_sf()
+  l_buffer <- st_buffer(land_utm, dist = distance)
 
   # Apply st_wrap_dateline only if the CRS is geographic
   if (st_crs(l_buffer)$epsg == crs) {

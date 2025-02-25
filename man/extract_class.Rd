@@ -19,9 +19,9 @@ If the tibble is empty, it returns NA.
 }
 \examples{
 # Example usage:
-record <- tibble::tibble(class = c("Class1", "Class2"))
+record <- dplyr::tibble(class = c("Class1", "Class2"))
 iRfcb:::extract_class(record)
 
-empty_record <- tibble::tibble(class = character(0))
+empty_record <- dplyr::tibble(class = character(0))
 iRfcb:::extract_class(empty_record)
 }

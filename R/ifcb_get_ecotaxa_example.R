@@ -26,7 +26,7 @@
 #' ecotaxa_example <- ifcb_get_ecotaxa_example()
 #'
 #' # Print the first five columns
-#' tidyr::tibble(ecotaxa_example)
+#' dplyr::tibble(ecotaxa_example)
 ifcb_get_ecotaxa_example <- function(example = "ifcb") {
   file_path <- switch(example,
                       "minimal" = "exdata/ecotaxa_table_minimum.tsv",

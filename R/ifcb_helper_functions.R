@@ -345,10 +345,10 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
 #' or NA if the tibble is empty.
 #' @examples
 #' # Example usage:
-#' record <- tibble::tibble(class = c("Class1", "Class2"))
+#' record <- dplyr::tibble(class = c("Class1", "Class2"))
 #' iRfcb:::extract_class(record)
 #'
-#' empty_record <- tibble::tibble(class = character(0))
+#' empty_record <- dplyr::tibble(class = character(0))
 #' iRfcb:::extract_class(empty_record)
 extract_class <- function(record) {
   if (nrow(record) == 0) {
@@ -368,10 +368,10 @@ extract_class <- function(record) {
 #' or NA if the tibble is empty.
 #' @examples
 #' # Example usage:
-#' record <- tibble::tibble(AphiaID = c(12345, 67890))
+#' record <- dplyr::tibble(AphiaID = c(12345, 67890))
 #' iRfcb:::extract_aphia_id(record)
 #'
-#' empty_record <- tibble::tibble(AphiaID = numeric(0))
+#' empty_record <- dplyr::tibble(AphiaID = numeric(0))
 #' iRfcb:::extract_aphia_id(empty_record)
 extract_aphia_id <- function(record) {
   if (nrow(record) == 0) {
