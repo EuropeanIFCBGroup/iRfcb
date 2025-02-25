@@ -6,7 +6,15 @@ vignette: >
   %\VignetteIndexEntry{Creating a DwC-A from IFCB Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{LivingNorwayR}
 ---
+
+```{r, include=FALSE}
+if (!requireNamespace("LivingNorwayR", quietly = TRUE)) {
+  knitr::opts_chunk$set(eval = FALSE)
+  message("LivingNorwayR is not available, so this vignette will not run.")
+}
+```
 
 ## Introduction
 

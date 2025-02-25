@@ -5,16 +5,22 @@ vignette: >
   %\VignetteIndexEntry{Metadata template}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{LivingNorwayR}
 ---
 
 ```{r, include = FALSE}
+if (!requireNamespace("LivingNorwayR", quietly = TRUE)) {
+  knitr::opts_chunk$set(eval = FALSE)
+  message("LivingNorwayR is not available, so this vignette will not run.")
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup, echo=FALSE}
+```{r setup, echo=FALSE, include=FALSE}
 # This is setup code that is not displayed in the rendered HTML file but includes packages
 # needed for producing the metadata document
 knitr::opts_chunk$set(echo = TRUE)
