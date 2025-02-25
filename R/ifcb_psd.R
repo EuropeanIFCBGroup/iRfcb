@@ -110,7 +110,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   # Convert to tibble and add sample column
   data_df <- tibble::rownames_to_column(data_df, var = "sample") %>%
     dplyr::arrange(sample) %>%
-    dplyr::as_tibble
+    dplyr::as_tibble()
 
   # Convert nested list to a data frame
   fits_df <- as.data.frame(lapply(fits, function(x) unlist(x)))
@@ -118,7 +118,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   # Convert to long format and then to wide format
   fits_df <- fits_df %>%
     mutate(sample = rownames(.)) %>%
-    dplyr::as_tibble %>%
+    dplyr::as_tibble() %>%
     dplyr::arrange(sample)
 
   if (nrow(as.data.frame(flags)) > 0) {
