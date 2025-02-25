@@ -13,8 +13,10 @@
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
 #'        Default is 10 seconds.
 #' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
-#' @param fuzzy A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
+#' @param fuzzy
+#'    `r lifecycle::badge("deprecated")`
+#'    The fuzzy argument is no longer available
 #'
 #' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
 #'
@@ -26,7 +28,13 @@
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
-ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE, fuzzy = TRUE, verbose = TRUE) {
+ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE, fuzzy = deprecated(), verbose = TRUE) {
+
+  # Warn the user if fuzzy is used
+  if (lifecycle::is_present(fuzzy)) {
+    # Signal the deprecation to the user
+    deprecate_warn("0.4.2", "iRfcb::ifcb_is_diatom(fuzzy = )")
+  }
 
   # Clean the taxa list
   taxa_list_clean <- taxa_list %>%
@@ -41,20 +49,22 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
                                       sleep_time = sleep_time,
                                       marine_only = marine_only,
                                       fuzzy = fuzzy,
-                                      return_list = TRUE,
+                                      return_list = FALSE,
                                       verbose = verbose)
 
-  # Extract classes with error handling for missing data
-  classes <- sapply(worms_data, function(record) {
-    if (!is.null(record)) {
-      extract_class(record)
-    } else {
-      NA
-    }
-  })
+  # # Extract classes with error handling for missing data
+  # classes <- sapply(worms_data, function(record) {
+  #   if (!is.null(record)) {
+  #     extract_class(record)
+  #   } else {
+  #     NA
+  #   }
+  # })
+
+  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_data$class, stringsAsFactors = FALSE)
 
   # Create the dataframe with taxa_list_clean and classes
-  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = classes, stringsAsFactors = FALSE)
+  # result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = classes, stringsAsFactors = FALSE)
 
   # Check if the class is the specified diatom class
   is_diatom <- result_df$class %in% diatom_class

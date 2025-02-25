@@ -10,7 +10,7 @@ ifcb_is_diatom(
   max_retries = 3,
   sleep_time = 10,
   marine_only = FALSE,
-  fuzzy = TRUE,
+  fuzzy = deprecated(),
   verbose = TRUE
 )
 }
@@ -28,7 +28,8 @@ Default is 10 seconds.}
 
 \item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
 
-\item{fuzzy}{A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.}
+\item{fuzzy}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+The fuzzy argument is no longer available}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }

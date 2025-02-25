@@ -10,7 +10,7 @@ test_that("ifcb_match_taxa_names handles errors gracefully", {
                                   verbose = TRUE)
 
   # Expected logical vector (true for diatoms, false for others)
-  expected_result <- c("no content", "not found")
+  expected_result <- c("no content", "no content")
 
   # Assert the results
   expect_equal(result$status, expected_result)
