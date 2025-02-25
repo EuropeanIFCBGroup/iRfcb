@@ -147,6 +147,7 @@ png_per_sample <- ifcb_summarize_png_counts(png_folder = "data/png",
                                             hdr_folder = "data/data",
                                             sum_level = "sample")
 
+# Print output
 head(png_per_sample)
 
 # Summarise counts on class level
