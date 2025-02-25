@@ -59,11 +59,6 @@ jobs:
         run: |
           Rscript -e 'remotes::install_github("LivingNorway/LivingNorwayR")'
 
-      - name: Install XQuartz on macOS
-        if: runner.os == 'macOS'
-        run: |
-          brew install --cask xquartz
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
