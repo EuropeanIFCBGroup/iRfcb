@@ -1,13 +1,13 @@
 #' Determine if Positions are Near Land
 #'
 #' Determines whether given positions are near land based on a coastline shape file.
-#' The Natural Earth 1:50m land vectors are included as default shapefile in `iRfcb`.
+#' The Natural Earth 1:10m land vectors are included as default shapefile in `iRfcb`.
 #'
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions.
 #' @param distance Buffer distance in meters around the coastline. Default is 500 m.
 #' @param shape Optional path to a shapefile containing coastline data. If provided,
-#'   the function will use this shapefile instead of the default Natural Earth 1:50m land vectors.
+#'   the function will use this shapefile instead of the default Natural Earth 1:10m land vectors.
 #'   Using a more detailed shapefile allows for a smaller buffer distance.
 #'   For detailed European coastlines, download polygons from the EEA at
 #'   \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.
@@ -77,10 +77,10 @@ ifcb_is_near_land <- function(latitudes,
     exdir <- tempdir()  # Temporary directory
 
     # Extract the files
-    unzip(system.file("exdata/ne_50m_land.zip", package = "iRfcb"), exdir = exdir)
+    unzip(system.file("exdata/ne_10m_land.zip", package = "iRfcb"), exdir = exdir)
 
     # Get coastline and land data within the bounding box
-    land <- st_read(file.path(exdir, "ne_50m_land.shp"), quiet = TRUE)
+    land <- st_read(file.path(exdir, "ne_10m_land.shp"), quiet = TRUE)
   } else {
     land <- st_read(shape, quiet = TRUE)
     land <- st_transform(land, crs = crs)

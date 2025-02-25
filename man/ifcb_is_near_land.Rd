@@ -23,7 +23,7 @@ ifcb_is_near_land(
 \item{distance}{Buffer distance in meters around the coastline. Default is 500 m.}
 
 \item{shape}{Optional path to a shapefile containing coastline data. If provided,
-the function will use this shapefile instead of the default Natural Earth 1:50m land vectors.
+the function will use this shapefile instead of the default Natural Earth 1:10m land vectors.
 Using a more detailed shapefile allows for a smaller buffer distance.
 For detailed European coastlines, download polygons from the EEA at
 \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.
@@ -46,7 +46,7 @@ Logical vector indicating whether each position is near land.
 }
 \description{
 Determines whether given positions are near land based on a coastline shape file.
-The Natural Earth 1:50m land vectors are included as default shapefile in \code{iRfcb}.
+The Natural Earth 1:10m land vectors are included as default shapefile in \code{iRfcb}.
 }
 \details{
 This function calculates a buffered area around the coastline and checks if

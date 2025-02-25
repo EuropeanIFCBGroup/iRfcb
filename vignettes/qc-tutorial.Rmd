@@ -161,7 +161,7 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 gps_data$near_land <- ifcb_is_near_land(gps_data$gpsLatitude,
                                         gps_data$gpsLongitude,
                                         distance = 100, # 100 meters from shore
-                                        shape = NULL) # Using the default NE 1:50m Land Polygon
+                                        shape = NULL) # Using the default NE 1:10m Land Polygon
 
 # Print output
 head(gps_data)
