@@ -8,7 +8,7 @@ Authors@R:
            email = "anders.torstensson@smhi.se",
            comment = c(affiliation = "Swedish Meteorological and Hydrological Institute",
                        ORCID = "0000-0002-8283-656X"))
-Description: A comprehensive suite of tools for managing, processing, and analyzing data from the Imaging FlowCytobot (IFCB). ‘I R FlowCytobot’ (iRfcb) supports quality control, geospatial analysis, and preparation of IFCB data for publication in databases like <https://www.gbif.org>, <https://www.obis.org>, <https://www.emodnet.eu>, <https://shark.smhi.se/>, and <https://www.ecotaxa.org>. The package integrates with the MATLAB ifcb-analysis tool and offers features for working with annotated, classified, and manually classified image datasets. Key functionalities include image extraction, particle size distribution analysis, taxonomic data handling, and biomass concentration calculations, essential for plankton research.
+Description: A comprehensive suite of tools for managing, processing, and analyzing data from the Imaging FlowCytobot (IFCB). ‘I R FlowCytobot’ (iRfcb) supports quality control, geospatial analysis, and preparation of IFCB data for publication in databases like <https://www.gbif.org>, <https://www.obis.org>, <https://emodnet.ec.europa.eu/en>, <https://shark.smhi.se/>, and <https://www.ecotaxa.org>. The package integrates with the MATLAB ifcb-analysis tool and offers features for working with annotated, classified, and manually classified image datasets. Key functionalities include image extraction, particle size distribution analysis, taxonomic data handling, and biomass concentration calculations, essential for plankton research.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
