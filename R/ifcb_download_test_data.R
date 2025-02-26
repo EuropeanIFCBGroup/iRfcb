@@ -13,6 +13,8 @@
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
+#' @return No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.
+#'
 #' @references Torstensson, Anders; Skjevik, Ann-Turi; Mohlin, Malin; Karlberg, Maria; Karlson, Bengt (2024). SMHI IFCB Plankton Image Reference Library. Version 3. SciLifeLab. Dataset.
 #' \doi{10.17044/scilifelab.25883455.v3}
 #'

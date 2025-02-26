@@ -2,12 +2,9 @@
 % Please edit documentation in R/defunct.R
 \name{defunct}
 \alias{defunct}
-\alias{ifcb_get_svea_position}
 \title{Defunct functions}
 \usage{
 # Deprecated in 0.3.* -------------------------------------
-
-ifcb_get_svea_position(...)
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#defunct}{\figure{lifecycle-defunct.svg}{options: alt='[Defunct]'}}}{\strong{[Defunct]}}

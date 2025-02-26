@@ -24,6 +24,9 @@ By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is 
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
+\value{
+No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.
+}
 \description{
 This function downloads a zip archive containing MATLAB files from the \code{iRfcb}
 dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),

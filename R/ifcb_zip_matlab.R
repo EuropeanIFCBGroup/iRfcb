@@ -33,6 +33,8 @@
 #'   \item Cleans up temporary directories after creating the zip archive.
 #' }
 #'
+#' @return No return value. This function creates a zip archive containing the specified files and directories.
+#'
 #' @examples
 #' \dontrun{
 #' ifcb_zip_matlab("path/to/manual_files", "path/to/feature_files",

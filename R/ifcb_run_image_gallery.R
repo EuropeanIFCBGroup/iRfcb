@@ -12,6 +12,8 @@
 #' @import shiny
 #' @export
 #'
+#' @return No return value. This function launches a Shiny application for interactive image browsing and management.
+#'
 #' @examples
 #' \dontrun{
 #' # Run the IFCB image gallery Shiny app

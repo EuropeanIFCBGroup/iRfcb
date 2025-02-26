@@ -15,7 +15,7 @@ NULL
 #' @name defunct
 NULL
 
-#' @export
+#' @noRd
 #' @rdname defunct
 #' @importFrom lifecycle deprecate_stop
 ifcb_get_svea_position <- function(...) {

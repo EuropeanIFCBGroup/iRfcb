@@ -8,6 +8,10 @@ utils::globalVariables(":=")
 #' @param paths A character vector of paths to files and/or directories to include in the manifest.
 #' @param manifest_path A character string specifying the path to the manifest file. Default is "MANIFEST.txt".
 #' @param temp_dir A character string specifying the temporary directory to be removed from the file paths.
+#' @return This function does not return any value. It creates a `MANIFEST.txt` file at the specified location,
+#'         which contains a list of all files (including their sizes) in the provided paths.
+#'         The file paths are relative to the specified `temp_dir`, and the manifest excludes the manifest file itself if present.
+#' @export
 create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_dir) {
   # Initialize a vector to store all files
   all_files <- NULL
@@ -57,6 +61,7 @@ create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_
 #'
 #' @param folder_name A character string specifying the folder name to truncate.
 #' @return A character string with the truncated folder name.
+#' @noRd
 truncate_folder_name <- function(folder_name) {
   sub("_\\d{3}$", "", basename(folder_name))
 }
@@ -68,6 +73,7 @@ truncate_folder_name <- function(folder_name) {
 #' @param current An integer specifying the current progress.
 #' @param total An integer specifying the total steps for the process.
 #' @param bar_width An integer specifying the width of the progress bar. Default is 50.
+#' @noRd
 print_progress <- function(current, total, bar_width = 50) {
   progress <- current / total
   complete <- round(progress * bar_width)
@@ -84,6 +90,7 @@ print_progress <- function(current, total, bar_width = 50) {
 #' @param mat_file A character string specifying the path to the .mat file.
 #' @param feature_files A character vector of paths to feature files to search.
 #' @return A character vector of matching feature files.
+#' @noRd
 find_matching_features <- function(mat_file, feature_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, feature_files, value = TRUE)
@@ -97,6 +104,7 @@ find_matching_features <- function(mat_file, feature_files) {
 #' @param mat_file A character string specifying the path to the .mat file.
 #' @param data_files A character vector of paths to data files to search.
 #' @return A character vector of matching data files.
+#' @noRd
 find_matching_data <- function(mat_file, data_files) {
   base_name <- tools::file_path_sans_ext(basename(mat_file))
   matching_files <- grep(base_name, data_files, value = TRUE)
@@ -109,6 +117,7 @@ find_matching_data <- function(mat_file, data_files) {
 #'
 #' @param file A character string specifying the path to the HDR file.
 #' @return A data frame with columns: parameter, value, and file.
+#' @export
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
   lines <- gsub("\\bN/A\\b", NA, lines)
@@ -129,6 +138,7 @@ read_hdr_file <- function(file) {
 #'
 #' @param filename A character string specifying the filename to extract parts from.
 #' @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
+#' @noRd
 extract_parts <- function(filename) {
 
   # Clean filename
@@ -181,7 +191,7 @@ extract_parts <- function(filename) {
 #' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
 #'
 #' @param ... Additional arguments passed to the function.
-#'
+#' @noRd
 .onLoad <- function(...) {
   # List available virtual environments in the default virtualenv root
   venvs <- reticulate::virtualenv_list()
@@ -210,6 +220,7 @@ extract_parts <- function(filename) {
 #'   \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
 #'   \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
+#' @export
 summarize_TBclass <- function(classfile, adhocthresh = NULL) {
   data <- readMat(classfile)
   class2useTB <- data$class2useTB
@@ -256,6 +267,7 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL) {
 #' @examples
 #' volume <- c(5000, 10000, 20000)
 #' iRfcb:::vol2C_lgdiatom(volume)
+#' @export
 vol2C_lgdiatom <- function(volume) {
   loga <- -0.933
   b <- 0.881
@@ -277,6 +289,7 @@ vol2C_lgdiatom <- function(volume) {
 #' @examples
 #' volume <- c(5000, 10000, 20000)
 #' iRfcb:::vol2C_nondiatom(volume)
+#' @export
 vol2C_nondiatom <- function(volume) {
   loga <- -0.665
   b <- 0.939
@@ -316,8 +329,7 @@ vol2C_nondiatom <- function(volume) {
 #'                                             c("8002", "8003", "8172"),
 #'                                             round_timestamp)
 #' }
-#'
-#' @export
+#' @noRd
 handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, rounding_function) {
   # Ensure that the columns from ferrybox_data are present and rename them
   ferrybox_data <- ferrybox_data %>%
@@ -350,6 +362,7 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
 #'
 #' empty_record <- dplyr::tibble(class = character(0))
 #' iRfcb:::extract_class(empty_record)
+#' @noRd
 extract_class <- function(record) {
   if (nrow(record) == 0) {
     NA
@@ -373,6 +386,7 @@ extract_class <- function(record) {
 #'
 #' empty_record <- dplyr::tibble(AphiaID = numeric(0))
 #' iRfcb:::extract_aphia_id(empty_record)
+#' @noRd
 extract_aphia_id <- function(record) {
   if (nrow(record) == 0) {
     NA
@@ -400,6 +414,7 @@ extract_aphia_id <- function(record) {
 #' @return A list of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
 #'
 #' @keywords internal
+#' @export
 retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE, verbose = TRUE) {
 
   # Print deprecation warning
@@ -425,6 +440,7 @@ retrieve_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10,
 #' feature_data <- data.frame(roi_number = 1:10, feature_value = rnorm(10))
 #' result <- extract_features(sample_name, feature_data)
 #' }
+#' @noRd
 extract_features <- function(sample_name, feature_data) {
   feature_data$sample <- gsub("_fea_v2.csv", "", sample_name)
   feature_data
@@ -446,7 +462,7 @@ extract_features <- function(sample_name, feature_data) {
 #' # Split an existing zip file into parts of up to 500 MB
 #' split_large_zip("large_file.zip", max_size = 500)
 #' }
-#'
+#' @export
 split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 
   # Convert zip_file to an absolute path
@@ -583,8 +599,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' \dontrun{
 #' check_python_and_module("scipy") # Check for Python and 'scipy'
 #' }
-#'
-#' @export
+#' @noRd
 check_python_and_module <- function(module = "scipy", initialize = TRUE) {
   # Check if Python is available
   if (!py_available(initialize = initialize)) {

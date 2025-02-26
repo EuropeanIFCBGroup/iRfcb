@@ -6,6 +6,8 @@
 #' @param ... Additional arguments passed to `virtualenv_create`, such as `packages`.
 #' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
 #'
+#' @return No return value. This function is called for its side effect of creating and configuring a Python virtual environment.
+#'
 #' @examples
 #' \dontrun{
 #' # Install the iRfcb Python environment

@@ -5,7 +5,16 @@
 #' ROI numbers are included if available.
 #'
 #' @param filenames A character vector of IFCB filenames in the format "DYYYYMMDDTHHMMSS_IFCBxxx".
-#' @return A data frame with columns: sample, full_timestamp, year, month, day, time, and ifcb_number.
+#'
+#' @return A tibble with columns:
+#'   - `sample`: The extracted sample name.
+#'   - `full_timestamp`: The full timestamp in "YYYY-MM-DD HH:MM:SS" format.
+#'   - `year`: The year as an integer.
+#'   - `month`: The month as an integer.
+#'   - `day`: The day as an integer.
+#'   - `time`: The extracted time in "HH:MM:SS" format.
+#'   - `ifcb_number`: The IFCB instrument number.
+#'
 #' @examples
 #' filenames <- c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135")
 #' timestamps <- ifcb_convert_filenames(filenames)
