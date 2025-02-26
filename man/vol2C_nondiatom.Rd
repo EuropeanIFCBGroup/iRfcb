@@ -19,6 +19,9 @@ The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
 with log a = -0.665 and b = 0.939.
 }
 \examples{
+# Volumes in microns^3
 volume <- c(5000, 10000, 20000)
-iRfcb:::vol2C_nondiatom(volume)
+
+# Convert biovolume to carbon for non-diatom protists
+vol2C_nondiatom(volume)
 }

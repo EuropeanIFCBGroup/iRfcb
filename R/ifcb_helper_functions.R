@@ -265,8 +265,11 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL) {
 #' @return A numeric vector of carbon measurements in picograms.
 #'
 #' @examples
+#' # Volumes in microns^3
 #' volume <- c(5000, 10000, 20000)
-#' iRfcb:::vol2C_lgdiatom(volume)
+#'
+#' # Convert biovolume to carbon for large diatoms
+#' vol2C_lgdiatom(volume)
 #' @export
 vol2C_lgdiatom <- function(volume) {
   loga <- -0.933
@@ -287,8 +290,11 @@ vol2C_lgdiatom <- function(volume) {
 #' @return A numeric vector of carbon measurements in picograms.
 #'
 #' @examples
+#' # Volumes in microns^3
 #' volume <- c(5000, 10000, 20000)
-#' iRfcb:::vol2C_nondiatom(volume)
+#'
+#' # Convert biovolume to carbon for non-diatom protists
+#' vol2C_nondiatom(volume)
 #' @export
 vol2C_nondiatom <- function(volume) {
   loga <- -0.665
