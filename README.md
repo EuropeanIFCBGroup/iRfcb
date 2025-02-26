@@ -4,7 +4,6 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
-[![CodeFactor](https://www.codefactor.io/repository/github/europeanifcbgroup/irfcb/badge)](https://www.codefactor.io/repository/github/europeanifcbgroup/irfcb)
 
 ## Overview
 
@@ -12,7 +11,7 @@ The `iRfcb` R package offers a suite of tools for managing and performing qualit
 
 ### Key Features
 
-- **Data Management**: Comprehensive functions for reading IFCB files, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.
+- **Data Management**: Functions for reading raw and processed IFCB files in R, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.
 - **Quality Control**: Tools for geospatial quality control of IFCB data and analysis of [Particle Size Distribution](https://github.com/kudelalab/PSD).
 - **Image Extraction**: Tools to extract and prepare images for publication.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data.

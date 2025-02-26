@@ -63,7 +63,6 @@ reference:
   - '`ifcb_summarize_biovolumes`'
   - '`ifcb_summarize_class_counts`'
   - '`ifcb_summarize_png_counts`'
-  - '`ifcb_summarize_png_data`'
   - '`ifcb_summarize_png_metadata`'
   - '`ifcb_volume_analyzed`'
   - '`ifcb_volume_analyzed_from_adc`'
@@ -84,10 +83,12 @@ reference:
   - '`handle_missing_ferrybox_data`'
   - '`print_progress`'
   - '`read_hdr_file`'
-  - '`retrieve_worms_records`'
   - '`split_large_zip`'
   - '`summarize_TBclass`'
   - '`truncate_folder_name`'
   - '`vol2C_lgdiatom`'
   - '`vol2C_nondiatom`'
-
+- title: Deprecated functions
+  contents:
+  - '`retrieve_worms_records`'
+  - '`ifcb_summarize_png_data`'
