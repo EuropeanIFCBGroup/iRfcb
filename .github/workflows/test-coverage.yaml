@@ -28,14 +28,6 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
-      - name: Install remotes
-        run: |
-          Rscript -e 'install.packages("remotes")'
-
-      - name: Install non-CRAN package
-        run: |
-          Rscript -e 'remotes::install_github("LivingNorway/LivingNorwayR")'
-
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(

@@ -31,12 +31,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: |
+            any::pkgdown,
+            any::remotes,
+            any::uuid,
+            local::.
           needs: website
-
-      - name: Install remotes
-        run: |
-          Rscript -e 'install.packages("remotes")'
 
       - name: Install non-CRAN package
         run: |
