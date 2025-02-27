@@ -11,7 +11,7 @@ The `iRfcb` R package offers a suite of tools for managing and performing qualit
 
 ### Key Features
 
-- **Data Management**: Functions for reading raw and processed IFCB files in R, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.
+- **Data Management**: Functions for reading raw and processed IFCB files, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.
 - **Quality Control**: Tools for geospatial quality control of IFCB data and analysis of [Particle Size Distribution](https://github.com/kudelalab/PSD).
 - **Image Extraction**: Tools to extract and prepare images for publication.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data.
