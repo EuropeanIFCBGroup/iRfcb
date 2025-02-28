@@ -1,4 +1,8 @@
 test_that("ifcb_py_install creates and uses the virtual environment", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Mock the virtualenv_create function
   mock_virtualenv_create <- mockery::mock()
   # Mock the use_virtualenv function
@@ -25,6 +29,10 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
 })
 
 test_that("ifcb_py_install handles additional arguments", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Mock the virtualenv_create function
   mock_virtualenv_create <- mockery::mock()
   # Mock the use_virtualenv function

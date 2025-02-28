@@ -1,4 +1,8 @@
 test_that("ifcb_psd works correctly", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Create a temporary directory
   temp_dir <- file.path(tempdir(), "ifcb_psd")
 

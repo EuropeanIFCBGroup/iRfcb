@@ -34,7 +34,10 @@ test_that("ifcb_zip_pngs works correctly", {
   # List the contents of the zip file using zip::zip_list
   zip_contents <- zip::zip_list(zip_filename)
   expected_files <- list.files(png_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
-  expected_files <- gsub(paste0(temp_dir, "/"), "", expected_files)
+
+  # Normalize paths to use forward slashes
+  temp_dir_fixed <- normalizePath(temp_dir, winslash = "/")
+  expected_files <- gsub(paste0(temp_dir_fixed, "/"), "", expected_files)
 
   # Verify the zip file contains the expected files
   for (file in expected_files) {

@@ -1,4 +1,8 @@
 test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
@@ -32,6 +36,10 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
 })
 
 test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   manual_folder <- file.path(tempdir(), "nonexistent")
   out_folder <- file.path(tempdir(), "out")
 
@@ -42,6 +50,10 @@ test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
 })
 
 test_that("ifcb_replace_mat_values handles missing files in manual folder gracefully", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
 
@@ -62,6 +74,10 @@ test_that("ifcb_replace_mat_values handles missing files in manual folder gracef
 })
 
 test_that("ifcb_replace_mat_values creates output directory if it does not exist", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "new_output")
 
@@ -85,6 +101,10 @@ test_that("ifcb_replace_mat_values creates output directory if it does not exist
 })
 
 test_that("ifcb_replace_mat_values handles different column indices correctly", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
 

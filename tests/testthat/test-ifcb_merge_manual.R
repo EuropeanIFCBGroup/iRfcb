@@ -1,4 +1,8 @@
 test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")
 
@@ -55,6 +59,10 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
 })
 
 test_that("ifcb_merge_manual throws the correct error messages", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")
 
