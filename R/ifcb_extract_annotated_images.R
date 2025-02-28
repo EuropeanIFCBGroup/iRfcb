@@ -1,7 +1,7 @@
 utils::globalVariables(c("name", "manual"))
 #' Extract Annotated Images from IFCB Data
 #'
-#' This function extracts labelled images from IFCB (Imaging FlowCytobot) data,
+#' This function extracts labeled images from IFCB (Imaging FlowCytobot) data,
 #' annotated using the MATLAB code from the `ifcb-analysis` repository (Sosik and Olson 2007).
 #' It reads manually classified data, maps class indices to class names, and extracts
 #' the corresponding Region of Interest (ROI) images, saving them to the specified directory.

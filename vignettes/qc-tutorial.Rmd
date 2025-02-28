@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette provides an overview of quality control (QC) methods for Imaging FlowCytobot (IFCB) data using the `iRfcb` package. The package offers tools to analyze Particle Size Distribution (PSD) follwing Hayashi et al. *in prep*, verify geographical positions, and integrate contextual data from sources like ferrybox systems. These QC workflows ensure high-quality datasets for phytoplankton and microzooplankton monitoring in marine ecosystems.
+This vignette provides an overview of quality control (QC) methods for Imaging FlowCytobot (IFCB) data using the `iRfcb` package. The package offers tools to analyze Particle Size Distribution (PSD) following Hayashi et al. *in prep*, verify geographical positions, and integrate contextual data from sources like ferrybox systems. These QC workflows ensure high-quality datasets for phytoplankton and microzooplankton monitoring in marine ecosystems.
 
 You'll learn how to:
 

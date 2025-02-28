@@ -46,7 +46,7 @@ Explore the key features and capabilities of `iRfcb` through the tutorials:
 - [Sharing Annotated IFCB Images](https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.html)
 - [Prepare IFCB Images for EcoTaxa](https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.html)
 
-### Example Useage
+### Example Usage
 
 `iRfcb` is designed for integration into IFCB data processing pipelines. For an example, see its implementation in the following project:
 

@@ -242,7 +242,7 @@ event_df <- parent_event_df %>%
 tibble(event_df)
 ```
 
-The final stage is to initialise an event object in the `livingNorwayR` package - this will be used later to build the DwC compliant data package.
+The final stage is to initialize an event object in the `livingNorwayR` package - this will be used later to build the DwC compliant data package.
 
 ```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 GBIF_Event <- initializeGBIFEvent(event_df, 

@@ -25,7 +25,7 @@
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
 #'
 #' The **base** set consists of the original classifications that are used as a reference for the merging process.
-#' The **additions** set contains th additional classifications that need to be merged with the base set.
+#' The **additions** set contains the additional classifications that need to be merged with the base set.
 #' When merging, unique class names from the additions set that are not present in the base set are appended.
 #'
 #' The function works by aligning the class labels from the additions set with those in the base set,
