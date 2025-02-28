@@ -9,7 +9,7 @@ ifcb_py_install(..., envname = ".virtualenvs/iRfcb")
 \arguments{
 \item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
 
-\item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
+\item{envname}{A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".}
 }
 \value{
 No return value. This function is called for its side effect of creating and configuring a Python virtual environment.
