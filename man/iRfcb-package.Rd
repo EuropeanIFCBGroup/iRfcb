@@ -4,11 +4,11 @@
 \name{iRfcb-package}
 \alias{iRfcb}
 \alias{iRfcb-package}
-\title{iRfcb: Tools for Analyzing and Processing Imaging FlowCytobot (IFCB) Data}
+\title{iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A comprehensive suite of tools for managing, processing, and analyzing data from the Imaging FlowCytobot (IFCB). ‘I R FlowCytobot’ (iRfcb) supports quality control, geospatial analysis, and preparation of IFCB data for publication in databases like \url{https://www.gbif.org}, \url{https://www.obis.org}, \url{https://emodnet.ec.europa.eu/en}, \url{https://shark.smhi.se/}, and \url{https://www.ecotaxa.org}. The package integrates with the MATLAB ifcb-analysis tool and offers features for working with annotated, classified, and manually classified image datasets. Key functionalities include image extraction, particle size distribution analysis, taxonomic data handling, and biomass concentration calculations, essential for plankton research.
+A comprehensive suite of tools for managing, processing, and analyzing data from the IFCB. I R FlowCytobot ('iRfcb') supports quality control, geospatial analysis, and preparation of IFCB data for publication in databases like \url{https://www.gbif.org}, \url{https://www.obis.org}, \url{https://emodnet.ec.europa.eu/en}, \url{https://shark.smhi.se/}, and \url{https://www.ecotaxa.org}. The package integrates with the MATLAB 'ifcb-analysis' tool, which is described in Sosik and Olson (2007) \doi{10.4319/lom.2007.5.204}, and provides features for working with raw, manually classified, and machine learning–classified image datasets. Key functionalities include image extraction, particle size distribution analysis, taxonomic data handling, and biomass concentration calculations, essential for plankton research.
 }
 \seealso{
 Useful links:
