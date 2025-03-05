@@ -321,7 +321,6 @@ taxa_names_clean <- gsub("Cylindrotheca/Nitzschia longissima", "Bacillariaceae",
 # Retrieve worms records
 worms_records <- ifcb_match_taxa_names(taxa_names_clean,
                                        marine_only = FALSE,
-                                       fuzzy = FALSE,
                                        verbose = FALSE)
 
 # Create data frame with taxa information and class names

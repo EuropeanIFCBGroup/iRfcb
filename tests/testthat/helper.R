@@ -20,7 +20,7 @@ create_temp_ferrybox_file <- function(file_path, content) {
 }
 
 # Mock the helper function to simulate WoRMS data retrieval
-mocked_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE, fuzzy = TRUE, return_list = FALSE, verbose = FALSE) {
+mocked_worms_records <- function(taxa_names, max_retries = 3, sleep_time = 10, marine_only = FALSE, return_list = FALSE, verbose = FALSE) {
   # Simulated data
   records <- list(
     list(scientificname = "Nitzschia", class = "Bacillariophyceae"),
@@ -37,7 +37,7 @@ mocked_extract_class <- function(record) {
 }
 
 # Mock wm_records_names to simulate an error
-mocked_wm_records_names_error <- function(taxa_names, marine_only = FALSE, fuzzy = TRUE, return_list = FALSE) {
+mocked_wm_records_names_error <- function(taxa_names, marine_only = FALSE, return_list = FALSE) {
   stop("Simulated retrieval error")
 }
 
