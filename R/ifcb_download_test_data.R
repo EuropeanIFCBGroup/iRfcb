@@ -104,7 +104,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   dir.create(ferrybox_dir, recursive = TRUE, showWarnings = FALSE)
 
   # Define destination files
-  dest_class_file <- file.path(classified_dir, "D20230810T113059_IFCB134_class_v1.mat")
+  dest_class_file <- file.path(classified_dir, "D20230314T001205_IFCB134_class_v1.mat")
   dest_summary_file <- file.path(summary_dir, "summary_allTB_2023.mat")
   dest_correction_file <- file.path(manual_dir, "Alexandrium_pseudogonyaulax_selected_images.txt")
   dest_ferrybox_file <- file.path(ferrybox_dir, "SveaFB_38059_20220501000100_20220531235800_OK.txt")

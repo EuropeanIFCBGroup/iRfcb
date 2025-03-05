@@ -74,7 +74,7 @@ To begin working with classified data, you can extract all classified images fro
 
 ```{r}
 # Extract all classified images from a sample
-ifcb_extract_classified_images(sample = "D20230810T113059_IFCB134",
+ifcb_extract_classified_images(sample = "D20230314T001205_IFCB134",
                                classified_folder = "data/classified",
                                roi_folder = "data/data",
                                out_folder = "data/classified_images",
