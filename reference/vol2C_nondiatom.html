@@ -13,7 +13,7 @@ with log a = -0.665 and b = 0.939."><meta property="og:image" content="https://e
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,8 +79,11 @@ with log a = -0.665 and b = 0.939.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">volume</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">20000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu">vol2C_nondiatom</span><span class="op">(</span><span class="va">volume</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Volumes in microns^3</span></span></span>
+<span class="r-in"><span><span class="va">volume</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5000</span>, <span class="fl">10000</span>, <span class="fl">20000</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Convert biovolume to carbon for non-diatom protists</span></span></span>
+<span class="r-in"><span><span class="fu">vol2C_nondiatom</span><span class="op">(</span><span class="va">volume</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  643.1804 1233.1048 2364.1072</span>
 </code></pre></div>
     </div>
@@ -89,7 +92,7 @@ with log a = -0.665 and b = 0.939.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">

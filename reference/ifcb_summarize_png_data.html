@@ -15,7 +15,7 @@ and optionally retrieves GPS positions, and IFCB information using ifcb_read_hdr
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,14 +107,14 @@ If sum_level is "class", returns a data frame with columns: class_name, n_images
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Example usage:</span></span></span>
 <span class="r-in"><span><span class="co"># Assuming the following directory structure:</span></span></span>
-<span class="r-in"><span><span class="co"># png_folder/</span></span></span>
-<span class="r-in"><span><span class="co"># ├── class1/</span></span></span>
-<span class="r-in"><span><span class="co"># │   ├── sample1_00001.png</span></span></span>
-<span class="r-in"><span><span class="co"># │   ├── sample1_00002.png</span></span></span>
-<span class="r-in"><span><span class="co"># │   ├── sample2_00001.png</span></span></span>
-<span class="r-in"><span><span class="co"># ├── class2/</span></span></span>
-<span class="r-in"><span><span class="co"># │   ├── sample1_00003.png</span></span></span>
-<span class="r-in"><span><span class="co"># │   ├── sample3_00001.png</span></span></span>
+<span class="r-in"><span><span class="co"># path/to/png_folder/</span></span></span>
+<span class="r-in"><span><span class="co"># |- class1/</span></span></span>
+<span class="r-in"><span><span class="co"># |  |- sample1_00001.png</span></span></span>
+<span class="r-in"><span><span class="co"># |  |- sample1_00002.png</span></span></span>
+<span class="r-in"><span><span class="co"># |  |- sample2_00001.png</span></span></span>
+<span class="r-in"><span><span class="co"># |- class2/</span></span></span>
+<span class="r-in"><span><span class="co"># |  |- sample1_00003.png</span></span></span>
+<span class="r-in"><span><span class="co"># |  |- sample3_00001.png</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">png_folder</span> <span class="op">&lt;-</span> <span class="st">"path/to/png_folder"</span></span></span>
 <span class="r-in"><span><span class="va">hdr_folder</span> <span class="op">&lt;-</span> <span class="st">"path/to/hdr_folder"</span> <span class="co"># This folder should contain corresponding .hdr files</span></span></span>
@@ -140,7 +140,7 @@ If sum_level is "class", returns a data frame with columns: class_name, n_images
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">

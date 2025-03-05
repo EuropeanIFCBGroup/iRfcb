@@ -11,7 +11,7 @@ ROI numbers are included if available."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,8 +71,14 @@ ROI numbers are included if available.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: sample, full_timestamp, year, month, day, time, and ifcb_number.</p>
-    </div>
+    <p>A tibble with columns:</p><ul><li><p><code>sample</code>: The extracted sample name.</p></li>
+<li><p><code>full_timestamp</code>: The full timestamp in "YYYY-MM-DD HH:MM:SS" format.</p></li>
+<li><p><code>year</code>: The year as an integer.</p></li>
+<li><p><code>month</code>: The month as an integer.</p></li>
+<li><p><code>day</code>: The day as an integer.</p></li>
+<li><p><code>time</code>: The extracted time in "HH:MM:SS" format.</p></li>
+<li><p><code>ifcb_number</code>: The IFCB instrument number.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -93,7 +99,7 @@ ROI numbers are included if available.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">

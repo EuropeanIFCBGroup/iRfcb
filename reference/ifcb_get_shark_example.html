@@ -9,7 +9,7 @@ This format is used for submitting IFCB data to https://shark.smhi.se/."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,7 @@ This format is used for submitting IFCB data to <a href="https://shark.smhi.se/"
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu">ifcb_get_shark_example</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print example as tibble</span></span></span>
-<span class="r-in"><span><span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 67</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MYEAR STATN    SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME SDATE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
@@ -95,7 +95,7 @@ This format is used for submitting IFCB data to <a href="https://shark.smhi.se/"
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">

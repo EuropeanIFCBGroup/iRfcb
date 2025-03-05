@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
 <p>This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB)
 data for <a href="https://ecotaxa.obs-vlfr.fr/" class="external-link">EcoTaxa</a> in R using
 the <code>iRfcb</code> package. This tutorial covers the export of both
-unclassifie raw IFCB images and annotated Regions of Interest (ROIs)
+unclassified raw IFCB images and annotated Regions of Interest (ROIs)
 using the MATLAB code from the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link">ifcb-analysis</a>
 repository (Sosik and Olson, 2007). However, the code can be adapted to
 process images from other software platforms. The code can also be
@@ -270,7 +270,7 @@ from WoRMS, such as <strong>AphiaID</strong>.</p>
 <span><span class="va">taxa_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">$</span><span class="va">subfolder</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Clean taxa_names by substituting specific patterns with spaces or empty strings</span></span>
-<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu"><a href="../reference/truncate_folder_name.html">truncate_folder_name</a></span><span class="op">(</span><span class="va">taxa_names</span><span class="op">)</span> <span class="co"># Remove numerics from folder name</span></span>
+<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu">truncate_folder_name</span><span class="op">(</span><span class="va">taxa_names</span><span class="op">)</span> <span class="co"># Remove numerics from folder name</span></span>
 <span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"_"</span>, <span class="st">" "</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
 <span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">" single cell"</span>, <span class="st">""</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
 <span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">" chain"</span>, <span class="st">""</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
@@ -296,7 +296,6 @@ from WoRMS, such as <strong>AphiaID</strong>.</p>
 <span><span class="co"># Retrieve worms records</span></span>
 <span><span class="va">worms_records</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_match_taxa_names.html">ifcb_match_taxa_names</a></span><span class="op">(</span><span class="va">taxa_names_clean</span>,</span>
 <span>                                       marine_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                                       fuzzy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                                       verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create data frame with taxa information and class names</span></span>
@@ -647,7 +646,7 @@ that class.</p>
 <span>  <span class="co"># Filter metadata for each class</span></span>
 <span>  <span class="va">ecotaxa_metadata_ix</span> <span class="op">&lt;-</span> <span class="va">ecotaxa_metadata</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">object_annotation_hierarchy</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ecotaxa_metadata</span><span class="op">$</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>object_annotation_hierarchy <span class="op">=</span> <span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu"><a href="../reference/truncate_folder_name.html">truncate_folder_name</a></span><span class="op">(</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>object_annotation_hierarchy <span class="op">=</span> <span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu">truncate_folder_name</span><span class="op">(</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co"># Add data format codes (text[t], float[f] etc.)</span></span>
 <span>  <span class="va">ecotaxa_metadata_ix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
@@ -662,7 +661,7 @@ that class.</p>
 <span>            <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
 <span>              <span class="va">subfolder_path</span>, </span>
 <span>              <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"ecotaxa_"</span>,</span>
-<span>                     <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu"><a href="../reference/truncate_folder_name.html">truncate_folder_name</a></span><span class="op">(</span><span class="va">ecotaxa_metadata</span><span class="op">$</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
+<span>                     <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">iRfcb</span><span class="fu">:::</span><span class="fu">truncate_folder_name</span><span class="op">(</span><span class="va">ecotaxa_metadata</span><span class="op">$</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>,</span>
 <span>                     <span class="st">".tsv"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>            na <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -705,17 +704,17 @@ Project</a>. Happy analyzing!</p>
 </h2>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##   Anders Torstensson (2025). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
-<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.4.1.</span></span>
+<span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.2.</span></span>
 <span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   @Manual{,</span></span>
-<span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
+<span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.1},</span></span>
+<span><span class="co">##     note = {R package version 0.4.2},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
@@ -739,7 +738,7 @@ SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" c
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">

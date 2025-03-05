@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -152,35 +152,13 @@ images from a specific sample. This is especially useful for isolating
 ROIs based on specific taxa or classification thresholds.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract all classified images from a sample</span></span>
-<span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230810T113059_IFCB134"</span>,</span>
+<span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230314T001205_IFCB134"</span>,</span>
 <span>                               classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
 <span>                               roi_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                               out_folder <span class="op">=</span> <span class="st">"data/classified_images"</span>,</span>
-<span>                               taxa <span class="op">=</span> <span class="st">"All"</span>, <span class="co"># or specify a particular taxa</span></span>
+<span>                               taxa <span class="op">=</span> <span class="st">"Tripos_lineatus"</span>, <span class="co"># A specific taxa or "All"</span></span>
 <span>                               threshold <span class="op">=</span> <span class="st">"opt"</span><span class="op">)</span> <span class="co"># or specify another threshold</span></span></code></pre></div>
-<pre><code><span><span class="co">## Writing 2747 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Heterocapsa_rotundata </span></span>
-<span><span class="co">## Writing 519 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Cryptomonadales </span></span>
-<span><span class="co">## Writing 464 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Dino_smaller_than_30unidentified </span></span>
-<span><span class="co">## Writing 511 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/unclassified </span></span>
-<span><span class="co">## Writing 6 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Ciliates </span></span>
-<span><span class="co">## Writing 245 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Leptocylindrus_danicus_minimus </span></span>
-<span><span class="co">## Writing 114 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Leptocylindrus_danicus </span></span>
-<span><span class="co">## Writing 66 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Cylindrotheca_Nitzschia_longissima </span></span>
-<span><span class="co">## Writing 23 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Chaetoceros_chain </span></span>
-<span><span class="co">## Writing 6 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Dino_larger_than_30unidentified </span></span>
-<span><span class="co">## Writing 23 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Prorocentrum_micans </span></span>
-<span><span class="co">## Writing 51 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Scrippsiella_group </span></span>
-<span><span class="co">## Writing 2 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Tripos_lineatus </span></span>
-<span><span class="co">## Writing 1 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Cerataulina_pelagica </span></span>
-<span><span class="co">## Writing 6 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Gymnodiniales_smaller_than_30 </span></span>
-<span><span class="co">## Writing 3 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Chaetoceros_single_cell </span></span>
-<span><span class="co">## Writing 5 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Skeletonema_marinoi </span></span>
-<span><span class="co">## Writing 1 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Enisiculifera_carinata </span></span>
-<span><span class="co">## Writing 2 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Thalassiosira_gravida </span></span>
-<span><span class="co">## Writing 2 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Pseudo-nitzschia_spp </span></span>
-<span><span class="co">## Writing 1 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Octactis_speculum </span></span>
-<span><span class="co">## Writing 3 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Guinardia_delicatula </span></span>
-<span><span class="co">## Writing 1 ROIs from D20230810T113059_IFCB134.roi to data/classified_images/Thalassiosira_nordenskioeldii</span></span></code></pre>
+<pre><code><span><span class="co">## Writing 1 ROIs from D20230314T001205_IFCB134.roi to data/classified_images/Tripos_lineatus</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="read-a-summary-file">Read a Summary File<a class="anchor" aria-label="anchor" href="#read-a-summary-file"></a>
@@ -240,12 +218,12 @@ and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovo
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
 <span><span class="co">##   sample             classifier class counts biovolume_mm3 carbon_ug ml_analyzed</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Cera…      1    0.000<span style="text-decoration: underline;">001</span>75 0.000<span style="text-decoration: underline;">083</span>9        3.17</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Chae…     23    0.000<span style="text-decoration: underline;">017</span>6  0.000<span style="text-decoration: underline;">901</span>         3.17</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Chae…      3    0.000<span style="text-decoration: underline;">001</span>18 0.000<span style="text-decoration: underline;">067</span>4        3.17</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Cili…      6    0.000<span style="text-decoration: underline;">011</span>7  0.001<span style="text-decoration: underline;">59</span>          3.17</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Cryp…    519    0.000<span style="text-decoration: underline;">097</span>1  0.015<span style="text-decoration: underline;">1</span>           3.17</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230810T113059_… <span style="color: #949494;">"</span>Z:\\data… Cyli…     66    0.000<span style="text-decoration: underline;">016</span>8  0.001<span style="text-decoration: underline;">01</span>          3.17</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Chae…      1   0.000<span style="text-decoration: underline;">002</span>55  0.000<span style="text-decoration: underline;">117</span>         4.57</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Cili…     11   0.000<span style="text-decoration: underline;">047</span>9   0.006<span style="text-decoration: underline;">01</span>          4.57</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Cryp…    162   0.000<span style="text-decoration: underline;">029</span>1   0.004<span style="text-decoration: underline;">55</span>          4.57</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Cyli…      4   0.000<span style="text-decoration: underline;">000</span>918 0.000<span style="text-decoration: underline;">053</span>6        4.57</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Dino…      3   0.000<span style="text-decoration: underline;">016</span>2   0.002<span style="text-decoration: underline;">07</span>          4.57</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230314T001205_… <span style="color: #949494;">"</span>Z:\\data… Dino…    137   0.000<span style="text-decoration: underline;">072</span>2   0.010<span style="text-decoration: underline;">6</span>           4.57</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 3 more variables: counts_per_liter &lt;dbl&gt;, biovolume_mm3_per_liter &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   carbon_ug_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -302,6 +280,7 @@ sample data frame:</p>
 <span>                                            hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>                                            sum_level <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">png_per_sample</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 13</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># Groups:   sample, ifcb_number [3]</span></span></span>
@@ -388,7 +367,7 @@ files using the <code>correction</code> file with selected images:</p>
 <span>                         <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span></span>
+<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"iRfcb"</span><span class="op">)</span> <span class="co"># Or your preferred venv path</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Correct the annotation with the output from the image gallery</span></span>
@@ -415,10 +394,6 @@ files using the <code>correction</code> file with selected images:</p>
 <span><span class="co"># Find the class id of unclassified</span></span>
 <span><span class="va">unclassified_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"unclassified"</span>,</span>
 <span>                         <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="co"># env_path &lt;- "~/.virtualenvs/iRfcb"</span></span>
-<span><span class="co"># ifcb_py_install(envname = env_path)</span></span>
 <span></span>
 <span><span class="co"># Move all Alexandrium_pseudogonyaulax images to unclassified</span></span>
 <span><span class="fu"><a href="../reference/ifcb_replace_mat_values.html">ifcb_replace_mat_values</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -503,17 +478,17 @@ Project</a>. Happy analyzing!</p>
 </h2>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">##   Anders Torstensson (2025). I 'R' FlowCytobot (iRfcb): Tools for</span></span>
-<span><span class="co">##   Analyzing and Processing Data from the IFCB. R package version 0.4.1.</span></span>
+<span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.2.</span></span>
 <span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   @Manual{,</span></span>
-<span><span class="co">##     title = {I 'R' FlowCytobot (iRfcb): Tools for Analyzing and Processing Data from the IFCB},</span></span>
+<span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.1},</span></span>
+<span><span class="co">##     note = {R package version 0.4.2},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
@@ -544,7 +519,7 @@ SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" c
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Anders Torstensson.</p>
+  <p>Developed by Anders Torstensson, DTO-BioFlow.</p>
 </div>
 
 <div class="pkgdown-footer-right">
