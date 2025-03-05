@@ -1,7 +1,7 @@
 test_that("ifcb_count_mat_annotations works correctly", {
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_count_mat_annotations")
   unzip(test_data_zip, exdir = temp_dir)
 
   # Define the paths for the manual folder and the class2use file
@@ -38,7 +38,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
 
   # Ensure that the skipped IDs do not appear in the result
   skipped_classes <- ifcb_get_mat_variable(class2use_file) %>%
-    tibble::enframe(name = NULL, value = "class") %>%
+    data.frame(class = .) %>%  # Convert vector to data frame
     filter(seq_along(class) %in% skip_ids) %>%
     pull(class)
   expect_true(all(!result_skip_ids$class %in% skipped_classes))

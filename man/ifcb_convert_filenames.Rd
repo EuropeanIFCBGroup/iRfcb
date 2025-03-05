@@ -10,7 +10,16 @@ ifcb_convert_filenames(filenames)
 \item{filenames}{A character vector of IFCB filenames in the format "DYYYYMMDDTHHMMSS_IFCBxxx".}
 }
 \value{
-A data frame with columns: sample, full_timestamp, year, month, day, time, and ifcb_number.
+A tibble with columns:
+\itemize{
+\item \code{sample}: The extracted sample name.
+\item \code{full_timestamp}: The full timestamp in "YYYY-MM-DD HH:MM:SS" format.
+\item \code{year}: The year as an integer.
+\item \code{month}: The month as an integer.
+\item \code{day}: The day as an integer.
+\item \code{time}: The extracted time in "HH:MM:SS" format.
+\item \code{ifcb_number}: The IFCB instrument number.
+}
 }
 \description{
 This function converts IFCB filenames to a data frame with separate columns for

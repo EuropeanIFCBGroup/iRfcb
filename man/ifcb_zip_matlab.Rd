@@ -50,6 +50,9 @@ ifcb_zip_matlab(
 
 \item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.}
 }
+\value{
+No return value. This function creates a zip archive containing the specified files and directories.
+}
 \description{
 This function creates a zip archive containing specified files and directories for manually
 annotated IFCB images, organized into a structured format suitable for distribution or storage.

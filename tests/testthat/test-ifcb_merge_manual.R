@@ -1,9 +1,13 @@
 test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")
 
   # Define the temporary directory for unzipping
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_merge_manual")
 
   # Unzip the test data to the temporary directory
   unzip(zip_path, exdir = temp_dir)
@@ -19,15 +23,6 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   class2use <- as.character(ifcb_get_mat_variable(class2use_file))
   class2use_addition <- "New_class"
   class2use <- c(class2use_addition, class2use)
-
-  # Create and set up a virtual environment for Python dependencies (iRfcb)
-  venv_dir <- "~/.virtualenvs/iRfcb"
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Create a new class2use file with the updated classes
   ifcb_create_class2use(class2use, class2use_file_new)
@@ -64,11 +59,15 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
 })
 
 test_that("ifcb_merge_manual throws the correct error messages", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")
 
   # Define the temporary directory for unzipping
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_merge_manual")
 
   # Unzip the test data to the temporary directory
   unzip(zip_path, exdir = temp_dir)
@@ -87,15 +86,6 @@ test_that("ifcb_merge_manual throws the correct error messages", {
   class2use <- as.character(ifcb_get_mat_variable(class2use_file))
   class2use_addition <- "New_class"
   class2use <- c(class2use_addition, class2use)
-
-  # Create and set up a virtual environment for Python dependencies (iRfcb)
-  venv_dir <- "~/.virtualenvs/iRfcb"
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Create a new class2use file with the updated classes
   ifcb_create_class2use(class2use, class2use_file_new)

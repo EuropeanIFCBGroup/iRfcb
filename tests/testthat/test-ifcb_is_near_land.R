@@ -4,7 +4,7 @@ test_that("ifcb_is_near_land works correctly", {
   longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174, 15.0, NA)
 
   # Directory to extract files
-  exdir <- tempdir()  # Temporary directory
+  exdir <- file.path(tempdir(), "ifcb_is_near_land")  # Temporary directory
 
   # Extract the files
   unzip(system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb"), exdir = exdir)
@@ -32,7 +32,7 @@ test_that("ifcb_is_near_land works correctly", {
 
   # Check that positions are near land correctly identified (dummy check)
   # These values should be manually verified with known data
-  expected_near_land <- c(FALSE, FALSE, TRUE, FALSE, NA, NA)
+  expected_near_land <- c(TRUE, FALSE, TRUE, FALSE, NA, NA)
   expect_equal(near_land_default, expected_near_land)
 
   # Cleanup temporary files

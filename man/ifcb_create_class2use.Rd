@@ -13,6 +13,9 @@ ifcb_create_class2use(classes, filename, do_compression = TRUE)
 
 \item{do_compression}{A logical value indicating whether to compress the \code{.mat} file. Defaults to \code{TRUE}.}
 }
+\value{
+No return value. This function is called for its side effect of creating a \code{.mat} file.
+}
 \description{
 This function creates a \code{.mat} file containing a character vector of class names.
 A class2use file can be used for manual annotation using the code in the \code{ifcb-analysis}

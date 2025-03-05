@@ -16,7 +16,7 @@ test_that("ifcb_is_in_basin works with default Baltic Sea shapefile", {
 test_that("ifcb_is_in_basin works with a custom shapefile", {
   # Define a custom shapefile path (here we use the same Baltic shapefile for simplicity)
   shape_file <- system.file("exdata/baltic_sea_polygon.zip", package = "iRfcb")
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_is_in_basin")
   unzip(shape_file, exdir = temp_dir)
   custom_shape_file <- file.path(temp_dir, "baltic_sea_buffered.shp")
 

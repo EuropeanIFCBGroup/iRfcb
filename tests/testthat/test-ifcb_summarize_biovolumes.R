@@ -1,6 +1,6 @@
 # Define paths to the test data
 test_data_zip <- test_path("test_data/test_data.zip")
-temp_dir <- tempdir()
+temp_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes")
 unzip(test_data_zip, exdir = temp_dir)
 
 feature_folder <- file.path(temp_dir, "test_data", "features")
@@ -41,7 +41,7 @@ test_that("ifcb_summarize_biovolumes works correctly", {
 })
 
 test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes")
 
   # Create empty directories
   feature_folder <- file.path(temp_dir, "empty_features")

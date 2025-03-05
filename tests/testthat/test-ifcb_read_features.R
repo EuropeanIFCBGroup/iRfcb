@@ -1,5 +1,5 @@
 # Path to temporary test folder
-test_feature_folder <- tempdir()
+test_feature_folder <- file.path(tempdir(), "test_features")
 
 test_that("ifcb_read_features reads all feature files correctly", {
   setup_test_files(test_feature_folder)

@@ -2,7 +2,7 @@
 zip_path <- test_path("test_data/test_data.zip")
 
 # Define the temporary directory for unzipping
-temp_dir <- tempdir()
+temp_dir <- file.path(tempdir(), "ifcb_extract_biovolumes")
 
 # Unzip the test data
 unzip(zip_path, exdir = temp_dir)

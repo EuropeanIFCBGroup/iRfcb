@@ -53,7 +53,7 @@ utils::globalVariables("edit_manual_file")
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL, correct_classid, do_compression = TRUE, correction_file = deprecated()) {
 
-  # Warn the user if class_folder is used
+  # Warn the user if correction_file is used
   if (lifecycle::is_present(correction_file)) {
     # Signal the deprecation to the user
     deprecate_warn("0.3.12", "iRfcb::ifcb_correct_annotation(correction_file = )", "iRfcb::ifcb_correct_annotation(correction = )")

@@ -2,7 +2,7 @@
 summary_file_path <- system.file("exdata/example_summary.mat", package = "iRfcb")
 
 # Directory to extract files
-exdir <- tempdir()
+exdir <- file.path(tempdir(), "ifcb_read_summary")
 
 # Extract the files
 unzip(test_path("test_data/test_data.zip"), exdir = exdir)

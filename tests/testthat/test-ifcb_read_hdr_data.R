@@ -1,5 +1,5 @@
 # Directory to extract files
-exdir <- tempdir()
+exdir <- file.path(tempdir(), "ifcb_read_hdr_data")
 
 # Extract the files
 unzip(test_path("test_data/test_data.zip"), exdir = exdir)

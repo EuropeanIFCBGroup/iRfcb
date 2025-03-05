@@ -1,7 +1,7 @@
 test_that("ifcb_extract_pngs works correctly", {
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
-  temp_dir <- tempdir()
+  temp_dir <- file.path(tempdir(), "ifcb_extract_pngs")
   unzip(test_data_zip, exdir = temp_dir)
 
   # Path to the .roi and .adc files in the extracted test data

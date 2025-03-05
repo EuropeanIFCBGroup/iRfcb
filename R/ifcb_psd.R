@@ -71,6 +71,9 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     stop("No output file specified. Please provide a valid output file path to save the data.")
   }
 
+  # Initialize python check
+  check_python_and_module()
+
   source_python(system.file("python", "psd.py", package = "iRfcb"))
 
   # Create a Bin object
@@ -105,17 +108,20 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
   data_df <- as.data.frame(lapply(data, function(x) unlist(x)))
 
   # Convert to tibble and add sample column
-  data_df <- tibble::rownames_to_column(data_df, var = "sample") %>%
-    dplyr::arrange(sample) %>%
-    as_tibble
+  data_df <- data_df %>%
+    mutate(sample = rownames(data_df)) %>%  # Add row names as a new column
+    relocate(sample) %>%
+    arrange(sample) %>%
+    dplyr::as_tibble()
 
   # Convert nested list to a data frame
   fits_df <- as.data.frame(lapply(fits, function(x) unlist(x)))
 
   # Convert to long format and then to wide format
   fits_df <- fits_df %>%
-    tibble::rownames_to_column("sample") %>%
-    as_tibble %>%
+    mutate(sample = rownames(.)) %>%
+    dplyr::as_tibble() %>%
+    relocate(sample) %>%
     dplyr::arrange(sample)
 
   if (nrow(as.data.frame(flags)) > 0) {
@@ -124,7 +130,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     flags <- unlist(flags$flag)
 
     # Combine into a data frame
-    flags_df <- tibble(
+    flags_df <- dplyr::tibble(
       sample = files,
       flag = flags
     ) %>%

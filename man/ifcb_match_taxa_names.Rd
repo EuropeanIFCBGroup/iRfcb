@@ -6,19 +6,17 @@
 \usage{
 ifcb_match_taxa_names(
   taxa_names,
-  fuzzy = TRUE,
   best_match_only = TRUE,
   max_retries = 3,
   sleep_time = 10,
   marine_only = FALSE,
   return_list = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  fuzzy = deprecated()
 )
 }
 \arguments{
 \item{taxa_names}{A character vector of taxa names to retrieve records for.}
-
-\item{fuzzy}{A logical value indicating whether to search using a fuzzy search pattern. Default is TRUE.}
 
 \item{best_match_only}{A logical value indicating whether to automatically select the first match and return a single match. Default is TRUE.}
 
@@ -31,6 +29,9 @@ ifcb_match_taxa_names(
 \item{return_list}{A logical value indicating whether to to return the output as a list. Default is FALSE, where the result is returned as a dataframe.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
+
+\item{fuzzy}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+The fuzzy argument is no longer available}
 }
 \value{
 A data frame (or list if return_list is TRUE) of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.

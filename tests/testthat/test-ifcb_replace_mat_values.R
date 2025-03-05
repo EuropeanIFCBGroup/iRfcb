@@ -1,7 +1,11 @@
 test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Create a temporary directory for the manual_folder
-  manual_folder <- tempdir()
-  out_folder <- tempdir()
+  manual_folder <- file.path(tempdir(), "manual")
+  out_folder <- file.path(tempdir(), "out")
 
   # Create a test .mat file with a classlist
   test_classlist <- matrix(c(1, 99, 3, 99, 5, 6, 99, 8, 9), ncol = 1, byrow = TRUE)
@@ -12,17 +16,6 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   target_id <- 99
   new_id <- 1
   column_index <- 0 # Python uses 0-based indexing
-
-  # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
 
   # Use the mock function instead of the actual Python function
   source_python <- function(file) mock_replace_value_in_classlist
@@ -39,13 +32,16 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   expect_equal(output_classlist, expected_classlist)
 
   # Clean up the temporary virtual environment
-  # unlink(venv_dir, recursive = TRUE)
   unlink(manual_folder)
 })
 
 test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   manual_folder <- file.path(tempdir(), "nonexistent")
-  out_folder <- tempdir()
+  out_folder <- file.path(tempdir(), "out")
 
   expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1),
                paste("The manual folder does not exist:"))
@@ -54,8 +50,12 @@ test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
 })
 
 test_that("ifcb_replace_mat_values handles missing files in manual folder gracefully", {
-  manual_folder <- tempdir()
-  out_folder <- tempdir()
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  manual_folder <- file.path(tempdir(), "manual")
+  out_folder <- file.path(tempdir(), "out")
 
   manual_folder <- file.path(tempdir(), "empty_dir")
 
@@ -74,7 +74,11 @@ test_that("ifcb_replace_mat_values handles missing files in manual folder gracef
 })
 
 test_that("ifcb_replace_mat_values creates output directory if it does not exist", {
-  manual_folder <- tempdir()
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "new_output")
 
   # Create a test .mat file with a classlist
@@ -97,8 +101,12 @@ test_that("ifcb_replace_mat_values creates output directory if it does not exist
 })
 
 test_that("ifcb_replace_mat_values handles different column indices correctly", {
-  manual_folder <- tempdir()
-  out_folder <- tempdir()
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  manual_folder <- file.path(tempdir(), "manual")
+  out_folder <- file.path(tempdir(), "out")
 
   # Create a test .mat file with a classlist having multiple columns
   test_classlist <- matrix(c(1, 2, 99, 3, 4, 99, 5, 6, 99), ncol = 3, byrow = TRUE)

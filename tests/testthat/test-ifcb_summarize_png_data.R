@@ -1,6 +1,6 @@
 # Extract test data and define paths
 zip_path <- test_path("test_data/test_data.zip")
-temp_dir <- tempdir()
+temp_dir <- file.path(tempdir(), "ifcb_summarize_png_data")
 unzip(zip_path, exdir = temp_dir)
 
 # Define paths to the unzipped folders
@@ -87,7 +87,7 @@ test_that("ifcb_summarize_png_data calculates n_images correctly for different c
 
   # Check if n_images are calculated correctly for each class
   # Replace the following expected values with the actual expected values from your test data
-  expected_class_counts <- tibble(
+  expected_class_counts <- dplyr::tibble(
     class_name = "Cryptomonadales",
     n_images = 1
   )

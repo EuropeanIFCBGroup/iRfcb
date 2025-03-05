@@ -25,5 +25,4 @@ and splits it into smaller zip files without splitting subfolders.
 # Split an existing zip file into parts of up to 500 MB
 split_large_zip("large_file.zip", max_size = 500)
 }
-
 }

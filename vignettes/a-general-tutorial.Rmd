@@ -175,18 +175,18 @@ tibble(worms_records)
 
 ### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`iRfcb:::vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`iRfcb:::vol2C_lgdiatom`](../reference/vol2C_lgdiatom.html) for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`vol2C_lgdiatom`](../reference/vol2C_lgdiatom.html) for carbon calculations (not included in NAMESPACE).
 
 ```{r}
-# Read class2use file
-class2use <- ifcb_get_mat_variable("data/config/class2use.mat")
+# Read class2use file and select five taxa
+class2use <- ifcb_get_mat_variable("data/config/class2use.mat")[10:15]
 
 # Create a dataframe with class name and result from `ifcb_is_diatom`
 class_list <- data.frame(class2use,
                          is_diatom = ifcb_is_diatom(class2use, verbose = FALSE))
 
 # Print rows 10-15 of result
-class_list[10:15,]
+class_list
 ```
 The default class for diatoms is defined as Bacillariophyceae, but may be adjusted using the `diatom_class` argument.
 

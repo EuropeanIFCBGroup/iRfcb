@@ -39,7 +39,7 @@ ifcb_extract_annotated_images(
 None. The function saves the extracted PNG images to the specified output directory.
 }
 \description{
-This function extracts labelled images from IFCB (Imaging FlowCytobot) data,
+This function extracts labeled images from IFCB (Imaging FlowCytobot) data,
 annotated using the MATLAB code from the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 It reads manually classified data, maps class indices to class names, and extracts
 the corresponding Region of Interest (ROI) images, saving them to the specified directory.

@@ -1,14 +1,7 @@
 test_that("ifcb_create_empty_manual_file creates MAT file with correct parameters", {
-  # Create a temporary virtual environment
-  venv_dir <- "~/.virtualenvs/iRfcb"
-
-  # Install a temporary virtual environment
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  } else {
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE)
-  }
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
 
   output_file <- tempfile()
 

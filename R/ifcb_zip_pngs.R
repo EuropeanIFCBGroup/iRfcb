@@ -99,7 +99,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     files <- list.files(png_folder, pattern = "png$", full.names = TRUE, recursive = TRUE)
 
     # Summarize the number of images by directory
-    files_df <- tibble::tibble(dir = dirname(files)) %>%
+    files_df <- dplyr::tibble(dir = dirname(files)) %>%
       dplyr::count(dir) %>%
       dplyr::mutate(taxa = truncate_folder_name(dir)) %>% # Helper function
       dplyr::arrange(desc(n))

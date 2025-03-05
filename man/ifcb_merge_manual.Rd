@@ -52,7 +52,7 @@ The merged \code{.mat} data can be used with the code in the \code{ifcb-analysis
 This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
 
 The \strong{base} set consists of the original classifications that are used as a reference for the merging process.
-The \strong{additions} set contains th additional classifications that need to be merged with the base set.
+The \strong{additions} set contains the additional classifications that need to be merged with the base set.
 When merging, unique class names from the additions set that are not present in the base set are appended.
 
 The function works by aligning the class labels from the additions set with those in the base set,

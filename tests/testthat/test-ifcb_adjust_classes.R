@@ -1,9 +1,13 @@
 test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
+  # Skip if Python is not available
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
 
   # Define the temporary directory for unzipping
-  temp_dir <- tempdir() # Create a temporary directory to extract the zip contents
+  temp_dir <- file.path(tempdir(), "ifcb_adjust_classes") # Create a temporary directory to extract the zip contents
 
   # Unzip the test data into the temporary directory
   unzip(zip_path, exdir = temp_dir) # Extract the test data
@@ -21,18 +25,6 @@ test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
 
   # Append the new class to the existing class list
   class2use <- c(class2use, class2use_addition) # Combine old and new class
-
-  # Create a temporary virtual environment if it doesn't exist
-  venv_dir <- "~/.virtualenvs/iRfcb" # Path to the virtual environment
-
-  # Check if the virtual environment exists, if not create it and install dependencies
-  if (reticulate::virtualenv_exists(venv_dir)) {
-    reticulate::use_virtualenv(venv_dir, required = TRUE) # Use the existing virtual environment
-  } else {
-    # Create a new virtual environment and install required packages
-    reticulate::virtualenv_create(venv_dir, requirements = system.file("python", "requirements.txt", package = "iRfcb"))
-    reticulate::use_virtualenv(venv_dir, required = TRUE) # Use the newly created virtual environment
-  }
 
   # Create a new class2use file with the updated class list
   ifcb_create_class2use(class2use, class2use_file_new) # Save the updated class2use list

@@ -17,14 +17,14 @@
 #' \dontrun{
 #' # Example usage:
 #' # Assuming the following directory structure:
-#' # png_folder/
-#' # ├── class1/
-#' # │   ├── sample1_00001.png
-#' # │   ├── sample1_00002.png
-#' # │   ├── sample2_00001.png
-#' # ├── class2/
-#' # │   ├── sample1_00003.png
-#' # │   ├── sample3_00001.png
+#' # path/to/png_folder/
+#' # |- class1/
+#' # |  |- sample1_00001.png
+#' # |  |- sample1_00002.png
+#' # |  |- sample2_00001.png
+#' # |- class2/
+#' # |  |- sample1_00003.png
+#' # |  |- sample3_00001.png
 #'
 #' png_folder <- "path/to/png_folder"
 #' hdr_folder <- "path/to/hdr_folder" # This folder should contain corresponding .hdr files

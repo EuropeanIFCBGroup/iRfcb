@@ -6,6 +6,9 @@
 \usage{
 ifcb_run_image_gallery()
 }
+\value{
+No return value. This function launches a Shiny application for interactive image browsing and management.
+}
 \description{
 Launches a Shiny application that provides an interactive interface for
 browsing and managing IFCB (Imaging FlowCytobot) image galleries.
