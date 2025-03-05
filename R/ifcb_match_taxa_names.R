@@ -36,7 +36,7 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
   # Warn the user if fuzzy is used
   if (lifecycle::is_present(fuzzy)) {
     # Signal the deprecation to the user
-    deprecate_warn("0.4.2", "iRfcb::ifcb_match_taxa_names2(fuzzy = )")
+    deprecate_warn("0.4.2", "iRfcb::ifcb_match_taxa_names(fuzzy = )")
   }
 
   attempt <- 1
