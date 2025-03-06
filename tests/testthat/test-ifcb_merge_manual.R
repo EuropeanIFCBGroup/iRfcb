@@ -41,7 +41,9 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   ifcb_replace_mat_values(manual_folder_additions, manual_folder_additions, 5, 128)
 
   # Merge the manual classification data from base and additions folders into the merged folder
-  ifcb_merge_manual(class2use_file, class2use_file_new, NULL, manual_folder, manual_folder_additions, manual_folder_merged)
+  ifcb_merge_manual(class2use_file, class2use_file_new, NULL,
+                    manual_folder, manual_folder_additions,
+                    manual_folder_merged, skip_class = "None")
 
   # Verify that the merged folder contains the correct number of files
   files_base <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE)

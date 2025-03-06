@@ -16,6 +16,7 @@
 #' @param manual_folder_output Character. Path to the output folder where the merged classification files will be stored.
 #' @param do_compression A logical value indicating whether to compress the `.mat` file. Defaults to `TRUE`.
 #' @param temp_index_offset Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.
+#' @param skip_class Character. A vector of class names to skip from the `class2use_file_additions` during the merge process. Default is `NULL`.
 #' @param quiet Logical. If `TRUE`, suppresses output messages. Default is `FALSE`.
 #'
 #' @return No return value. Outputs the combined `class2use` file in the same folder as `class2use_file_base` is located or at a user-specified location,
@@ -49,7 +50,8 @@
 ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
                               class2use_file_output = NULL, manual_folder_base,
                               manual_folder_additions, manual_folder_output,
-                              do_compression = TRUE, temp_index_offset = 50000, quiet = FALSE) {
+                              do_compression = TRUE, temp_index_offset = 50000,
+                              skip_class = NULL, quiet = FALSE) {
 
   # Initialize python check
   check_python_and_module()
@@ -67,6 +69,11 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   # Get base and additional class names
   class2use_base <- as.character(ifcb_get_mat_variable(class2use_file_base))
   class2use_additions <- as.character(ifcb_get_mat_variable(class2use_file_additions))
+
+  # Remove classes to skip
+  if(!is.null(skip_class)) {
+    class2use_additions <- class2use_additions[!class2use_additions %in% skip_class]
+  }
 
   # Combine vectors, only add unique elements from additions
   class2use_combined <- unique(c(class2use_base, class2use_additions))
