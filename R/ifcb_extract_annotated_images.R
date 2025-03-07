@@ -47,6 +47,12 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
 
   # Process each manual file
   for (file in manualfiles) {
+
+    if (file.size(file) == 0) {
+      warning(paste("Empty .mat file:", file, "Skipping."))
+      next
+    }
+
     sample <- basename(tools::file_path_sans_ext(file))
 
     manual.mat <- readMat(file)
