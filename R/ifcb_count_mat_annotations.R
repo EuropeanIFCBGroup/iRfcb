@@ -64,10 +64,17 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   warning_list <- list()
 
   for (file in manual_files) {
+
+    # Skip empty/corrupt files
+    if (file.size(file) == 0) {
+      warning(paste("Empty .mat file:", file, "Skipping."))
+      next
+    }
+
     # Read the taxa list from the file
     mat_data <- suppressWarnings({R.matlab::readMat(file)})
 
-    taxa_list <- as.data.frame(mat_data$classlist)  # Assuming readMat is used to read .mat files
+    taxa_list <- as.data.frame(mat_data$classlist)
 
     # Assign names to the columns in taxa_list
     names(taxa_list) <- unlist(mat_data$list.titles)
