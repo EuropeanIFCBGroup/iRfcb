@@ -277,7 +277,7 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   }
 
   if (!dir.exists(dirname(zip_filename))) {
-    dir.create(dirname(zip_filename))
+    dir.create(dirname(zip_filename), recursive = TRUE)
   }
 
   zipr(zipfile = zip_filename, files = files_to_zip)
