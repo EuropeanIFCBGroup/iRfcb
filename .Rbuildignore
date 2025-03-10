@@ -18,3 +18,4 @@ vignettes/data/
 ^vignettes/dwca-tutorial\.Rmd$
 ^vignettes/metadata-template\.Rmd$
 ^vignettes/files/
+.virtualenvs/

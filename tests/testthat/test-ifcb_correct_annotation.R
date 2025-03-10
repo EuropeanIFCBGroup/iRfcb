@@ -1,7 +1,6 @@
 test_that("ifcb_correct_annotation updates class IDs correctly", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -65,8 +64,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
 test_that("ifcb_correct_annotation works with character vector input", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -121,8 +119,7 @@ test_that("ifcb_correct_annotation works with character vector input", {
 
 test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -181,8 +178,7 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
 
 test_that("ifcb_correct_annotation handles errors gracefully", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")

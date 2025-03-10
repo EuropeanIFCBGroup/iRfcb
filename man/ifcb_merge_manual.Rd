@@ -13,6 +13,7 @@ ifcb_merge_manual(
   manual_folder_output,
   do_compression = TRUE,
   temp_index_offset = 50000,
+  skip_class = NULL,
   quiet = FALSE
 )
 }
@@ -36,6 +37,8 @@ If \code{NULL}, the merged file will be stored in the same directory as \code{cl
 \item{do_compression}{A logical value indicating whether to compress the \code{.mat} file. Defaults to \code{TRUE}.}
 
 \item{temp_index_offset}{Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.}
+
+\item{skip_class}{Character. A vector of class names to skip from the \code{class2use_file_additions} during the merge process. Default is \code{NULL}.}
 
 \item{quiet}{Logical. If \code{TRUE}, suppresses output messages. Default is \code{FALSE}.}
 }

@@ -81,3 +81,29 @@ mock_replace_value_in_classlist <- function(input_file, output_file, target_valu
   # Write the modified contents to the output .mat file
   R.matlab::writeMat(output_file, classlist = classlist)
 }
+
+skip_if_no_scipy <- function() {
+  reticulate::py_available(initialize = TRUE)
+  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
+  if (!"scipy" %in% available_packages$package)
+    skip("scipy not available for testing")
+}
+
+skip_if_no_matplotlib <- function() {
+  reticulate::py_available(initialize = TRUE)
+  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
+  if (!"matplotlib" %in% available_packages$package)
+    skip("matplotlib not available for testing")
+}
+
+skip_if_no_pandas <- function() {
+  reticulate::py_available(initialize = TRUE)
+  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
+  if (!"pandas" %in% available_packages$package)
+    skip("pandas not available for testing")
+}
+
+skip_if_no_python <- function() {
+    if (!reticulate::py_available(initialize = TRUE))
+    skip("Python not available for testing")
+}

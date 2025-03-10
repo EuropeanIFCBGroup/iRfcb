@@ -4,26 +4,31 @@
 \alias{ifcb_py_install}
 \title{Install iRfcb Python Environment}
 \usage{
-ifcb_py_install(..., envname = ".virtualenvs/iRfcb")
+ifcb_py_install(envname = ".virtualenvs/iRfcb", use_venv = TRUE, ...)
 }
 \arguments{
-\item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
-
 \item{envname}{A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".}
+
+\item{use_venv}{Logical. If \code{TRUE} (default), a virtual environment is created. If \code{FALSE}, the system Python is used instead, and missing packages are installed globally for the user.}
+
+\item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
 }
 \value{
-No return value. This function is called for its side effect of creating and configuring a Python virtual environment.
+No return value. This function is called for its side effect of configuring the Python environment.
 }
 \description{
-This function creates and activates a Python virtual environment named "iRfcb" and installs the required Python packages as specified in the "requirements.txt" file.
-Additional packages can be installed by passing them through the \code{packages} argument.
+This function sets up the Python environment for \code{iRfcb}. By default, it creates and activates a Python virtual environment (\code{venv}) named "iRfcb" and installs the required Python packages from the "requirements.txt" file.
+Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting \code{use_venv = FALSE}.
 }
 \examples{
 \dontrun{
-# Install the iRfcb Python environment
+# Install the iRfcb Python environment using a virtual environment (default)
 ifcb_py_install()
 
 # Install the iRfcb Python environment with additional packages
-ifcb_py_install(packages = c("numpy", "pandas"))
+ifcb_py_install(packages = c("numpy", "plotly"))
+
+# Use system Python instead of a virtual environment
+ifcb_py_install(use_venv = FALSE)
 }
 }

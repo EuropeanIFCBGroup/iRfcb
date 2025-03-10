@@ -42,6 +42,37 @@ library(iRfcb)
 library(ggplot2)
 ```
 
+```{r, include=FALSE}
+library(reticulate)
+
+# Define path to virtual environment
+env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
+
+# Install python virtual environment
+tryCatch({
+  ifcb_py_install(envname = env_path)
+}, error = function(e) {
+  warning("Python environment could not be installed.")
+})
+```
+
+```{r, echo=FALSE}
+# Check if Python is available
+if (!py_available(initialize = TRUE)) {
+  knitr::opts_chunk$set(eval = FALSE)
+  warning("Python is not available. Skipping vignette evaluation.")
+} else {
+  # List available packages
+  available_packages <- py_list_packages(python = reticulate::py_discover_config()$python)
+  
+  # Check if pandas and matplotlib are available
+  if (!"pandas" %in% available_packages$package || !"matplotlib" %in% available_packages$package) {
+    knitr::opts_chunk$set(eval = FALSE)
+    warning("Required python modules are not available. Skipping vignette evaluation.")
+  }
+}
+```
+
 ### Download Sample Data
 
 To get started, download sample data from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024) with the following function:
@@ -100,12 +131,6 @@ psd <- ifcb_psd(feature_folder = "data/features/2023",
 ```
 
 ```{r, include=FALSE}
-# Define path to virtual environment
-env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
-
-# Install python virtual environment
-ifcb_py_install(envname = env_path) 
-
 # Run PSD quality control
 psd <- ifcb_psd(feature_folder = "data/features/2023",
                 hdr_folder = "data/data/2023",

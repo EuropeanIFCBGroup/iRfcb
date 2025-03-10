@@ -1,60 +1,55 @@
 test_that("ifcb_py_install creates and uses the virtual environment", {
+  # Skip on CRAN
+  skip_on_cran()
+
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_python()
 
-  # Mock the virtualenv_create function
-  mock_virtualenv_create <- mockery::mock()
-  # Mock the use_virtualenv function
-  mock_use_virtualenv <- mockery::mock()
+  # Create a temporary venv
+  plotly_venv <- file.path(tempdir(), "py_install-venv")
 
-  # Stub the virtualenv_create and use_virtualenv functions
-  mockery::stub(ifcb_py_install, 'virtualenv_create', mock_virtualenv_create)
-  mockery::stub(ifcb_py_install, 'use_virtualenv', mock_use_virtualenv)
+  # Call the function and add plotly package to venv
+  suppressWarnings(ifcb_py_install(envname = plotly_venv,
+                                   packages = "plotly"))
 
-  # Call the function
-  ifcb_py_install(envname = Sys.getenv("TEST_VENV_PATH", unset = ""))
+  # Check if venv is correctly installed
+  expect_true(reticulate::virtualenv_exists(plotly_venv))
 
-  # Capture the arguments passed to virtualenv_create
-  args_virtualenv_create <- mockery::mock_args(mock_virtualenv_create)
-  # Capture the arguments passed to use_virtualenv
-  args_use_virtualenv <- mockery::mock_args(mock_use_virtualenv)
+  # List available packages
+  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
 
-  # Check if virtualenv_create was called with the correct arguments
-  expect_equal(args_virtualenv_create[[1]][[1]], Sys.getenv("TEST_VENV_PATH", unset = ""))
-  expect_equal(args_virtualenv_create[[1]][[2]], system.file("python", "requirements.txt", package = "iRfcb"))
+  # Expect that required python packages are installed
+  expect_true("scipy" %in% available_packages$package)
+  expect_true("matplotlib" %in% available_packages$package)
+  expect_true("pandas" %in% available_packages$package)
+  expect_true("plotly" %in% available_packages$package)
 
-  # Check if use_virtualenv was called with the correct arguments
-  expect_equal(args_use_virtualenv[[1]][[1]], Sys.getenv("TEST_VENV_PATH", unset = ""))
+  suppressWarnings(ifcb_py_install(envname = plotly_venv))
+
+  # Check if venv is correctly installed
+  expect_true(reticulate::virtualenv_exists(plotly_venv))
 })
 
-test_that("ifcb_py_install handles additional arguments", {
+test_that("ifcb_py_install use system Python correctly", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_python()
 
-  # Mock the virtualenv_create function
-  mock_virtualenv_create <- mockery::mock()
-  # Mock the use_virtualenv function
-  mock_use_virtualenv <- mockery::mock()
+  # Call the function and add plotly package to venv
+  suppressWarnings(ifcb_py_install(use_venv = FALSE))
 
-  # Stub the virtualenv_create and use_virtualenv functions
-  mockery::stub(ifcb_py_install, 'virtualenv_create', mock_virtualenv_create)
-  mockery::stub(ifcb_py_install, 'use_virtualenv', mock_use_virtualenv)
+  # Check that Python is available
+  expect_true(reticulate::py_available())
 
-  # Call the function with additional arguments
-  ifcb_py_install(envname = file.path(tempdir(), "test-venv"), packages = c("numpy", "pandas"))
+  # List declared required packages
+  required_packages <- reticulate::py_require()
 
-  # Capture the arguments passed to virtualenv_create
-  args_virtualenv_create <- mockery::mock_args(mock_virtualenv_create)
-  # Capture the arguments passed to use_virtualenv
-  args_use_virtualenv <- mockery::mock_args(mock_use_virtualenv)
+  # List required packages
+  expected_packages <- scan(system.file("python", "requirements.txt", package = "iRfcb"),
+                            what = character(),
+                            quiet = TRUE)
 
-  # Check if virtualenv_create was called with the correct arguments
-  expect_equal(args_virtualenv_create[[1]][[1]], file.path(tempdir(), "test-venv"))
-  expect_equal(args_virtualenv_create[[1]][[2]], system.file("python", "requirements.txt", package = "iRfcb"))
-  expect_equal(args_virtualenv_create[[1]]$packages, c("numpy", "pandas"))
-
-  # Check if use_virtualenv was called with the correct arguments
-  expect_equal(args_use_virtualenv[[1]][[1]], file.path(tempdir(), "test-venv"))
+  # Expect that required python packages are declared
+  expect_true(expected_packages[1] %in% required_packages$packages)
+  expect_true(expected_packages[2] %in% required_packages$packages)
+  expect_true(expected_packages[3] %in% required_packages$packages)
 })
