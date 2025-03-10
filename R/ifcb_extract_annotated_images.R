@@ -60,16 +60,16 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
   class2use <- ifcb_get_mat_variable(class2use_file)
 
   # Process each manual file
-  for (file in manualfiles) {
+  for (manual_file in manualfiles) {
 
-    if (file.size(file) == 0) {
-      warning(paste("Empty .mat file:", file, "Skipping."))
+    if (file.size(manual_file) == 0) {
+      warning(paste("Empty .mat file:", manual_file, "Skipping."))
       next
     }
 
-    sample <- basename(tools::file_path_sans_ext(file))
+    sample <- basename(tools::file_path_sans_ext(manual_file))
 
-    manual.mat <- readMat(file)
+    manual.mat <- readMat(manual_file)
 
     # Get the list of ROI files matching the sample from multiple folders
     roifiles <- unlist(lapply(roi_folders, function(folder) {
