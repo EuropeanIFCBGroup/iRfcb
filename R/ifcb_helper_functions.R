@@ -186,26 +186,6 @@ extract_parts <- function(filename) {
   }
   df
 }
-#' Load iRfcb Python Environment on Package Load
-#'
-#' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
-#'
-#' @param ... Additional arguments passed to the function.
-#' @noRd
-.onLoad <- function(...) {
-  # List available virtual environments in the default virtualenv root
-  venvs <- reticulate::virtualenv_list()
-
-  # Find the iRfcb virtual environment
-  irfcb_venvs <- venvs[grepl("iRfcb", venvs)]
-
-  # Construct the full path to the environment and activate it
-  envname <- file.path(reticulate::virtualenv_root(), irfcb_venvs[1])
-
-  if (dir.exists(envname)) {
-    reticulate::use_virtualenv(envname, required = FALSE)
-  }
-}
 
 #' Summarize TreeBagger Classifier Results
 #'
@@ -612,8 +592,11 @@ check_python_and_module <- function(module = "scipy", initialize = TRUE) {
     stop("Python is not available. Please ensure Python is installed and accessible, or see `ifcb_py_install`.")
   }
 
+  # List available packages
+  available_packages <- py_list_packages(python = reticulate::py_discover_config()$python)
+
   # Check if the required Python module is available
-  if (!py_module_available(module)) {
+  if (!module %in% available_packages$package) {
     stop(paste("Python package '", module, "' is not available. Please install '", module, "' in your Python environment, or see `ifcb_py_install`.", sep = ""))
   }
 }

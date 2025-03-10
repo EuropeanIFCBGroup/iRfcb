@@ -1,7 +1,6 @@
 test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
-  # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  # Skip if scipy is not available
+  skip_if_no_scipy()
 
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
