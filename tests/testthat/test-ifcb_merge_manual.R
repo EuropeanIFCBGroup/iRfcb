@@ -21,7 +21,9 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   # Load existing classes from the class2use.mat file and add a new class
   class2use <- as.character(ifcb_get_mat_variable(class2use_file))
   class2use_addition <- "New_class"
-  class2use <- c(class2use_addition, class2use)
+
+  # Insert the new class at position 127, shifting other elements forward
+  class2use <- append(class2use, values = class2use_addition, after = 127 - 1)
 
   # Create a new class2use file with the updated classes
   ifcb_create_class2use(class2use, class2use_file_new)

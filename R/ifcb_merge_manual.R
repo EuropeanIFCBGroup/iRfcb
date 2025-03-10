@@ -139,8 +139,14 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     message(paste0("Replacing ", nrow(addition_translations), " class indices with temporary placeholders..."))
   }
 
+  # Set up the progress bar
+  if (!quiet & nrow(addition_translations) > 0) {pb <- txtProgressBar(min = 0, max = nrow(addition_translations), style = 3)}
+
   # Replace index with placeholder index
   for (i in seq_len(nrow(addition_translations))) {
+    # Update progress bar
+    if (!quiet & nrow(addition_translations) > 0) {setTxtProgressBar(pb, i)}
+
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
       addition_translations$index_in_additions[i],
@@ -149,19 +155,35 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     )
   }
 
+  # Close the progress bar
+  if (!quiet & nrow(addition_translations) > 0) {
+    close(pb)
+  }
+
   if (!quiet) {
     # Message indicating the number of indices being replaced
     message(paste0("Replacing ", nrow(addition_translations), " class indices with updated values..."))
   }
 
+  # Set up the progress bar
+  if (!quiet & nrow(addition_translations) > 0) {pb2 <- txtProgressBar(min = 0, max = nrow(addition_translations), style = 3)}
+
   # Replace placeholder index with rownumber
   for (i in seq_len(nrow(addition_translations))) {
+    # Update progress bar
+    if (!quiet & nrow(addition_translations) > 0) {setTxtProgressBar(pb2, i)}
+
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
       addition_translations$temp_index[i],
       addition_translations$rownumber[i],
       do_compression = do_compression
     )
+  }
+
+  # Close the progress bar
+  if (!quiet & nrow(addition_translations) > 0) {
+    close(pb2)
   }
 
   # Copy the base files with logging
