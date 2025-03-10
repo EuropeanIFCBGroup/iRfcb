@@ -29,7 +29,7 @@ utils::globalVariables(c("name", "manual"))
 #' ifcb_extract_annotated_images(
 #'   manual_folder = "path/to/manual_folder",
 #'   class2use_file = "path/to/class2use_file.mat",
-#'   roi_folder = "path/to/roi_folder",
+#'   roi_folders = "path/to/roi_folder",
 #'   out_folder = "path/to/out_folder",
 #'   skip_class = 1
 #' )
