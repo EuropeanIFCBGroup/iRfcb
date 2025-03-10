@@ -56,7 +56,7 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
 
     # Skip empty/corrupt files
     if (file.size(file_path_in) == 0) {
-      warning(paste("Empty .mat file:", file, "Skipping."))
+      warning(paste("Empty .mat file:", file_path_in, "Skipping."))
       next
     }
 
