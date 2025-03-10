@@ -7,13 +7,14 @@
 ifcb_extract_annotated_images(
   manual_folder,
   class2use_file,
-  roi_folder,
+  roi_folders,
   out_folder,
   skip_class = NA,
   verbose = TRUE,
   manual_recursive = FALSE,
   roi_recursive = TRUE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  roi_folder = deprecated()
 )
 }
 \arguments{
@@ -21,7 +22,7 @@ ifcb_extract_annotated_images(
 
 \item{class2use_file}{A character string specifying the path to the file containing class names.}
 
-\item{roi_folder}{A character string specifying the path to the directory containing the ROI files.}
+\item{roi_folders}{A character vector specifying one or more directories containing the ROI files.}
 
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
@@ -34,6 +35,9 @@ ifcb_extract_annotated_images(
 \item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
+
+\item{roi_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{roi_folders} instead.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.

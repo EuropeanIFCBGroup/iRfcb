@@ -19,7 +19,7 @@ test_that("ifcb_extract_annotated_images works correctly", {
   expect_warning(ifcb_extract_annotated_images(
     manual_folder = manual_folder,
     class2use_file = class2use_file,
-    roi_folder = roi_folder,
+    roi_folders = roi_folder,
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
@@ -43,7 +43,7 @@ test_that("ifcb_extract_annotated_images works correctly", {
   ifcb_extract_annotated_images(
     manual_folder = manual_folder,
     class2use_file = class2use_file,
-    roi_folder = roi_folder,
+    roi_folders = roi_folder,
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
@@ -57,7 +57,7 @@ test_that("ifcb_extract_annotated_images works correctly", {
   expect_error(ifcb_extract_annotated_images(
     manual_folder = "non-exisiting-folder",
     class2use_file = class2use_file,
-    roi_folder = roi_folder,
+    roi_folders = roi_folder,
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
@@ -68,7 +68,7 @@ test_that("ifcb_extract_annotated_images works correctly", {
   expect_error(ifcb_extract_annotated_images(
     manual_folder = manual_folder,
     class2use_file = class2use_file,
-    roi_folder = roi_folder,
+    roi_folders = roi_folder,
     out_folder = out_folder,
     skip_class = "non-exisiting-class",
     verbose = FALSE

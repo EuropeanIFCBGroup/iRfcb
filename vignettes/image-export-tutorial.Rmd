@@ -70,7 +70,7 @@ Extract annotated ROIs as `.png` images in subfolders for each class, skipping t
 # Extract .png images
 ifcb_extract_annotated_images(manual_folder = "data/manual",
                               class2use_file = "data/config/class2use.mat",
-                              roi_folder = "data/data",
+                              roi_folders = "data/data",
                               out_folder = "data/extracted_images",
                               skip_class = 1, # or "unclassified"
                               verbose = FALSE) # Do not print messages

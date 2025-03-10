@@ -8,13 +8,16 @@ utils::globalVariables(c("name", "manual"))
 #'
 #' @param manual_folder A character string specifying the path to the directory containing the manually classified .mat files.
 #' @param class2use_file A character string specifying the path to the file containing class names.
-#' @param roi_folder A character string specifying the path to the directory containing the ROI files.
+#' @param roi_folders A character vector specifying one or more directories containing the ROI files.
 #' @param out_folder A character string specifying the output directory where the extracted images will be saved.
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
+#' @param roi_folder
+#'    `r lifecycle::badge("deprecated")`
+#'    Use `roi_folders` instead.
 #'
 #' @return None. The function saves the extracted PNG images to the specified output directory.
 #'
@@ -31,9 +34,20 @@ utils::globalVariables(c("name", "manual"))
 #'   skip_class = 1
 #' )
 #' }
-ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folder, out_folder,
+ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folders, out_folder,
                                           skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
-                                          roi_recursive = TRUE, overwrite = FALSE) {
+                                          roi_recursive = TRUE, overwrite = FALSE, roi_folder = deprecated()) {
+
+  # Warn the user if roi_folder is used
+  if (lifecycle::is_present(roi_folder)) {
+    # Signal the deprecation to the user
+    lifecycle::deprecate_warn("0.4.3",
+                              "iRfcb::ifcb_extract_annotated_images(roi_folder = )",
+                              "iRfcb::ifcb_extract_annotated_images(roi_folders = )",
+                              "ifcb_extract_annotated_images now handles multiple input roi folders")
+
+    roi_folders <- roi_folder
+  }
 
   # Get the list of classified files
   manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
@@ -51,8 +65,11 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
 
     manual.mat <- readMat(file)
 
-    # Get the list of ROI files matching the sample
-    roifiles <- list.files(roi_folder, pattern = ".roi$", full.names = TRUE, recursive = roi_recursive)
+    # Get the list of ROI files matching the sample from multiple folders
+    roifiles <- unlist(lapply(roi_folders, function(folder) {
+      list.files(folder, pattern = ".roi$", full.names = TRUE, recursive = roi_recursive)
+    }))
+
     roifilename <- roifiles[grepl(sample, roifiles)]
 
     if (length(roifilename) == 0) {
