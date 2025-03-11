@@ -6,7 +6,7 @@
 #' @return A list containing the MATLAB variables.
 #'
 #' @details
-#' This function requires a Python interpreter with `scipy` installed.
+#' This function requires a Python interpreter with `SciPy` installed.
 #'
 #' @examples
 #' \dontrun{

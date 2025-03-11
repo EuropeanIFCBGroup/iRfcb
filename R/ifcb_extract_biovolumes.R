@@ -29,7 +29,7 @@ utils::globalVariables("biovolume")
 #' functions specific to diatoms and non-diatom protists.
 #'
 #' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
-#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
 #' To enable this functionality, ensure Python is properly configured with the required dependencies.
 #' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
 #'

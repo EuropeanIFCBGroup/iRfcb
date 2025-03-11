@@ -16,7 +16,7 @@ A list containing the MATLAB variables.
 This function reads a MATLAB .mat file using a Python function via \code{reticulate}.
 }
 \details{
-This function requires a Python interpreter with \code{scipy} installed.
+This function requires a Python interpreter with \code{SciPy} installed.
 }
 \examples{
 \dontrun{

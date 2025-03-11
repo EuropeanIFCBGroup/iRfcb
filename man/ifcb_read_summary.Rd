@@ -34,7 +34,7 @@ It returns a data frame with species counts and optionally biovolume information
 }
 \details{
 If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
-This approach may be faster than \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+This approach may be faster than the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
 
