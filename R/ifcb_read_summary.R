@@ -36,13 +36,13 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
     mat <- summary
 
     # Replace all underscores in the names of the list elements with dots to match output from MATLAB
-    names(mat) <- gsub("_", ".",names(mat))
+    # names(mat) <- gsub("_", ".",names(mat))
   } else {
     if (use_python && scipy_available()) {
       mat <- ifcb_read_mat(summary)
     } else {
       # Read the contents of the MAT file
-      mat <- suppressWarnings({R.matlab::readMat(summary)})
+      mat <- suppressWarnings({R.matlab::readMat(summary, fixNames = FALSE)})
     }
   }
 
@@ -64,13 +64,13 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   }
 
   # Extract ml_analyzed and file list from the MATLAB data
-  ml_analyzed <- as.vector(mat$ml.analyzedTB)
+  ml_analyzed <- as.vector(mat$ml_analyzedTB)
   filelistTB <- unlist(mat$filelistTB)
 
   # Select class count based on threshold
   classcountTB <- switch(threshold,
-                         "opt" = mat$classcountTB.above.optthresh,
-                         "adhoc" = mat$classcountTB.above.adhocthresh,
+                         "opt" = mat$classcountTB_above_optthresh,
+                         "adhoc" = mat$classcountTB_above_adhocthresh,
                          "none" = mat$classcountTB,
                          stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 
@@ -97,8 +97,8 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   if (biovolume) {
     # Select biovolume based on threshold
     classbiovolTB <- switch(threshold,
-                            "opt" = mat$classbiovolTB.above.optthresh,
-                            "adhoc" = mat$classbiovolTB.above.adhocthresh,
+                            "opt" = mat$classbiovolTB_above_optthresh,
+                            "adhoc" = mat$classbiovolTB_above_adhocthresh,
                             "none" = mat$classbiovolTB,
                             stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 

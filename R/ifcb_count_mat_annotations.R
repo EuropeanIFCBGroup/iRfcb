@@ -84,13 +84,13 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
       mat_data <- ifcb_read_mat(file)
     } else {
       # Read the contents of the MAT file
-      mat_data <- suppressWarnings({R.matlab::readMat(file)})
+      mat_data <- suppressWarnings({R.matlab::readMat(file, fixNames = FALSE)})
     }
 
     taxa_list <- as.data.frame(mat_data$classlist)
 
     # Assign names to the columns in taxa_list
-    names(taxa_list) <- unlist(mat_data$list.titles)
+    names(taxa_list) <- unlist(mat_data$list_titles)
 
     # Filter out the skipped classes and NA values from the taxa list
     taxa_list <- taxa_list %>%

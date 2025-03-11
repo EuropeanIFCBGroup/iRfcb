@@ -83,7 +83,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
       manual.mat <- ifcb_read_mat(manual_file)
     } else {
       # Read the contents of the MAT file
-      manual.mat <- suppressWarnings({R.matlab::readMat(manual_file)})
+      manual.mat <- suppressWarnings({R.matlab::readMat(manual_file, fixNames = FALSE)})
     }
 
     # Get the list of ROI files matching the sample from multiple folders
@@ -100,7 +100,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
 
     # Extract the taxa list from the manual.mat data
     taxa.list <- as.data.frame(manual.mat$classlist)
-    names(taxa.list) <- unlist(manual.mat$list.titles)
+    names(taxa.list) <- unlist(manual.mat$list_titles)
 
     # Create a lookup table from class2use
     lookup_table <- data.frame(

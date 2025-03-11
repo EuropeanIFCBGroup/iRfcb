@@ -5,7 +5,7 @@
 #'
 #' @param mat_file A character string specifying the path to the .mat file containing the class information.
 #' @param variable_name A character string specifying the variable name in the .mat file that contains the class information.
-#'                      The default is "class2use". Other examples include "class2use.manual" from a manual file, or "class2use.auto"
+#'                      The default is "class2use". Other examples include "class2use_manual" from a manual file, or "class2use_auto"
 #'                      for a class list used for automatic assignment. You can find available variable names using the function \code{\link{ifcb_get_mat_names}}.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @return A character vector of class names.
@@ -37,7 +37,7 @@ ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_pyt
     class_info <- ifcb_read_mat(mat_file)
   } else {
     # Read the contents of the MAT file
-    class_info <- suppressWarnings({R.matlab::readMat(mat_file)})
+    class_info <- suppressWarnings({R.matlab::readMat(mat_file, fixNames = FALSE)})
   }
 
   # Check if the specified variable name exists in the MAT file

@@ -53,8 +53,8 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   expect_equal(length(files_base) + length(files_additions), length(files_merged))
 
   # Ensure the merged files contain more classes than the base files
-  classes_base <- as.character(ifcb_get_mat_variable(files_base[1], "class2use.manual"))
-  classes_merged <- as.character(ifcb_get_mat_variable(files_merged[1], "class2use.manual"))
+  classes_base <- as.character(ifcb_get_mat_variable(files_base[1], "class2use_manual"))
+  classes_merged <- as.character(ifcb_get_mat_variable(files_merged[1], "class2use_manual"))
   expect_gt(length(classes_merged), length(classes_base))
 
   # Clean up the temporary directory after the test

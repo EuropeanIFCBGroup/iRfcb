@@ -69,7 +69,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
   }
 
   # Check if files are manually classified
-  is_manual <- "class2use.manual" %in% ifcb_get_mat_names(mat_files[1])
+  is_manual <- "class2use_manual" %in% ifcb_get_mat_names(mat_files[1])
 
   if (is_manual && is.null(class2use_file)) {
     stop("class2use must be specified when extracting manual biovolume data")
@@ -156,7 +156,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
           temp_result <- ifcb_read_mat(matching_mat[class])
         } else {
           # Read the contents of the MAT file
-          temp_result <- suppressWarnings({R.matlab::readMat(matching_mat[class])})
+          temp_result <- suppressWarnings({R.matlab::readMat(matching_mat[class], fixNames = FALSE)})
         }
         warning_list <- c(warning_list, warnings())
         temp_result
@@ -168,7 +168,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
         classifier = temp$classifierName,
         roi_number = temp$roinum,
         class = if (threshold == "opt") {
-          unlist(temp$TBclass.above.threshold)
+          unlist(temp$TBclass_above_threshold)
         } else {
           unlist(temp$TBclass)
         }

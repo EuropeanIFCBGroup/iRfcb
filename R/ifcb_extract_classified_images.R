@@ -68,7 +68,7 @@ ifcb_extract_classified_images <- function(sample,
     classified.mat <- ifcb_read_mat(classifiedfilename)
   } else {
     # Read the contents of the MAT file
-    classified.mat <- suppressWarnings({R.matlab::readMat(classifiedfilename)})
+    classified.mat <- suppressWarnings({R.matlab::readMat(classifiedfilename, fixNames = FALSE)})
   }
 
   # Get the list of ROI files and find the one matching the sample
@@ -81,8 +81,8 @@ ifcb_extract_classified_images <- function(sample,
 
   # Extract taxa list based on the specified threshold
   taxa.list <- switch(threshold,
-                      "opt" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.threshold), stringsAsFactors = FALSE),
-                      "adhoc" = as.data.frame(do.call(rbind, classified.mat$TBclass.above.adhocthresh), stringsAsFactors = FALSE),
+                      "opt" = as.data.frame(do.call(rbind, classified.mat$TBclass_above_threshold), stringsAsFactors = FALSE),
+                      "adhoc" = as.data.frame(do.call(rbind, classified.mat$TBclass_above_adhocthresh), stringsAsFactors = FALSE),
                       "none" = as.data.frame(do.call(rbind, classified.mat$TBclass), stringsAsFactors = FALSE),
                       stop("Invalid threshold specified"))
 

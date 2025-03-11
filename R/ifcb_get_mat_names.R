@@ -29,7 +29,7 @@ ifcb_get_mat_names <- function(mat_file, use_python = FALSE) {
     mat_contents <- ifcb_read_mat(mat_file)
   } else {
     # Read the contents of the MAT file
-    mat_contents <- suppressWarnings({R.matlab::readMat(mat_file)})
+    mat_contents <- suppressWarnings({R.matlab::readMat(mat_file, fixNames = FALSE)})
   }
 
   # Extract variable names

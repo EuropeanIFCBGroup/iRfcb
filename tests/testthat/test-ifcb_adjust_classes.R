@@ -32,13 +32,13 @@ test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
   manual_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE) # List all .mat files in the manual folder
 
   # Extract the class list from the first .mat file (before update)
-  class_list_old <- as.character(ifcb_get_mat_variable(manual_files[1], "class2use.manual")) # Old class list
+  class_list_old <- as.character(ifcb_get_mat_variable(manual_files[1], "class2use_manual")) # Old class list
 
   # Call the function to adjust the classes in the manual folder based on the updated class2use file
   ifcb_adjust_classes(class2use_file_new, manual_folder) # Adjust the classes in .mat files
 
   # Extract the updated class list from the first .mat file (after update)
-  class_list_updated <- as.character(ifcb_get_mat_variable(manual_files[1], "class2use.manual")) # New class list
+  class_list_updated <- as.character(ifcb_get_mat_variable(manual_files[1], "class2use_manual")) # New class list
 
   # Assert that the updated class list contains more classes than the old list
   expect_gt(length(class_list_updated), length(class_list_old)) # Check that the updated list has more classes

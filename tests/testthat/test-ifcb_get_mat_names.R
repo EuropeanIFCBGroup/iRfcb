@@ -5,7 +5,7 @@ test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file
   variable_names <- ifcb_get_mat_names(mat_file)
 
   # Expected variable names
-  expected_names <- c("TBclass", "TBclass.above.threshold", "TBscores", "class2useTB", "classifierName", "roinum")
+  expected_names <- c("TBclass", "TBclass_above_threshold", "TBscores", "class2useTB", "classifierName", "roinum")
 
   # Check if the retrieved variable names match the expected names
   expect_equal(sort(variable_names), sort(expected_names), info = "Variable names should match expected names")
@@ -31,7 +31,7 @@ test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file
   variable_names <- ifcb_get_mat_names(mat_file, use_python = TRUE)
 
   # Expected variable names
-  expected_names <- c("TBclass", "TBclass.above.threshold", "TBscores", "class2useTB", "classifierName", "roinum")
+  expected_names <- c("TBclass", "TBclass_above_threshold", "TBscores", "class2useTB", "classifierName", "roinum")
 
   # Check if the retrieved variable names match the expected names
   expect_equal(sort(variable_names), sort(expected_names), info = "Variable names should match expected names")
