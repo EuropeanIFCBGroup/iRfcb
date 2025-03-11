@@ -6,14 +6,14 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
   skip_if_no_python()
 
   # Create a temporary venv
-  plotly_venv <- file.path(tempdir(), "py_install-venv")
+  venv_dir <- file.path(tempdir(), "test-venv")
 
   # Call the function and add plotly package to venv
-  suppressWarnings(ifcb_py_install(envname = plotly_venv,
+  suppressWarnings(ifcb_py_install(envname = venv_dir,
                                    packages = "plotly"))
 
   # Check if venv is correctly installed
-  expect_true(reticulate::virtualenv_exists(plotly_venv))
+  expect_true(reticulate::virtualenv_exists(venv_dir))
 
   # List available packages
   available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
@@ -24,10 +24,10 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
   expect_true("pandas" %in% available_packages$package)
   expect_true("plotly" %in% available_packages$package)
 
-  suppressWarnings(ifcb_py_install(envname = plotly_venv))
+  suppressWarnings(ifcb_py_install(envname = venv_dir))
 
   # Check if venv is correctly installed
-  expect_true(reticulate::virtualenv_exists(plotly_venv))
+  expect_true(reticulate::virtualenv_exists(venv_dir))
 })
 
 test_that("ifcb_py_install use system Python correctly", {

@@ -4,14 +4,18 @@
 \alias{ifcb_py_install}
 \title{Install iRfcb Python Environment}
 \usage{
-ifcb_py_install(envname = ".virtualenvs/iRfcb", use_venv = TRUE, ...)
+ifcb_py_install(
+  envname = ".virtualenvs/iRfcb",
+  use_venv = TRUE,
+  packages = NULL
+)
 }
 \arguments{
 \item{envname}{A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".}
 
 \item{use_venv}{Logical. If \code{TRUE} (default), a virtual environment is created. If \code{FALSE}, the system Python is used instead, and missing packages are installed globally for the user.}
 
-\item{...}{Additional arguments passed to \code{virtualenv_create}, such as \code{packages}.}
+\item{packages}{A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.}
 }
 \value{
 No return value. This function is called for its side effect of configuring the Python environment.

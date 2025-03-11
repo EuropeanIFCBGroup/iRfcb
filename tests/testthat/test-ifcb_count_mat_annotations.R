@@ -13,7 +13,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_true(file.exists(class2use_file))
 
   # Run the function without skipping any classes
-  result <- ifcb_count_mat_annotations(manual_folder, class2use_file)
+  result <- ifcb_count_mat_annotations(manual_folder, class2use_file, use_python = TRUE)
 
   # Verify the structure of the result
   expect_s3_class(result, "data.frame")
@@ -53,6 +53,9 @@ test_that("ifcb_count_mat_annotations works correctly", {
 
   # Ensure that the skipped class name does not appear in the result
   expect_true(all(!result_skip_names$class %in% skip_names))
+
+  # Define an empty list (MATLAB struct equivalent)
+  empty_data <- list()
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)

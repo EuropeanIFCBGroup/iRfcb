@@ -1,5 +1,4 @@
 import scipy.io
-import numpy as np
 
 def read_mat_file(file_path):
     """
@@ -16,11 +15,6 @@ def read_mat_file(file_path):
     
     # Remove MATLAB metadata keys
     data = {key: value for key, value in data.items() if not key.startswith('__')}
-    
-    # Convert numpy arrays to lists for better compatibility with R
-    for key, value in data.items():
-        if isinstance(value, np.ndarray):
-            data[key] = value.tolist()
     
     return data
 

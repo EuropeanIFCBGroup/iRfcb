@@ -537,10 +537,10 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' check_python_and_module("scipy") # Check for Python and 'scipy'
 #' }
 #' @noRd
-check_python_and_module <- function(module = "scipy", initialize = TRUE) {
+check_python_and_module <- function(module = "scipy", initialize = FALSE) {
   # Check if Python is available
   if (!py_available(initialize = initialize)) {
-    stop("Python is not available. Please ensure Python is installed and accessible, or see `ifcb_py_install`.")
+    stop("Python is not available. Please ensure Python is installed and initalized, or see `ifcb_py_install`.")
   }
 
   # List available packages
@@ -564,7 +564,7 @@ check_python_and_module <- function(module = "scipy", initialize = TRUE) {
 #' scipy_available() # Check for Python and 'scipy'
 #' }
 #' @noRd
-scipy_available <- function(initialize = TRUE) {
+scipy_available <- function(initialize = FALSE) {
   # Check if Python is available
   if (!reticulate::py_available(initialize = initialize)) {
     return(FALSE)
