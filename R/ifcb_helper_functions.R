@@ -202,11 +202,11 @@ extract_parts <- function(filename) {
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 #' @export
 summarize_TBclass <- function(classfile, adhocthresh = NULL) {
-  data <- readMat(classfile)
+  data <- readMat(classfile, fixNames = FALSE)
   class2useTB <- data$class2useTB
   TBscores <- data$TBscores
   TBclass <- data$TBclass
-  TBclass_above_threshold <- data$TBclass.above.threshold
+  TBclass_above_threshold <- data$TBclass_above_threshold
 
   classcount <- rep(NA, length(class2useTB))
   classcount_above_optthresh <- classcount
@@ -332,55 +332,6 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
 
   missing_data
 }
-
-#' Extract the Class from the First Row of Each worms_records Tibble
-#'
-#' This function extracts the class from the first row of a given worms_records tibble.
-#' If the tibble is empty, it returns NA.
-#'
-#' @param record A tibble containing worms_records with at least a 'class' column.
-#' @return A character string representing the class of the first row in the tibble,
-#' or NA if the tibble is empty.
-#' @examples
-#' # Example usage:
-#' record <- dplyr::tibble(class = c("Class1", "Class2"))
-#' iRfcb:::extract_class(record)
-#'
-#' empty_record <- dplyr::tibble(class = character(0))
-#' iRfcb:::extract_class(empty_record)
-#' @noRd
-extract_class <- function(record) {
-  if (nrow(record) == 0) {
-    NA
-  } else {
-    record$class[1]
-  }
-}
-
-#' Extract the AphiaID from the First Row of Each worms_records Tibble
-#'
-#' This function extracts the AphiaID from the first row of a given worms_records tibble.
-#' If the tibble is empty, it returns NA.
-#'
-#' @param record A tibble containing worms_records with at least an 'AphiaID' column.
-#' @return A numeric value representing the AphiaID of the first row in the tibble,
-#' or NA if the tibble is empty.
-#' @examples
-#' # Example usage:
-#' record <- dplyr::tibble(AphiaID = c(12345, 67890))
-#' iRfcb:::extract_aphia_id(record)
-#'
-#' empty_record <- dplyr::tibble(AphiaID = numeric(0))
-#' iRfcb:::extract_aphia_id(empty_record)
-#' @noRd
-extract_aphia_id <- function(record) {
-  if (nrow(record) == 0) {
-    NA
-  } else {
-    record$AphiaID[1]
-  }
-}
-
 #' Retrieve WoRMS Records with Retry Mechanism
 #'
 #' @description
@@ -624,4 +575,24 @@ scipy_available <- function(initialize = TRUE) {
 
   # Check if 'scipy' is installed
   return("scipy" %in% available_packages$package)
+}
+
+# Helper function to install missing Python packages
+install_missing_packages <- function(packages, envname = NULL) {
+  installed <- reticulate::py_list_packages()$package
+  missing_packages <- setdiff(packages, installed)
+
+  if (length(missing_packages) > 0) {
+    message("Installing missing Python packages: ", paste(missing_packages, collapse = ", "))
+
+    if (is.null(envname)) {
+      # Install globally if system Python is used
+      reticulate::py_install(missing_packages, pip = TRUE)
+    } else {
+      # Install in virtual environment
+      reticulate::virtualenv_install(envname, missing_packages, ignore_installed = TRUE)
+    }
+  } else {
+    message("All requested packages are already installed.")
+  }
 }

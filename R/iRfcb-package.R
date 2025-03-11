@@ -11,7 +11,7 @@
 #'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
 #'   annotate
 #' @importFrom png writePNG
-#' @importFrom lifecycle deprecate_warn deprecated is_present
+#' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
 #'   year ymd_hms
 #' @importFrom readr cols col_character read_delim type_convert
