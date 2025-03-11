@@ -19,7 +19,7 @@ test_that("ifcb_summarize_class_counts works correctly", {
   expect_named(summary_data, c("class2useTB", "classcountTB", "classcountTB_above_optthresh", "ml_analyzedTB", "mdateTB", "filelistTB", "classpath_generic", "classcountTB_above_adhocthresh", "adhocthresh"))
 
   # Check the individual elements in the summary data
-  expect_type(summary_data$class2useTB, "list")
+  expect_type(summary_data$class2useTB, "character")
   expect_type(summary_data$classcountTB, "integer")
   expect_type(summary_data$classcountTB_above_optthresh, "integer")
   expect_type(summary_data$ml_analyzedTB, "double")

@@ -86,7 +86,7 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
     temp <- ifcb_read_mat(classfiles[1])
   } else {
     # Read the contents of the MAT file
-    temp <- suppressWarnings({R.matlab::readMat(classfiles[1], fixNames = FALSE)})
+    temp <- read_mat(classfiles[1])
   }
   class2use <- temp$class2useTB
   classcount <- matrix(NA, nrow = length(classfiles), ncol = length(class2use))

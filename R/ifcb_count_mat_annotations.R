@@ -84,7 +84,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
       mat_data <- ifcb_read_mat(file)
     } else {
       # Read the contents of the MAT file
-      mat_data <- suppressWarnings({R.matlab::readMat(file, fixNames = FALSE)})
+      mat_data <- read_mat(file)
     }
 
     taxa_list <- as.data.frame(mat_data$classlist)

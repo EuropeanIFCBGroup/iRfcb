@@ -52,7 +52,7 @@ ifcb_extract_classified_images <- function(sample,
                                            verbose = TRUE) {
 
   # Get the list of classified files and find the one matching the sample
-  classifiedfiles <- list.files(classified_folder, pattern="mat$", full.names = TRUE, recursive = TRUE)
+  classifiedfiles <- list.files(classified_folder, pattern = "mat$", full.names = TRUE, recursive = TRUE)
   classifiedfilename <- classifiedfiles[grepl(sample, classifiedfiles)]
 
   if (length(classifiedfilename) == 0) {
@@ -68,7 +68,7 @@ ifcb_extract_classified_images <- function(sample,
     classified.mat <- ifcb_read_mat(classifiedfilename)
   } else {
     # Read the contents of the MAT file
-    classified.mat <- suppressWarnings({R.matlab::readMat(classifiedfilename, fixNames = FALSE)})
+    classified.mat <- read_mat(classifiedfilename)
   }
 
   # Get the list of ROI files and find the one matching the sample
@@ -81,10 +81,13 @@ ifcb_extract_classified_images <- function(sample,
 
   # Extract taxa list based on the specified threshold
   taxa.list <- switch(threshold,
-                      "opt" = as.data.frame(do.call(rbind, classified.mat$TBclass_above_threshold), stringsAsFactors = FALSE),
-                      "adhoc" = as.data.frame(do.call(rbind, classified.mat$TBclass_above_adhocthresh), stringsAsFactors = FALSE),
-                      "none" = as.data.frame(do.call(rbind, classified.mat$TBclass), stringsAsFactors = FALSE),
+                      "opt" = as.data.frame(classified.mat$TBclass_above_threshold),
+                      "adhoc" = as.data.frame(classified.mat$TBclass_above_adhocthresh),
+                      "none" = as.data.frame(classified.mat$TBclass),
                       stop("Invalid threshold specified"))
+
+  # Rename the column
+  names(taxa.list) <- "V1"
 
   # Add ROI column
   taxa.list$ROI <- classified.mat$roinum

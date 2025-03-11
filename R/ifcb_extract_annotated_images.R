@@ -83,7 +83,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
       manual.mat <- ifcb_read_mat(manual_file)
     } else {
       # Read the contents of the MAT file
-      manual.mat <- suppressWarnings({R.matlab::readMat(manual_file, fixNames = FALSE)})
+      manual.mat <- read_mat(manual_file)
     }
 
     # Get the list of ROI files matching the sample from multiple folders

@@ -42,7 +42,7 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
       mat <- ifcb_read_mat(summary)
     } else {
       # Read the contents of the MAT file
-      mat <- suppressWarnings({R.matlab::readMat(summary, fixNames = FALSE)})
+      mat <- read_mat(summary)
     }
   }
 

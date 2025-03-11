@@ -37,7 +37,7 @@ ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_pyt
     class_info <- ifcb_read_mat(mat_file)
   } else {
     # Read the contents of the MAT file
-    class_info <- suppressWarnings({R.matlab::readMat(mat_file, fixNames = FALSE)})
+    class_info <- read_mat(mat_file)
   }
 
   # Check if the specified variable name exists in the MAT file

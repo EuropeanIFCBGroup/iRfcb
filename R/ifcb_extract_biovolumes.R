@@ -156,7 +156,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
           temp_result <- ifcb_read_mat(matching_mat[class])
         } else {
           # Read the contents of the MAT file
-          temp_result <- suppressWarnings({R.matlab::readMat(matching_mat[class], fixNames = FALSE)})
+          temp_result <- read_mat(matching_mat[class], fixNames = FALSE)
         }
         warning_list <- c(warning_list, warnings())
         temp_result

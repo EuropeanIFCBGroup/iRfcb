@@ -577,7 +577,16 @@ scipy_available <- function(initialize = FALSE) {
   return("scipy" %in% available_packages$package)
 }
 
-# Helper function to install missing Python packages
+#' Install Missing Python Packages
+#'
+#' A helper function to check for missing Python packages and install them using `reticulate`.
+#' If an environment name is provided, the packages are installed in that virtual environment.
+#'
+#' @param packages Character vector. Names of the Python packages to check and install if missing.
+#' @param envname Character (optional). Name of the virtual environment where packages should be installed.
+#'   If `NULL`, packages are installed globally.
+#' @return Invisibly returns `NULL`. Prints messages about installation status.
+#' @noRd
 install_missing_packages <- function(packages, envname = NULL) {
   installed <- reticulate::py_list_packages()$package
   missing_packages <- setdiff(packages, installed)
@@ -595,4 +604,30 @@ install_missing_packages <- function(packages, envname = NULL) {
   } else {
     message("All requested packages are already installed.")
   }
+}
+#' Read MATLAB (.mat) Files
+#'
+#' A helper function to read MATLAB `.mat` files using the `R.matlab` package.
+#' Optionally, it can fix variable names during import.
+#'
+#' @param file_path Character. Path to the `.mat` file.
+#' @param fixNames Logical. If `TRUE`, fixes variable names to be valid R identifiers. Default is `FALSE`.
+#' @return A list containing the data from the `.mat` file, with any nested lists converted to character vectors.
+#' @noRd
+read_mat <- function(file_path, fixNames = FALSE) {
+  # Read the contents of the MAT file
+  mat_contents <- suppressWarnings({R.matlab::readMat(file_path, fixNames = fixNames)})
+
+  # Iterate through each element of mat_data2 and convert any list to a character vector
+  mat_contents_converted <- lapply(mat_contents, function(x) {
+    # Check if the element is a list
+    if (is.list(x)) {
+      # Flatten the list and convert it to a character vector
+      return(as.character(unlist(x)))
+    } else {
+      # If it's not a list, leave it unchanged
+      return(x)
+    }
+  })
+  mat_contents_converted
 }

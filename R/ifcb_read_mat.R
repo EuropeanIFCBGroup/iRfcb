@@ -1,3 +1,4 @@
+utils::globalVariables("read_mat_file")
 #' Read a MATLAB .mat File in R
 #'
 #' This function reads a MATLAB .mat file using a Python function via `reticulate`.
