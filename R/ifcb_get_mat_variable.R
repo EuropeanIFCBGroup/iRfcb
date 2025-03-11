@@ -7,7 +7,17 @@
 #' @param variable_name A character string specifying the variable name in the .mat file that contains the class information.
 #'                      The default is "class2use". Other examples include "class2use.manual" from a manual file, or "class2use.auto"
 #'                      for a class list used for automatic assignment. You can find available variable names using the function \code{\link{ifcb_get_mat_names}}.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @return A character vector of class names.
+#'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
+#'
 #' @examples
 #' \dontrun{
 #' # Get class names from a class2use file
@@ -22,9 +32,13 @@
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \code{\link{ifcb_get_mat_names}} \url{https://github.com/hsosik/ifcb-analysis}
-ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use") {
-  # Read class information from the MAT file
-  class_info <- suppressWarnings({R.matlab::readMat(mat_file)})
+ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_python = FALSE) {
+  if (use_python && scipy_available()) {
+    class_info <- ifcb_read_mat(mat_file)
+  } else {
+    # Read the contents of the MAT file
+    class_info <- suppressWarnings({R.matlab::readMat(mat_file)})
+  }
 
   # Check if the specified variable name exists in the MAT file
   if (!variable_name %in% names(class_info)) {

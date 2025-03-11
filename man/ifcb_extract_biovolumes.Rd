@@ -15,6 +15,7 @@ ifcb_extract_biovolumes(
   multiblob = FALSE,
   feature_recursive = TRUE,
   mat_recursive = TRUE,
+  use_python = FALSE,
   verbose = TRUE
 )
 }
@@ -39,6 +40,8 @@ ifcb_extract_biovolumes(
 
 \item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
 
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
@@ -56,6 +59,13 @@ The function combines biovolume data extracted from feature files with class
 information read from corresponding MATLAB files. It determines if each class is a
 diatom based on user-defined criteria and computes carbon content using conversion
 functions specific to diatoms and non-diatom protists.
+
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

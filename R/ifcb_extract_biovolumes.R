@@ -17,6 +17,7 @@ utils::globalVariables("biovolume")
 #' @param multiblob A logical indicating whether to include multiblob features. Default is FALSE.
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within when `feature_files` is a folder. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return A data frame containing 'sample', 'classifier' 'roi_number', 'class', 'biovolume_um3', and computed 'carbon_pg'.
@@ -26,6 +27,13 @@ utils::globalVariables("biovolume")
 #' information read from corresponding MATLAB files. It determines if each class is a
 #' diatom based on user-defined criteria and computes carbon content using conversion
 #' functions specific to diatoms and non-diatom protists.
+#'
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @examples
 #' \dontrun{
@@ -45,7 +53,8 @@ utils::globalVariables("biovolume")
 ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = NULL,
                                     micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
                                     marine_only = FALSE, threshold = "opt", multiblob = FALSE,
-                                    feature_recursive = TRUE, mat_recursive = TRUE, verbose = TRUE) {
+                                    feature_recursive = TRUE, mat_recursive = TRUE, use_python = FALSE,
+                                    verbose = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
   if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
@@ -130,7 +139,8 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
 
     class_df <- ifcb_count_mat_annotations(matching_mat,
                                            class2use_file,
-                                           sum_level = "roi")
+                                           sum_level = "roi",
+                                           use_python = use_python)
 
     names(class_df)[2] <- "roi_number"
 
@@ -141,7 +151,13 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder, class2use_file = 
     for (class in seq_along(matching_mat)) {
       # Capture warnings for each readMat call
       temp <- suppressWarnings({
-        temp_result <- readMat(matching_mat[class])
+
+        if (use_python && scipy_available()) {
+          temp_result <- ifcb_read_mat(matching_mat[class])
+        } else {
+          # Read the contents of the MAT file
+          temp_result <- suppressWarnings({R.matlab::readMat(matching_mat[class])})
+        }
         warning_list <- c(warning_list, warnings())
         temp_result
       })

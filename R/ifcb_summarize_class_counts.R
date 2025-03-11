@@ -8,6 +8,7 @@
 #' @param hdr_folder Character string specifying the directory where the data (hdr files) are located.
 #'                   This can be a URL for web services or a full path for local files.
 #' @param year_range Numeric vector specifying the range of years (e.g., 2013:2014) to process.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #'
 #' @return A list containing the following elements:
 #'   \item{class2useTB}{Classes used in the TreeBagger classifier.}
@@ -20,6 +21,14 @@
 #'   \item{classcountTB_above_adhocthresh (optional)}{Counts of each class considering only classifications above the adhoc threshold.}
 #'   \item{adhocthresh (optional)}{The adhoc threshold used for classification.}
 #'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
+#'
 #' @examples
 #' \dontrun{
 #' ifcb_summarize_class_counts('C:/work/IFCB/user_training_test_data/class/classxxxx_v1/',
@@ -27,7 +36,7 @@
 #' }
 #'
 #' @export
-ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_range) {
+ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_range, use_python = FALSE) {
   # Check whether hdr_folder is a URL
   urlflag <- FALSE
   if (startsWith(hdr_folder, "http")) {
@@ -73,7 +82,12 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
   mdate <- sapply(filelist, function(f) { ymd_hms(gsub("T", "", substr(f, 2, 16)), tz = "UTC") })
 
   # Load the first class file to get class2useTB
-  temp <- readMat(classfiles[1])
+  if (use_python && scipy_available()) {
+    temp <- ifcb_read_mat(classfiles[1])
+  } else {
+    # Read the contents of the MAT file
+    temp <- suppressWarnings({R.matlab::readMat(classfiles[1])})
+  }
   class2use <- temp$class2useTB
   classcount <- matrix(NA, nrow = length(classfiles), ncol = length(class2use))
   classcount_above_optthresh <- classcount

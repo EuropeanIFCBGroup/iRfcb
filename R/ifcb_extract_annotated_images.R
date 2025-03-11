@@ -15,11 +15,20 @@ utils::globalVariables(c("name", "manual"))
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param roi_folder
 #'    `r lifecycle::badge("deprecated")`
 #'    Use `roi_folders` instead.
 #'
 #' @return None. The function saves the extracted PNG images to the specified output directory.
+#'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @export
 #' @seealso \code{\link{ifcb_extract_pngs}} \code{\link{ifcb_extract_classified_images}} \url{https://github.com/hsosik/ifcb-analysis}
@@ -36,7 +45,8 @@ utils::globalVariables(c("name", "manual"))
 #' }
 ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folders, out_folder,
                                           skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
-                                          roi_recursive = TRUE, overwrite = FALSE, roi_folder = deprecated()) {
+                                          roi_recursive = TRUE, overwrite = FALSE, use_python = FALSE,
+                                          roi_folder = deprecated()) {
 
   # Warn the user if roi_folder is used
   if (lifecycle::is_present(roi_folder)) {
@@ -69,7 +79,12 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
 
     sample <- basename(tools::file_path_sans_ext(manual_file))
 
-    manual.mat <- readMat(manual_file)
+    if (use_python && scipy_available()) {
+      manual.mat <- ifcb_read_mat(manual_file)
+    } else {
+      # Read the contents of the MAT file
+      manual.mat <- suppressWarnings({R.matlab::readMat(manual_file)})
+    }
 
     # Get the list of ROI files matching the sample from multiple folders
     roifiles <- unlist(lapply(roi_folders, function(folder) {

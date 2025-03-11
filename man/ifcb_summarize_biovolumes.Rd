@@ -16,6 +16,7 @@ ifcb_summarize_biovolumes(
   feature_recursive = TRUE,
   mat_recursive = TRUE,
   hdr_recursive = TRUE,
+  use_python = FALSE,
   verbose = TRUE
 )
 }
@@ -42,6 +43,8 @@ ifcb_summarize_biovolumes(
 
 \item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
 
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
@@ -66,6 +69,13 @@ This function performs the following steps:
 \item Optionally incorporates volume data from HDR files to calculate volume analyzed per sample.
 \item Computes biovolume and carbon content per liter of sample analyzed.
 }
+
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

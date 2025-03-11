@@ -14,6 +14,7 @@ ifcb_extract_annotated_images(
   manual_recursive = FALSE,
   roi_recursive = TRUE,
   overwrite = FALSE,
+  use_python = FALSE,
   roi_folder = deprecated()
 )
 }
@@ -36,6 +37,8 @@ ifcb_extract_annotated_images(
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
 
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
 \item{roi_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{roi_folders} instead.}
 }
@@ -47,6 +50,14 @@ This function extracts labeled images from IFCB (Imaging FlowCytobot) data,
 annotated using the MATLAB code from the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 It reads manually classified data, maps class indices to class names, and extracts
 the corresponding Region of Interest (ROI) images, saving them to the specified directory.
+}
+\details{
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

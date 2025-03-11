@@ -600,3 +600,28 @@ check_python_and_module <- function(module = "scipy", initialize = TRUE) {
     stop(paste("Python package '", module, "' is not available. Please install '", module, "' in your Python environment, or see `ifcb_py_install`.", sep = ""))
   }
 }
+#' Check Python and SciPy Availability
+#'
+#' This helper function verifies whether Python is available and if the specified Python module (e.g., `scipy`) is installed.
+#'
+#' @param initialize Logical. If `TRUE`, attempts to initialize Python if it is not already initialized. Default is `TRUE`.
+#'
+#' @return Logical. Returns `TRUE` if Python and the specified module are available, otherwise `FALSE`.
+#'
+#' @examples
+#' \dontrun{
+#' scipy_available() # Check for Python and 'scipy'
+#' }
+#' @noRd
+scipy_available <- function(initialize = TRUE) {
+  # Check if Python is available
+  if (!reticulate::py_available(initialize = initialize)) {
+    return(FALSE)
+  }
+
+  # Get the list of installed Python packages
+  available_packages <- reticulate::py_list_packages()
+
+  # Check if 'scipy' is installed
+  return("scipy" %in% available_packages$package)
+}

@@ -11,8 +11,9 @@ ifcb_extract_classified_images(
   out_folder,
   taxa = "All",
   threshold = "opt",
-  verbose = TRUE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  use_python = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,9 +29,11 @@ ifcb_extract_classified_images(
 
 \item{threshold}{A character string specifying the threshold to use ("none", "opt", "adhoc"). Default is "opt".}
 
-\item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
-
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
+
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
+\item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
 No return value, called for side effects. Extracts and saves taxa images to a directory.
@@ -40,6 +43,14 @@ This function reads a MATLAB classified sample file (.mat) generated
 by the \code{start_classify_batch_user_training} function from the \code{ifcb-analysis} repository (Sosik and Olson 2007),
 extracts specified taxa images from the corresponding ROI files,
 and saves each image in a specified directory.
+}
+\details{
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

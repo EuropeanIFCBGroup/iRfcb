@@ -11,10 +11,19 @@
 #' @param out_folder A character string specifying the directory to save the extracted images.
 #' @param taxa A character string specifying the taxa to extract. Default is "All".
 #' @param threshold A character string specifying the threshold to use ("none", "opt", "adhoc"). Default is "opt".
-#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
+#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return No return value, called for side effects. Extracts and saves taxa images to a directory.
+#'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @examples
 #' \dontrun{
@@ -38,8 +47,9 @@ ifcb_extract_classified_images <- function(sample,
                                            out_folder,
                                            taxa = "All",
                                            threshold = "opt",
-                                           verbose = TRUE,
-                                           overwrite = FALSE) {
+                                           overwrite = FALSE,
+                                           use_python = FALSE,
+                                           verbose = TRUE) {
 
   # Get the list of classified files and find the one matching the sample
   classifiedfiles <- list.files(classified_folder, pattern="mat$", full.names = TRUE, recursive = TRUE)
@@ -54,7 +64,12 @@ ifcb_extract_classified_images <- function(sample,
   }
 
   # Read classified file
-  classified.mat <- readMat(classifiedfilename)
+  if (use_python && scipy_available()) {
+    classified.mat <- ifcb_read_mat(classifiedfilename)
+  } else {
+    # Read the contents of the MAT file
+    classified.mat <- suppressWarnings({R.matlab::readMat(classifiedfilename)})
+  }
 
   # Get the list of ROI files and find the one matching the sample
   roifiles <- list.files(roi_folder, pattern=".roi$", full.names = TRUE, recursive = TRUE)
