@@ -17,10 +17,16 @@ This function reads a MATLAB .mat file using a Python function via \code{reticul
 }
 \details{
 This function requires a Python interpreter with \code{SciPy} installed.
+
+This function requires a python interpreter to be installed.
+The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
 }
 \examples{
 \dontrun{
 data <- read_mat_file_r("C:/data/sample.mat")
 }
 
+}
+\seealso{
+\code{\link{ifcb_py_install}}
 }

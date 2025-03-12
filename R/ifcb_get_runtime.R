@@ -19,7 +19,7 @@
 ifcb_get_runtime <- function(hdr_file) {
   if (startsWith(hdr_file, "http")) {
     # Fetch the raw content
-    response <- curl::curl_fetch_memory(url, handle = curl::new_handle())
+    response <- curl::curl_fetch_memory(hdr_file, handle = curl::new_handle())
 
     # Convert raw content to a character vector
     text_content <- rawToChar(response$content)

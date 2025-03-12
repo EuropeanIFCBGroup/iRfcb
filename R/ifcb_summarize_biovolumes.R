@@ -58,7 +58,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
                                       feature_recursive = TRUE, mat_recursive = TRUE, hdr_recursive = TRUE, use_python = FALSE,
                                       verbose = TRUE) {
 
-  # Step 1: Extract biovolumes and carbon content from feature and class files
+  # Extract biovolumes and carbon content from feature and class files
   biovolumes <- ifcb_extract_biovolumes(feature_files = feature_folder,
                                         mat_folder = mat_folder,
                                         class2use_file = class2use_file,
@@ -71,7 +71,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
                                         use_python = use_python,
                                         verbose = verbose)
 
-  # Step 2: Aggregate biovolumes and carbon content by sample and class
+  # Aggregate biovolumes and carbon content by sample and class
   biovolume_aggregated <- biovolumes %>%
     group_by(sample, classifier, class) %>%
     summarise(counts = n(),
@@ -79,7 +79,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder, class2use_file
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug
               .groups = 'drop')
 
-  # Step 3: Optionally incorporate volume data from HDR files if provided
+  # Optionally incorporate sample volume data from HDR files if provided and calculate volume normalized values
   if (!is.null(hdr_folder)) {
     mat_files <- list.files(mat_folder, pattern = "D.*\\.mat", full.names = TRUE, recursive = mat_recursive)
     hdr_files <- list.files(hdr_folder, pattern = "D.*\\.hdr", full.names = TRUE, recursive = hdr_recursive)

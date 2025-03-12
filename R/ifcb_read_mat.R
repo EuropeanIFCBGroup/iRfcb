@@ -14,8 +14,12 @@ utils::globalVariables("read_mat_file")
 #' data <- read_mat_file_r("C:/data/sample.mat")
 #' }
 #'
-#' @export
+#' @details
+#' This function requires a python interpreter to be installed.
+#' The required python packages can be installed in a virtual environment using `ifcb_py_install`.
 #'
+#' @export
+#' @seealso \code{\link{ifcb_py_install}}
 ifcb_read_mat <- function(file_path) {
   # Initialize python check
   check_python_and_module()
