@@ -631,3 +631,68 @@ read_mat <- function(file_path, fixNames = FALSE) {
   })
   mat_contents_converted
 }
+#' Extract the Class from the First Row of Each worms_records Tibble
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#'
+#' This function extracts the class from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least a 'class' column.
+#' @return A character string representing the class of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- dplyr::tibble(class = c("Class1", "Class2"))
+#' iRfcb:::extract_class(record)
+#'
+#' empty_record <- dplyr::tibble(class = character(0))
+#' iRfcb:::extract_class(empty_record)
+#' @noRd
+extract_class <- function(record) {
+
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.4.3", "iRfcb::extract_class()", "ifcb_match_taxa_names()", "ifcb_match_taxa_names() now returns worms data as data frame")
+
+  if (nrow(record) == 0) {
+    NA
+  } else {
+    record$class[1]
+  }
+}
+
+#' Extract the AphiaID from the First Row of Each worms_records Tibble
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#'
+#' This function extracts the AphiaID from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least an 'AphiaID' column.
+#' @return A numeric value representing the AphiaID of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- dplyr::tibble(AphiaID = c(12345, 67890))
+#' iRfcb:::extract_aphia_id(record)
+#'
+#' empty_record <- dplyr::tibble(AphiaID = numeric(0))
+#' iRfcb:::extract_aphia_id(empty_record)
+#' @noRd
+extract_aphia_id <- function(record) {
+
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.4.3", "iRfcb::extract_aphia_id()", "ifcb_match_taxa_names()", "ifcb_match_taxa_names() now returns worms data as data frame")
+
+  if (nrow(record) == 0) {
+    NA
+  } else {
+    record$AphiaID[1]
+  }
+}
