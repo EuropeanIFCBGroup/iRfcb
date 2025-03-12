@@ -14,7 +14,7 @@ test_that("ifcb_zip_matlab works correctly", {
   features_folder <- file.path(temp_dir, "test_data/features")
   data_folder <- file.path(temp_dir, "test_data/data")
   class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
-  zip_filename <- file.path(temp_dir, "test_output.zip")
+  zip_filename <- file.path(temp_dir, "output", "test_output.zip")
 
   # Remove unnecessary file
   file.remove(file.path(manual_folder, "D20220712T210855_IFCB134.mat"))

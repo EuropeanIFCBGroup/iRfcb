@@ -17,6 +17,7 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   manual_folder_merged <- file.path(temp_dir, "test_data/manual_merged")
   class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
   class2use_file_new <- file.path(temp_dir, "test_data/config/class2use_new.mat")
+  class2use_file_merged <- file.path(temp_dir, "test_data/config/merged/class2use_merge.mat")
 
   # Load existing classes from the class2use.mat file and add a new class
   class2use <- as.character(ifcb_get_mat_variable(class2use_file))
@@ -42,7 +43,7 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   ifcb_replace_mat_values(manual_folder_additions, manual_folder_additions, 5, 128)
 
   # Merge the manual classification data from base and additions folders into the merged folder
-  ifcb_merge_manual(class2use_file, class2use_file_new, NULL,
+  ifcb_merge_manual(class2use_file, class2use_file_new, class2use_file_merged,
                     manual_folder, manual_folder_additions,
                     manual_folder_merged, skip_class = "None")
 
