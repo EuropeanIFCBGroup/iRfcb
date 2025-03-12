@@ -623,10 +623,10 @@ read_mat <- function(file_path, fixNames = FALSE) {
     # Check if the element is a list
     if (is.list(x)) {
       # Flatten the list and convert it to a character vector
-      return(as.character(unlist(x)))
+      as.character(unlist(x))
     } else {
       # If it's not a list, leave it unchanged
-      return(x)
+      x
     }
   })
   mat_contents_converted
