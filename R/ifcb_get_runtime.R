@@ -18,7 +18,14 @@
 #' }
 ifcb_get_runtime <- function(hdr_file) {
   if (startsWith(hdr_file, "http")) {
-    t <- readLines(hdr_file, warn = FALSE)
+    # Fetch the raw content
+    response <- curl::curl_fetch_memory(url, handle = curl::new_handle())
+
+    # Convert raw content to a character vector
+    text_content <- rawToChar(response$content)
+
+    # Read lines from the character string
+    t <- strsplit(text_content, "\r\n")[[1]]
   } else {
     t <- readLines(hdr_file, warn = FALSE)
   }
