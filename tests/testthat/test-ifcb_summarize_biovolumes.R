@@ -55,6 +55,46 @@ test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
                "No MAT files found")
 })
 
+test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
+
+  # Define custom list
+  classes = c("Mesodinium_rubrum", "Mesodinium_rubrum")
+  images <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  # Call the function with the test data
+  result <- ifcb_summarize_biovolumes(feature_folder,
+                                      hdr_folder = hdr_folder,
+                                      custom_images = images,
+                                      custom_classes = classes)
+
+  # Check if the result is a data frame
+  expect_s3_class(result, "data.frame")
+
+  # Check if the result contains the expected columns
+  expected_columns <- c("sample", "class", "counts", "biovolume_mm3", "carbon_ug", "ml_analyzed",
+                        "counts_per_liter", "biovolume_mm3_per_liter", "carbon_ug_per_liter")
+  expect_true(all(expected_columns %in% colnames(result)))
+
+  # Check if the result contains the correct number of rows (adjust this based on your expected output)
+  expected_rows <- 1
+  expect_equal(nrow(result), expected_rows)
+
+  # Check if the result contains non-NA values in key columns
+  expect_true(all(!is.na(result$biovolume_mm3)))
+  expect_true(all(!is.na(result$carbon_ug)))
+  expect_true(all(!is.na(result$ml_analyzed)))
+  expect_true(all(!is.na(result$biovolume_mm3_per_liter)))
+  expect_true(all(!is.na(result$carbon_ug_per_liter)))
+  expect_true(all(is.na(result$classifier)))
+
+  # Check if the result values are within expected ranges (adjust based on your expected output)
+  expect_equal(result$biovolume_mm3, 1.224387e-05, tolerance = 1e-7)
+  expect_equal(result$carbon_ug, 0.001554673, tolerance = 1e-6)
+  expect_equal(result$ml_analyzed, 2.9812723)
+  expect_equal(result$biovolume_mm3_per_liter, 0.004106928)
+  expect_equal(result$carbon_ug_per_liter, 0.52147962)
+})
+
 test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, manual_folder, hdr_folder = hdr_folder),
