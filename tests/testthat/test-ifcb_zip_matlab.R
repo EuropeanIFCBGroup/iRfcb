@@ -1,4 +1,7 @@
 test_that("ifcb_zip_matlab works correctly", {
+  # Skip slow tests on CRAN
+  skip_on_cran()
+
   # Create a temporary directory
   temp_dir <- file.path(tempdir(), "ifcb_zip_matlab")
 

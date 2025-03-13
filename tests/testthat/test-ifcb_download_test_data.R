@@ -1,13 +1,14 @@
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline()
+  skip_on_cran()
+
   # Setup test environment
   temp_dir <- file.path(tempdir(), "ifcb_download_test_data")
   on.exit(unlink(temp_dir, recursive = TRUE))  # Ensure temp_dir is removed after the test
 
   # Non-existing directory
   temp_dir <- file.path(temp_dir, "temp")
-
-  # Check for internet connection and skip the test if offline
-  skip_if_offline()
 
   # Call the function to test error handling
   expect_error(ifcb_download_test_data(temp_dir, figshare_article = "Non-valid-article", max_retries = 2, sleep_time = 1), "Download failed after 2 attempts.")

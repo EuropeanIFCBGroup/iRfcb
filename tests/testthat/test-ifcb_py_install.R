@@ -31,6 +31,9 @@ test_that("ifcb_py_install creates and uses the virtual environment", {
 })
 
 test_that("ifcb_py_install use system Python correctly", {
+  # Skip on CRAN
+  skip_on_cran()
+
   # Skip if Python is not available
   skip_if_no_python()
 

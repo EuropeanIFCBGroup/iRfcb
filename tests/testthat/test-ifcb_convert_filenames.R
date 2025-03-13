@@ -15,7 +15,7 @@ test_that("ifcb_convert_filenames correctly extracts timestamp components", {
     stringsAsFactors = FALSE
   )
 
-  expected_data <- type_convert(expected_data, col_types = cols())
+  expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
 
   # Call the function
   result <- ifcb_convert_filenames(filenames)
@@ -45,7 +45,7 @@ test_that("ifcb_convert_filenames correctly handles filenames with ROI", {
     stringsAsFactors = FALSE
   )
 
-  expected_data <- type_convert(expected_data, col_types = cols())
+  expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
 
   # Expected results with ROI
   expected_data_with_roi <- expected_data

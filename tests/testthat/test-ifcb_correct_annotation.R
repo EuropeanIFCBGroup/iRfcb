@@ -1,6 +1,7 @@
 test_that("ifcb_correct_annotation updates class IDs correctly", {
   # Skip if Python is not available
   skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -28,7 +29,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
     # Read the input .mat file
-    mat_contents <- readMat(input_file)
+    mat_contents <- R.matlab::readMat(input_file)
     classlist <- mat_contents$classlist
 
     # Modify the classlist for each row number
@@ -48,7 +49,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
   # Verify the output file has the expected changes
   output_file <- file.path(out_folder, "D20220712T210855_IFCB134.mat")
-  output_contents <- readMat(output_file)
+  output_contents <- R.matlab::readMat(output_file)
   output_classlist <- output_contents$classlist[,2]
 
   expected_classlist <- c(rep(1, 3), rep(99, 2), rep(1, 28), 8, rep(1, 44), 8, rep(1, 105))
@@ -65,6 +66,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 test_that("ifcb_correct_annotation works with character vector input", {
   # Skip if Python is not available
   skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -86,7 +88,7 @@ test_that("ifcb_correct_annotation works with character vector input", {
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
     # Read the input .mat file
-    mat_contents <- readMat(input_file)
+    mat_contents <- R.matlab::readMat(input_file)
     classlist <- mat_contents$classlist
 
     # Modify the classlist for each row number
@@ -106,7 +108,7 @@ test_that("ifcb_correct_annotation works with character vector input", {
 
   # Verify the output file has the expected changes
   output_file <- file.path(out_folder, "D20220712T210855_IFCB134.mat")
-  output_contents <- readMat(output_file)
+  output_contents <- R.matlab::readMat(output_file)
   output_classlist <- output_contents$classlist[,2]
 
   expected_classlist <- c(rep(1, 3), rep(99, 2), rep(1, 28), 8, rep(1, 44), 8, rep(1, 105))
@@ -120,6 +122,7 @@ test_that("ifcb_correct_annotation works with character vector input", {
 test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   # Skip if Python is not available
   skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -147,7 +150,7 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
     # Read the input .mat file
-    mat_contents <- readMat(input_file)
+    mat_contents <- R.matlab::readMat(input_file)
     classlist <- mat_contents$classlist
 
     # Modify the classlist for each row number
@@ -179,6 +182,7 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
 test_that("ifcb_correct_annotation handles errors gracefully", {
   # Skip if Python is not available
   skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -197,7 +201,7 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
   # Mock the Python function (edit_manual_file)
   mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
     # Read the input .mat file
-    mat_contents <- readMat(input_file)
+    mat_contents <- R.matlab::readMat(input_file)
     classlist <- mat_contents$classlist
 
     # Modify the classlist for each row number

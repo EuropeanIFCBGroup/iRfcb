@@ -31,7 +31,7 @@
 #'
 #' @export
 ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retries = 3, sleep_time = 10,
-                                   marine_only = FALSE, return_list = FALSE, verbose = TRUE, fuzzy = deprecated()) {
+                                  marine_only = FALSE, return_list = FALSE, verbose = TRUE, fuzzy = deprecated()) {
 
   # Warn the user if fuzzy is used
   if (lifecycle::is_present(fuzzy)) {

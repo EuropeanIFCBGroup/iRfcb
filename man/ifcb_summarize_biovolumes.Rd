@@ -90,8 +90,6 @@ If \code{use_python = TRUE}, the function tries to read the \code{.mat} file usi
 This approach may be faster than the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
-
-If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

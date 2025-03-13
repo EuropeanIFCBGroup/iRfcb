@@ -1,7 +1,10 @@
 library(reticulate)
 
+#CRAN OMP THREAD LIMIT
+Sys.setenv("OMP_THREAD_LIMIT" = 2)
+
 # Check if we are on CRAN
-on_cran <- Sys.getenv("NOT_CRAN") != "true"
+on_cran <- testthat:::on_cran()
 
 if (!on_cran) {
   # Define the virtual environment path

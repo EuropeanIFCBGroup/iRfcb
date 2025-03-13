@@ -58,6 +58,7 @@ test_that("ifcb_get_runtime handles header file from URL", {
 
   # Check for internet connection and skip the test if offline
   skip_if_offline()
+  skip_on_cran()
 
   # Attempt to read the header file from the URL, handle potential errors
   hdr_info_db <- tryCatch(
