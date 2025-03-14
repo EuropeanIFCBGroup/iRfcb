@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -152,12 +152,13 @@ images from a specific sample. This is especially useful for isolating
 ROIs based on specific taxa or classification thresholds.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract all classified images from a sample</span></span>
-<span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="st">"D20230314T001205_IFCB134"</span>,</span>
-<span>                               classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
-<span>                               roi_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>                               out_folder <span class="op">=</span> <span class="st">"data/classified_images"</span>,</span>
-<span>                               taxa <span class="op">=</span> <span class="st">"Tripos_lineatus"</span>, <span class="co"># A specific taxa or "All"</span></span>
-<span>                               threshold <span class="op">=</span> <span class="st">"opt"</span><span class="op">)</span> <span class="co"># or specify another threshold</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images</a></span><span class="op">(</span></span>
+<span>  sample <span class="op">=</span> <span class="st">"D20230314T001205_IFCB134"</span>,</span>
+<span>  classified_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
+<span>  roi_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>  out_folder <span class="op">=</span> <span class="st">"data/classified_images"</span>,</span>
+<span>  taxa <span class="op">=</span> <span class="st">"Tripos_lineatus"</span>, <span class="co"># A specific taxa or "All"</span></span>
+<span>  threshold <span class="op">=</span> <span class="st">"opt"</span><span class="op">)</span> <span class="co"># or specify another threshold</span></span></code></pre></div>
 <pre><code><span><span class="co">## Writing 1 ROIs from D20230314T001205_IFCB134.roi to data/classified_images/Tripos_lineatus</span></span></code></pre>
 </div>
 <div class="section level3">
@@ -196,22 +197,28 @@ Data<a class="anchor" aria-label="anchor" href="#summarize-counts-biovolumes-and
 </h3>
 <p>This function calculates aggregated biovolumes and carbon content
 from IFCB samples based on feature and MATLAB classification result
-files, without summarizing the data in MATLAB. Biovolumes are converted
-to carbon according to Menden-Deuer and Lessard (2000) for individual
-ROIs, where different conversion factors are applied to diatoms and
-non-diatom protist. If provided, it also incorporates sample volume data
-from <code>.hdr</code> files to compute biovolume and carbon content per
-liter of sample. See details in the help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
+files, without summarizing the data in MATLAB. The function can also be
+adapted to process classification results from other non-MATLAB machine
+learning algorithms (e.g., a CNN model) by providing custom lists of
+image names and class labels through the <code>custom_images</code> and
+<code>custom_classes</code> arguments.</p>
+<p>Biovolumes are converted to carbon according to Menden-Deuer and
+Lessard (2000) for individual ROIs, where different conversion factors
+are applied to diatoms and non-diatom protist. If provided, it also
+incorporates sample volume data from <code>.hdr</code> files to compute
+biovolume and carbon content per liter of sample. See details in the
+help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
 and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
-<span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
-<span>                                            mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
-<span>                                            hdr_folder <span class="op">=</span> <span class="st">"data/data/2023"</span>,</span>
-<span>                                            micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
-<span>                                            diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
-<span>                                            threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
-<span>                                            verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print progress bars</span></span>
+<span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
+<span>  feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
+<span>  mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
+<span>  hdr_folder <span class="op">=</span> <span class="st">"data/data/2023"</span>,</span>
+<span>  micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
+<span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print progress bars</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
@@ -239,13 +246,14 @@ pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summa
 and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_annotations</code></a>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
-<span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span>feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
-<span>                                                   mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                                                   class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                                                   hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>                                                   micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
-<span>                                                   diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
-<span>                                                   verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print progress bars</span></span>
+<span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
+<span>  feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
+<span>  mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>  micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
+<span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print progress bars</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
@@ -317,10 +325,11 @@ sample data frame:</p>
 <p>Count the annotations in the MATLAB files, similar to <a href="../reference/ifcb_summarize_png_counts.html"><code>ifcb_summarize_png_counts</code></a>:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize counts from MATLAB files</span></span>
-<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                                        class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                                        skip_class <span class="op">=</span> <span class="st">"unclassified"</span>, <span class="co"># Or class ID</span></span>
-<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span>
+<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
+<span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  skip_class <span class="op">=</span> <span class="st">"unclassified"</span>, <span class="co"># Or class ID</span></span>
+<span>  sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
@@ -371,10 +380,11 @@ files using the <code>correction</code> file with selected images:</p>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Correct the annotation with the output from the image gallery</span></span>
-<span><span class="fu"><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                        out_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                        correction <span class="op">=</span> <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
-<span>                        correct_classid <span class="op">=</span> <span class="va">unclassified_id</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation</a></span><span class="op">(</span></span>
+<span>  manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  out_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  correction <span class="op">=</span> <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
+<span>  correct_classid <span class="op">=</span> <span class="va">unclassified_id</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="replace-specific-class-annotations">Replace Specific Class Annotations<a class="anchor" aria-label="anchor" href="#replace-specific-class-annotations"></a>
@@ -407,10 +417,11 @@ files using the <code>correction</code> file with selected images:</p>
 <p>Verify that the corrections have been applied:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
-<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                                        class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                                        skip_class <span class="op">=</span> <span class="st">"unclassified"</span>, <span class="co"># Or class ID</span></span>
-<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span>
+<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
+<span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  skip_class <span class="op">=</span> <span class="st">"unclassified"</span>, <span class="co"># Or class ID</span></span>
+<span>  sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span> <span class="co"># Or per "sample"</span></span>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
@@ -434,8 +445,9 @@ list will be updated accordingly. If no file is found, a new
 as unclassified.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a file with selected images, generated by the image gallery app</span></span>
-<span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span><span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>, </span>
-<span>                         header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>, </span>
+<span>  header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print image names to be annotated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span></code></pre></div>
@@ -449,10 +461,11 @@ as unclassified.</p>
 <span>                    class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Summarize new counts after re-annotation</span></span>
-<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span>manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                                        class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                                        skip_class <span class="op">=</span> <span class="st">"unclassified"</span>,</span>
-<span>                                        sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
+<span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
+<span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  skip_class <span class="op">=</span> <span class="st">"unclassified"</span>,</span>
+<span>  sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print output and check if Alexandrium pseudogonyaulax is back</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
@@ -479,7 +492,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.2.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
 <span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -488,7 +501,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.2},</span></span>
+<span><span class="co">##     note = {R package version 0.4.3},</span></span>
 <span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

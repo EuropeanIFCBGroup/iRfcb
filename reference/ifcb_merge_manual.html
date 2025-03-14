@@ -11,7 +11,7 @@ The merged .mat data can be used with the code in the ifcb-analysis repository (
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,6 +67,7 @@ The merged <code>.mat</code> data can be used with the code in the <code>ifcb-an
 <span>  <span class="va">manual_folder_output</span>,</span>
 <span>  do_compression <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  temp_index_offset <span class="op">=</span> <span class="fl">50000</span>,</span>
+<span>  skip_class <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -109,6 +110,10 @@ If <code>NULL</code>, the merged file will be stored in the same directory as <c
 
 <dt id="arg-temp-index-offset">temp_index_offset<a class="anchor" aria-label="anchor" href="#arg-temp-index-offset"></a></dt>
 <dd><p>Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.</p></dd>
+
+
+<dt id="arg-skip-class">skip_class<a class="anchor" aria-label="anchor" href="#arg-skip-class"></a></dt>
+<dd><p>Character. A vector of class names to skip from the <code>class2use_file_additions</code> during the merge process. Default is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>

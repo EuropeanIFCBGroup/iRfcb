@@ -9,7 +9,7 @@ It can be used, for example, to extract lists of classes from the file."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,11 @@ It can be used, for example, to extract lists of classes from the file.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_get_mat_variable</span><span class="op">(</span><span class="va">mat_file</span>, variable_name <span class="op">=</span> <span class="st">"class2use"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_get_mat_variable</span><span class="op">(</span></span>
+<span>  <span class="va">mat_file</span>,</span>
+<span>  variable_name <span class="op">=</span> <span class="st">"class2use"</span>,</span>
+<span>  use_python <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,13 +72,25 @@ It can be used, for example, to extract lists of classes from the file.</p>
 
 <dt id="arg-variable-name">variable_name<a class="anchor" aria-label="anchor" href="#arg-variable-name"></a></dt>
 <dd><p>A character string specifying the variable name in the .mat file that contains the class information.
-The default is "class2use". Other examples include "class2use.manual" from a manual file, or "class2use.auto"
+The default is "class2use". Other examples include "class2use_manual" from a manual file, or "class2use_auto"
 for a class list used for automatic assignment. You can find available variable names using the function <code><a href="ifcb_get_mat_names.html">ifcb_get_mat_names</a></code>.</p></dd>
+
+
+<dt id="arg-use-python">use_python<a class="anchor" aria-label="anchor" href="#arg-use-python"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, attempts to read the <code>.mat</code> file using a Python-based method. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A character vector of class names.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>If <code>use_python = TRUE</code>, the function tries to read the <code>.mat</code> file using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code>, which relies on <code>SciPy</code>.
+This approach may be faster than the default approach using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>, especially for large <code>.mat</code> files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
+<p>If <code>use_python = FALSE</code> or if <code>SciPy</code> is not available, the function falls back to using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

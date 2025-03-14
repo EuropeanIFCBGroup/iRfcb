@@ -9,7 +9,7 @@ and returns a summary data list."><meta property="og:image" content="https://eur
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,12 @@ and returns a summary data list.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_summarize_class_counts</span><span class="op">(</span><span class="va">classpath_generic</span>, <span class="va">hdr_folder</span>, <span class="va">year_range</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_summarize_class_counts</span><span class="op">(</span></span>
+<span>  <span class="va">classpath_generic</span>,</span>
+<span>  <span class="va">hdr_folder</span>,</span>
+<span>  <span class="va">year_range</span>,</span>
+<span>  use_python <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,6 +79,10 @@ This can be a URL for web services or a full path for local files.</p></dd>
 
 <dt id="arg-year-range">year_range<a class="anchor" aria-label="anchor" href="#arg-year-range"></a></dt>
 <dd><p>Numeric vector specifying the range of years (e.g., 2013:2014) to process.</p></dd>
+
+
+<dt id="arg-use-python">use_python<a class="anchor" aria-label="anchor" href="#arg-use-python"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, attempts to read the <code>.mat</code> file using a Python-based method. Default is <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -107,6 +116,14 @@ This can be a URL for web services or a full path for local files.</p></dd>
 <dd><p>The adhoc threshold used for classification.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>If <code>use_python = TRUE</code>, the function tries to read the <code>.mat</code> file using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code>, which relies on <code>SciPy</code>.
+This approach may be faster than the default approach using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>, especially for large <code>.mat</code> files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
+<p>If <code>use_python = FALSE</code> or if <code>SciPy</code> is not available, the function falls back to using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
