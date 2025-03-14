@@ -15,6 +15,8 @@
 .onLoad <- function(libname, pkgname) {
   # CRAN OMP THREAD LIMIT
   Sys.setenv("OMP_THREAD_LIMIT" = 1)
+  Sys.setenv("OPENBLAS_NUM_THREADS" = 1)
+  Sys.setenv("MKL_NUM_THREADS" = 1)
 
   # Get the path to the requirements file
   req_file <- system.file("python", "requirements.txt", package = "iRfcb")

@@ -1,4 +1,6 @@
 test_that("ifcb_extract_classified_images works correctly with default parameters", {
+  skip_on_cran()
+
   # Create a temporary directory
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
 
@@ -43,6 +45,8 @@ test_that("ifcb_extract_classified_images works correctly with default parameter
 })
 
 test_that("ifcb_extract_classified_images works correctly with specific taxa", {
+  skip_on_cran()
+
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
@@ -77,6 +81,8 @@ test_that("ifcb_extract_classified_images works correctly with specific taxa", {
 })
 
 test_that("ifcb_extract_classified_images handles missing classified file gracefully", {
+  skip_on_cran()
+
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
@@ -110,6 +116,8 @@ test_that("ifcb_extract_classified_images handles missing classified file gracef
 })
 
 test_that("ifcb_extract_classified_images handles multiple classified files gracefully", {
+  skip_on_cran()
+
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
@@ -142,6 +150,8 @@ test_that("ifcb_extract_classified_images handles multiple classified files grac
 })
 
 test_that("ifcb_extract_classified_images works correctly with different thresholds", {
+  skip_on_cran()
+
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))
@@ -179,6 +189,8 @@ test_that("ifcb_extract_classified_images works correctly with different thresho
 })
 
 test_that("ifcb_extract_classified_images handles missing roi files gracefully", {
+  skip_on_cran()
+
   temp_dir <- file.path(tempdir(), "ifcb_extract_classified_images")
   test_data_zip <- test_path("test_data/test_data.zip")
   expect_true(file.exists(test_data_zip))

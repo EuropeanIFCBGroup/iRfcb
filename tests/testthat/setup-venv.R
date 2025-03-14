@@ -1,12 +1,9 @@
 library(reticulate)
 
-#CRAN OMP THREAD LIMIT
-Sys.setenv("OMP_THREAD_LIMIT" = 2)
-
 # Check if we are on CRAN
-on_cran <- identical(Sys.getenv("NOT_CRAN"), "false")
+not_cran <- identical(Sys.getenv("NOT_CRAN"), "true")
 
-if (!on_cran) {
+if (not_cran) {
   # Define the virtual environment path
   venv_dir <- file.path(tempdir(), "test-venv")
 

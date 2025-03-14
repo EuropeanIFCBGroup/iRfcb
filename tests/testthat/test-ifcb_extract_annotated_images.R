@@ -1,4 +1,6 @@
 test_that("ifcb_extract_annotated_images works correctly", {
+  skip_on_cran()
+
   # Create a temporary directory
   temp_dir <- file.path(tempdir(), "ifcb_extract_annotated_images")
 
@@ -55,6 +57,8 @@ test_that("ifcb_extract_annotated_images works correctly", {
 })
 
 test_that("ifcb_extract_annotated_images handles errors gracefully", {
+  skip_on_cran()
+
   # Create a temporary directory
   temp_dir <- file.path(tempdir(), "ifcb_extract_annotated_images")
 
