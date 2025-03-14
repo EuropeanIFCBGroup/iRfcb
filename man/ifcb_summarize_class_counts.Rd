@@ -4,7 +4,12 @@
 \alias{ifcb_summarize_class_counts}
 \title{Count Cells from TreeBagger Classifier Output}
 \usage{
-ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range)
+ifcb_summarize_class_counts(
+  classpath_generic,
+  hdr_folder,
+  year_range,
+  use_python = FALSE
+)
 }
 \arguments{
 \item{classpath_generic}{Character string specifying the location of the classifier output files.
@@ -14,6 +19,8 @@ The path should include 'xxxx' in place of the 4-digit year (e.g., 'classxxxx_v1
 This can be a URL for web services or a full path for local files.}
 
 \item{year_range}{Numeric vector specifying the range of years (e.g., 2013:2014) to process.}
+
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 }
 \value{
 A list containing the following elements:
@@ -30,6 +37,14 @@ A list containing the following elements:
 \description{
 This function summarizes class results for a series of classifier output files
 and returns a summary data list.
+}
+\details{
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

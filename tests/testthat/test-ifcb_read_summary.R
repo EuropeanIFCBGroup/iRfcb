@@ -43,4 +43,12 @@ test_that("ifcb_read_summary handles non-existent file gracefully", {
   expect_error(suppressWarnings(ifcb_read_summary(non_existent_file)))
 })
 
+test_that("ifcb_read_summary throws an error if biovolume is requested but missing", {
+  # Call the function with biovolume TRUE
+  expect_error(
+    summary_data <- ifcb_read_summary(summary_file_path, hdr_directory = hdr_directory_path, biovolume = TRUE, threshold = "opt"),
+    "Biovolume data for threshold opt does not exist in the file."
+  )
+})
+
 unlink(exdir)

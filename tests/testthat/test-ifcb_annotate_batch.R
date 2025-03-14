@@ -1,7 +1,8 @@
 test_that("ifcb_annotate_batch creates and updates mat files as expected", {
+
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual_folder")
@@ -62,8 +63,8 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
 
 test_that("ifcb_annotate_batch handles errors gracefully", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
+  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual_folder")

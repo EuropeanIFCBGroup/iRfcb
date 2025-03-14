@@ -4,10 +4,12 @@
 \alias{ifcb_get_mat_names}
 \title{Get Variable Names from a MAT File}
 \usage{
-ifcb_get_mat_names(mat_file)
+ifcb_get_mat_names(mat_file, use_python = FALSE)
 }
 \arguments{
 \item{mat_file}{A character string specifying the path to the .mat file.}
+
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 }
 \value{
 A character vector of variable names.
@@ -15,6 +17,14 @@ A character vector of variable names.
 \description{
 This function reads a .mat file generated the \code{ifcb-analysis} repository (Sosik and Olson 2007) and retrieves the
 names of all variables stored within it.
+}
+\details{
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be faster than the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
 \dontrun{

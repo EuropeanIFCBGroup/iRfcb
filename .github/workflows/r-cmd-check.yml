@@ -45,7 +45,7 @@ jobs:
 
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.x'
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

@@ -21,5 +21,15 @@ Useful links:
 \author{
 \strong{Maintainer}: Anders Torstensson \email{anders.torstensson@smhi.se} (\href{https://orcid.org/0000-0002-8283-656X}{ORCID}) (Swedish Meteorological and Hydrological Institute)
 
+Other contributors:
+\itemize{
+  \item Kendra Hayashi (\href{https://orcid.org/0000-0003-1600-9504}{ORCID}) [contributor]
+  \item Jamie Enslein [contributor]
+  \item Raphael Kudela (\href{https://orcid.org/0000-0002-8640-1205}{ORCID}) [contributor]
+  \item Alle Lie (\href{https://orcid.org/0009-0001-8709-4841}{ORCID}) [contributor]
+  \item Jayme Smith (\href{https://orcid.org/0000-0002-9669-4427}{ORCID}) [contributor]
+  \item DTO-BioFlow (Horizon Europe, HORIZON-MISS-2022-OCEAN-01-07) [funder]
+}
+
 }
 \keyword{internal}

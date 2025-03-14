@@ -67,4 +67,9 @@ test_that("ifcb_read_hdr_data converts column types correctly", {
   unlink(hdr_folder)
 })
 
+test_that("ifcb_read_hdr_data handles deprecated arguments correctly", {
+  hdr_folder <- create_temp_hdr_from_example(exdir, hdr_file_path)
+  lifecycle::expect_deprecated(ifcb_read_hdr_data(hdr_folder = hdr_folder, verbose = FALSE))
+})
+
 unlink(exdir)

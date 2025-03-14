@@ -52,19 +52,7 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
                                       return_list = FALSE,
                                       verbose = verbose)
 
-  # # Extract classes with error handling for missing data
-  # classes <- sapply(worms_data, function(record) {
-  #   if (!is.null(record)) {
-  #     extract_class(record)
-  #   } else {
-  #     NA
-  #   }
-  # })
-
   result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_data$class, stringsAsFactors = FALSE)
-
-  # Create the dataframe with taxa_list_clean and classes
-  # result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = classes, stringsAsFactors = FALSE)
 
   # Check if the class is the specified diatom class
   is_diatom <- result_df$class %in% diatom_class

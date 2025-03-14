@@ -186,26 +186,6 @@ extract_parts <- function(filename) {
   }
   df
 }
-#' Load iRfcb Python Environment on Package Load
-#'
-#' This function attempts to use the "iRfcb" Python virtual environment when the package is loaded.
-#'
-#' @param ... Additional arguments passed to the function.
-#' @noRd
-.onLoad <- function(...) {
-  # List available virtual environments in the default virtualenv root
-  venvs <- reticulate::virtualenv_list()
-
-  # Find the iRfcb virtual environment
-  irfcb_venvs <- venvs[grepl("iRfcb", venvs)]
-
-  # Construct the full path to the environment and activate it
-  envname <- file.path(reticulate::virtualenv_root(), irfcb_venvs[1])
-
-  if (dir.exists(envname)) {
-    reticulate::use_virtualenv(envname, required = FALSE)
-  }
-}
 
 #' Summarize TreeBagger Classifier Results
 #'
@@ -222,11 +202,11 @@ extract_parts <- function(filename) {
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 #' @export
 summarize_TBclass <- function(classfile, adhocthresh = NULL) {
-  data <- readMat(classfile)
+  data <- readMat(classfile, fixNames = FALSE)
   class2useTB <- data$class2useTB
   TBscores <- data$TBscores
   TBclass <- data$TBclass
-  TBclass_above_threshold <- data$TBclass.above.threshold
+  TBclass_above_threshold <- data$TBclass_above_threshold
 
   classcount <- rep(NA, length(class2useTB))
   classcount_above_optthresh <- classcount
@@ -352,55 +332,6 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
 
   missing_data
 }
-
-#' Extract the Class from the First Row of Each worms_records Tibble
-#'
-#' This function extracts the class from the first row of a given worms_records tibble.
-#' If the tibble is empty, it returns NA.
-#'
-#' @param record A tibble containing worms_records with at least a 'class' column.
-#' @return A character string representing the class of the first row in the tibble,
-#' or NA if the tibble is empty.
-#' @examples
-#' # Example usage:
-#' record <- dplyr::tibble(class = c("Class1", "Class2"))
-#' iRfcb:::extract_class(record)
-#'
-#' empty_record <- dplyr::tibble(class = character(0))
-#' iRfcb:::extract_class(empty_record)
-#' @noRd
-extract_class <- function(record) {
-  if (nrow(record) == 0) {
-    NA
-  } else {
-    record$class[1]
-  }
-}
-
-#' Extract the AphiaID from the First Row of Each worms_records Tibble
-#'
-#' This function extracts the AphiaID from the first row of a given worms_records tibble.
-#' If the tibble is empty, it returns NA.
-#'
-#' @param record A tibble containing worms_records with at least an 'AphiaID' column.
-#' @return A numeric value representing the AphiaID of the first row in the tibble,
-#' or NA if the tibble is empty.
-#' @examples
-#' # Example usage:
-#' record <- dplyr::tibble(AphiaID = c(12345, 67890))
-#' iRfcb:::extract_aphia_id(record)
-#'
-#' empty_record <- dplyr::tibble(AphiaID = numeric(0))
-#' iRfcb:::extract_aphia_id(empty_record)
-#' @noRd
-extract_aphia_id <- function(record) {
-  if (nrow(record) == 0) {
-    NA
-  } else {
-    record$AphiaID[1]
-  }
-}
-
 #' Retrieve WoRMS Records with Retry Mechanism
 #'
 #' @description
@@ -606,14 +537,162 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' check_python_and_module("scipy") # Check for Python and 'scipy'
 #' }
 #' @noRd
-check_python_and_module <- function(module = "scipy", initialize = TRUE) {
+check_python_and_module <- function(module = "scipy", initialize = FALSE) {
   # Check if Python is available
   if (!py_available(initialize = initialize)) {
-    stop("Python is not available. Please ensure Python is installed and accessible, or see `ifcb_py_install`.")
+    stop("Python is not available. Please ensure Python is installed and initalized, or see `ifcb_py_install`.")
   }
 
+  # List available packages
+  available_packages <- py_list_packages(python = reticulate::py_discover_config()$python)
+
   # Check if the required Python module is available
-  if (!py_module_available(module)) {
+  if (!module %in% available_packages$package) {
     stop(paste("Python package '", module, "' is not available. Please install '", module, "' in your Python environment, or see `ifcb_py_install`.", sep = ""))
+  }
+}
+#' Check Python and SciPy Availability
+#'
+#' This helper function verifies whether Python is available and if the specified Python module (e.g., `scipy`) is installed.
+#'
+#' @param initialize Logical. If `TRUE`, attempts to initialize Python if it is not already initialized. Default is `TRUE`.
+#'
+#' @return Logical. Returns `TRUE` if Python and the specified module are available, otherwise `FALSE`.
+#'
+#' @examples
+#' \dontrun{
+#' scipy_available() # Check for Python and 'scipy'
+#' }
+#' @noRd
+scipy_available <- function(initialize = FALSE) {
+  # Check if Python is available
+  if (!reticulate::py_available(initialize = initialize)) {
+    return(FALSE)
+  }
+
+  # Get the list of installed Python packages
+  available_packages <- reticulate::py_list_packages()
+
+  # Check if 'scipy' is installed
+  return("scipy" %in% available_packages$package)
+}
+
+#' Install Missing Python Packages
+#'
+#' A helper function to check for missing Python packages and install them using `reticulate`.
+#' If an environment name is provided, the packages are installed in that virtual environment.
+#'
+#' @param packages Character vector. Names of the Python packages to check and install if missing.
+#' @param envname Character (optional). Name of the virtual environment where packages should be installed.
+#'   If `NULL`, packages are installed globally.
+#' @return Invisibly returns `NULL`. Prints messages about installation status.
+#' @noRd
+install_missing_packages <- function(packages, envname = NULL) {
+  installed <- reticulate::py_list_packages()$package
+  missing_packages <- setdiff(packages, installed)
+
+  if (length(missing_packages) > 0) {
+    message("Installing missing Python packages: ", paste(missing_packages, collapse = ", "))
+
+    if (is.null(envname)) {
+      # Install globally if system Python is used
+      reticulate::py_install(missing_packages, pip = TRUE)
+    } else {
+      # Install in virtual environment
+      reticulate::virtualenv_install(envname, missing_packages, ignore_installed = TRUE)
+    }
+  } else {
+    message("All requested packages are already installed.")
+  }
+}
+#' Read MATLAB (.mat) Files
+#'
+#' A helper function to read MATLAB `.mat` files using the `R.matlab` package.
+#' Optionally, it can fix variable names during import.
+#'
+#' @param file_path Character. Path to the `.mat` file.
+#' @param fixNames Logical. If `TRUE`, fixes variable names to be valid R identifiers. Default is `FALSE`.
+#' @return A list containing the data from the `.mat` file, with any nested lists converted to character vectors.
+#' @noRd
+read_mat <- function(file_path, fixNames = FALSE) {
+  # Read the contents of the MAT file
+  mat_contents <- suppressWarnings({R.matlab::readMat(file_path, fixNames = fixNames)})
+
+  # Iterate through each element of mat_data2 and convert any list to a character vector
+  mat_contents_converted <- lapply(mat_contents, function(x) {
+    # Check if the element is a list
+    if (is.list(x)) {
+      # Flatten the list and convert it to a character vector
+      as.character(unlist(x))
+    } else {
+      # If it's not a list, leave it unchanged
+      x
+    }
+  })
+  mat_contents_converted
+}
+#' Extract the Class from the First Row of Each worms_records Tibble
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#'
+#' This function extracts the class from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least a 'class' column.
+#' @return A character string representing the class of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- dplyr::tibble(class = c("Class1", "Class2"))
+#' iRfcb:::extract_class(record)
+#'
+#' empty_record <- dplyr::tibble(class = character(0))
+#' iRfcb:::extract_class(empty_record)
+#' @noRd
+extract_class <- function(record) {
+
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.4.3", "iRfcb::extract_class()", "ifcb_match_taxa_names()", "ifcb_match_taxa_names() now returns worms data as data frame")
+
+  if (nrow(record) == 0) {
+    NA
+  } else {
+    record$class[1]
+  }
+}
+
+#' Extract the AphiaID from the First Row of Each worms_records Tibble
+#'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#'
+#' This function extracts the AphiaID from the first row of a given worms_records tibble.
+#' If the tibble is empty, it returns NA.
+#'
+#' @param record A tibble containing worms_records with at least an 'AphiaID' column.
+#' @return A numeric value representing the AphiaID of the first row in the tibble,
+#' or NA if the tibble is empty.
+#' @examples
+#' # Example usage:
+#' record <- dplyr::tibble(AphiaID = c(12345, 67890))
+#' iRfcb:::extract_aphia_id(record)
+#'
+#' empty_record <- dplyr::tibble(AphiaID = numeric(0))
+#' iRfcb:::extract_aphia_id(empty_record)
+#' @noRd
+extract_aphia_id <- function(record) {
+
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.4.3", "iRfcb::extract_aphia_id()", "ifcb_match_taxa_names()", "ifcb_match_taxa_names() now returns worms data as data frame")
+
+  if (nrow(record) == 0) {
+    NA
+  } else {
+    record$AphiaID[1]
   }
 }

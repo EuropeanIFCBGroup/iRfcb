@@ -70,7 +70,7 @@ Extract annotated ROIs as `.png` images in subfolders for each class, skipping t
 # Extract .png images
 ifcb_extract_annotated_images(manual_folder = "data/manual",
                               class2use_file = "data/config/class2use.mat",
-                              roi_folder = "data/data",
+                              roi_folders = "data/data",
                               out_folder = "data/extracted_images",
                               skip_class = 1, # or "unclassified"
                               verbose = FALSE) # Do not print messages
@@ -144,13 +144,13 @@ env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
 ifcb_py_install(envname = env_path)
 
 # Merge Skagerrak-Kattegat and Tångesund to a single dataset
-ifcb_merge_manual(class2use_file_base = file.path(skagerrak_kattegat_dir, "config/class2use.mat"),
-                  class2use_file_additions = file.path(tangesund_dir, "config/class2use.mat"),
-                  class2use_file_output = file.path(merged_dir, "config/class2use.mat"),
-                  manual_folder_base = file.path(skagerrak_kattegat_dir, "manual"),
-                  manual_folder_additions = file.path(tangesund_dir, "manual"),
-                  manual_folder_output = file.path(merged_dir, "manual")
-                  )
+ifcb_merge_manual(
+  class2use_file_base = file.path(skagerrak_kattegat_dir, "config/class2use.mat"),
+  class2use_file_additions = file.path(tangesund_dir, "config/class2use.mat"),
+  class2use_file_output = file.path(merged_dir, "config/class2use.mat"),
+  manual_folder_base = file.path(skagerrak_kattegat_dir, "manual"),
+  manual_folder_additions = file.path(tangesund_dir, "manual"),
+  manual_folder_output = file.path(merged_dir, "manual"))
 ```
 
 This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!

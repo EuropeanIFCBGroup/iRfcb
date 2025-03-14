@@ -53,6 +53,13 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
 
   for (i in seq_along(files)) {
     file_path_in <- files[i]
+
+    # Skip empty/corrupt files
+    if (file.size(file_path_in) == 0) {
+      warning(paste("Empty .mat file:", file_path_in, "Skipping."))
+      next
+    }
+
     file_path_out <- file.path(out_folder, basename(files[i]))
 
     replace_value_in_classlist(

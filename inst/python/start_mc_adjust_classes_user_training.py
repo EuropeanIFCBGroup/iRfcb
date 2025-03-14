@@ -1,5 +1,7 @@
 import os
 import scipy.io
+import warnings
+from scipy.io.matlab._miobase import MatReadError
 
 def start_mc_adjust_classes_user_training(class2use_name, manual_path, do_compression=True):
     # Load class2use from the .mat file
@@ -10,8 +12,14 @@ def start_mc_adjust_classes_user_training(class2use_name, manual_path, do_compre
     for filename in os.listdir(manual_path):
         if filename.startswith('D'):
             manual_file_path = os.path.join(manual_path, filename)
-            manual_data = scipy.io.loadmat(manual_file_path)
-
+            
+            try:
+                # Attempt to load the manual data
+                manual_data = scipy.io.loadmat(manual_file_path)
+            except MatReadError:
+                warnings.warn(f"Warning: The manual file {filename} is empty or corrupted.", UserWarning)
+                continue  # Skip processing this file
+            
             # Adjust the manual file's class2use fields
             manual_data['class2use_manual'] = class2use
             

@@ -17,7 +17,6 @@ NULL
 
 #' @noRd
 #' @rdname defunct
-#' @importFrom lifecycle deprecate_stop
 ifcb_get_svea_position <- function(...) {
   lifecycle::deprecate_stop("0.3.4", "ifcb_get_svea_position()", "iRfcb::ifcb_get_ferrybox_data()")
 }

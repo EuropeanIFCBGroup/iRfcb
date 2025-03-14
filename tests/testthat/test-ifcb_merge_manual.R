@@ -1,7 +1,7 @@
 test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
+  skip_on_cran()
 
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")
@@ -18,11 +18,14 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   manual_folder_merged <- file.path(temp_dir, "test_data/manual_merged")
   class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
   class2use_file_new <- file.path(temp_dir, "test_data/config/class2use_new.mat")
+  class2use_file_merged <- file.path(temp_dir, "test_data/config/merged/class2use_merge.mat")
 
   # Load existing classes from the class2use.mat file and add a new class
   class2use <- as.character(ifcb_get_mat_variable(class2use_file))
   class2use_addition <- "New_class"
-  class2use <- c(class2use_addition, class2use)
+
+  # Insert the new class at position 127, shifting other elements forward
+  class2use <- append(class2use, values = class2use_addition, after = 127 - 1)
 
   # Create a new class2use file with the updated classes
   ifcb_create_class2use(class2use, class2use_file_new)
@@ -41,7 +44,9 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   ifcb_replace_mat_values(manual_folder_additions, manual_folder_additions, 5, 128)
 
   # Merge the manual classification data from base and additions folders into the merged folder
-  ifcb_merge_manual(class2use_file, class2use_file_new, NULL, manual_folder, manual_folder_additions, manual_folder_merged)
+  ifcb_merge_manual(class2use_file, class2use_file_new, class2use_file_merged,
+                    manual_folder, manual_folder_additions,
+                    manual_folder_merged, skip_class = "None")
 
   # Verify that the merged folder contains the correct number of files
   files_base <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE)
@@ -50,8 +55,8 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
   expect_equal(length(files_base) + length(files_additions), length(files_merged))
 
   # Ensure the merged files contain more classes than the base files
-  classes_base <- as.character(ifcb_get_mat_variable(files_base[1], "class2use.manual"))
-  classes_merged <- as.character(ifcb_get_mat_variable(files_merged[1], "class2use.manual"))
+  classes_base <- as.character(ifcb_get_mat_variable(files_base[1], "class2use_manual"))
+  classes_merged <- as.character(ifcb_get_mat_variable(files_merged[1], "class2use_manual"))
   expect_gt(length(classes_merged), length(classes_base))
 
   # Clean up the temporary directory after the test
@@ -60,8 +65,8 @@ test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
 
 test_that("ifcb_merge_manual throws the correct error messages", {
   # Skip if Python is not available
-  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
-          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+  skip_if_no_scipy()
+  skip_on_cran()
 
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip")

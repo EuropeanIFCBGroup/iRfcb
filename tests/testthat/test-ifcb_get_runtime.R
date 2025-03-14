@@ -58,9 +58,10 @@ test_that("ifcb_get_runtime handles header file from URL", {
 
   # Check for internet connection and skip the test if offline
   skip_if_offline()
+  skip_on_cran()
 
   # Attempt to read the header file from the URL, handle potential errors
-  hdr_info <- tryCatch(
+  hdr_info_db <- tryCatch(
     {
       # Call the function to read the header file from the URL
       ifcb_get_runtime(url)
@@ -72,6 +73,6 @@ test_that("ifcb_get_runtime handles header file from URL", {
   )
 
   # Check if the extracted values are correct (example values, adjust as needed)
-  expect_equal(hdr_info$runtime, 1198.026000, info = "Extracted runtime should be 1198.026")
-  expect_equal(hdr_info$inhibittime, 0.000000, info = "Extracted inhibittime should be 0")
+  expect_equal(hdr_info_db$runtime, 1198.026000, info = "Extracted runtime should be 1198.026")
+  expect_equal(hdr_info_db$inhibittime, 0.000000, info = "Extracted inhibittime should be 0")
 })

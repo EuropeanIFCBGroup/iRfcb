@@ -1,4 +1,7 @@
 test_that("ifcb_count_mat_annotations works correctly", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")
   temp_dir <- file.path(tempdir(), "ifcb_count_mat_annotations")
@@ -13,7 +16,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_true(file.exists(class2use_file))
 
   # Run the function without skipping any classes
-  result <- ifcb_count_mat_annotations(manual_folder, class2use_file)
+  result <- ifcb_count_mat_annotations(manual_folder, class2use_file, use_python = TRUE)
 
   # Verify the structure of the result
   expect_s3_class(result, "data.frame")
@@ -39,8 +42,8 @@ test_that("ifcb_count_mat_annotations works correctly", {
   # Ensure that the skipped IDs do not appear in the result
   skipped_classes <- ifcb_get_mat_variable(class2use_file) %>%
     data.frame(class = .) %>%  # Convert vector to data frame
-    filter(seq_along(class) %in% skip_ids) %>%
-    pull(class)
+    dplyr::filter(seq_along(class) %in% skip_ids) %>%
+    dplyr::pull(class)
   expect_true(all(!result_skip_ids$class %in% skipped_classes))
 
   # Run the function with skipping a specific class name
@@ -53,6 +56,9 @@ test_that("ifcb_count_mat_annotations works correctly", {
 
   # Ensure that the skipped class name does not appear in the result
   expect_true(all(!result_skip_names$class %in% skip_names))
+
+  # Define an empty list (MATLAB struct equivalent)
+  empty_data <- list()
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)

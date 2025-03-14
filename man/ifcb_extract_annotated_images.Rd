@@ -7,13 +7,15 @@
 ifcb_extract_annotated_images(
   manual_folder,
   class2use_file,
-  roi_folder,
+  roi_folders,
   out_folder,
   skip_class = NA,
   verbose = TRUE,
   manual_recursive = FALSE,
   roi_recursive = TRUE,
-  overwrite = FALSE
+  overwrite = FALSE,
+  use_python = FALSE,
+  roi_folder = deprecated()
 )
 }
 \arguments{
@@ -21,7 +23,7 @@ ifcb_extract_annotated_images(
 
 \item{class2use_file}{A character string specifying the path to the file containing class names.}
 
-\item{roi_folder}{A character string specifying the path to the directory containing the ROI files.}
+\item{roi_folders}{A character vector specifying one or more directories containing the ROI files.}
 
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
@@ -34,6 +36,11 @@ ifcb_extract_annotated_images(
 \item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
+
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
+\item{roi_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{roi_folders} instead.}
 }
 \value{
 None. The function saves the extracted PNG images to the specified output directory.
@@ -44,12 +51,20 @@ annotated using the MATLAB code from the \code{ifcb-analysis} repository (Sosik 
 It reads manually classified data, maps class indices to class names, and extracts
 the corresponding Region of Interest (ROI) images, saving them to the specified directory.
 }
+\details{
+If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
+This approach may be fasterthan the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+To enable this functionality, ensure Python is properly configured with the required dependencies.
+You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
+
+If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
+}
 \examples{
 \dontrun{
 ifcb_extract_annotated_images(
   manual_folder = "path/to/manual_folder",
   class2use_file = "path/to/class2use_file.mat",
-  roi_folder = "path/to/roi_folder",
+  roi_folders = "path/to/roi_folder",
   out_folder = "path/to/out_folder",
   skip_class = 1
 )

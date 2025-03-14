@@ -10,7 +10,17 @@ utils::globalVariables(c("gpsLatitude", "gpsLongitude", "type", "value", "counts
 #' @param hdr_directory A character string specifying the path to the directory containing header (.hdr) files. Default is NULL.
 #' @param biovolume A logical indicating whether the file contains biovolume data. Default is FALSE.
 #' @param threshold A character string specifying the threshold type for counts and biovolume. Options are "opt" (default), "adhoc", and "none".
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @return A data frame containing the summary information including file list, volume analyzed, species counts, optionally biovolume, and other metadata.
+#'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
+#'
 #' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
@@ -19,17 +29,21 @@ utils::globalVariables(c("gpsLatitude", "gpsLongitude", "type", "value", "counts
 #' summary_data <- ifcb_read_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
 #' print(summary_data)
 #' }
-ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, threshold = "opt") {
+ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, threshold = "opt", use_python = FALSE) {
 
   if (is.list(summary)) {
     # If 'summary' is a list, assign it to the variable 'mat'
     mat <- summary
 
     # Replace all underscores in the names of the list elements with dots to match output from MATLAB
-    names(mat) <- gsub("_", ".",names(mat))
+    # names(mat) <- gsub("_", ".",names(mat))
   } else {
-    # Read the MATLAB .mat file
-    mat <- R.matlab::readMat(summary)
+    if (use_python && scipy_available()) {
+      mat <- ifcb_read_mat(summary)
+    } else {
+      # Read the contents of the MAT file
+      mat <- read_mat(summary)
+    }
   }
 
   # Check if hdr_directory is provided and exists
@@ -50,13 +64,13 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   }
 
   # Extract ml_analyzed and file list from the MATLAB data
-  ml_analyzed <- as.vector(mat$ml.analyzedTB)
+  ml_analyzed <- as.vector(mat$ml_analyzedTB)
   filelistTB <- unlist(mat$filelistTB)
 
   # Select class count based on threshold
   classcountTB <- switch(threshold,
-                         "opt" = mat$classcountTB.above.optthresh,
-                         "adhoc" = mat$classcountTB.above.adhocthresh,
+                         "opt" = mat$classcountTB_above_optthresh,
+                         "adhoc" = mat$classcountTB_above_adhocthresh,
                          "none" = mat$classcountTB,
                          stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 
@@ -83,8 +97,8 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   if (biovolume) {
     # Select biovolume based on threshold
     classbiovolTB <- switch(threshold,
-                            "opt" = mat$classbiovolTB.above.optthresh,
-                            "adhoc" = mat$classbiovolTB.above.adhocthresh,
+                            "opt" = mat$classbiovolTB_above_optthresh,
+                            "adhoc" = mat$classbiovolTB_above_adhocthresh,
                             "none" = mat$classbiovolTB,
                             stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
 

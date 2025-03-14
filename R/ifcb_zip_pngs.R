@@ -162,7 +162,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     }
 
     if (!dir.exists(dirname(zip_filename))) {
-      dir.create(dirname(zip_filename))
+      dir.create(dirname(zip_filename), recursive = TRUE)
     }
 
     zip::zipr(zipfile = zip_filename, files = files_to_zip)

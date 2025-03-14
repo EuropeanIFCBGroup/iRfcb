@@ -14,6 +14,8 @@ manual_folder <- file.path(temp_dir, "test_data/manual")
 class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
 
 test_that("ifcb_extract_biovolumes works correctly", {
+  # Skip slow test on CRAN
+  skip_on_cran()
 
   # Run the function with test data
   biovolume_df <- ifcb_extract_biovolumes(feature_folder, class_folder, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
@@ -43,6 +45,9 @@ test_that("ifcb_extract_biovolumes works correctly", {
 })
 
 test_that("ifcb_extract_biovolumes handles empty directories", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define empty directories for features and class
   empty_feature_dir <- file.path(temp_dir, "empty_features")
   empty_class_dir <- file.path(temp_dir, "empty_class")
@@ -58,6 +63,9 @@ test_that("ifcb_extract_biovolumes handles empty directories", {
 })
 
 test_that("ifcb_extract_biovolumes handles invalid directories gracefully", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define invalid directories for features and class
   invalid_feature_dir <- file.path(temp_dir, "invalid_features")
   invalid_class_dir <- file.path(temp_dir, "invalid_class")
@@ -67,24 +75,29 @@ test_that("ifcb_extract_biovolumes handles invalid directories gracefully", {
 })
 
 test_that("ifcb_extract_biovolumes calculates carbon content correctly for diatoms and non-diatoms", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Use test data to check specific calculations
   biovolume_df <- ifcb_extract_biovolumes(feature_folder, class_folder, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
 
   # Check if diatom classes are identified correctly and carbon is calculated
-  diatom_rows <- biovolume_df %>% filter(class %in% "Bacillariophyceae")
+  diatom_rows <- biovolume_df %>% dplyr::filter(class %in% "Bacillariophyceae")
   expect_true(all(diatom_rows$carbon_pg > 0))
 
   # Check if non-diatom classes are identified correctly and carbon is calculated
-  non_diatom_rows <- biovolume_df %>% filter(!class %in% "Bacillariophyceae")
+  non_diatom_rows <- biovolume_df %>% dplyr::filter(!class %in% "Bacillariophyceae")
   expect_true(all(non_diatom_rows$carbon_pg > 0))
 })
 
 test_that("ifcb_extract_biovolumes manual data correctly", {
+  # Skip slow test on CRAN
+  skip_on_cran()
 
   expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use must be specified when extracting manual biovolume data")
 
   # Run the function with test data
-  biovolume_df <- ifcb_extract_biovolumes(feature_folder, manual_folder, class2use_file, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
+  biovolume_df <- ifcb_extract_biovolumes(feature_folder, manual_folder, class2use_file = class2use_file, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
 
   # Check that the returned object is a data frame
   expect_s3_class(biovolume_df, "data.frame")
@@ -108,6 +121,62 @@ test_that("ifcb_extract_biovolumes manual data correctly", {
 
   expected_carbon_pg <- 668.05635  # Example value
   expect_equal(biovolume_df$carbon_pg[1], expected_carbon_pg, tolerance = 1e-8)
+})
+
+test_that("ifcb_extract_biovolumes handles customs classifications correctly", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
+  # Define custom list
+  class = c("Mesodinium_rubrum", "Mesodinium_rubrum")
+  image <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  # Run the function with test data
+  biovolume_df <- ifcb_extract_biovolumes(feature_folder, custom_classes = class, custom_images = image)
+
+  # Check that the returned object is a data frame
+  expect_s3_class(biovolume_df, "data.frame")
+
+  # Check that the data frame contains the expected columns
+  expected_columns <- c("sample", "roi_number", "class", "biovolume_um3", "carbon_pg")
+  expect_true(all(expected_columns %in% names(biovolume_df)))
+
+  # Check that the data frame has non-zero rows
+  expect_gt(nrow(biovolume_df), 0)
+
+  # Check some specific values (replace with expected values based on your test data)
+  # Example: Check if specific sample and roi_number exist in the output
+  expect_true("D20220522T003051_IFCB134" %in% biovolume_df$sample)
+  expect_true(2 %in% biovolume_df$roi_number)
+
+  # Example: Check if biovolume_um3 and carbon_pg are calculated correctly
+  # Replace the following expected values with the actual expected values from your test data
+  expected_biovolume_um3 <- 5206.2003  # Example value
+  expect_equal(biovolume_df$biovolume_um3[1], expected_biovolume_um3, tolerance = 1e-8)
+
+  expected_carbon_pg <- 668.05635  # Example value
+  expect_equal(biovolume_df$carbon_pg[1], expected_carbon_pg, tolerance = 1e-8)
+})
+
+test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
+  # Define custom list
+  class = c("Mesodinium_rubrum", "Mesodinium_rubrum")
+  image <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  expect_warning(ifcb_extract_biovolumes(feature_folder, class_folder, custom_images = image, verbose = FALSE),
+                 "Both `mat_folder` and `custom_images/custom_classes` were provided")
+
+  expect_error(ifcb_extract_biovolumes(feature_folder, verbose = FALSE),
+               "No classification information supplied")
+
+  expect_error(ifcb_extract_biovolumes("not_a_dir", class_folder, verbose = FALSE),
+               "The specified directory does not exist")
+
+  expect_error(ifcb_extract_biovolumes(0, class_folder, verbose = FALSE),
+               "feature_files must be a character vector of filenames")
 })
 
 unlink(temp_dir, recursive = TRUE)

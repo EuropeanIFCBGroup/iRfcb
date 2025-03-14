@@ -1,4 +1,7 @@
 test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a MAT file", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define the path to the example .mat file included in the iRfcb package
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 
@@ -14,6 +17,9 @@ test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a
 })
 
 test_that("ifcb_get_mat_variable handles missing variable gracefully", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define the path to the example .mat file included in the iRfcb package
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 
@@ -27,6 +33,9 @@ test_that("ifcb_get_mat_variable handles missing variable gracefully", {
 })
 
 test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Create a temporary directory and file for the test
   temp_dir <- file.path(tempdir(), "ifcb_get_mat_variable")
   empty_mat_file <- file.path(temp_dir, "empty_test_file.mat")

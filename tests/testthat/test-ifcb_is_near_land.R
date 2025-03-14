@@ -1,4 +1,7 @@
 test_that("ifcb_is_near_land works correctly", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+
   # Define test latitudes and longitudes
   latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338, NA, 60.0)
   longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174, 15.0, NA)

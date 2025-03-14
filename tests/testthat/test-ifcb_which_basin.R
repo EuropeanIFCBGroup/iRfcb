@@ -34,6 +34,8 @@ test_that("ifcb_which_basin returns a ggplot object when plot = TRUE", {
 })
 
 test_that("ifcb_which_basin correctly handles a custom shapefile", {
+  skip_on_cran()
+
   # Directory to extract files
   exdir <- file.path(tempdir(), "ifcb_which_basin")  # Temporary directory
 

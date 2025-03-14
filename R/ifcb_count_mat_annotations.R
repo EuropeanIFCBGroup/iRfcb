@@ -9,6 +9,15 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample", "roi" or "class" (default).
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when `manual_files` is a folder. Default is FALSE.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
+#'
+#' @details
+#' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
+#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
+#' To enable this functionality, ensure Python is properly configured with the required dependencies.
+#' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
+#'
+#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @return A data frame with the total count of images per class, roi or per sample.
 #' @export
@@ -28,7 +37,7 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #'                                      skip_class = "unclassified")
 #' print(result)
 #' }
-ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE) {
+ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE, use_python = FALSE) {
   if (!sum_level %in% c("class", "sample", "roi")) {
     stop("sum_level should either be `class`, `roi` or `sample`")
   }
@@ -64,13 +73,24 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   warning_list <- list()
 
   for (file in manual_files) {
-    # Read the taxa list from the file
-    mat_data <- suppressWarnings({R.matlab::readMat(file)})
 
-    taxa_list <- as.data.frame(mat_data$classlist)  # Assuming readMat is used to read .mat files
+    # Skip empty/corrupt files
+    if (file.size(file) == 0) {
+      warning(paste("Empty .mat file:", file, "Skipping."))
+      next
+    }
+
+    if (use_python && scipy_available()) {
+      mat_data <- ifcb_read_mat(file)
+    } else {
+      # Read the contents of the MAT file
+      mat_data <- read_mat(file)
+    }
+
+    taxa_list <- as.data.frame(mat_data$classlist)
 
     # Assign names to the columns in taxa_list
-    names(taxa_list) <- unlist(mat_data$list.titles)
+    names(taxa_list) <- unlist(mat_data$list_titles)
 
     # Filter out the skipped classes and NA values from the taxa list
     taxa_list <- taxa_list %>%
