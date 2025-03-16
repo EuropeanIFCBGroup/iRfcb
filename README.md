@@ -4,6 +4,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
 [![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
+[![CRAN status](https://www.r-pkg.org/badges/version/iRfcb)](https://CRAN.R-project.org/package=iRfcb)
 
 ## Overview
 
@@ -18,7 +19,15 @@ The `iRfcb` R package offers a suite of tools for managing and performing qualit
 
 ## Installation
 
-You can install the package from GitHub using the `remotes` package:
+You can install `iRfcb` from CRAN using:
+
+```r
+install.packages("iRfcb")
+```
+
+### Development version
+
+To access a feature from the development version of `iRfcb`, install the latest development version from GitHub using the `remotes` package:
 
 ```r
 # install.packages("remotes")
@@ -51,6 +60,10 @@ Explore the key features and capabilities of `iRfcb` through the tutorials:
 `iRfcb` is designed for integration into IFCB data processing pipelines. For an example, see its implementation in the following project:
 
 - [Example Data Pipelines](https://github.com/nodc-sweden/ifcb-data-pipeline)
+
+## Getting help
+
+If you encounter a bug or need an IFCB feature that’s missing, please report it on [GitHub](https://github.com/EuropeanIFCBGroup/iRfcb/issues) with a minimal reproducible example.
 
 ## Repository
 
