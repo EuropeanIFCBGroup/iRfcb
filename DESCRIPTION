@@ -1,7 +1,7 @@
 Package: iRfcb
 Type: Package
 Title: Tools for Managing Imaging FlowCytobot (IFCB) Data
-Version: 0.4.3
+Version: 0.4.3.9000
 Authors@R: c(
     person("Anders", "Torstensson", email = "anders.torstensson@smhi.se", role = c("aut", "cre"),
            comment = c(affiliation = "Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
