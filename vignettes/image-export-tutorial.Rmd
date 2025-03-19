@@ -20,10 +20,9 @@ Additionally, this vignette shows how users of the [ifcb-analysis](https://githu
 
 ### Installation
 
-You can install the package from GitHub using the `remotes` package:
+You can install the package from CRAN using:
 ```{r, eval=FALSE}
-# install.packages("remotes")
-remotes::install_github("EuropeanIFCBGroup/iRfcb")
+install.packages("iRfcb")
 ```
 
 Load the `iRfcb` library:
