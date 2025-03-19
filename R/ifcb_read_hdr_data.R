@@ -96,6 +96,6 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
 
   if (verbose) cat("Processing completed.\n")
 
-  # Remove the 'file' column from the final data frame
-  return(dplyr::select(hdr_data_pivot, -file))
+  # Remove the 'file' column from the returned data frame
+  dplyr::select(hdr_data_pivot, -file)
 }
