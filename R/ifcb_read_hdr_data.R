@@ -64,6 +64,14 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
     stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
   }
 
+  # Fix unique names, e.g. runType from IFCBAquire 1.x.x.x
+  hdr_data <- hdr_data %>%
+    dplyr::group_by(file, parameter) %>%
+    dplyr::mutate(
+      parameter = if (n() > 1) paste0(parameter, "_", row_number()) else parameter
+    ) %>%
+    dplyr::ungroup()
+
   # Transform data to wide format
   hdr_data_pivot <- tidyr::pivot_wider(data = hdr_data, names_from = parameter, values_from = value)
 
