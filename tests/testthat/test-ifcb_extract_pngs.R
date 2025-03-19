@@ -23,7 +23,7 @@ test_that("ifcb_extract_pngs works correctly", {
   dir.create(out_folder, showWarnings = FALSE, recursive = TRUE)
 
   # Call the function to extract PNG images
-  ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = FALSE)
+  ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = FALSE, scale_bar_um = 5)
   ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = TRUE)
 
   # Check that the expected PNG files are created
@@ -34,6 +34,12 @@ test_that("ifcb_extract_pngs works correctly", {
   for (file in expected_files) {
     expect_true(file.exists(file), info = paste("File does not exist:", file))
   }
+
+  # Test errors
+  expect_error(ifcb_extract_pngs(roi_file, scale_bar_position = "leftright"),
+               "Invalid scale_bar_position")
+  expect_error(ifcb_extract_pngs(roi_file, scale_bar_color = "green"),
+               "Invalid scale_bar_color")
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)
