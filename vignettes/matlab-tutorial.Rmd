@@ -18,10 +18,9 @@ With `iRfcb`, you can further analyze and manage IFCB data, including summarizin
 
 ### Installation
 
-You can install the package from GitHub using the `remotes` package:
+You can install the package from CRAN using:
 ```{r, eval=FALSE}
-# install.packages("remotes")
-remotes::install_github("EuropeanIFCBGroup/iRfcb")
+install.packages("iRfcb")
 ```
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 

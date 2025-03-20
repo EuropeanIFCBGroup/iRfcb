@@ -30,11 +30,12 @@ With DwC-A, your data can become part of a global ecosystem of interoperable dat
 
 ### Installation
 
-You can install the `iRfcb` and `LivingNorwayR` packages from GitHub using the `remotes` package:
+You can install the `iRfcb` package from CRAN, and the `LivingNorwayR` package from GitHub using the `remotes` package:
 ```{r, eval=FALSE}
+install.packages("iRfcb")
+
 # install.packages("remotes")
-remotes::install_github(c("EuropeanIFCBGroup/iRfcb",
-                          "LivingNorway/LivingNorwayR"))
+remotes::install_github("LivingNorway/LivingNorwayR")
 ```
 
 Load the required libraries:

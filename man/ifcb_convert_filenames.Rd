@@ -4,22 +4,30 @@
 \alias{ifcb_convert_filenames}
 \title{Convert IFCB Filenames to Timestamps}
 \usage{
-ifcb_convert_filenames(filenames)
+ifcb_convert_filenames(filenames, tz = "UTC")
 }
 \arguments{
-\item{filenames}{A character vector of IFCB filenames in the format "DYYYYMMDDTHHMMSS_IFCBxxx".}
+\item{filenames}{A character vector of IFCB filenames in the format "DYYYYMMDDTHHMMSS_IFCBxxx"
+or "IFCBxxx_YYYY_DDD_HHMMSS". Filenames can optionally include an ROI number,
+which will be extracted if present.}
+
+\item{tz}{Character. Time zone to assign to the extracted timestamps.
+Defaults to "UTC". Set this to a different time zone if needed.}
 }
 \value{
-A tibble with columns:
+A tibble with the following columns:
 \itemize{
-\item \code{sample}: The extracted sample name.
-\item \code{full_timestamp}: The full timestamp in "YYYY-MM-DD HH:MM:SS" format.
-\item \code{year}: The year as an integer.
-\item \code{month}: The month as an integer.
-\item \code{day}: The day as an integer.
-\item \code{time}: The extracted time in "HH:MM:SS" format.
-\item \code{ifcb_number}: The IFCB instrument number.
+\item \code{sample}: The extracted sample name (character).
+\item \code{full_timestamp}: The full timestamp in "YYYY-MM-DD HH:MM:SS" format (POSIXct).
+\item \code{year}: The year extracted from the timestamp (integer).
+\item \code{month}: The month extracted from the timestamp (integer).
+\item \code{day}: The day extracted from the timestamp (integer).
+\item \code{time}: The extracted time in "HH:MM:SS" format (character).
+\item \code{ifcb_number}: The IFCB instrument number (character).
+\item \code{roi}: The extracted ROI number if available (integer or \code{NA}).
 }
+
+If the \code{roi} column is empty (all \code{NA}), it will be excluded from the output.
 }
 \description{
 This function converts IFCB filenames to a data frame with separate columns for
