@@ -4,7 +4,7 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 #'
 #' This function reads all IFCB instrument settings information files (.hdr) from a specified directory.
 #'
-#' @param hdr_files A character string specifying the path to feature files or a folder path.
+#' @param hdr_files A character string specifying the path to hdr files or a folder path.
 #' @param gps_only A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param hdr_folder `r lifecycle::badge("deprecated")`
@@ -26,7 +26,7 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 #' @export
 ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_folder = deprecated()) {
 
-  # Warn the user if feature_folder is used
+  # Warn the user if hdr_folder is used
   if (lifecycle::is_present(hdr_folder)) {
 
     # Signal the deprecation to the user
@@ -36,7 +36,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
     hdr_files <- hdr_folder
   }
 
-  # Check if feature_files is a single folder path or a vector of file paths
+  # Check if hdr_files is a single folder path or a vector of file paths
   if (length(hdr_files) == 1 && file.info(hdr_files)$isdir) {
     hdr_files <- list.files(hdr_files, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
   }
@@ -64,6 +64,14 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
     stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
   }
 
+  # Fix unique names, e.g. runType from IFCBAquire 1.x.x.x
+  hdr_data <- hdr_data %>%
+    dplyr::group_by(file, parameter) %>%
+    dplyr::mutate(
+      parameter = if (n() > 1) paste0(parameter, "_", row_number()) else parameter
+    ) %>%
+    dplyr::ungroup()
+
   # Transform data to wide format
   hdr_data_pivot <- tidyr::pivot_wider(data = hdr_data, names_from = parameter, values_from = value)
 
@@ -88,6 +96,6 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
 
   if (verbose) cat("Processing completed.\n")
 
-  # Remove the 'file' column from the final data frame
-  return(dplyr::select(hdr_data_pivot, -file))
+  # Remove the 'file' column from the returned data frame
+  dplyr::select(hdr_data_pivot, -file)
 }
