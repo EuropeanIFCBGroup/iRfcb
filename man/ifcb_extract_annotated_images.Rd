@@ -14,6 +14,10 @@ ifcb_extract_annotated_images(
   manual_recursive = FALSE,
   roi_recursive = TRUE,
   overwrite = FALSE,
+  scale_bar_um = NULL,
+  scale_micron_factor = 1/3.4,
+  scale_bar_position = "bottomright",
+  scale_bar_color = "black",
   use_python = FALSE,
   roi_folder = deprecated()
 )
@@ -36,6 +40,14 @@ ifcb_extract_annotated_images(
 \item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
+
+\item{scale_bar_um}{An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.}
+
+\item{scale_micron_factor}{A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.}
+
+\item{scale_bar_position}{A character string specifying the position of the scale bar in the image. Options are \code{"topright"}, \code{"topleft"}, \code{"bottomright"}, or \code{"bottomleft"}. Defaults to \code{"bottomright"}.}
+
+\item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
