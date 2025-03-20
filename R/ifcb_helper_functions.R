@@ -137,54 +137,85 @@ read_hdr_file <- function(file) {
 #' This function extracts timestamp, IFCB number, and date components from a filename.
 #'
 #' @param filename A character string specifying the filename to extract parts from.
+#' @param tz Character. Time zone to assign to the extracted timestamps.
+#'   Defaults to "UTC". Set this to a different time zone if needed.
 #' @return A data frame with columns: sample, timestamp, date, year, month, day, time, and ifcb_number.
 #' @noRd
-extract_parts <- function(filename) {
+extract_parts <- function(filenames, tz = "UTC") {
+  # Remove extension from all filenames
+  filenames <- tools::file_path_sans_ext(filenames)
 
-  # Clean filename
-  filename <- tools::file_path_sans_ext(filename)
+  is_d_format <- grepl("^D\\d{8}T\\d{6}", filenames)
+  is_ifcb_format <- grepl("^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}", filenames)
 
-  # Extract timestamp and IFCB number
-  timestamp_str <- stringr::str_extract(filename, "D\\d{8}T\\d{6}")
-  ifcb_number <- stringr::str_extract(filename, "IFCB\\d+")
-
-  # Extract the ROI part if it exists
-  roi_str <- stringr::str_extract(filename, "_\\d+$")
-  roi <- ifelse(is.na(roi_str), NA, as.integer(stringr::str_remove(roi_str, "_")))
-
-  # Convert timestamp string to proper datetime format
-  full_timestamp <- lubridate::ymd_hms(
-    paste0(
-      stringr::str_remove_all(timestamp_str, "[^0-9]"), # Remove all non-numeric characters
-      collapse = ""
-    )
-  )
-
-  # Extract date, year, month, day, and time
-  date <- lubridate::date(full_timestamp)
-  year <- lubridate::year(full_timestamp)
-  month <- lubridate::month(full_timestamp)
-  day <- lubridate::day(full_timestamp)
-  time <- format(full_timestamp, "%H:%M:%S")
-  sample <- stringr::str_remove(filename, "_\\d+$")
-
-  df <- data.frame(
-    sample = sample,
-    timestamp = full_timestamp,
-    date = date,
-    year = year,
-    month = month,
-    day = day,
-    time = time,
-    ifcb_number = ifcb_number,
+  result <- data.frame(
+    sample = filenames,
+    timestamp = as.POSIXct(NA, tz = tz),
+    date = as.Date(NA),
+    year = NA_integer_,
+    month = NA_integer_,
+    day = NA_integer_,
+    time = NA_character_,
+    ifcb_number = NA_character_,
+    roi = NA_integer_,
     stringsAsFactors = FALSE
   )
 
-  # Conditionally add the ROI column if it has no NAs
-  if (!any(is.na(roi))) {
-    df$roi <- roi
+  # Process D-format filenames
+  d_indices <- which(is_d_format)
+  if (length(d_indices) > 0) {
+    d_files <- filenames[d_indices]
+    timestamps <- ymd_hms(str_remove_all(str_extract(d_files, "D\\d{8}T\\d{6}"), "[^0-9]"), tz = tz)
+    rois <- str_extract(d_files, "_\\d+$")
+    rois <- ifelse(is.na(rois), NA, as.integer(str_remove(rois, "_")))
+
+    sample_d <- ifelse(grepl("_[0-9]+$", d_files),
+                       str_remove(d_files, "_[0-9]+$"),
+                       d_files)
+
+    result$sample[d_indices] <- sample_d
+    result$timestamp[d_indices] <- timestamps
+    result$date[d_indices] <- date(timestamps)
+    result$year[d_indices] <- year(timestamps)
+    result$month[d_indices] <- month(timestamps)
+    result$day[d_indices] <- day(timestamps)
+    result$time[d_indices] <- format(timestamps, "%H:%M:%S")
+    result$ifcb_number[d_indices] <- str_extract(d_files, "IFCB\\d+")
+    result$roi[d_indices] <- rois
   }
-  df
+
+  # Process IFCB-format filenames
+  ifcb_indices <- which(is_ifcb_format)
+  if (length(ifcb_indices) > 0) {
+    ifcb_files <- filenames[ifcb_indices]
+    matches <- str_match(ifcb_files, "^(IFCB\\d+)_([0-9]{4})_([0-9]{3})_([0-9]{6})(?:_([0-9]+))?$")
+
+    ifcb_number <- matches[, 2]
+    year_val <- as.integer(matches[, 3])
+    doy <- as.integer(matches[, 4])
+    time_str <- matches[, 5]
+    roi <- as.integer(matches[, 6])
+
+    timestamps <- as_datetime(ymd(paste0(year_val, "-01-01"), tz = tz) + days(doy - 1)) +
+      hours(as.integer(substr(time_str, 1, 2))) +
+      minutes(as.integer(substr(time_str, 3, 4))) +
+      seconds(as.integer(substr(time_str, 5, 6)))
+    timestamps <- with_tz(timestamps, tz)
+
+    sample_ifcb <- paste0(ifcb_number, "_", matches[, 3], "_", matches[, 4], "_", time_str)
+
+    result$sample[ifcb_indices] <- sample_ifcb
+    result$timestamp[ifcb_indices] <- timestamps
+    result$date[ifcb_indices] <- date(timestamps)
+    result$year[ifcb_indices] <- year(timestamps)
+    result$month[ifcb_indices] <- month(timestamps)
+    result$day[ifcb_indices] <- day(timestamps)
+    result$time[ifcb_indices] <- format(timestamps, "%H:%M:%S")
+    result$ifcb_number[ifcb_indices] <- ifcb_number
+    result$roi[ifcb_indices] <- ifelse(is.na(roi), NA, roi)
+  }
+
+  return(result)
 }
 
 #' Summarize TreeBagger Classifier Results

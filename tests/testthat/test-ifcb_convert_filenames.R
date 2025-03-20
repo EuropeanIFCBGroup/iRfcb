@@ -61,6 +61,34 @@ test_that("ifcb_convert_filenames correctly handles filenames with ROI", {
   expect_equal(result, expected_data_with_roi)
 })
 
+test_that("ifcb_convert_filenames correctly handles old IFCB format", {
+
+  # Define example IFCB filenames with ROI for testing
+  filenames_with_roi <- c("IFCB1_2014_188_222013", "IFCB13_2014_188_222013_04321.png")
+
+  # Expected results
+  expected_data <- data.frame(
+    sample = c("IFCB1_2014_188_222013", "IFCB1_2014_188_222013"),
+    timestamp = as.POSIXct(c("2014-07-07 22:20:13", "2014-07-07 22:20:13"), format = "%Y-%m-%d %H:%M:%S", tz = "UTC"),
+    date = as.Date(c("2014-07-07", "2014-07-07")),
+    year = c(2014, 2014),
+    month = c(7, 7),
+    day = c(7, 7),
+    time = c("22:20:13", "22:20:13"),
+    ifcb_number = c("IFCB1", "IFCB13"),
+    roi = c(NA, 4321),
+    stringsAsFactors = FALSE
+  )
+
+  expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
+
+  # Call the function
+  result <- ifcb_convert_filenames(filenames_with_roi)
+
+  # Check that the result is a data frame
+  expect_true(is.data.frame(result))
+})
+
 test_that("ifcb_convert_filenames handles empty input", {
   result <- ifcb_convert_filenames(character(0))
   expect_true(is.data.frame(result))
