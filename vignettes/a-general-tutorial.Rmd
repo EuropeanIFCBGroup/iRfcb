@@ -195,11 +195,13 @@ This function takes a list of taxa names and matches them with the **SMHI Trophi
 
 ```{r}
 # Example taxa names
-taxa_list <- c("Acanthoceras zachariasii",
-               "Nodularia spumigena",
-               "Acanthoica quattrospina",
-               "Noctiluca",
-               "Gymnodiniales")
+taxa_list <- c(
+  "Acanthoceras zachariasii",
+  "Nodularia spumigena",
+  "Acanthoica quattrospina",
+  "Noctiluca",
+  "Gymnodiniales"
+)
 
 # Get trophic type for taxa
 trophic_type <- ifcb_get_trophic_type(taxa_list)
