@@ -215,7 +215,7 @@ extract_parts <- function(filenames, tz = "UTC") {
     result$roi[ifcb_indices] <- ifelse(is.na(roi), NA, roi)
   }
 
-  return(result)
+  result
 }
 
 #' Summarize TreeBagger Classifier Results
@@ -605,7 +605,7 @@ scipy_available <- function(initialize = FALSE) {
   available_packages <- reticulate::py_list_packages()
 
   # Check if 'scipy' is installed
-  return("scipy" %in% available_packages$package)
+  "scipy" %in% available_packages$package
 }
 
 #' Install Missing Python Packages
