@@ -10,7 +10,7 @@ read_hdr_file(file)
 \item{file}{A character string specifying the path to the HDR file.}
 }
 \value{
-A data frame with columns: parameter, value, and file.
+A data frame with columns: \code{parameter}, \code{value}, and \code{file.}
 }
 \description{
 This function reads an HDR file and extracts relevant lines containing parameters and their values.

@@ -116,7 +116,7 @@ find_matching_data <- function(mat_file, data_files) {
 #' This function reads an HDR file and extracts relevant lines containing parameters and their values.
 #'
 #' @param file A character string specifying the path to the HDR file.
-#' @return A data frame with columns: parameter, value, and file.
+#' @return A data frame with columns: `parameter`, `value`, and `file.`
 #' @export
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
@@ -220,10 +220,10 @@ extract_parts <- function(filenames, tz = "UTC") {
 
 #' Summarize TreeBagger Classifier Results
 #'
-#' This function reads a TreeBagger classifier result file (.mat format) and summarizes
+#' This function reads a TreeBagger classifier result file (`.mat` format) and summarizes
 #' the number of targets in each class based on the classification scores and thresholds.
 #'
-#' @param classfile Character string specifying the path to the TreeBagger classifier result file (.mat format).
+#' @param classfile Character string specifying the path to the TreeBagger classifier result file (`.mat` format).
 #' @param adhocthresh Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
 #'                    If a single numeric value is provided, it is applied to all classes.
 #'

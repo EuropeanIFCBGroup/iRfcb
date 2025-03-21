@@ -22,7 +22,7 @@ No return value. This function is called for its side effect of configuring the 
 }
 \description{
 This function sets up the Python environment for \code{iRfcb}. By default, it creates and activates a Python virtual environment (\code{venv}) named "iRfcb" and installs the required Python packages from the "requirements.txt" file.
-Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting \code{use_venv = FALSE}.
+Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting \code{use_venv = FALSE} (not recommended).
 }
 \examples{
 \dontrun{

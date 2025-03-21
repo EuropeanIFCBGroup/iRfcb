@@ -3,12 +3,12 @@
 #' This function summarizes the number of images per class for each sample and timestamps,
 #' and optionally retrieves GPS positions, and IFCB information using `ifcb_read_hdr_data` and `ifcb_convert_filenames` functions.
 #'
-#' @param png_folder A character string specifying the path to the main directory containing subfolders (classes) with .png images.
-#' @param hdr_folder A character string specifying the path to the directory containing the .hdr files. Default is NULL.
+#' @param png_folder A character string specifying the path to the main directory containing subfolders (classes) with `.png` images.
+#' @param hdr_folder A character string specifying the path to the directory containing the `.hdr` files. Default is NULL.
 #' @param sum_level A character string specifying the level of summarization. Options: "sample" (default) or "class".
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
-#' @return If sum_level is "sample", returns a data frame with columns: sample, ifcb_number, class_name, n_images, gpsLatitude, gpsLongitude, timestamp, year, month, day, time, roi_numbers.
-#'         If sum_level is "class", returns a data frame with columns: class_name, n_images.
+#' @return If sum_level is "sample", returns a data frame with columns: `sample`, `ifcb_number`, `class_name`, `n_images`, `gpsLatitude`, `gpsLongitude`, `timestamp`, `year`, `month`, `day`, `time`, `roi_numbers`.
+#'         If sum_level is "class", returns a data frame with columns: `class_name`, `n_images.`
 #'
 #' @export
 #' @seealso \code{\link{ifcb_read_hdr_data}} \code{\link{ifcb_convert_filenames}}
