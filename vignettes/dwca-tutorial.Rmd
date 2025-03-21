@@ -69,10 +69,12 @@ To get started, download sample data from the [SMHI IFCB Plankton Image Referenc
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        max_retries = 10,
-                        sleep_time = 30,
-                        verbose = FALSE)
+ifcb_download_test_data(
+  dest_dir = data_dir,
+  max_retries = 10,
+  sleep_time = 30,
+  verbose = FALSE
+)
 ```
 
 ```{r, include=FALSE}
@@ -82,10 +84,12 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 if (!dir.exists(data_dir)) {
   # Download and extract test data if the folder does not exist
-  ifcb_download_test_data(dest_dir = data_dir,
-                          max_retries = 10,
-                          sleep_time = 30,
-                          verbose = FALSE)
+  ifcb_download_test_data(
+    dest_dir = data_dir,
+    max_retries = 10,
+    sleep_time = 30,
+    verbose = FALSE
+  )
 }
 ```
 
@@ -113,7 +117,8 @@ manual_biovolume_data <- ifcb_summarize_biovolumes(
   mat_folder = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
-  verbose = FALSE)
+  verbose = FALSE
+)
 ```
 
 The coordinates and biovolume data are now combined into a single unified dataframe.
@@ -142,13 +147,18 @@ data_event <- data_manual %>%
 # Event Date and info for parentEvents
 data_parent_event <- data_event  %>%
   group_by(parentEventID) %>%
-  summarise(min = min(date), max=max(date),
-            ifcb_number = unique(ifcb_number)) %>%
-  mutate(eventID = parentEventID,
-         parentEventID = NA,
-         eventType = "Project",
-         datasetName = "iRfcb-DwC-A",
-         eventDate = paste0(min, "/", max))  %>%
+  summarise(
+    min = min(date),
+    max = max(date),
+    ifcb_number = unique(ifcb_number)
+  ) %>%
+  mutate(
+    eventID = parentEventID,
+    parentEventID = NA,
+    eventType = "Project",
+    datasetName = "iRfcb-DwC-A",
+    eventDate = paste0(min, "/", max)
+  )  %>%
   select(-min, -max)
 ```
 
@@ -178,8 +188,10 @@ data_event <- data_event %>%
     # Adding geographical information
     decimalLatitude = gpsLatitude,
     decimalLongitude = gpsLongitude,
-    locality = NA, # The specific description of the place, if available
-    verbatimLocality = NA, # The original textual description of the place
+    # The specific description of the place, if available
+    locality = NA,
+    # The original textual description of the place
+    verbatimLocality = NA,
     geodeticDatum = "EPSG:4326",
     countryCode = "SE",
     country = "Sweden",
@@ -207,13 +219,11 @@ If the exact sample position is unknown, the coordinates can be estimated and pa
 # Add estimated coordinates and uncertainty for events with missing positions
 data_event <- data_event %>%
   mutate(
-    coordinateUncertaintyInMeters = if_else(is.na(decimalLongitude) & is.na(decimalLatitude), 
-                                            150000, NA),
-    decimalLongitude = if_else(is.na(decimalLongitude), 
-                               11.3, decimalLongitude),
-    decimalLatitude = if_else(is.na(decimalLatitude), 
-                              57.4, decimalLatitude)
-    )
+    coordinateUncertaintyInMeters = if_else(is.na(decimalLongitude) &
+                                              is.na(decimalLatitude), 150000, NA),
+    decimalLongitude = if_else(is.na(decimalLongitude), 11.3, decimalLongitude),
+    decimalLatitude = if_else(is.na(decimalLatitude), 57.4, decimalLatitude)
+  )
 ```
 
 Next, we extract the relevant columns for the Event tables and combine the Event and Parent Event tables into a single data frame.
@@ -221,12 +231,33 @@ Next, we extract the relevant columns for the Event tables and combine the Event
 ```{r}
 # Create a clean data frame with selected columns
 event_df <- data_event %>%
-  select(eventType, ownerInstitutionCode, institutionCode, institutionID,  
-         parentEventID, eventID, license, samplingProtocol, sampleSizeValue, 
-         sampleSizeUnit, eventDate, eventTime, year, month, day, country, 
-         countryCode, decimalLatitude, decimalLongitude, geodeticDatum, 
-         coordinateUncertaintyInMeters, locality, verbatimLocality, 
-         minimumDepthInMeters, maximumDepthInMeters) %>%
+  select(
+    eventType,
+    ownerInstitutionCode,
+    institutionCode,
+    institutionID,
+    parentEventID,
+    eventID,
+    license,
+    samplingProtocol,
+    sampleSizeValue,
+    sampleSizeUnit,
+    eventDate,
+    eventTime,
+    year,
+    month,
+    day,
+    country,
+    countryCode,
+    decimalLatitude,
+    decimalLongitude,
+    geodeticDatum,
+    coordinateUncertaintyInMeters,
+    locality,
+    verbatimLocality,
+    minimumDepthInMeters,
+    maximumDepthInMeters
+  ) %>%
   mutate(eventDate = as.character(eventDate)) %>%
   # Ensure rows are unique
   distinct()
@@ -264,16 +295,22 @@ Links to raw images can be included in **associatedMedia**. These links may poin
 
 ```{r}
 # Create an occurrence table by transforming event data and adding fields
-data_occurrences <- data_event %>%  
-  rowwise() %>%  
-  mutate(  
-    type = "StillImage",  # Specifies the record type as an image  
-    collectionCode = "iRfcb",  # Provides a collection identifier  
-    occurrenceID = uuid::UUIDgenerate(use.time = FALSE),  # Generates a unique identifier for each occurrence  
-    basisOfRecord = "MachineObservation", # Indicates the data was recorded by a machine  
-    identificationVerificationStatus = "ValidatedByHuman", # Indicate that the images have been validated
+data_occurrences <- data_event %>%
+  rowwise() %>%
+  mutate(
+    # Specifies the record type as an image
+    type = "StillImage",
+    # Provides a collection identifier
+    collectionCode = "iRfcb",
+    # Generates a unique identifier for each occurrence
+    occurrenceID = uuid::UUIDgenerate(use.time = FALSE),
+    # Indicates the data was recorded by a machine
+    basisOfRecord = "MachineObservation",
+    # Indicate that the images have been validated
+    identificationVerificationStatus = "ValidatedByHuman",
     identificationReferences = "https://github.com/hsosik/ifcb-analysis/wiki/Instructions-for-manual-annotation-of-images",
-    identifiedBy = "John Doe", # Indicate who validated the image
+    # Indicate who validated the image
+    identifiedBy = "John Doe",
     associatedMedia = "https://ecotaxa.obs-vlfr.fr/prj/14392" # Link to images (if available)
   )  
 ```
@@ -316,14 +353,22 @@ taxa_names_clean <- gsub("Enisiculifera", "Ensiculifera", taxa_names_clean)
 
 # Standardize ambiguous class names by renaming them to their closest taxonomic relatives
 taxa_names_clean <- gsub("Dinoflagellate", "Dinophyceae", taxa_names_clean)
-taxa_names_clean <- gsub("Leptocylindrus danicus minimus", "Leptocylindrus", taxa_names_clean)
-taxa_names_clean <- gsub("Heterocapsa/Azadinium", "Peridiniphycidae", taxa_names_clean)
-taxa_names_clean <- gsub("Cylindrotheca/Nitzschia longissima", "Bacillariaceae", taxa_names_clean)
+taxa_names_clean <- gsub("Leptocylindrus danicus minimus",
+                         "Leptocylindrus",
+                         taxa_names_clean)
+taxa_names_clean <- gsub("Heterocapsa/Azadinium",
+                         "Peridiniphycidae",
+                         taxa_names_clean)
+taxa_names_clean <- gsub("Cylindrotheca/Nitzschia longissima",
+                         "Bacillariaceae",
+                         taxa_names_clean)
 
 # Retrieve worms records
-worms_records <- ifcb_match_taxa_names(taxa_names_clean,
-                                       marine_only = FALSE,
-                                       verbose = FALSE)
+worms_records <- ifcb_match_taxa_names(
+  taxa_names_clean, 
+  marine_only = FALSE, 
+  verbose = FALSE
+)
 
 # Create data frame with taxa information and class names
 class_names <- worms_records %>%
@@ -333,28 +378,48 @@ class_names <- worms_records %>%
 The **scientificName** and **verbatimIdentification** fields are populated using the cleaned taxonomic names and the original class names, respectively.
 
 ```{r}
-data_occurrences <- data_occurrences %>% 
+data_occurrences <- data_occurrences %>%
   rename(class_name = class) %>%
   left_join(class_names, by = "class_name") %>%
-  mutate(scientificName = name,
-         scientificNameAuthorship = authority,
-         verbatimIdentification = class_name,
-         scientificNameID = lsid,
-         taxonRank = rank,
-         occurrenceStatus = "present")
+  mutate(
+    scientificName = name,
+    scientificNameAuthorship = authority,
+    verbatimIdentification = class_name,
+    scientificNameID = lsid,
+    taxonRank = rank,
+    occurrenceStatus = "present"
+  )
 ```
 
 The final Occurrence table includes all relevant fields for DwC-A formatting.
 
 ```{r}
 # Select relevant fields
-occurrence_df <- data_occurrences %>% 
-  select(occurrenceID, eventID, eventDate, occurrenceStatus, collectionCode, 
-         type, basisOfRecord, identificationVerificationStatus, 
-         identificationReferences, identifiedBy, associatedMedia, 
-         scientificName, scientificNameAuthorship, scientificNameID, 
-         taxonRank, kingdom,  phylum, class, order, family, genus, 
-         verbatimIdentification)
+occurrence_df <- data_occurrences %>%
+  select(
+    occurrenceID,
+    eventID,
+    eventDate,
+    occurrenceStatus,
+    collectionCode,
+    type,
+    basisOfRecord,
+    identificationVerificationStatus,
+    identificationReferences,
+    identifiedBy,
+    associatedMedia,
+    scientificName,
+    scientificNameAuthorship,
+    scientificNameID,
+    taxonRank,
+    kingdom,
+    phylum,
+    class,
+    order,
+    family,
+    genus,
+    verbatimIdentification
+  )
 
 # Print the final table as tibble
 tibble(occurrence_df)
@@ -377,30 +442,36 @@ The MoF table allows us to capture any additional measurements and facts associa
 data_occurrence_mof <- data_occurrences
 
 # Add placeholder for occurrence IDs in the event dataset
-data_event_mof <- data_event %>% 
+data_event_mof <- data_event %>%
   mutate(occurrenceID = NA)
 
 # Add placeholders for occurrence IDs and specify instrument type in the parent event dataset
-data_parent_mof <- data_parent_event %>% 
-  mutate(occurrenceID = NA,
-         instrument = "IFCB")
+data_parent_mof <- data_parent_event %>%
+  mutate(occurrenceID = NA, instrument = "IFCB")
 ```
 
 Next, we extract the necessary columns from the dataset that will be used in the MoF table. This includes the measurement ID, associated event and occurrence IDs, and key IFCB-derived measurements such as counts, abundance, biovolume, and carbon concentration.
 
 ```{r}
 # Convert biovolume units and select the relevant columns for occurrence MoF
-data_occurrence_mof <- data_occurrence_mof %>% 
+data_occurrence_mof <- data_occurrence_mof %>%
   mutate(biovolume_um3_per_liter = biovolume_mm3_per_liter * 10^9) %>%
-  select(eventID, parentEventID, occurrenceID, counts, 
-         counts_per_liter, biovolume_um3_per_liter, carbon_ug_per_liter)
+  select(
+    eventID,
+    parentEventID,
+    occurrenceID,
+    counts,
+    counts_per_liter,
+    biovolume_um3_per_liter,
+    carbon_ug_per_liter
+  )
 
 # Select the relevant columns for parentEvent MoF
 data_parent_mof <- data_parent_mof %>%
   select(eventID, parentEventID, occurrenceID, instrument, ifcb_number)
 
 # Select the relevant columns for event MoF
-data_event_mof <- data_event_mof %>% 
+data_event_mof <- data_event_mof %>%
   select(eventID, parentEventID, occurrenceID, ml_analyzed) %>%
   distinct()
 ```
@@ -411,13 +482,26 @@ We also standardize the measurement types to align with controlled vocabularies 
 
 ```{r}
 # Pivot and standardize occurrence measurements
-data_occurrence_mof <- data_occurrence_mof %>% 
-  pivot_longer(cols = c(counts, counts_per_liter, biovolume_um3_per_liter, carbon_ug_per_liter), 
-               names_to = "measurementType",
-               values_to = "measurementValue") %>% 
+data_occurrence_mof <- data_occurrence_mof %>%
+  pivot_longer(
+    cols = c(
+      counts,
+      counts_per_liter,
+      biovolume_um3_per_liter,
+      carbon_ug_per_liter
+    ),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
   drop_na(measurementValue) %>%
   mutate(measurementType = gsub("counts_per_liter", "Abundance", measurementType)) %>%
-  mutate(measurementType = gsub("biovolume_um3_per_liter", "Biovolume concentration", measurementType)) %>%
+  mutate(
+    measurementType = gsub(
+      "biovolume_um3_per_liter",
+      "Biovolume concentration",
+      measurementType
+    )
+  ) %>%
   mutate(measurementType = gsub("carbon_ug_per_liter", "Carbon content", measurementType)) %>%
   mutate(measurementType = gsub("counts", "Count", measurementType)) %>%
   mutate(measurementValue = as.character(measurementValue))
@@ -425,18 +509,28 @@ data_occurrence_mof <- data_occurrence_mof %>%
 # Pivot and standardize event measurements
 data_event_mof <- data_event_mof %>%
   mutate(ml_analyzed = as.character(ml_analyzed)) %>%
-  pivot_longer(cols = c(ml_analyzed), 
-               names_to = "measurementType",
-               values_to = "measurementValue") %>%
-  mutate(measurementType = gsub("ml_analyzed", "Sample volume", measurementType)) 
+  pivot_longer(
+    cols = c(ml_analyzed),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
+  mutate(measurementType = gsub("ml_analyzed", "Sample volume", measurementType))
 
 # Pivot and standardize parent measurements
-data_parent_mof <- data_parent_mof %>% 
-  pivot_longer(cols = c(instrument, ifcb_number), 
-               names_to = "measurementType",
-               values_to = "measurementValue") %>%
+data_parent_mof <- data_parent_mof %>%
+  pivot_longer(
+    cols = c(instrument, ifcb_number),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
   mutate(measurementType = gsub("instrument", "Imaging instrument name", measurementType)) %>%
-  mutate(measurementType = gsub("ifcb_number", "Instrument identification number", measurementType))
+  mutate(
+    measurementType = gsub(
+      "ifcb_number",
+      "Instrument identification number",
+      measurementType
+    )
+  )
 
 # Combine all standardized measurements into a single dataset and add unique measurementIDs for each measurment
 data_mof <- bind_rows(data_parent_mof, data_event_mof, data_occurrence_mof) %>%
@@ -449,36 +543,47 @@ To ensure data interoperability, we match each measurement type with its corresp
 ```{r}
 # Create a lookup table for NERC vocabularies
 nerc_vocab <- data.frame(
-  measurementValueID = c(rep(NA, 6), 
-                         "http://vocab.nerc.ac.uk/collection/L22/current/TOOL1588/"),
-  measurementType = c("Count", 
-                      "Abundance", 
-                      "Biovolume concentration", 
-                      "Carbon content",
-                      "Sample volume",
-                      "Instrument identification number",
-                      "Imaging instrument name"),
-  measurementTypeID = c("http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/CVOLUKNB/",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/SERNUMZZ/",
-                        "http://vocab.nerc.ac.uk/collection/P01/current/NMSPINST/"),
-  measurementUnit = c("Dimensionless", 
-                      "Individual per litre", 
-                      "Cubic micrometres per litre", 
-                      "Micrograms per litre",
-                      "Millilitres",
-                      "Not applicable",
-                      "Not applicable"),
-  measurementUnitID = c("http://vocab.nerc.ac.uk/collection/P06/current/UUUU/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/CUPL/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/UGPL/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/VVML/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/",
-                        "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"))
+  measurementValueID = c(
+    rep(NA, 6),
+    "http://vocab.nerc.ac.uk/collection/L22/current/TOOL1588/"
+  ),
+  measurementType = c(
+    "Count",
+    "Abundance",
+    "Biovolume concentration",
+    "Carbon content",
+    "Sample volume",
+    "Instrument identification number",
+    "Imaging instrument name"
+  ),
+  measurementTypeID = c(
+    "http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01",
+    "http://vocab.nerc.ac.uk/collection/P01/current/CVOLUKNB/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/SERNUMZZ/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/NMSPINST/"
+  ),
+  measurementUnit = c(
+    "Dimensionless",
+    "Individual per litre",
+    "Cubic micrometres per litre",
+    "Micrograms per litre",
+    "Millilitres",
+    "Not applicable",
+    "Not applicable"
+  ),
+  measurementUnitID = c(
+    "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/CUPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/UGPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/VVML/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"
+  )
+)
 
 # Merge the data with NERC vocabularies and relocate columns
 mof_df <- data_mof %>%

@@ -12,7 +12,7 @@ ifcb_read_hdr_data(
 )
 }
 \arguments{
-\item{hdr_files}{A character string specifying the path to feature files or a folder path.}
+\item{hdr_files}{A character string specifying the path to hdr files or a folder path.}
 
 \item{gps_only}{A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.}
 

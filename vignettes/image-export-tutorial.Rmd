@@ -42,10 +42,12 @@ To get started, download sample data from the [SMHI IFCB Plankton Image Referenc
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        max_retries = 10,
-                        sleep_time = 30,
-                        verbose = FALSE)
+ifcb_download_test_data(
+  dest_dir = data_dir,
+  max_retries = 10,
+  sleep_time = 30,
+  verbose = FALSE
+)
 ```
 
 ```{r, include=FALSE}
@@ -55,10 +57,12 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 if (!dir.exists(data_dir)) {
   # Download and extract test data if the folder does not exist
-  ifcb_download_test_data(dest_dir = data_dir,
-                          max_retries = 10,
-                          sleep_time = 30,
-                          verbose = FALSE)
+  ifcb_download_test_data(
+    dest_dir = data_dir,
+    max_retries = 10,
+    sleep_time = 30,
+    verbose = FALSE
+  )
 }
 ```
 
@@ -67,12 +71,14 @@ if (!dir.exists(data_dir)) {
 Extract annotated ROIs as `.png` images in subfolders for each class, skipping the **unclassified** (class id 1) category:
 ```{r}
 # Extract .png images
-ifcb_extract_annotated_images(manual_folder = "data/manual",
-                              class2use_file = "data/config/class2use.mat",
-                              roi_folders = "data/data",
-                              out_folder = "data/extracted_images",
-                              skip_class = 1, # or "unclassified"
-                              verbose = FALSE) # Do not print messages
+ifcb_extract_annotated_images(
+  manual_folder = "data/manual",
+  class2use_file = "data/config/class2use.mat",
+  roi_folders = "data/data",
+  out_folder = "data/extracted_images",
+  skip_class = 1, # or "unclassified"
+  verbose = FALSE # Do not print messages
+)
 ```
 
 ## Package PNG Directory
@@ -81,13 +87,15 @@ Prepare the PNG directory for publication as a zip-archive, similar to the files
 
 ```{r}
 # Create zip-archive
-ifcb_zip_pngs(png_folder = "data/extracted_images",
-              zip_filename = "data/zip/ifcb_annotated_images_corrected.zip",
-              readme_file = system.file("exdata/README-template.md", 
-                                        package = "iRfcb"), # Template icluded in `iRfcb`
-              email_address = "tutorial@test.com",
-              version = "1.1",
-              print_progress = FALSE)
+ifcb_zip_pngs(
+  png_folder = "data/extracted_images",
+  zip_filename = "data/zip/ifcb_annotated_images_corrected.zip",
+  # Template icluded in `iRfcb`
+  readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
+  email_address = "tutorial@test.com",
+  version = "1.1",
+  print_progress = FALSE
+)
 ```
 
 ## Package MATLAB Directory
@@ -96,18 +104,19 @@ Prepare the MATLAB directory for publication as a zip-archive, similar to the fi
 
 ```{r}
 # Create zip-archive
-ifcb_zip_matlab(manual_folder = "data/manual",
-                features_folder = "data/features",
-                class2use_file = "data/config/class2use.mat",
-                zip_filename = "data/zip/ifcb_matlab_files_corrected.zip",
-                data_folder = "data/data",
-                readme_file = system.file("exdata/README-template.md", 
-                                          package = "iRfcb"), # Template icluded in `iRfcb`
-                matlab_readme_file = system.file("exdata/MATLAB-template.md", 
-                                                 package = "iRfcb"), # Template icluded in `iRfcb`
-                email_address = "tutorial@test.com",
-                version = "1.1",
-                print_progress = FALSE)
+ifcb_zip_matlab(
+  manual_folder = "data/manual",
+  features_folder = "data/features",
+  class2use_file = "data/config/class2use.mat",
+  zip_filename = "data/zip/ifcb_matlab_files_corrected.zip",
+  data_folder = "data/data",
+  # Templates icluded in `iRfcb`
+  readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
+  matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"),
+  email_address = "tutorial@test.com",
+  version = "1.1",
+  print_progress = FALSE
+)
 ```
 
 ## Create MANIFEST.txt

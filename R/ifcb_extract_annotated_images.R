@@ -15,6 +15,10 @@ utils::globalVariables(c("name", "manual"))
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
+#' @param scale_bar_um An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.
+#' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
+#' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
+#' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param roi_folder
 #'    `r lifecycle::badge("deprecated")`
@@ -45,7 +49,9 @@ utils::globalVariables(c("name", "manual"))
 #' }
 ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folders, out_folder,
                                           skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
-                                          roi_recursive = TRUE, overwrite = FALSE, use_python = FALSE,
+                                          roi_recursive = TRUE, overwrite = FALSE, scale_bar_um = NULL,
+                                          scale_micron_factor = 1/3.4, scale_bar_position = "bottomright",
+                                          scale_bar_color = "black", use_python = FALSE,
                                           roi_folder = deprecated()) {
 
   # Warn the user if roi_folder is used
@@ -141,6 +147,10 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                         ROInumbers = taxa.list_ix$`roi number`,
                         taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_"),
                         verbose = verbose,
+                        scale_bar_um =scale_bar_um,
+                        scale_micron_factor = scale_micron_factor,
+                        scale_bar_position = scale_bar_position,
+                        scale_bar_color = scale_bar_color,
                         overwrite = overwrite
                         )
     }

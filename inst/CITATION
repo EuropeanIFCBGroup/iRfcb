@@ -6,6 +6,6 @@ bibentry(
                   comment = c(ORCID = "0000-0002-8283-656X")),
   year = "2025",
   note = "R package version 0.4.3",
-  url = "https://doi.org/10.5281/zenodo.12533225",
-  textVersion = paste("Anders Torstensson (2025). iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data. R package version 0.4.3. https://doi.org/10.5281/zenodo.12533225")
+  url = "https://CRAN.R-project.org/package=iRfcb",
+  textVersion = paste("Anders Torstensson (2025). iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data. R package version 0.4.3. https://CRAN.R-project.org/package=iRfcb")
 )

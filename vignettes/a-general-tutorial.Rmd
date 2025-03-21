@@ -134,11 +134,14 @@ head(multiblob_features[[1]])[,1:10]
 
 IFCB images stored in `.roi` files can be extracted as `.png` files using the `iRfcb` package, as demonstrated below.
 
-Extract all images from a sample using the [`ifcb_extract_pngs`](../reference/ifcb_extract_pngs.html) function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file. The `gamma` can be adjusted to enhance image contrast.
+Extract all images from a sample using the [`ifcb_extract_pngs`](../reference/ifcb_extract_pngs.html) function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file. The `gamma` can be adjusted to enhance image contrast, and an optional scale bar can be added by specifying `scale_bar_um`.
 ```{r}
 # All ROIs in sample
-ifcb_extract_pngs("data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
-                  gamma = 1) # Default gamma value
+ifcb_extract_pngs(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  gamma = 1, # Default gamma value
+  scale_bar_um = 5 # Add a 5 micrometer scale bar
+) 
 ```
 
 Extract specific ROIs:
@@ -195,11 +198,13 @@ This function takes a list of taxa names and matches them with the **SMHI Trophi
 
 ```{r}
 # Example taxa names
-taxa_list <- c("Acanthoceras zachariasii",
-               "Nodularia spumigena",
-               "Acanthoica quattrospina",
-               "Noctiluca",
-               "Gymnodiniales")
+taxa_list <- c(
+  "Acanthoceras zachariasii",
+  "Nodularia spumigena",
+  "Acanthoica quattrospina",
+  "Noctiluca",
+  "Gymnodiniales"
+)
 
 # Get trophic type for taxa
 trophic_type <- ifcb_get_trophic_type(taxa_list)
