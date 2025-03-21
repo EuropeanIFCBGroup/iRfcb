@@ -282,11 +282,15 @@ demonstrated below.</p>
 function. You can specify the <code>out_folder</code>, but by default,
 images will be saved in a subdirectory within the same directory as the
 ROI file. The <code>gamma</code> can be adjusted to enhance image
-contrast.</p>
+contrast, and an optional scale bar can be added by specifying
+<code>scale_bar_um</code>.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># All ROIs in sample</span></span>
-<span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span><span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
-<span>                  gamma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># Default gamma value</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
+<span>  gamma <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Default gamma value</span></span>
+<span>  scale_bar_um <span class="op">=</span> <span class="fl">5</span> <span class="co"># Add a 5 micrometer scale bar</span></span>
+<span><span class="op">)</span> </span></code></pre></div>
 <pre><code><span><span class="co">## Writing 1218 ROIs from D20230314T001205_IFCB134.roi to data/data/2023/D20230314/D20230314T001205_IFCB134</span></span></code></pre>
 <p>Extract specific ROIs:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -381,11 +385,13 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 <strong>SMHI Trophic Type</strong> list used in <a href="https://shark.smhi.se/hamta-data/" class="external-link">SHARK</a>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
-<span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Acanthoceras zachariasii"</span>,</span>
-<span>               <span class="st">"Nodularia spumigena"</span>,</span>
-<span>               <span class="st">"Acanthoica quattrospina"</span>,</span>
-<span>               <span class="st">"Noctiluca"</span>,</span>
-<span>               <span class="st">"Gymnodiniales"</span><span class="op">)</span></span>
+<span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="st">"Acanthoceras zachariasii"</span>,</span>
+<span>  <span class="st">"Nodularia spumigena"</span>,</span>
+<span>  <span class="st">"Acanthoica quattrospina"</span>,</span>
+<span>  <span class="st">"Noctiluca"</span>,</span>
+<span>  <span class="st">"Gymnodiniales"</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get trophic type for taxa</span></span>
 <span><span class="va">trophic_type</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_trophic_type.html">ifcb_get_trophic_type</a></span><span class="op">(</span><span class="va">taxa_list</span><span class="op">)</span></span>
@@ -463,7 +469,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
 <span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
-<span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -472,7 +478,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
 <span><span class="co">##     note = {R package version 0.4.3},</span></span>
-<span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
+<span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
 <div class="section level2">

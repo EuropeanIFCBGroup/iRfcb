@@ -129,10 +129,12 @@ following function:</p>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="st">"data"</span></span>
 <span></span>
 <span><span class="co"># Download and extract test data in the data folder</span></span>
-<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>                        max_retries <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>                        sleep_time <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>                        verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span></span>
+<span>  dest_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>  max_retries <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  sleep_time <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -143,12 +145,14 @@ each class, skipping the <strong>unclassified</strong> (class id 1)
 category:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract .png images</span></span>
-<span><span class="fu"><a href="../reference/ifcb_extract_annotated_images.html">ifcb_extract_annotated_images</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                              class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                              roi_folders <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>                              out_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>                              skip_class <span class="op">=</span> <span class="fl">1</span>, <span class="co"># or "unclassified"</span></span>
-<span>                              verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print messages</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_extract_annotated_images.html">ifcb_extract_annotated_images</a></span><span class="op">(</span></span>
+<span>  manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  roi_folders <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>  out_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
+<span>  skip_class <span class="op">=</span> <span class="fl">1</span>, <span class="co"># or "unclassified"</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># Do not print messages</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="package-png-directory">Package PNG Directory<a class="anchor" aria-label="anchor" href="#package-png-directory"></a>
@@ -161,13 +165,15 @@ zip archive. A template <strong>README</strong> file is included with
 the <code>iRfcb</code> package.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
-<span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
-<span>              zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
-<span>              readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
-<span>                                        package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
-<span>              email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
-<span>              version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
-<span>              print_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span></span>
+<span>  png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
+<span>  zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
+<span>  <span class="co"># Template icluded in `iRfcb`</span></span>
+<span>  readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
+<span>  email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
+<span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Creating README file...</span></span>
 <span><span class="co">## Creating MANIFEST.txt...</span></span>
 <span><span class="co">## Creating zip archive...</span></span>
@@ -181,18 +187,19 @@ similar to the files in the <a href="https://doi.org/10.17044/scilifelab.2588345
 Image Reference Library</a>:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
-<span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span>manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
-<span>                features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
-<span>                class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
-<span>                zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_matlab_files_corrected.zip"</span>,</span>
-<span>                data_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>                readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, </span>
-<span>                                          package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
-<span>                matlab_readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/MATLAB-template.md"</span>, </span>
-<span>                                                 package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>, <span class="co"># Template icluded in `iRfcb`</span></span>
-<span>                email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
-<span>                version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
-<span>                print_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span></span>
+<span>  manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  features_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
+<span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
+<span>  zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_matlab_files_corrected.zip"</span>,</span>
+<span>  data_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>  <span class="co"># Templates icluded in `iRfcb`</span></span>
+<span>  readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
+<span>  matlab_readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/MATLAB-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
+<span>  email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
+<span>  version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
+<span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Listing all files...</span></span>
 <span><span class="co">## Copying manual files...</span></span>
 <span><span class="co">## Copying feature files...</span></span>
@@ -269,7 +276,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
 <span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
-<span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -278,7 +285,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
 <span><span class="co">##     note = {R package version 0.4.3},</span></span>
-<span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
+<span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
 <div class="section level2">

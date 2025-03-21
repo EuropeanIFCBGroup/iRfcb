@@ -153,10 +153,12 @@ following function:</p>
 <span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="st">"data"</span></span>
 <span></span>
 <span><span class="co"># Download and extract test data in the data folder</span></span>
-<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>                        max_retries <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>                        sleep_time <span class="op">=</span> <span class="fl">30</span>,</span>
-<span>                        verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span></span>
+<span>  dest_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
+<span>  max_retries <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  sleep_time <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -189,7 +191,8 @@ setting the <code>mat_folder</code> parameter to point to your
 <span>  mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
 <span>  hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The coordinates and biovolume data are now combined into a single
 unified dataframe.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -228,13 +231,18 @@ terms can be defined here as well, such as
 <span><span class="co"># Event Date and info for parentEvents</span></span>
 <span><span class="va">data_parent_event</span> <span class="op">&lt;-</span> <span class="va">data_event</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">parentEventID</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>, max<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,</span>
-<span>            ifcb_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ifcb_number</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>eventID <span class="op">=</span> <span class="va">parentEventID</span>,</span>
-<span>         parentEventID <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>         eventType <span class="op">=</span> <span class="st">"Project"</span>,</span>
-<span>         datasetName <span class="op">=</span> <span class="st">"iRfcb-DwC-A"</span>,</span>
-<span>         eventDate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">min</span>, <span class="st">"/"</span>, <span class="va">max</span><span class="op">)</span><span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>    min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,</span>
+<span>    max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span>,</span>
+<span>    ifcb_number <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ifcb_number</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    eventID <span class="op">=</span> <span class="va">parentEventID</span>,</span>
+<span>    parentEventID <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    eventType <span class="op">=</span> <span class="st">"Project"</span>,</span>
+<span>    datasetName <span class="op">=</span> <span class="st">"iRfcb-DwC-A"</span>,</span>
+<span>    eventDate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">min</span>, <span class="st">"/"</span>, <span class="va">max</span><span class="op">)</span></span>
+<span>  <span class="op">)</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">min</span>, <span class="op">-</span><span class="va">max</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -270,8 +278,10 @@ processes and structures the data into an event-focused format.</p>
 <span>    <span class="co"># Adding geographical information</span></span>
 <span>    decimalLatitude <span class="op">=</span> <span class="va">gpsLatitude</span>,</span>
 <span>    decimalLongitude <span class="op">=</span> <span class="va">gpsLongitude</span>,</span>
-<span>    locality <span class="op">=</span> <span class="cn">NA</span>, <span class="co"># The specific description of the place, if available</span></span>
-<span>    verbatimLocality <span class="op">=</span> <span class="cn">NA</span>, <span class="co"># The original textual description of the place</span></span>
+<span>    <span class="co"># The specific description of the place, if available</span></span>
+<span>    locality <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>    <span class="co"># The original textual description of the place</span></span>
+<span>    verbatimLocality <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>    geodeticDatum <span class="op">=</span> <span class="st">"EPSG:4326"</span>,</span>
 <span>    countryCode <span class="op">=</span> <span class="st">"SE"</span>,</span>
 <span>    country <span class="op">=</span> <span class="st">"Sweden"</span>,</span>
@@ -301,24 +311,43 @@ within the Skagerrak and Kattegat region and specify an uncertainty of
 <code class="sourceCode R"><span><span class="co"># Add estimated coordinates and uncertainty for events with missing positions</span></span>
 <span><span class="va">data_event</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    coordinateUncertaintyInMeters <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLongitude</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLatitude</span><span class="op">)</span>, </span>
-<span>                                            <span class="fl">150000</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>    decimalLongitude <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLongitude</span><span class="op">)</span>, </span>
-<span>                               <span class="fl">11.3</span>, <span class="va">decimalLongitude</span><span class="op">)</span>,</span>
-<span>    decimalLatitude <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLatitude</span><span class="op">)</span>, </span>
-<span>                              <span class="fl">57.4</span>, <span class="va">decimalLatitude</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
+<span>    coordinateUncertaintyInMeters <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLongitude</span><span class="op">)</span> <span class="op">&amp;</span></span>
+<span>                                              <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLatitude</span><span class="op">)</span>, <span class="fl">150000</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>    decimalLongitude <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLongitude</span><span class="op">)</span>, <span class="fl">11.3</span>, <span class="va">decimalLongitude</span><span class="op">)</span>,</span>
+<span>    decimalLatitude <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">decimalLatitude</span><span class="op">)</span>, <span class="fl">57.4</span>, <span class="va">decimalLatitude</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>Next, we extract the relevant columns for the Event tables and
 combine the Event and Parent Event tables into a single data frame.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a clean data frame with selected columns</span></span>
 <span><span class="va">event_df</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">eventType</span>, <span class="va">ownerInstitutionCode</span>, <span class="va">institutionCode</span>, <span class="va">institutionID</span>,  </span>
-<span>         <span class="va">parentEventID</span>, <span class="va">eventID</span>, <span class="va">license</span>, <span class="va">samplingProtocol</span>, <span class="va">sampleSizeValue</span>, </span>
-<span>         <span class="va">sampleSizeUnit</span>, <span class="va">eventDate</span>, <span class="va">eventTime</span>, <span class="va">year</span>, <span class="va">month</span>, <span class="va">day</span>, <span class="va">country</span>, </span>
-<span>         <span class="va">countryCode</span>, <span class="va">decimalLatitude</span>, <span class="va">decimalLongitude</span>, <span class="va">geodeticDatum</span>, </span>
-<span>         <span class="va">coordinateUncertaintyInMeters</span>, <span class="va">locality</span>, <span class="va">verbatimLocality</span>, </span>
-<span>         <span class="va">minimumDepthInMeters</span>, <span class="va">maximumDepthInMeters</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">eventType</span>,</span>
+<span>    <span class="va">ownerInstitutionCode</span>,</span>
+<span>    <span class="va">institutionCode</span>,</span>
+<span>    <span class="va">institutionID</span>,</span>
+<span>    <span class="va">parentEventID</span>,</span>
+<span>    <span class="va">eventID</span>,</span>
+<span>    <span class="va">license</span>,</span>
+<span>    <span class="va">samplingProtocol</span>,</span>
+<span>    <span class="va">sampleSizeValue</span>,</span>
+<span>    <span class="va">sampleSizeUnit</span>,</span>
+<span>    <span class="va">eventDate</span>,</span>
+<span>    <span class="va">eventTime</span>,</span>
+<span>    <span class="va">year</span>,</span>
+<span>    <span class="va">month</span>,</span>
+<span>    <span class="va">day</span>,</span>
+<span>    <span class="va">country</span>,</span>
+<span>    <span class="va">countryCode</span>,</span>
+<span>    <span class="va">decimalLatitude</span>,</span>
+<span>    <span class="va">decimalLongitude</span>,</span>
+<span>    <span class="va">geodeticDatum</span>,</span>
+<span>    <span class="va">coordinateUncertaintyInMeters</span>,</span>
+<span>    <span class="va">locality</span>,</span>
+<span>    <span class="va">verbatimLocality</span>,</span>
+<span>    <span class="va">minimumDepthInMeters</span>,</span>
+<span>    <span class="va">maximumDepthInMeters</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>eventDate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">eventDate</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># Ensure rows are unique</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -337,16 +366,16 @@ combine the Event and Parent Event tables into a single data frame.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 26</span></span></span>
 <span><span class="co">##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               185b51… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 185b5161-5a19-4… 924e11… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 185b5161-5a19-4… ac279c… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 185b5161-5a19-4… 27fccb… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 185b5161-5a19-4… cb8a09… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 185b5161-5a19-4… f1659b… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 185b5161-5a19-4… 7ed4af… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 185b5161-5a19-4… 0d86ea… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 185b5161-5a19-4… 30f4d8… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 185b5161-5a19-4… 118c13… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               cd1bb6… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> cd1bb6cf-6502-4… e484b0… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> cd1bb6cf-6502-4… 48837c… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> cd1bb6cf-6502-4… 7d404c… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> cd1bb6cf-6502-4… 730620… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> cd1bb6cf-6502-4… e1e71f… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> cd1bb6cf-6502-4… 3d073e… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> cd1bb6cf-6502-4… 53f403… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> cd1bb6cf-6502-4… b0d4ad… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> cd1bb6cf-6502-4… a02c7a… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 20 more variables: institutionCode &lt;chr&gt;, institutionID &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   license &lt;chr&gt;, samplingProtocol &lt;chr&gt;, sampleSizeValue &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   sampleSizeUnit &lt;chr&gt;, eventTime &lt;time&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;, day &lt;int&gt;,</span></span></span>
@@ -396,16 +425,22 @@ images to an <a href="../articles/image-export-tutorial.html">image
 repository</a>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an occurrence table by transforming event data and adding fields</span></span>
-<span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>  </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>  </span>
-<span>    type <span class="op">=</span> <span class="st">"StillImage"</span>,  <span class="co"># Specifies the record type as an image  </span></span>
-<span>    collectionCode <span class="op">=</span> <span class="st">"iRfcb"</span>,  <span class="co"># Provides a collection identifier  </span></span>
-<span>    occurrenceID <span class="op">=</span> <span class="fu">uuid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/uuid/man/UUIDgenerate.html" class="external-link">UUIDgenerate</a></span><span class="op">(</span>use.time <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,  <span class="co"># Generates a unique identifier for each occurrence  </span></span>
-<span>    basisOfRecord <span class="op">=</span> <span class="st">"MachineObservation"</span>, <span class="co"># Indicates the data was recorded by a machine  </span></span>
-<span>    identificationVerificationStatus <span class="op">=</span> <span class="st">"ValidatedByHuman"</span>, <span class="co"># Indicate that the images have been validated</span></span>
+<span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    <span class="co"># Specifies the record type as an image</span></span>
+<span>    type <span class="op">=</span> <span class="st">"StillImage"</span>,</span>
+<span>    <span class="co"># Provides a collection identifier</span></span>
+<span>    collectionCode <span class="op">=</span> <span class="st">"iRfcb"</span>,</span>
+<span>    <span class="co"># Generates a unique identifier for each occurrence</span></span>
+<span>    occurrenceID <span class="op">=</span> <span class="fu">uuid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/uuid/man/UUIDgenerate.html" class="external-link">UUIDgenerate</a></span><span class="op">(</span>use.time <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>    <span class="co"># Indicates the data was recorded by a machine</span></span>
+<span>    basisOfRecord <span class="op">=</span> <span class="st">"MachineObservation"</span>,</span>
+<span>    <span class="co"># Indicate that the images have been validated</span></span>
+<span>    identificationVerificationStatus <span class="op">=</span> <span class="st">"ValidatedByHuman"</span>,</span>
 <span>    identificationReferences <span class="op">=</span> <span class="st">"https://github.com/hsosik/ifcb-analysis/wiki/Instructions-for-manual-annotation-of-images"</span>,</span>
-<span>    identifiedBy <span class="op">=</span> <span class="st">"John Doe"</span>, <span class="co"># Indicate who validated the image</span></span>
+<span>    <span class="co"># Indicate who validated the image</span></span>
+<span>    identifiedBy <span class="op">=</span> <span class="st">"John Doe"</span>,</span>
 <span>    associatedMedia <span class="op">=</span> <span class="st">"https://ecotaxa.obs-vlfr.fr/prj/14392"</span> <span class="co"># Link to images (if available)</span></span>
 <span>  <span class="op">)</span>  </span></code></pre></div>
 </div>
@@ -452,14 +487,22 @@ below.</p>
 <span></span>
 <span><span class="co"># Standardize ambiguous class names by renaming them to their closest taxonomic relatives</span></span>
 <span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Dinoflagellate"</span>, <span class="st">"Dinophyceae"</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
-<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Leptocylindrus danicus minimus"</span>, <span class="st">"Leptocylindrus"</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
-<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Heterocapsa/Azadinium"</span>, <span class="st">"Peridiniphycidae"</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
-<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Cylindrotheca/Nitzschia longissima"</span>, <span class="st">"Bacillariaceae"</span>, <span class="va">taxa_names_clean</span><span class="op">)</span></span>
+<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Leptocylindrus danicus minimus"</span>,</span>
+<span>                         <span class="st">"Leptocylindrus"</span>,</span>
+<span>                         <span class="va">taxa_names_clean</span><span class="op">)</span></span>
+<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Heterocapsa/Azadinium"</span>,</span>
+<span>                         <span class="st">"Peridiniphycidae"</span>,</span>
+<span>                         <span class="va">taxa_names_clean</span><span class="op">)</span></span>
+<span><span class="va">taxa_names_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"Cylindrotheca/Nitzschia longissima"</span>,</span>
+<span>                         <span class="st">"Bacillariaceae"</span>,</span>
+<span>                         <span class="va">taxa_names_clean</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Retrieve worms records</span></span>
-<span><span class="va">worms_records</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_match_taxa_names.html">ifcb_match_taxa_names</a></span><span class="op">(</span><span class="va">taxa_names_clean</span>,</span>
-<span>                                       marine_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                                       verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">worms_records</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_match_taxa_names.html">ifcb_match_taxa_names</a></span><span class="op">(</span></span>
+<span>  <span class="va">taxa_names_clean</span>, </span>
+<span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span>, </span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Create data frame with taxa information and class names</span></span>
 <span><span class="va">class_names</span> <span class="op">&lt;-</span> <span class="va">worms_records</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -468,42 +511,62 @@ below.</p>
 <strong>verbatimIdentification</strong> fields are populated using the
 cleaned taxonomic names and the original class names, respectively.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<code class="sourceCode R"><span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>class_name <span class="op">=</span> <span class="va">class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">class_names</span>, by <span class="op">=</span> <span class="st">"class_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>scientificName <span class="op">=</span> <span class="va">name</span>,</span>
-<span>         scientificNameAuthorship <span class="op">=</span> <span class="va">authority</span>,</span>
-<span>         verbatimIdentification <span class="op">=</span> <span class="va">class_name</span>,</span>
-<span>         scientificNameID <span class="op">=</span> <span class="va">lsid</span>,</span>
-<span>         taxonRank <span class="op">=</span> <span class="va">rank</span>,</span>
-<span>         occurrenceStatus <span class="op">=</span> <span class="st">"present"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    scientificName <span class="op">=</span> <span class="va">name</span>,</span>
+<span>    scientificNameAuthorship <span class="op">=</span> <span class="va">authority</span>,</span>
+<span>    verbatimIdentification <span class="op">=</span> <span class="va">class_name</span>,</span>
+<span>    scientificNameID <span class="op">=</span> <span class="va">lsid</span>,</span>
+<span>    taxonRank <span class="op">=</span> <span class="va">rank</span>,</span>
+<span>    occurrenceStatus <span class="op">=</span> <span class="st">"present"</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>The final Occurrence table includes all relevant fields for DwC-A
 formatting.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select relevant fields</span></span>
-<span><span class="va">occurrence_df</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">occurrenceID</span>, <span class="va">eventID</span>, <span class="va">eventDate</span>, <span class="va">occurrenceStatus</span>, <span class="va">collectionCode</span>, </span>
-<span>         <span class="va">type</span>, <span class="va">basisOfRecord</span>, <span class="va">identificationVerificationStatus</span>, </span>
-<span>         <span class="va">identificationReferences</span>, <span class="va">identifiedBy</span>, <span class="va">associatedMedia</span>, </span>
-<span>         <span class="va">scientificName</span>, <span class="va">scientificNameAuthorship</span>, <span class="va">scientificNameID</span>, </span>
-<span>         <span class="va">taxonRank</span>, <span class="va">kingdom</span>,  <span class="va">phylum</span>, <span class="va">class</span>, <span class="va">order</span>, <span class="va">family</span>, <span class="va">genus</span>, </span>
-<span>         <span class="va">verbatimIdentification</span><span class="op">)</span></span>
+<span><span class="va">occurrence_df</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">occurrenceID</span>,</span>
+<span>    <span class="va">eventID</span>,</span>
+<span>    <span class="va">eventDate</span>,</span>
+<span>    <span class="va">occurrenceStatus</span>,</span>
+<span>    <span class="va">collectionCode</span>,</span>
+<span>    <span class="va">type</span>,</span>
+<span>    <span class="va">basisOfRecord</span>,</span>
+<span>    <span class="va">identificationVerificationStatus</span>,</span>
+<span>    <span class="va">identificationReferences</span>,</span>
+<span>    <span class="va">identifiedBy</span>,</span>
+<span>    <span class="va">associatedMedia</span>,</span>
+<span>    <span class="va">scientificName</span>,</span>
+<span>    <span class="va">scientificNameAuthorship</span>,</span>
+<span>    <span class="va">scientificNameID</span>,</span>
+<span>    <span class="va">taxonRank</span>,</span>
+<span>    <span class="va">kingdom</span>,</span>
+<span>    <span class="va">phylum</span>,</span>
+<span>    <span class="va">class</span>,</span>
+<span>    <span class="va">order</span>,</span>
+<span>    <span class="va">family</span>,</span>
+<span>    <span class="va">genus</span>,</span>
+<span>    <span class="va">verbatimIdentification</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print the final table as tibble</span></span>
 <span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">occurrence_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 101 × 22</span></span></span>
 <span><span class="co">##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type </span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 471bb49a-90fe-4ec2-… 924e11… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> bfff860d-8fd0-4e38-… 924e11… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 607150c0-4faf-4078-… 924e11… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 66119be0-ef0a-41de-… 924e11… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 6ab2dfcd-ea54-423c-… ac279c… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> aaf90c02-b871-4e08-… 27fccb… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 652b87d6-08aa-42d2-… 27fccb… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> c8f41104-ee63-441f-… 27fccb… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 447a8c31-1917-4e0f-… cb8a09… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ccd1cdbf-0538-4713-… cb8a09… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> eb307031-a916-475e-… e484b0… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> f1468286-d704-429b-… e484b0… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 3db9c559-be1d-4fa9-… e484b0… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> d835762a-113a-4ff4-… e484b0… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> c5676310-65d2-420d-… 48837c… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 12df4268-54d6-4662-… 7d404c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> f797902a-43b1-4b28-… 7d404c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> ce801a6d-ff1c-42fc-… 7d404c… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 00da60a7-c9db-41c2-… 730620… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 446a67bd-9242-4fd4-… 730620… 2022-07-12 present          iRfcb          Stil…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 91 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: basisOfRecord &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   identificationVerificationStatus &lt;chr&gt;, identificationReferences &lt;chr&gt;,</span></span></span>
@@ -535,30 +598,36 @@ observations.</p>
 <span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span></span>
 <span></span>
 <span><span class="co"># Add placeholder for occurrence IDs in the event dataset</span></span>
-<span><span class="va">data_event_mof</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">data_event_mof</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>occurrenceID <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Add placeholders for occurrence IDs and specify instrument type in the parent event dataset</span></span>
-<span><span class="va">data_parent_mof</span> <span class="op">&lt;-</span> <span class="va">data_parent_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>occurrenceID <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>         instrument <span class="op">=</span> <span class="st">"IFCB"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">data_parent_mof</span> <span class="op">&lt;-</span> <span class="va">data_parent_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>occurrenceID <span class="op">=</span> <span class="cn">NA</span>, instrument <span class="op">=</span> <span class="st">"IFCB"</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we extract the necessary columns from the dataset that will be
 used in the MoF table. This includes the measurement ID, associated
 event and occurrence IDs, and key IFCB-derived measurements such as
 counts, abundance, biovolume, and carbon concentration.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert biovolume units and select the relevant columns for occurrence MoF</span></span>
-<span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>biovolume_um3_per_liter <span class="op">=</span> <span class="va">biovolume_mm3_per_liter</span> <span class="op">*</span> <span class="fl">10</span><span class="op">^</span><span class="fl">9</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">eventID</span>, <span class="va">parentEventID</span>, <span class="va">occurrenceID</span>, <span class="va">counts</span>, </span>
-<span>         <span class="va">counts_per_liter</span>, <span class="va">biovolume_um3_per_liter</span>, <span class="va">carbon_ug_per_liter</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>    <span class="va">eventID</span>,</span>
+<span>    <span class="va">parentEventID</span>,</span>
+<span>    <span class="va">occurrenceID</span>,</span>
+<span>    <span class="va">counts</span>,</span>
+<span>    <span class="va">counts_per_liter</span>,</span>
+<span>    <span class="va">biovolume_um3_per_liter</span>,</span>
+<span>    <span class="va">carbon_ug_per_liter</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Select the relevant columns for parentEvent MoF</span></span>
 <span><span class="va">data_parent_mof</span> <span class="op">&lt;-</span> <span class="va">data_parent_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">eventID</span>, <span class="va">parentEventID</span>, <span class="va">occurrenceID</span>, <span class="va">instrument</span>, <span class="va">ifcb_number</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Select the relevant columns for event MoF</span></span>
-<span><span class="va">data_event_mof</span> <span class="op">&lt;-</span> <span class="va">data_event_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">data_event_mof</span> <span class="op">&lt;-</span> <span class="va">data_event_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">eventID</span>, <span class="va">parentEventID</span>, <span class="va">occurrenceID</span>, <span class="va">ml_analyzed</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The table needs to be transformed into a “long format,” where all
@@ -572,13 +641,26 @@ concentration</em>) for better compatibility with global biodiversity
 standards.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pivot and standardize occurrence measurements</span></span>
-<span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">counts</span>, <span class="va">counts_per_liter</span>, <span class="va">biovolume_um3_per_liter</span>, <span class="va">carbon_ug_per_liter</span><span class="op">)</span>, </span>
-<span>               names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
-<span>               values_to <span class="op">=</span> <span class="st">"measurementValue"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>      <span class="va">counts</span>,</span>
+<span>      <span class="va">counts_per_liter</span>,</span>
+<span>      <span class="va">biovolume_um3_per_liter</span>,</span>
+<span>      <span class="va">carbon_ug_per_liter</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"measurementValue"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/drop_na.html" class="external-link">drop_na</a></span><span class="op">(</span><span class="va">measurementValue</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"counts_per_liter"</span>, <span class="st">"Abundance"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"biovolume_um3_per_liter"</span>, <span class="st">"Biovolume concentration"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span></span>
+<span>      <span class="st">"biovolume_um3_per_liter"</span>,</span>
+<span>      <span class="st">"Biovolume concentration"</span>,</span>
+<span>      <span class="va">measurementType</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"carbon_ug_per_liter"</span>, <span class="st">"Carbon content"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"counts"</span>, <span class="st">"Count"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementValue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">measurementValue</span><span class="op">)</span><span class="op">)</span></span>
@@ -586,18 +668,28 @@ standards.</p>
 <span><span class="co"># Pivot and standardize event measurements</span></span>
 <span><span class="va">data_event_mof</span> <span class="op">&lt;-</span> <span class="va">data_event_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>ml_analyzed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">ml_analyzed</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ml_analyzed</span><span class="op">)</span>, </span>
-<span>               names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
-<span>               values_to <span class="op">=</span> <span class="st">"measurementValue"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"ml_analyzed"</span>, <span class="st">"Sample volume"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ml_analyzed</span><span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"measurementValue"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"ml_analyzed"</span>, <span class="st">"Sample volume"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Pivot and standardize parent measurements</span></span>
-<span><span class="va">data_parent_mof</span> <span class="op">&lt;-</span> <span class="va">data_parent_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">instrument</span>, <span class="va">ifcb_number</span><span class="op">)</span>, </span>
-<span>               names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
-<span>               values_to <span class="op">=</span> <span class="st">"measurementValue"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">data_parent_mof</span> <span class="op">&lt;-</span> <span class="va">data_parent_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
+<span>    cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">instrument</span>, <span class="va">ifcb_number</span><span class="op">)</span>,</span>
+<span>    names_to <span class="op">=</span> <span class="st">"measurementType"</span>,</span>
+<span>    values_to <span class="op">=</span> <span class="st">"measurementValue"</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"instrument"</span>, <span class="st">"Imaging instrument name"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"ifcb_number"</span>, <span class="st">"Instrument identification number"</span>, <span class="va">measurementType</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span></span>
+<span>      <span class="st">"ifcb_number"</span>,</span>
+<span>      <span class="st">"Instrument identification number"</span>,</span>
+<span>      <span class="va">measurementType</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Combine all standardized measurements into a single dataset and add unique measurementIDs for each measurment</span></span>
 <span><span class="va">data_mof</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data_parent_mof</span>, <span class="va">data_event_mof</span>, <span class="va">data_occurrence_mof</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -611,36 +703,47 @@ for each <strong>measurementType</strong>.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a lookup table for NERC vocabularies</span></span>
 <span><span class="va">nerc_vocab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  measurementValueID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">6</span><span class="op">)</span>, </span>
-<span>                         <span class="st">"http://vocab.nerc.ac.uk/collection/L22/current/TOOL1588/"</span><span class="op">)</span>,</span>
-<span>  measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Count"</span>, </span>
-<span>                      <span class="st">"Abundance"</span>, </span>
-<span>                      <span class="st">"Biovolume concentration"</span>, </span>
-<span>                      <span class="st">"Carbon content"</span>,</span>
-<span>                      <span class="st">"Sample volume"</span>,</span>
-<span>                      <span class="st">"Instrument identification number"</span>,</span>
-<span>                      <span class="st">"Imaging instrument name"</span><span class="op">)</span>,</span>
-<span>  measurementTypeID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/CVOLUKNB/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/SERNUMZZ/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/NMSPINST/"</span><span class="op">)</span>,</span>
-<span>  measurementUnit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Dimensionless"</span>, </span>
-<span>                      <span class="st">"Individual per litre"</span>, </span>
-<span>                      <span class="st">"Cubic micrometres per litre"</span>, </span>
-<span>                      <span class="st">"Micrograms per litre"</span>,</span>
-<span>                      <span class="st">"Millilitres"</span>,</span>
-<span>                      <span class="st">"Not applicable"</span>,</span>
-<span>                      <span class="st">"Not applicable"</span><span class="op">)</span>,</span>
-<span>  measurementUnitID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UCPL/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/CUPL/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UGPL/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/VVML/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"</span>,</span>
-<span>                        <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  measurementValueID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">6</span><span class="op">)</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/L22/current/TOOL1588/"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  measurementType <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Count"</span>,</span>
+<span>    <span class="st">"Abundance"</span>,</span>
+<span>    <span class="st">"Biovolume concentration"</span>,</span>
+<span>    <span class="st">"Carbon content"</span>,</span>
+<span>    <span class="st">"Sample volume"</span>,</span>
+<span>    <span class="st">"Instrument identification number"</span>,</span>
+<span>    <span class="st">"Imaging instrument name"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  measurementTypeID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/CVOLUKNB/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/SERNUMZZ/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P01/current/NMSPINST/"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  measurementUnit <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Dimensionless"</span>,</span>
+<span>    <span class="st">"Individual per litre"</span>,</span>
+<span>    <span class="st">"Cubic micrometres per litre"</span>,</span>
+<span>    <span class="st">"Micrograms per litre"</span>,</span>
+<span>    <span class="st">"Millilitres"</span>,</span>
+<span>    <span class="st">"Not applicable"</span>,</span>
+<span>    <span class="st">"Not applicable"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  measurementUnitID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UCPL/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/CUPL/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/UGPL/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/VVML/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"</span>,</span>
+<span>    <span class="st">"http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Merge the data with NERC vocabularies and relocate columns</span></span>
 <span><span class="va">mof_df</span> <span class="op">&lt;-</span> <span class="va">data_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -653,16 +756,16 @@ for each <strong>measurementType</strong>.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 415 × 10</span></span></span>
 <span><span class="co">##    measurementID              eventID parentEventID occurrenceID measurementType</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 7f0dc6aa-240a-435f-9c7f-f… 185b51… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 83cd0a42-8f13-46c2-87d1-7… 185b51… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> b3dcd943-09bc-4e2b-ad3c-7… 924e11… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 05166233-3c17-4747-b39a-c… ac279c… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 0ba85e55-3887-47c2-8738-1… 27fccb… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 3127a6d9-8990-4456-809e-0… cb8a09… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 151a20e3-6dec-41e9-86cf-2… f1659b… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 7a4e76f6-77be-430f-9812-6… 7ed4af… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 669a9edd-dc1b-4b4b-b4d3-7… 0d86ea… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 5cf9c9c7-16a9-4a8d-a3d7-c… 30f4d8… 185b5161-5a1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> d2084e96-4287-4441-9ae7-a… cd1bb6… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> be1b7c07-6704-40b4-aa2a-f… cd1bb6… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 587524dc-9fad-4b88-83c3-5… e484b0… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> e8d635ed-4479-4e56-9a09-d… 48837c… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> f192d422-4249-40ae-af3d-c… 7d404c… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> e60ce3be-0cb5-4489-8307-7… 730620… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 3107e9f9-dba1-409b-8b60-e… e1e71f… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 97d0d410-aa91-4dcd-9325-7… 3d073e… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 8a63bd5a-f8db-479b-b339-3… 53f403… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> a67081d2-e6a9-4610-8f78-f… b0d4ad… cd1bb6cf-650… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 405 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: measurementTypeID &lt;chr&gt;, measurementValue &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   measurementValueID &lt;chr&gt;, measurementUnit &lt;chr&gt;, measurementUnitID &lt;chr&gt;</span></span></span></code></pre>
@@ -735,7 +838,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
 <span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
-<span><span class="co">##   https://doi.org/10.5281/zenodo.12533225</span></span>
+<span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">## </span></span>
@@ -744,7 +847,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
 <span><span class="co">##     note = {R package version 0.4.3},</span></span>
-<span><span class="co">##     url = {https://doi.org/10.5281/zenodo.12533225},</span></span>
+<span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>
 <div class="section level2">
