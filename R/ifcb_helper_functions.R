@@ -145,7 +145,7 @@ extract_parts <- function(filenames, tz = "UTC") {
   # Remove extension from all filenames
   filenames <- tools::file_path_sans_ext(filenames)
 
-  is_d_format <- grepl("^D\\d{8}T\\d{6}", filenames)
+  is_d_format <- grepl("^[A-Z]\\d{8}T\\d{6}", filenames)
   is_ifcb_format <- grepl("^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}", filenames)
 
   result <- data.frame(
@@ -165,7 +165,7 @@ extract_parts <- function(filenames, tz = "UTC") {
   d_indices <- which(is_d_format)
   if (length(d_indices) > 0) {
     d_files <- filenames[d_indices]
-    timestamps <- ymd_hms(str_remove_all(str_extract(d_files, "D\\d{8}T\\d{6}"), "[^0-9]"), tz = tz)
+    timestamps <- ymd_hms(str_remove_all(str_extract(d_files, "^[A-Z]\\d{8}T\\d{6}"), "[^0-9]"), tz = tz)
     rois <- str_extract(d_files, "_\\d+$")
     rois <- ifelse(is.na(rois), NA, as.integer(str_remove(rois, "_")))
 

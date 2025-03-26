@@ -49,7 +49,7 @@ ifcb_convert_filenames <- function(filenames, tz = "UTC") {
   filenames <- tools::file_path_sans_ext(filenames)
 
   # Check if filenames are in the correct format
-  valid_format <- grepl("^D\\d{8}T\\d{6}|^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}", filenames)
+  valid_format <- grepl("^[A-Z]\\d{8}T\\d{6}|^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}", filenames)
   if (!all(valid_format)) {
     stop("Error: One or more filenames are not in the correct format.")
   }
