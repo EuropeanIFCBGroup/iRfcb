@@ -8,12 +8,13 @@ ifcb_annotate_batch(
   png_images,
   class,
   manual_folder,
-  adc_folder,
+  adc_files,
   class2use_file,
   manual_output = NULL,
   manual_recursive = FALSE,
   unclassified_id = 1,
-  do_compression = TRUE
+  do_compression = TRUE,
+  adc_folder = deprecated()
 )
 }
 \arguments{
@@ -23,7 +24,7 @@ ifcb_annotate_batch(
 
 \item{manual_folder}{A character string specifying the path to the folder containing the manual \code{.mat} classlist files.}
 
-\item{adc_folder}{A character string specifying the path to the base folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD). Each subfolder contains ADC files, which are used to determine the number of regions of interest (ROIs) for each sample when creating new manual \code{.mat} files.}
+\item{adc_files}{A character string specifying the path to the folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD), or a vector with full paths to the \code{.adc} files. Each ADC file is used to determine the number of regions of interest (ROIs) for each sample when creating new manual \code{.mat} files.}
 
 \item{class2use_file}{A character string specifying the path to the \code{.mat} file containing class names and corresponding indices.}
 
@@ -34,6 +35,10 @@ ifcb_annotate_batch(
 \item{unclassified_id}{An integer specifying the class ID to use for unclassified regions of interest (ROIs) when creating new manual \code{.mat} files. Default is \code{1}.}
 
 \item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
+
+\item{adc_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Use \code{adc_files} instead.}
 }
 \value{
 The function does not return a value. It creates or updates \code{.mat} files in the \code{manual_folder} to
@@ -69,7 +74,7 @@ ifcb_annotate_batch(
                  "D20230714T102127_IFCB134_00069.png"),
   class = "Nodularia_spumigena",
   manual_folder = "path/to/manual",
-  adc_folder = "path/to/adc",
+  adc_files = "path/to/adc",
   class2use_file = "path/to/class2use.mat"
 )
 }

@@ -7,12 +7,15 @@
 #' @param png_images A character vector containing the names of the PNG images to be annotated in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png, where XXX represent the IFCB number and ZZZZZ the roi number.
 #' @param class A character string or integer specifying the class name or class2use index to annotate the images with. If a string is provided, it is matched against the available classes in `class2use_file`.
 #' @param manual_folder A character string specifying the path to the folder containing the manual `.mat` classlist files.
-#' @param adc_folder A character string specifying the path to the base folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD). Each subfolder contains ADC files, which are used to determine the number of regions of interest (ROIs) for each sample when creating new manual `.mat` files.
+#' @param adc_files A character string specifying the path to the folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD), or a vector with full paths to the `.adc` files. Each ADC file is used to determine the number of regions of interest (ROIs) for each sample when creating new manual `.mat` files.
 #' @param class2use_file A character string specifying the path to the `.mat` file containing class names and corresponding indices.
 #' @param manual_output A character string specifying the path to the folder where updated or newly created `.mat` classlist files will be saved. If not provided, the `manual_folder` path will be used by default.
 #' @param manual_recursive A logical value indicating whether to search recursively within `manual_folder` for `.mat` files. Default is `FALSE`.
 #' @param unclassified_id An integer specifying the class ID to use for unclassified regions of interest (ROIs) when creating new manual `.mat` files. Default is `1`.
 #' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
+#' @param adc_folder `r lifecycle::badge("deprecated")`
+#'
+#'    Use \code{adc_files} instead.
 #'
 #' @details
 #' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
@@ -46,15 +49,15 @@
 #'                  "D20230714T102127_IFCB134_00069.png"),
 #'   class = "Nodularia_spumigena",
 #'   manual_folder = "path/to/manual",
-#'   adc_folder = "path/to/adc",
+#'   adc_files = "path/to/adc",
 #'   class2use_file = "path/to/class2use.mat"
 #' )
 #' }
 #'
 #' @export
-ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, class2use_file,
+ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, class2use_file,
                                 manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1,
-                                do_compression = TRUE) {
+                                do_compression = TRUE, adc_folder = deprecated()) {
 
   # Initialize python check
   check_python_and_module()
@@ -69,9 +72,24 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
     stop("The specified class2use_file file does not exist")
   }
 
+  # Warn the user if adc_folder is used
+  if (lifecycle::is_present(adc_folder)) {
+
+    # Signal the deprecation to the user
+    deprecate_warn("0.4.4", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
+
+    # Deal with the deprecated argument for compatibility
+    adc_files <- adc_folder
+  }
+
   # Write files directly to manual_folder if no other folder has been specified
   if (is.null(manual_output)) {
     manual_output <- manual_folder
+  }
+
+  # Check if hdr_files is a single folder path or a vector of file paths
+  if (length(adc_files) == 1 && file.info(adc_files)$isdir) {
+    adc_files <- list.files(adc_files, pattern = "\\.adc$", recursive = TRUE, full.names = TRUE)
   }
 
   # Get the base names of the png files
@@ -96,6 +114,9 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
   # Prepare the annotations dataframe
   annotations <- data.frame(image_filename = png_name, ifcb_convert_filenames(png_name))
 
+  # List the adc files
+  adcfiles <- list.files(adc_folder, pattern = "adc$", full.names = TRUE, recursive = TRUE)
+
   # Loop through the unique samples in the annotations
   for (sample_name in unique(annotations$sample)) {
     # Filter the annotations for the current sample
@@ -113,8 +134,12 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_folder, cl
       # Sample doesn't have a manual file, so we create one
       sample_info <- ifcb_convert_filenames(sample_name)
 
-      # Construct the path to the ADC file
-      adcfile <- file.path(adc_folder, sample_info$year, substr(sample_info$sample, start = 1, stop = 9), paste0(sample_name, ".adc"))
+      # Find the path to the ADC file
+      adcfile <- adcfiles[grepl(sample_name, adcfiles)]
+
+      if (length(adcfile) > 1) {
+        stop("More than one .adc found for sample: ", sample_name)
+      }
 
       # Check if the ADC file exists
       if (!file.exists(adcfile)) {
