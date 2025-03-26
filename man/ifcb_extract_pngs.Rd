@@ -43,22 +43,14 @@ ifcb_extract_pngs(
 }
 \value{
 This function is called for its side effects: it writes PNG images to a directory.
-
-This function is called for its side effects: it writes PNG images to a directory.
 }
 \description{
-This function reads an IFCB (.roi) file and its corresponding .adc file, extracts regions of interest (ROIs),
+This function reads an IFCB (\code{.roi}) file and its corresponding \code{.adc} file, extracts regions of interest (ROIs),
 and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
-to extract, useful for specific ROIs from manual or automatic classification results.
+to extract, useful for specific ROIs from manual or automatic classification results. Additionally, a scale bar
+can be added to the extracted images based on a specified micron-to-pixel conversion factor.
 }
 \examples{
-\dontrun{
-# Convert ROI file to PNG images
-ifcb_extract_pngs("path/to/your_roi_file.roi")
-
-# Extract specific ROI numbers from ROI file
-ifcb_extract_pngs("path/to/your_roi_file.roi", "output_directory", ROInumbers = c(1, 2, 3))
-}
 \dontrun{
 # Convert ROI file to PNG images
 ifcb_extract_pngs("path/to/your_roi_file.roi")
@@ -71,16 +63,6 @@ ifcb_extract_pngs("path/to/your_roi_file.roi", scale_bar_um = 5)
 }
 }
 \seealso{
-\code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
-
-\code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-Extract Images from IFCB ROI File
-
-This function reads an IFCB (\code{.roi}) file and its corresponding \code{.adc} file, extracts regions of interest (ROIs),
-and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
-to extract, useful for specific ROIs from manual or automatic classification results. Additionally, a scale bar
-can be added to the extracted images based on a specified micron-to-pixel conversion factor.
-
 \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 
 \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.

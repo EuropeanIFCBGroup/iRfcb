@@ -1,33 +1,5 @@
 #' Extract Images from IFCB ROI File
 #'
-#' This function reads an IFCB (.roi) file and its corresponding .adc file, extracts regions of interest (ROIs),
-#' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
-#' to extract, useful for specific ROIs from manual or automatic classification results.
-#'
-#' @param roi_file A character string specifying the path to the .roi file.
-#' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
-#' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
-#' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
-#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
-#' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
-#' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
-#'
-#' @return This function is called for its side effects: it writes PNG images to a directory.
-#'
-#' @examples
-#' \dontrun{
-#' # Convert ROI file to PNG images
-#' ifcb_extract_pngs("path/to/your_roi_file.roi")
-#'
-#' # Extract specific ROI numbers from ROI file
-#' ifcb_extract_pngs("path/to/your_roi_file.roi", "output_directory", ROInumbers = c(1, 2, 3))
-#' }
-#' @export
-#' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
-#' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
-
-#' Extract Images from IFCB ROI File
-#'
 #' This function reads an IFCB (`.roi`) file and its corresponding `.adc` file, extracts regions of interest (ROIs),
 #' and saves each ROI as a PNG image in a specified directory. Optionally, you can specify ROI numbers
 #' to extract, useful for specific ROIs from manual or automatic classification results. Additionally, a scale bar

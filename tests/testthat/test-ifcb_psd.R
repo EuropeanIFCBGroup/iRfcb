@@ -54,7 +54,8 @@ test_that("ifcb_psd works correctly", {
 
       # Move the file to the subfolder
       new_file_path <- file.path(date_folder, file_name)
-      fs::file_move(file_path, new_file_path)
+      success <- file.copy(file_path, new_file_path)
+      if (success) unlink(file_path)
     }
   }
 

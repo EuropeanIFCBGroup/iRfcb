@@ -1,7 +1,7 @@
 #' Install iRfcb Python Environment
 #'
 #' This function sets up the Python environment for `iRfcb`. By default, it creates and activates a Python virtual environment (`venv`) named "iRfcb" and installs the required Python packages from the "requirements.txt" file.
-#' Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting `use_venv = FALSE`.
+#' Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting `use_venv = FALSE` (not recommended).
 #'
 #' @param envname A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".
 #' @param use_venv Logical. If `TRUE` (default), a virtual environment is created. If `FALSE`, the system Python is used instead, and missing packages are installed globally for the user.

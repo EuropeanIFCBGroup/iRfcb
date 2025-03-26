@@ -1,6 +1,6 @@
 #' Get Variable Names from a MAT File
 #'
-#' This function reads a .mat file generated the `ifcb-analysis` repository (Sosik and Olson 2007) and retrieves the
+#' This function reads a `.mat` file generated the `ifcb-analysis` repository (Sosik and Olson 2007) and retrieves the
 #' names of all variables stored within it.
 #'
 #' @param mat_file A character string specifying the path to the .mat file.

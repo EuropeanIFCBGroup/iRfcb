@@ -7,7 +7,7 @@
 summarize_TBclass(classfile, adhocthresh = NULL)
 }
 \arguments{
-\item{classfile}{Character string specifying the path to the TreeBagger classifier result file (.mat format).}
+\item{classfile}{Character string specifying the path to the TreeBagger classifier result file (\code{.mat} format).}
 
 \item{adhocthresh}{Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
 If a single numeric value is provided, it is applied to all classes.}
@@ -19,6 +19,6 @@ A list containing three elements:
 \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 }
 \description{
-This function reads a TreeBagger classifier result file (.mat format) and summarizes
+This function reads a TreeBagger classifier result file (\code{.mat} format) and summarizes
 the number of targets in each class based on the classification scores and thresholds.
 }

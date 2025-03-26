@@ -1,16 +1,16 @@
 #' Zip PNG Folders
 #'
-#' This function zips directories containing .png files and optionally includes README and MANIFEST files.
+#' This function zips directories containing `.png` files and optionally includes README and MANIFEST files.
 #' It can also split the resulting zip file into smaller parts if it exceeds a specified size.
 #' The zip archive can be used to submit IFCB data to repositories like in the SMHI IFCB Plankton Image Reference Library (Torstensson et al., 2024).
 #'
-#' @param png_folder The directory containing subdirectories with .png files.
+#' @param png_folder The directory containing subdirectories with `.png` files.
 #' @param zip_filename The name of the zip file to create.
 #' @param readme_file Optional path to a README file for inclusion in the zip package.
 #' @param email_address Optional email address to include in the README file.
 #' @param version Optional version information to include in the README file.
 #' @param print_progress A logical value indicating whether to print progress bar. Default is TRUE.
-#' @param include_txt A logical value indicating whether to include text (.txt, .tsv and .csv) files located in the subdirectories. Default is FALSE.
+#' @param include_txt A logical value indicating whether to include text (`.txt`, `.tsv` and `.csv`) files located in the subdirectories. Default is FALSE.
 #' @param split_zip A logical value indicating whether to split the zip file into smaller parts if its size exceeds `max_size`. Default is FALSE.
 #' @param max_size The maximum size (in MB) for the zip file before it gets split. Only used if `split_zip` is TRUE. Default is 500 MB.
 #' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the zip process. Default is FALSE.

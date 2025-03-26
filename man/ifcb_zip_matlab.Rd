@@ -22,15 +22,15 @@ ifcb_zip_matlab(
 )
 }
 \arguments{
-\item{manual_folder}{The directory containing .mat files to be included in the zip archive.}
+\item{manual_folder}{The directory containing \code{.mat} files to be included in the zip archive.}
 
-\item{features_folder}{The directory containing .csv files, including subfolders, to be included in the zip archive.}
+\item{features_folder}{The directory containing \code{.csv} files, including subfolders, to be included in the zip archive.}
 
 \item{class2use_file}{The path to the file (class2use_file) that will be renamed and included in the 'config' directory of the zip archive.}
 
 \item{zip_filename}{The filename for the zip archive to be created.}
 
-\item{data_folder}{Optionally, the directory containing additional data files (.roi, .adc, .hdr) to be included in the zip archive.}
+\item{data_folder}{Optionally, the directory containing additional data files (\code{.roi}, \code{.adc}, \code{.hdr}) to be included in the zip archive.}
 
 \item{readme_file}{Optionally, the path to a README file that will be updated with metadata and included in the zip archive.}
 

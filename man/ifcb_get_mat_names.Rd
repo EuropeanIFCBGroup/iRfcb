@@ -15,7 +15,7 @@ ifcb_get_mat_names(mat_file, use_python = FALSE)
 A character vector of variable names.
 }
 \description{
-This function reads a .mat file generated the \code{ifcb-analysis} repository (Sosik and Olson 2007) and retrieves the
+This function reads a \code{.mat} file generated the \code{ifcb-analysis} repository (Sosik and Olson 2007) and retrieves the
 names of all variables stored within it.
 }
 \details{

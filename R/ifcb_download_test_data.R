@@ -4,7 +4,7 @@
 #' dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 #' unzips them into the specified folder and extracts png images. These data can be used, for instance,
 #' for testing iRfcb and for creating the tutorial vignette
-#' using \code{vignette("tutorial", package = "iRfcb")}
+#' using \code{vignette("a-general-tutorial", package = "iRfcb")}
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.

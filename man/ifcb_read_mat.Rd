@@ -13,7 +13,7 @@ ifcb_read_mat(file_path)
 A list containing the MATLAB variables.
 }
 \description{
-This function reads a MATLAB .mat file using a Python function via \code{reticulate}.
+This function reads a MATLAB \code{.mat} file using a Python function via \code{reticulate}.
 }
 \details{
 This function requires a Python interpreter with \code{SciPy} installed.

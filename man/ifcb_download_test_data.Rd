@@ -32,7 +32,7 @@ This function downloads a zip archive containing MATLAB files from the \code{iRf
 dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing iRfcb and for creating the tutorial vignette
-using \code{vignette("tutorial", package = "iRfcb")}
+using \code{vignette("a-general-tutorial", package = "iRfcb")}
 }
 \examples{
 \dontrun{
