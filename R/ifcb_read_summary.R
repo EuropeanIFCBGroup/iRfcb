@@ -160,5 +160,5 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   }
 
   # Return the finalized summary_long data frame
-  return(summary_long)
+  summary_long
 }

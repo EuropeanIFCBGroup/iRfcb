@@ -48,5 +48,5 @@ ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_pyt
   # Extract and return the classes as a character vector
   classes <- unlist(class_info[[variable_name]])
 
-  return(classes)
+  classes
 }

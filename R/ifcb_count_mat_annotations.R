@@ -129,5 +129,5 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
     message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
   }
 
-  return(total_sum)
+  total_sum
 }

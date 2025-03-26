@@ -176,5 +176,5 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
   # Remove row names
   rownames(final_results) <- NULL
 
-  return(arrange(final_results, if (sum_level == "sample") sample else class_name))
+  arrange(final_results, if (sum_level == "sample") sample else class_name)
 }
