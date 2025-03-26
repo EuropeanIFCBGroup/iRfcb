@@ -36,6 +36,11 @@ ifcb_create_class2use <- function(classes, filename, do_compression = TRUE) {
   # Source the Python function
   source_python(system.file("python", "save_class2use_to_mat.py", package = "iRfcb"))
 
+  # Check if the output directory exists, if not create it
+  if(!dir.exists(dirname(filename))) {
+    dir.create(dirname(filename), recursive = TRUE)
+  }
+
   # Call the function in R
   save_class2use_to_mat(filename, classes, do_compression)
 }
