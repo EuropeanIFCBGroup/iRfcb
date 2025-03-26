@@ -16,6 +16,7 @@ ifcb_extract_classified_images(
   scale_micron_factor = 1/3.4,
   scale_bar_position = "bottomright",
   scale_bar_color = "black",
+  old_adc = FALSE,
   use_python = FALSE,
   verbose = TRUE
 )
@@ -42,6 +43,8 @@ ifcb_extract_classified_images(
 \item{scale_bar_position}{A character string specifying the position of the scale bar in the image. Options are \code{"topright"}, \code{"topleft"}, \code{"bottomright"}, or \code{"bottomleft"}. Defaults to \code{"bottomright"}.}
 
 \item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
+
+\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
