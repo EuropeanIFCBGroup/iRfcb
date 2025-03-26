@@ -114,9 +114,6 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   # Prepare the annotations dataframe
   annotations <- data.frame(image_filename = png_name, ifcb_convert_filenames(png_name))
 
-  # List the adc files
-  adcfiles <- list.files(adc_folder, pattern = "adc$", full.names = TRUE, recursive = TRUE)
-
   # Loop through the unique samples in the annotations
   for (sample_name in unique(annotations$sample)) {
     # Filter the annotations for the current sample
@@ -135,7 +132,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
       sample_info <- ifcb_convert_filenames(sample_name)
 
       # Find the path to the ADC file
-      adcfile <- adcfiles[grepl(sample_name, adcfiles)]
+      adcfile <- adc_files[grepl(sample_name, adc_files)]
 
       if (length(adcfile) > 1) {
         stop("More than one .adc found for sample: ", sample_name)
