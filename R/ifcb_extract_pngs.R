@@ -15,7 +15,7 @@
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
-#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
+#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return This function is called for its side effects: it writes PNG images to a directory.

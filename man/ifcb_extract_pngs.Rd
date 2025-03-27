@@ -40,7 +40,7 @@ ifcb_extract_pngs(
 
 \item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
 
-\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
+\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 }
