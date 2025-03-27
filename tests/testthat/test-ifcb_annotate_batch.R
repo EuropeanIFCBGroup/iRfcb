@@ -28,12 +28,13 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
             file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
 
   # Create a new file
-  ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
-                                     "D20220522T003051_IFCB134_00003.png"),
-                      class = "Nodularia_spumigena",
-                      manual_folder = new_folder,
-                      adc_folder = manual_folder,
-                      class2use_file = file.path(manual_folder, "class2use.mat"))
+  expect_warning(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
+                                                    "D20220522T003051_IFCB134_00003.png"),
+                                     class = "Nodularia_spumigena",
+                                     manual_folder = new_folder,
+                                     adc_files = manual_folder,
+                                     class2use_file = file.path(manual_folder, "class2use.mat")),
+                 "More than one .adc found for sample, will continue with")
 
   classlist <- ifcb_get_mat_variable(file.path(new_folder, "D20220522T003051_IFCB134.mat"),
                                      "classlist")
@@ -45,7 +46,7 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
                                      "D20220522T003051_IFCB134_00003.png"),
                       class = "Nodularia_spumigena",
                       manual_folder = manual_folder,
-                      adc_folder = manual_folder,
+                      adc_files = manual_folder,
                       class2use_file = file.path(manual_folder, "class2use.mat"))
 
   classlist_new <- ifcb_get_mat_variable(file.path(manual_folder, "D20220522T003051_IFCB134.mat"),
@@ -94,7 +95,7 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
                                                   "D20220522T003051_IFCB134_00003.png"),
                                    class = "Nodularia_spumigena",
                                    manual_folder = new_folder,
-                                   adc_folder = manual_folder,
+                                   adc_files = manual_folder,
                                    class2use_file = file.path(manual_folder, "non_exisiting_file")),
                "The specified class2use_file file does not exist")
 
@@ -103,18 +104,19 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
                                                   "D20220522T003051_IFCB134_00003.png"),
                                    class = "non_exisiting_class",
                                    manual_folder = new_folder,
-                                   adc_folder = manual_folder,
+                                   adc_files = manual_folder,
                                    class2use_file = file.path(manual_folder, "class2use.mat")),
                "Class non_exisiting_class not found in class2use")
 
   unlink(adc_folder, recursive = TRUE)
+  unlink(file.path(manual_folder, "D20220522T003051_IFCB134.adc"))
 
   # Expect error for non exisiting class
   expect_warning(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
                                                     "D20220522T003051_IFCB134_00003.png"),
                                      class = "Nodularia_spumigena",
                                      manual_folder = new_folder,
-                                     adc_folder = manual_folder,
+                                     adc_files = manual_folder,
                                      class2use_file = file.path(manual_folder, "class2use.mat")),
                  "ADC file not found for sample")
 
