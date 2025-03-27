@@ -9,8 +9,6 @@ hdr_folder <- file.path(temp_dir, "test_data", "data")
 manual_folder <- file.path(temp_dir, "test_data", "manual")
 
 test_that("ifcb_summarize_biovolumes works correctly", {
-  # Skip on CRAN
-  skip_on_cran()
 
   # Call the function with the test data
   result <- ifcb_summarize_biovolumes(feature_folder, class_folder, hdr_folder = hdr_folder)
@@ -43,8 +41,6 @@ test_that("ifcb_summarize_biovolumes works correctly", {
 })
 
 test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
-  # Skip on CRAN
-  skip_on_cran()
 
   temp_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes")
 
@@ -61,8 +57,6 @@ test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
 })
 
 test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
-  # Skip on CRAN
-  skip_on_cran()
 
   # Define custom list
   classes = c("Mesodinium_rubrum", "Mesodinium_rubrum")
@@ -103,8 +97,6 @@ test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
 })
 
 test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
-  # Skip on CRAN
-  skip_on_cran()
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, manual_folder, hdr_folder = hdr_folder),
                "class2use must be specified when extracting manual biovolume data")
@@ -112,3 +104,4 @@ test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)
 })
+

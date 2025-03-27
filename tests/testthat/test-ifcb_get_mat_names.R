@@ -1,6 +1,4 @@
 test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file", {
-  # Skip slow test on CRAN
-  skip_on_cran()
 
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 
@@ -15,8 +13,6 @@ test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file
 })
 
 test_that("ifcb_get_mat_names handles non-existent MAT file gracefully", {
-  # Skip slow test on CRAN
-  skip_on_cran()
 
   # Define a non-existent file path
   non_existent_file <- "non_existent_file.mat"
@@ -30,7 +26,6 @@ test_that("ifcb_get_mat_names handles non-existent MAT file gracefully", {
 test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file using python", {
 
   skip_if_no_scipy()
-  skip_on_cran()
 
   mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 

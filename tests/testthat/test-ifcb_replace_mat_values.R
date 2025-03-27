@@ -1,7 +1,6 @@
 test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", {
   # Skip if Python is not available
   skip_if_no_scipy()
-  skip_on_cran()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
