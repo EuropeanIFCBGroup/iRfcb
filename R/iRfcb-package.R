@@ -6,7 +6,7 @@
 #' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
 #'   filter first full_join group_by if_any left_join mutate n n_distinct
 #'   pull relocate rename rename_with rowwise select slice_min summarise summarize
-#'   ungroup %>% as_tibble tibble all_of contains
+#'   ungroup %>% as_tibble tibble all_of contains row_number
 #' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text
 #'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
 #'   annotate
