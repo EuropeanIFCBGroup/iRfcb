@@ -134,8 +134,17 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
       # Find the path to the ADC file
       adcfile <- adc_files[grepl(sample_name, adc_files)]
 
+      # Check if no ADC file was found
+      if (length(adcfile) == 0) {
+        warning(paste("ADC file not found for sample:", sample_name))
+        next
+      }
+
       if (length(adcfile) > 1) {
-        stop("More than one .adc found for sample: ", sample_name)
+        # If multiple ADC files are found, use the first one
+        adcfile <- adcfile[1]
+
+        warning("More than one .adc found for sample, will continue with: ", adcfile)
       }
 
       # Check if the ADC file exists
