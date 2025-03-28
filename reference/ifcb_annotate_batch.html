@@ -62,12 +62,13 @@ These <code>.mat</code> can be used with the code in the <code>ifcb-analysis</co
 <span>  <span class="va">png_images</span>,</span>
 <span>  <span class="va">class</span>,</span>
 <span>  <span class="va">manual_folder</span>,</span>
-<span>  <span class="va">adc_folder</span>,</span>
+<span>  <span class="va">adc_files</span>,</span>
 <span>  <span class="va">class2use_file</span>,</span>
 <span>  manual_output <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  manual_recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  unclassified_id <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  do_compression <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  do_compression <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  adc_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,8 +88,8 @@ These <code>.mat</code> can be used with the code in the <code>ifcb-analysis</co
 <dd><p>A character string specifying the path to the folder containing the manual <code>.mat</code> classlist files.</p></dd>
 
 
-<dt id="arg-adc-folder">adc_folder<a class="anchor" aria-label="anchor" href="#arg-adc-folder"></a></dt>
-<dd><p>A character string specifying the path to the base folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD). Each subfolder contains ADC files, which are used to determine the number of regions of interest (ROIs) for each sample when creating new manual <code>.mat</code> files.</p></dd>
+<dt id="arg-adc-files">adc_files<a class="anchor" aria-label="anchor" href="#arg-adc-files"></a></dt>
+<dd><p>A character string specifying the path to the folder containing the raw data, organized in subfolders by year (YYYY) and date (DYYYYMMDD), or a vector with full paths to the <code>.adc</code> files. Each ADC file is used to determine the number of regions of interest (ROIs) for each sample when creating new manual <code>.mat</code> files.</p></dd>
 
 
 <dt id="arg-class-use-file">class2use_file<a class="anchor" aria-label="anchor" href="#arg-class-use-file"></a></dt>
@@ -109,6 +110,11 @@ These <code>.mat</code> can be used with the code in the <code>ifcb-analysis</co
 
 <dt id="arg-do-compression">do_compression<a class="anchor" aria-label="anchor" href="#arg-do-compression"></a></dt>
 <dd><p>A logical value indicating whether to compress the .mat file. Default is TRUE.</p></dd>
+
+
+<dt id="arg-adc-folder">adc_folder<a class="anchor" aria-label="anchor" href="#arg-adc-folder"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a></p>
+<p>Use <code>adc_files</code> instead.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -149,7 +155,7 @@ classes in <code>class2use_file</code>. If no match is found, an error is thrown
 <span class="r-in"><span>                 <span class="st">"D20230714T102127_IFCB134_00069.png"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  class <span class="op">=</span> <span class="st">"Nodularia_spumigena"</span>,</span></span>
 <span class="r-in"><span>  manual_folder <span class="op">=</span> <span class="st">"path/to/manual"</span>,</span></span>
-<span class="r-in"><span>  adc_folder <span class="op">=</span> <span class="st">"path/to/adc"</span>,</span></span>
+<span class="r-in"><span>  adc_files <span class="op">=</span> <span class="st">"path/to/adc"</span>,</span></span>
 <span class="r-in"><span>  class2use_file <span class="op">=</span> <span class="st">"path/to/class2use.mat"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
