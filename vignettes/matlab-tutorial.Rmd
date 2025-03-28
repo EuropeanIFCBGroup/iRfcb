@@ -331,7 +331,7 @@ ifcb_annotate_batch(
   png_images = correction$image_filename,
   class = "Alexandrium_pseudogonyaulax",
   manual_folder = "data/manual",
-  adc_folder = "data/data",
+  adc_files = "data/data",
   class2use_file = "data/config/class2use.mat"
 )
 
