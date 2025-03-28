@@ -19,6 +19,7 @@ utils::globalVariables(c("name", "manual"))
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
+#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param roi_folder
 #'    `r lifecycle::badge("deprecated")`
@@ -51,7 +52,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                                           skip_class = NA, verbose = TRUE, manual_recursive = FALSE,
                                           roi_recursive = TRUE, overwrite = FALSE, scale_bar_um = NULL,
                                           scale_micron_factor = 1/3.4, scale_bar_position = "bottomright",
-                                          scale_bar_color = "black", use_python = FALSE,
+                                          scale_bar_color = "black", old_adc = FALSE, use_python = FALSE,
                                           roi_folder = deprecated()) {
 
   # Warn the user if roi_folder is used
@@ -151,7 +152,8 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                         scale_micron_factor = scale_micron_factor,
                         scale_bar_position = scale_bar_position,
                         scale_bar_color = scale_bar_color,
-                        overwrite = overwrite
+                        overwrite = overwrite,
+                        old_adc = old_adc
                         )
     }
   }

@@ -1,6 +1,4 @@
 test_that("ifcb_count_mat_annotations works correctly", {
-  # Skip slow test on CRAN
-  skip_on_cran()
 
   # Define paths to the test data
   test_data_zip <- test_path("test_data/test_data.zip")

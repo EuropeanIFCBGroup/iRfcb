@@ -42,6 +42,11 @@ ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, un
   # Import the Python function
   source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
 
+  # Check if the output directory exists, if not create it
+  if(!dir.exists(dirname(output_file))) {
+    dir.create(dirname(output_file), recursive = TRUE)
+  }
+
   # Create the MAT file
   create_and_save_mat_structure(as.integer(roi_length),
                                 as.character(class2use),

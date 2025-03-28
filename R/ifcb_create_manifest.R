@@ -51,6 +51,11 @@ ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_p
   # Format the file information as "filename [size bytes]"
   manifest_content <- paste0(manifest_df$file, " [", formatC(as.numeric(manifest_df$size), format = "f", big.mark = ",", digits = 0), " bytes]")
 
+  # Create dir if not exists
+  if (!dir.exists(dirname(manifest_path))) {
+    dir.create(dirname(manifest_path), recursive = TRUE)
+  }
+
   # Write the manifest content to MANIFEST.txt
   writeLines(manifest_content, manifest_path)
 

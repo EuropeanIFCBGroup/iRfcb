@@ -1,7 +1,6 @@
 test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
   # Skip if scipy is not available
   skip_if_no_scipy()
-  skip_on_cran()
 
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config

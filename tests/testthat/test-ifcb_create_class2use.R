@@ -1,7 +1,6 @@
 test_that("ifcb_create_class2use creates .mat file correctly", {
   # Skip if Python is not available
   skip_if_no_scipy()
-  skip_on_cran()
 
   # Define test parameters
   classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")

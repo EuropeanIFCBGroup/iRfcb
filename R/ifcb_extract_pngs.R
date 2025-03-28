@@ -15,6 +15,7 @@
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
+#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return This function is called for its side effects: it writes PNG images to a directory.
@@ -35,7 +36,8 @@
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
 ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL,
                               gamma = 1, overwrite = FALSE, scale_bar_um = NULL, scale_micron_factor = 1/3.4,
-                              scale_bar_position = "bottomright", scale_bar_color = "black", verbose = TRUE) {
+                              scale_bar_position = "bottomright", scale_bar_color = "black", old_adc = FALSE,
+                              verbose = TRUE) {
 
   # Valid positions for scale bar
   valid_positions <- c("topright", "topleft", "bottomright", "bottomleft")
@@ -60,15 +62,15 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   # Get ADC data for start byte and length of each ROI
   adcfile <- sub("\\.roi$", ".adc", roi_file)
   adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
-  x <- as.numeric(adcdata$V16)
-  y <- as.numeric(adcdata$V17)
-  startbyte <- as.numeric(adcdata$V18)
+  x <- as.numeric(if (old_adc) adcdata$V12 else adcdata$V16)
+  y <- as.numeric(if (old_adc) adcdata$V13 else adcdata$V17)
+  startbyte <- as.numeric(if (old_adc) adcdata$V14 else adcdata$V18)
 
   if (!is.null(ROInumbers)) {
     adcdata <- adcdata[ROInumbers,]
-    x <- as.numeric(adcdata$V16)
-    y <- as.numeric(adcdata$V17)
-    startbyte <- as.numeric(adcdata$V18)
+    x <- as.numeric(if (old_adc) adcdata$V12 else adcdata$V16)
+    y <- as.numeric(if (old_adc) adcdata$V13 else adcdata$V17)
+    startbyte <- as.numeric(if (old_adc) adcdata$V14 else adcdata$V18)
   } else {
     ROInumbers <- seq_along(startbyte)
   }

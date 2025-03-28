@@ -68,7 +68,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   hdr_data <- hdr_data %>%
     dplyr::group_by(file, parameter) %>%
     dplyr::mutate(
-      parameter = if (n() > 1) paste0(parameter, "_", row_number()) else parameter
+      parameter = if (n() > 1) paste0(parameter, "_", dplyr::row_number()) else parameter
     ) %>%
     dplyr::ungroup()
 
