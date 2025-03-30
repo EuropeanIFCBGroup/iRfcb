@@ -4,12 +4,21 @@
 \alias{ifcb_download_whoi_plankton}
 \title{Download and Extract WHOI-Plankton Data}
 \usage{
-ifcb_download_whoi_plankton(years, dest_folder)
+ifcb_download_whoi_plankton(
+  years,
+  dest_folder,
+  max_retries = 10,
+  quiet = FALSE
+)
 }
 \arguments{
-\item{years}{A vector of years (numeric or character) indicating which datasets to download.}
+\item{years}{A vector of years (numeric or character) indicating which datasets to download. The available years are currently 2006 to 2014.}
 
 \item{dest_folder}{A string specifying the destination folder where the files will be extracted.}
+
+\item{max_retries}{An integer specifying the maximum number of attempts to retrieve data. Default is 10.}
+
+\item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.}
 }
 \value{
 No return value. Files are downloaded and extracted to \code{dest_folder}.
@@ -21,6 +30,6 @@ The extracted \code{.png} files are saved in the specified destination folder.
 }
 \examples{
 \dontrun{
-ifcb_download_whoi_plankton(c(2006, 2007), "data/")
+ifcb_download_whoi_plankton(c(2006, 2007), "data")
 }
 }

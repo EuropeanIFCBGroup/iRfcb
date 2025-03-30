@@ -35,7 +35,7 @@ Imports:
   worrms,
   png,
   R.matlab,
-  curl,
+  curl (>= 5.0.0),
   lubridate
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

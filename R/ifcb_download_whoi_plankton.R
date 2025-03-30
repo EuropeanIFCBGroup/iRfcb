@@ -4,16 +4,18 @@
 #' from \url{https://hdl.handle.net/1912/7341}.
 #' The extracted `.png` files are saved in the specified destination folder.
 #'
-#' @param years A vector of years (numeric or character) indicating which datasets to download.
+#' @param years A vector of years (numeric or character) indicating which datasets to download. The available years are currently 2006 to 2014.
 #' @param dest_folder A string specifying the destination folder where the files will be extracted.
+#' @param max_retries An integer specifying the maximum number of attempts to retrieve data. Default is 10.
+#' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.
 #'
 #' @return No return value. Files are downloaded and extracted to `dest_folder`.
 #' @examples
 #' \dontrun{
-#' ifcb_download_whoi_plankton(c(2006, 2007), "data/")
+#' ifcb_download_whoi_plankton(c(2006, 2007), "data")
 #' }
 #' @export
-ifcb_download_whoi_plankton <- function(years, dest_folder) {
+ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, quiet = FALSE) {
   # Define the URL mapping
   url_map <- list(
     "2006" = "https://darchive.mblwhoilibrary.org/bitstreams/6968c380-3713-57b1-bdca-5b21e514a996/download",
@@ -27,30 +29,98 @@ ifcb_download_whoi_plankton <- function(years, dest_folder) {
     "2014" = "https://darchive.mblwhoilibrary.org/bitstreams/5bf89ef0-0155-5ac2-923b-f2a8578c963a/download"
   )
 
+  # Convert the list to a dataframe
+  url_df <- data.frame(
+    year = names(url_map),
+    url = unlist(url_map),
+    zip_files = file.path(dest_folder, paste0(names(url_map), ".zip")),
+    stringsAsFactors = FALSE,
+    row.names = NULL
+  )
+
+  # Convert years to character
+  years <- as.character(years)
+
+  # Check if the specified years are available
+  not_available <- years[!years %in% url_df$year]
+
+  # Filter the years to only include those available
+  years <- years[years %in% url_df$year]
+
+  # Filter the dataframe to only include the specified years
+  url_df <- url_df %>%
+    filter(year %in% years)
+
+  # Copy the original dataframe for later use
+  url_df_all <- url_df
+
+  # Check if any valid years are specified
+  if (nrow(url_df) == 0) {
+    stop("No valid years specified.")
+  }
+
+  # Warn if any years are not available
+  if (length(not_available) > 0) {
+    warning("Skipping year(s) ", paste(not_available, collapse = ", "), ": No URL found.")
+  }
+
   # Ensure the destination folder exists
   if (!dir.exists(dest_folder)) {
     dir.create(dest_folder, recursive = TRUE)
   }
 
-  for (year in years) {
-    year <- as.character(year)
-    if (year %in% names(url_map)) {
-      zip_file <- file.path(dest_folder, paste0(year, ".zip"))
+  # Retry logic (max 5 attempts)
+  max_retries <- max_retries
+  attempt <- 1
+  success <- FALSE
 
-      # Download the file using curl package
-      message("Downloading WHOI Plankton ", year, "...")
-      handle <- curl::new_handle()
-      curl::curl_download(url_map[[year]], zip_file, handle = handle)
+  while (attempt <= max_retries && !success) {
+    if (!quiet) message("Downloading WHOI-Plankton images from year(s):\n", paste(url_df$year, collapse = ", "), " (Attempt ", attempt, ")...")
 
-      # Extract the file
-      message("Extracting ", year, "...")
-      unzip(zip_file, exdir = dest_folder)
+    # Perform the download with multi_download()
+    res <- curl::multi_download(
+      urls = url_df$url,
+      destfiles = url_df$zip_files,
+      resume = TRUE, # Enable resuming
+      progress = !quiet, # Show progress if not quiet
+      multiplex = TRUE
+    )
 
-      # Remove the zip file after extraction
-      file.remove(zip_file)
+    # Split the results into complete and incomplete downloads
+    complete <- res %>%
+      filter(success)
+
+    # Check if all downloads were successful
+    incomplete <- res %>%
+      filter(!success)
+
+    # Check results
+    if (nrow(incomplete) == 0) {
+      if (!quiet) message("Download completed for year(s):\n", paste(years, collapse = ", "))
+      success <- TRUE
     } else {
-      message("Skipping year ", year, ": No URL found.")
+      url_df_complete <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(complete$url)))
+      url_df <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(incomplete$url)))
+      if (!quiet && nrow(url_df_complete) > 0) message("Download successful for year(s):\n", paste(url_df_complete$year, collapse = ", "))
+      if (!quiet) message("Download interrupted for year(s):\n", paste(url_df$year, collapse = ", "), "\nRetrying...")
+      attempt <- attempt + 1
     }
   }
-  message("Download and extraction complete.")
+
+  # Extract the files
+  for (yr in years) {
+
+    # Filter the dataframe to only include the specified year
+    url_df_year <- url_df_all %>%
+      filter(year == yr)
+
+    # Extract if the download was successful
+    if (file.exists(url_df_year$zip_files)) {
+      if (!quiet) message("Extracting .png images from year ", yr, "...")
+      unzip(url_df_year$zip_files, exdir = dest_folder)
+      file.remove(url_df_year$zip_files) # Remove zip file after extraction
+    }
+  }
+
+  if (!quiet) message("Download and extraction complete.")
 }
