@@ -727,3 +727,36 @@ extract_aphia_id <- function(record) {
     record$AphiaID[1]
   }
 }
+
+
+
+
+
+
+process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
+  sapply(ifcb_string, function(str) {
+    # Check if the string matches the first format (IFCB1_2014_188_222013)
+    if (grepl("^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}$", str)) {
+
+      # Extract components using regex
+      ifcb_parts <- str_match(str, "^(IFCB\\d+)_(\\d{4})_(\\d{3})_(\\d{6})$")
+
+      # Convert day of year to date
+      format(as.Date(paste0(ifcb_parts[,3], "-01-01")) + as.integer(ifcb_parts[,4]) - 1, "D%Y%m%d")
+
+    } else if (grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", str)) {
+
+      # Extract components using regex
+      ifcb_parts <- str_match(str, "^D(\\d{8})T(\\d{6})_IFCB(\\d+)$")
+
+      # Extract date (YYYYMMDD) from the match
+      ifcb_parts[,2]
+
+    } else {
+      if (!quiet) {
+        message("Unknown format: ", str)
+      }
+      NA  # Return NA for unknown formats
+    }
+  }, USE.NAMES = FALSE)
+}
