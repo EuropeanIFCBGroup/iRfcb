@@ -71,8 +71,20 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
        Please provide a valid directory path for `features_folder` to store the downloaded files.")
   }
 
-  # Download WHOI-Plankton png images
-  ifcb_download_whoi_plankton(years, png_folder, quiet = quiet)
+  # List all available data
+  available_data <- basename(list.dirs(png_folder, recursive = FALSE))
+
+  # Check if all requested years are already available
+  years <- years[!years %in% available_data]
+
+  # Check if all requested years are already available
+  if (length(years) == 0) {
+    if (!quiet) message("All requested WHOI-Plankton data folders are already available in: ", png_folder)
+  } else {
+    if (!quiet) message("Downloading and preparing WHOI-Plankton data for the following years: ", paste(years, collapse = ", "))
+    # Download WHOI-Plankton png images
+    ifcb_download_whoi_plankton(years, png_folder, quiet = quiet)
+  }
 
   # Update years with the successful downloads
   years <- basename(list.dirs(png_folder, recursive = FALSE))
@@ -83,6 +95,8 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     # Define paths for current year
     png_path <- file.path(png_folder, year)
     data_path <- file.path(raw_folder, year)
+    blobs_path <- file.path(blobs_folder, year)
+    features_path <- file.path(features_folder, year)
 
     # List all png files for the current year
     png_files <- list.files(path = png_path, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
@@ -113,14 +127,14 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
 
     # Download dashboard data
     ifcb_download_dashboard_data(dashboard_url, samples, file_types = c("roi", "adc", "hdr"),
-                                 raw_folder, convert_filenames = convert_filenames, convert_adc = convert_adc,
+                                 data_path, convert_filenames = convert_filenames, convert_adc = convert_adc,
                                  parallel_downloads = parallel_downloads, sleep_time = sleep_time,
                                  multi_timeout = multi_timeout, quiet = quiet)
 
     if (download_blobs) {
       # Download blobs
       ifcb_download_dashboard_data(dashboard_url, samples, file_types = "blobs",
-                                   blobs_folder, convert_filenames = convert_filenames, convert_adc = convert_adc,
+                                   blobs_path, convert_filenames = convert_filenames, convert_adc = convert_adc,
                                    parallel_downloads = parallel_downloads, sleep_time = sleep_time,
                                    multi_timeout = multi_timeout, quiet = quiet)
     }
@@ -128,7 +142,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     if (download_features) {
       # Download features
       ifcb_download_dashboard_data(dashboard_url, samples, file_types = "features",
-                                   features_folder, convert_filenames = convert_filenames, convert_adc = convert_adc,
+                                   features_path, convert_filenames = convert_filenames, convert_adc = convert_adc,
                                    parallel_downloads = parallel_downloads, sleep_time = sleep_time,
                                    multi_timeout = multi_timeout, quiet = quiet)
     }
@@ -205,9 +219,9 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     # Get unique sample names
     sample_names <- unique(rename_df$sample)
 
-    for (i in seq_along(sample_names)) {
+    for (j in seq_along(sample_names)) {
 
-      sample_name <- sample_names[i]
+      sample_name <- sample_names[j]
 
       # Find the path to the ADC file
       adcfile <- adcfiles[grepl(sample_name, adcfiles)]
@@ -246,7 +260,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
                                     do_compression = TRUE)
 
       # Update progress bar
-      if (!quiet) setTxtProgressBar(pb, i)
+      if (!quiet) setTxtProgressBar(pb, j)
     }
     # Close the progress bar after the loop finishes
     if (!quiet) close(pb)

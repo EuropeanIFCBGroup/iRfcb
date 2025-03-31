@@ -65,7 +65,7 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = TRUE,
     convert_adc = TRUE,
-    quiet = TRUE
+    quiet = FALSE
   )
 
   # Expect that the destination folder contains the expected files
@@ -73,6 +73,20 @@ test_that("ifcb_download_dashboard_data download data correctly", {
 
   # Expect that the creation time of the hdr file is the same
   expect_equal(file.info(file.path(dest_dir, "D20060825", "D20060825T000054_IFCB1.adc"))$ctime, ctime)
+
+  # Download autoclass data
+  ifcb_download_dashboard_data(
+    dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
+    samples = "IFCB1_2006_237_000054",
+    file_types = "autoclass",
+    dest_dir = dest_dir,
+    convert_filenames = FALSE,
+    convert_adc = FALSE,
+    quiet = TRUE
+  )
+
+  # Expect that the destination folder contains the expected files
+  expect_equal(length(list.files(dest_dir, recursive = TRUE)), 4)
 
   # Clean up
   unlink(dest_dir, recursive = TRUE)

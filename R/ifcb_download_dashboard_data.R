@@ -85,7 +85,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
     dashboard_url <- paste0(dashboard_url, "/")
   }
 
-  sample_url <- paste0(dashboard_url, samples)
+  sample_url <- paste0(dashboard_url, unique(samples))
 
   for (ext in file_types) {
     file_url <- paste0(sample_url, switch(
@@ -150,7 +150,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
         paste0(".", ext)  # Default case for roi, zip, hdr, adc
       )
 
-      # Construct the filename in the desired format: DYYYYMMDD_THHMMSS_IFCB<ifcb_number>_YYYY_DDD_HHMMSS.ext
+      # Construct the filename in the desired format
       filename[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)] <- paste0(date_object[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)], "T", substr(time, 1, 2), substr(time, 3, 4), substr(time, 5, 6), "_", ifcb_number, file_suffix)
     } else {
       filename <- basename(file_url)
@@ -162,6 +162,9 @@ ifcb_download_dashboard_data <- function(dashboard_url,
         date_object <- sub("I", "D", date_object)
       }
 
+      if (ext %in% c("features", "autoclass")) {
+        destfile <- file.path(dest_dir, filename)
+      }
       destfile <- file.path(dest_dir, date_object, filename)  # Use date_object with a D as directory
     } else {
       destfile <- file.path(dest_dir, filename)  # If no date_object, just the filename
@@ -188,7 +191,6 @@ ifcb_download_dashboard_data <- function(dashboard_url,
           # Remove the extension from the filename in chunk$filename
           base_no_ext <- tools::file_path_sans_ext(f)
           # Construct a regex pattern that allows an optional version suffix before .csv
-          # Example: "^D20220312T124757_IFCB127_features(_v\\w+)?\\.csv$"
           pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.csv$")
           any(grepl(pattern, exisiting_filenames))
         })
@@ -235,9 +237,9 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       }
 
       # Extract the relevant portion from the Content-Disposition header and modify the filename
-      for (i in 1:nrow(res)) {
+      for (j in 1:nrow(res)) {
         # Get the headers for this download
-        headers <- res$headers[[i]]
+        headers <- res$headers[[j]]
 
         # Extract the Content-Disposition header
         content_disposition <- headers[grep("Content-Disposition", headers)]
