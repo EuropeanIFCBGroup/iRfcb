@@ -728,11 +728,29 @@ extract_aphia_id <- function(record) {
   }
 }
 
-
-
-
-
-
+#' Process IFCB String
+#'
+#' This helper function processes IFCB (Imaging FlowCytobot) filenames and extracts the date component in `YYYYMMDD` format.
+#' It supports two formats:
+#' - `IFCB1_2014_188_222013`: Extracts the date using year and day-of-year information.
+#' - `D20240101T120000_IFCB1`: Extracts the date directly from the timestamp.
+#'
+#' @param ifcb_string A character vector of IFCB filenames to process.
+#' @param quiet A logical indicating whether to suppress messages for unknown formats. Defaults to `FALSE`.
+#'
+#' @return A character vector containing extracted dates in `YYYYMMDD` format, or `NA` for unknown formats.
+#'
+#' @examples
+#' # Example 1: Process a string in the 'IFCB1_2014_188_222013' format
+#' process_ifcb_string("IFCB1_2014_188_222013")
+#'
+#' # Example 2: Process a string in the 'D20240101T120000_IFCB1' format
+#' process_ifcb_string("D20240101T120000_IFCB1")
+#'
+#' # Example 3: Process an unknown format
+#' process_ifcb_string("UnknownFormat_12345")
+#'
+#' @export
 process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
   sapply(ifcb_string, function(str) {
     # Check if the string matches the first format (IFCB1_2014_188_222013)
@@ -750,7 +768,7 @@ process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
       ifcb_parts <- str_match(str, "^D(\\d{8})T(\\d{6})_IFCB(\\d+)$")
 
       # Extract date (YYYYMMDD) from the match
-      ifcb_parts[,2]
+      paste0("D", ifcb_parts[,2])
 
     } else {
       if (!quiet) {

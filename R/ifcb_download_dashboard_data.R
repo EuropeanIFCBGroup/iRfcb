@@ -3,16 +3,20 @@
 #' This function downloads specified IFCB data files from a given IFCB Dashboard URL.
 #' It supports optional filename conversion and ADC file adjustments from the old IFCB file format.
 #'
+#' @details
+#' This function can download several files in parallel if the server allows it. The download parameters can be adjusted using the `parallel_downloads`, `sleep_time` and `multi_timeout` arguments.
+#'
 #' @param dashboard_url Character. The base URL of the IFCB dashboard (e.g., `"https://ifcb-data.whoi.edu"`).
-#'                      If no subpath (e.g., `/data/` or `/mvco/`) is included, `/data/` will be added automatically.
+#'                      If no subpath (e.g., `/data/` or `/mvco/`) is included, `/data/` will be added automatically. For the "features" and "autoclass" `file_types`, the dataset name needs to be
+#'                      included in the url (e.g. `"https://ifcb-data.whoi.edu/mvco/"`).
 #' @param samples Character vector. The IFCB sample identifiers (e.g., `"IFCB1_2014_188_222013"` or `"D20220807T025424_IFCB010"`).
 #' @param file_types Character vector. Specifies which file types to download.
 #'                   Allowed values: `"blobs"`, `"features"`, `"autoclass"`, `"roi"`, `"zip"`, `"hdr"`, `"adc"`.
 #' @param dest_dir Character. The directory where downloaded files will be saved.
 #' @param convert_filenames Logical. If `TRUE`, converts filenames of the old format `"IFCBxxx_YYYY_DDD_HHMMSS"`
-#'   to the new format (`DYYYYMMDDTHHMMSS_IFCBXXX`).
+#'   to the new format (`DYYYYMMDDTHHMMSS_IFCBXXX`). Default is `FALSE`.
 #'   `r lifecycle::badge("experimental")`
-#' @param convert_adc Logical. If `TRUE`, adjusts ADC files from older IFCB instruments
+#' @param convert_adc Logical. If `TRUE`, adjusts `.adc` files from older IFCB instruments
 #'   (IFCB1–6, with filenames in the format `"IFCBxxx_YYYY_DDD_HHMMSS"`) by inserting
 #'   four empty columns after column 7 to match the newer format. Default is `FALSE`.
 #'   `r lifecycle::badge("experimental")`
@@ -34,9 +38,9 @@
 #' @examples
 #' \dontrun{
 #' ifcb_download_dashboard_data(
-#'   dashboard_url = "https://ifcb-data.whoi.edu",
+#'   dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
 #'   samples = "IFCB1_2014_188_222013",
-#'   file_types = c("blobs", "features"),
+#'   file_types = c("blobs", "autoclass"),
 #'   dest_dir = "data",
 #'   convert_filenames = FALSE,
 #'   convert_adc = FALSE
@@ -92,18 +96,27 @@ ifcb_download_dashboard_data <- function(dashboard_url,
     ))
 
     # Extract the IFCB string
-    ifcb_string <- tools::file_path_sans_ext(basename(sample_url))
+    ifcb_strings <- tools::file_path_sans_ext(basename(sample_url))
 
     # Initialize date_object as NULL
-    date_object <- NULL
+    date_object <- NA
 
     # Process ifcb string to extract date
-    date_object <- process_ifcb_string(ifcb_string, quiet)
+    date_object <- process_ifcb_string(ifcb_strings, quiet)
+
+    ifcb_string_to_convert <- ifcb_strings[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)]
+
+    filename <- rep(NA, length(ifcb_strings))
 
     # Filename creation logic
-    if (convert_filenames && !is.null(date_object)) {
+    if (convert_filenames && !all(is.na(date_object)) && length(ifcb_string_to_convert) > 0) {
+
+      ifcb_string_no_convert <- file_url[grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)]
+
+      filename[grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)] <- basename(ifcb_string_no_convert)
+
       # Extract the file name part (before the extension)
-      ifcb_string <- tools::file_path_sans_ext(basename(file_url))
+      ifcb_string <- tools::file_path_sans_ext(basename(file_url[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)]))
 
       # Remove "_blob", "_features", "_class_scores" from the string
       ifcb_string <- gsub("_blob", "", ifcb_string)
@@ -125,7 +138,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       } else {
         first_letter <- "I"
       }
-      date_object <- paste0(first_letter, format(as.Date(paste0(year, "-01-01")) + day_of_year - 1, "%Y%m%d"))
+      date_object[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)] <- paste0(first_letter, format(as.Date(paste0(year, "-01-01")) + day_of_year - 1, "%Y%m%d"))
 
       # Map special cases to their corresponding filenames
       file_suffix <- switch(
@@ -137,13 +150,13 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       )
 
       # Construct the filename in the desired format: DYYYYMMDD_THHMMSS_IFCB<ifcb_number>_YYYY_DDD_HHMMSS.ext
-      filename <- paste0(date_object, "T", substr(time, 1, 2), substr(time, 3, 4), substr(time, 5, 6), "_", ifcb_number, file_suffix)
+      filename[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)] <- paste0(date_object[!grepl("^D\\d{8}T\\d{6}_IFCB\\d+$", ifcb_strings)], "T", substr(time, 1, 2), substr(time, 3, 4), substr(time, 5, 6), "_", ifcb_number, file_suffix)
     } else {
       filename <- basename(file_url)
     }
 
     # Set the destination file path
-    if (!is.null(date_object)) {
+    if (!all(is.na(date_object))) {
       if (convert_filenames & !convert_adc) {
         date_object <- sub("I", "D", date_object)
       }
@@ -165,8 +178,23 @@ ifcb_download_dashboard_data <- function(dashboard_url,
     for (i in seq(1, nrow(file_df), by = parallel_downloads)) {
       chunk <- file_df[i:min(i + parallel_downloads - 1, nrow(file_df)), ]
 
-      # Remove already existing files *before* iterating over chunk
-      existing_files <- file.exists(chunk$destfile)
+      if (ext %in% c("features", "autoclass")) {
+        # Get the list of existing filenames in the directory
+        exisiting_filenames <- list.files(dirname(chunk$destfile), pattern = "\\.csv$")
+
+        # Create a vector of TRUE/FALSE for each file in chunk$filename based on the base name comparison
+        existing_files <- sapply(chunk$filename, function(f) {
+          # Remove the extension from the filename in chunk$filename
+          base_no_ext <- tools::file_path_sans_ext(f)
+          # Construct a regex pattern that allows an optional version suffix before .csv
+          # Example: "^D20220312T124757_IFCB127_features(_v\\w+)?\\.csv$"
+          pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.csv$")
+          any(grepl(pattern, exisiting_filenames))
+        })
+      } else {
+        # Remove already existing files *before* iterating over chunk
+        existing_files <- file.exists(chunk$destfile)
+      }
 
       # Print each skipped file on a separate line
       if (any(existing_files)) {
@@ -193,13 +221,43 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       )
 
       # Check for failed downloads
-      if (any(!res$success, na.rm = TRUE)) {
+      if (any(!res$status_code == 200, na.rm = TRUE)) {
         warning("Some downloads failed:\n",
-                paste(res$url[!res$success], collapse = "\n"),
+                paste(res$url[!res$status_code == 200], collapse = "\n"),
                 "\nPlease check the following:\n",
                 "1. Verify the URL(s) for any errors or issues.\n",
                 "2. Retry the download in case of transient network issues.\n",
                 "3. Consider adjusting the `parallel_downloads`, `multi_timeout`, or `sleep_time` parameters to optimize the download process.")
+                # Remove partial downloads
+                bad_files <- dplyr::filter(res, !status_code == 200)
+                unlink(bad_files$destfile)
+      }
+
+      # Extract the relevant portion from the Content-Disposition header and modify the filename
+      for (i in 1:nrow(res)) {
+        # Get the headers for this download
+        headers <- res$headers[[i]]
+
+        # Extract the Content-Disposition header
+        content_disposition <- headers[grep("Content-Disposition", headers)]
+
+        # If Content-Disposition is found, extract the suffix after '_v'
+        if (length(content_disposition) > 0) {
+          # Adjust the regex to not expect quotes since the header doesn't include them
+          file_suffix <- str_match(content_disposition, 'filename=.*_v([^\\s;]+)\\.csv')[, 2]
+
+          if (!is.na(file_suffix)) {
+            # Construct the new filename by appending '_v' and the extracted suffix to the custom destfile
+            custom_destfile <- res$destfile[i]
+            new_destfile <- sub("\\.csv$", paste0("_v", file_suffix, ".csv"), custom_destfile)
+
+            # Rename the file
+            file_rename <- file.rename(res$destfile[i], new_destfile)
+
+            # Update the destfile in the result (if needed)
+            res$destfile[i] <- new_destfile
+          }
+        }
       }
 
       # Wait the next batch of downloads
@@ -235,11 +293,6 @@ ifcb_download_dashboard_data <- function(dashboard_url,
           conn <- file(file, "wb")
           write.table(adc_file, conn, sep = ",", row.names = FALSE, col.names = FALSE, na = "", eol = "\n")
           close(conn)
-
-          # Print message
-          if (!quiet) {
-            message("Adjusted ADC file to new format: ", file)
-          }
         }
       }
     }

@@ -19,7 +19,8 @@ ifcb_download_dashboard_data(
 }
 \arguments{
 \item{dashboard_url}{Character. The base URL of the IFCB dashboard (e.g., \code{"https://ifcb-data.whoi.edu"}).
-If no subpath (e.g., \verb{/data/} or \verb{/mvco/}) is included, \verb{/data/} will be added automatically.}
+If no subpath (e.g., \verb{/data/} or \verb{/mvco/}) is included, \verb{/data/} will be added automatically. For the "features" and "autoclass" \code{file_types}, the dataset name needs to be
+included in the url (e.g. \code{"https://ifcb-data.whoi.edu/mvco/"}).}
 
 \item{samples}{Character vector. The IFCB sample identifiers (e.g., \code{"IFCB1_2014_188_222013"} or \code{"D20220807T025424_IFCB010"}).}
 
@@ -29,10 +30,10 @@ Allowed values: \code{"blobs"}, \code{"features"}, \code{"autoclass"}, \code{"ro
 \item{dest_dir}{Character. The directory where downloaded files will be saved.}
 
 \item{convert_filenames}{Logical. If \code{TRUE}, converts filenames of the old format \code{"IFCBxxx_YYYY_DDD_HHMMSS"}
-to the new format (\code{DYYYYMMDDTHHMMSS_IFCBXXX}).
+to the new format (\code{DYYYYMMDDTHHMMSS_IFCBXXX}). Default is \code{FALSE}.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
-\item{convert_adc}{Logical. If \code{TRUE}, adjusts ADC files from older IFCB instruments
+\item{convert_adc}{Logical. If \code{TRUE}, adjusts \code{.adc} files from older IFCB instruments
 (IFCB1–6, with filenames in the format \code{"IFCBxxx_YYYY_DDD_HHMMSS"}) by inserting
 four empty columns after column 7 to match the newer format. Default is \code{FALSE}.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
@@ -60,12 +61,15 @@ This function does not return a value. It performs the following actions:
 This function downloads specified IFCB data files from a given IFCB Dashboard URL.
 It supports optional filename conversion and ADC file adjustments from the old IFCB file format.
 }
+\details{
+This function can download several files in parallel if the server allows it. The download parameters can be adjusted using the \code{parallel_downloads}, \code{sleep_time} and \code{multi_timeout} arguments.
+}
 \examples{
 \dontrun{
 ifcb_download_dashboard_data(
-  dashboard_url = "https://ifcb-data.whoi.edu",
+  dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
   samples = "IFCB1_2014_188_222013",
-  file_types = c("blobs", "features"),
+  file_types = c("blobs", "autoclass"),
   dest_dir = "data",
   convert_filenames = FALSE,
   convert_adc = FALSE
