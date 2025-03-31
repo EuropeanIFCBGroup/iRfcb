@@ -1,3 +1,4 @@
+utils::globalVariables(c("folder", "formatted_roi"))
 #' Download and Prepare WHOI-Plankton Data
 #'
 #' This function downloads manually annotated images from the WHOI-Plankton dataset (\url{https://hdl.handle.net/1912/7341}) and generates manual

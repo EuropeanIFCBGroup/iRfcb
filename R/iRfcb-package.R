@@ -28,6 +28,7 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
 #' @importFrom utils flush.console read.csv read.table setTxtProgressBar txtProgressBar
+#'   write.table
 #' @importFrom worrms wm_records_names
 #' @importFrom zip unzip zip zipr
 ## usethis namespace: end

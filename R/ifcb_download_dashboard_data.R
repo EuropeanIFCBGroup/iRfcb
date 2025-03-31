@@ -1,3 +1,4 @@
+utils::globalVariables("status_code")
 #' Download IFCB data files from an IFCB Dashboard
 #'
 #' This function downloads specified IFCB data files from a given IFCB Dashboard URL.
