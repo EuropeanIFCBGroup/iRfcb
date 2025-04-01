@@ -75,6 +75,8 @@ classification files in \code{.mat} format that can be used to train an image cl
 The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.
+
+To exclude images from the training dataset, either exclude the class completely with the \code{skip_classes} argument, or manually delete specific \code{.png} files from the \code{png_folder} and rerun \code{ifcb_prepare_whoi_plankton}.
 }
 \examples{
 \dontrun{

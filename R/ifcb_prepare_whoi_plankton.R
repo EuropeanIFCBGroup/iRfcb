@@ -9,6 +9,8 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 #' Please note that this function downloads and extracts large amounts of data, which can take considerable time.
 #'
+#' To exclude images from the training dataset, either exclude the class completely with the `skip_classes` argument, or manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+#'
 #' @param years Character vector. Years to download and process. For available years, see \url{https://hdl.handle.net/1912/7341} or \code{\link{ifcb_download_whoi_plankton}}.
 #' @param png_folder Character. Directory where `.png` images will be stored.
 #' @param raw_folder Character. Directory where raw files (`.adc`, `.hdr`, `.roi`) will be stored.
@@ -125,6 +127,8 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
 
     # Get the sample names
     samples <- sample_df$sample
+
+    if (!quiet) message("Downloading IFCB Dashboard data for year ", year)
 
     # Download dashboard data
     ifcb_download_dashboard_data(dashboard_url, samples, file_types = c("roi", "adc", "hdr"),
