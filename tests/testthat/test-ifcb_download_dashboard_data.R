@@ -1,7 +1,7 @@
 test_that("ifcb_download_dashboard_data download data correctly", {
 
   # Skip the test if the internet connection is not available
-  skip_if_offline()
+  skip_if_offline(host = "ifcb-data.whoi.edu")
 
   dest_dir <- file.path(tempdir(), "ifcb_download_dashboard_data")
 
@@ -88,6 +88,13 @@ test_that("ifcb_download_dashboard_data download data correctly", {
   # Expect that the destination folder contains the expected files
   expect_equal(length(list.files(dest_dir, recursive = TRUE)), 4)
 
+  # Verify that helper function works as expected
+  date_object <- process_ifcb_string("D20240101T120000_IFCB1")
+  expect_equal(date_object, "D20240101")
+
+  date_object <- process_ifcb_string("non-valid-format")
+  expect_true(is.na(date_object))
+
   # Clean up
   unlink(dest_dir, recursive = TRUE)
 })
@@ -106,6 +113,17 @@ test_that("ifcb_download_dashboard_data handles errors gracefully", {
     convert_adc = FALSE,
     quiet = TRUE
   ), "Invalid extension")
+
+  # Download hdr data and expect error
+  expect_warning(ifcb_download_dashboard_data(
+    dashboard_url = "https://nodashboard.com",
+    samples = "IFCB1_2014_188_222013",
+    file_types = "hdr",
+    dest_dir = dest_dir,
+    convert_filenames = FALSE,
+    convert_adc = FALSE,
+    quiet = TRUE
+  ), "Some downloads failed")
 
   # Clean up
   unlink(dest_dir, recursive = TRUE)

@@ -68,7 +68,7 @@ four empty columns after column 7 to match the newer format.
 This function does not return a value but downloads, processes, and stores IFCB data.
 }
 \description{
-This function downloads manually annotated images from the WHOI-Plankton dataset (\url{https://hdl.handle.net/1912/7341}) and generates manual
+This function downloads manually annotated images from the WHOI-Plankton dataset (Sosik et al. 2015) and generates manual
 classification files in \code{.mat} format that can be used to train an image classifier using the \code{ifcb-analysis} MATLAB package (Sosik and Olson 2007).
 }
 \details{
@@ -91,6 +91,8 @@ ifcb_prepare_whoi_plankton(
 }
 \references{
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+
+Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. \doi{10.1575/1912/7341}
 }
 \seealso{
 \url{https://hdl.handle.net/1912/7341}, \url{https://whoigit.github.io/whoi-plankton/} \code{\link{ifcb_merge_manual}} \code{\link{ifcb_download_whoi_plankton}} \code{\link{ifcb_download_dashboard_data}}

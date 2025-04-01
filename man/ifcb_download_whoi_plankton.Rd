@@ -24,7 +24,7 @@ ifcb_download_whoi_plankton(
 No return value. Files are downloaded and extracted to \code{dest_folder}.
 }
 \description{
-This function downloads WHOI-Plankton annotated plankton images for specified years
+This function downloads WHOI-Plankton annotated plankton images (Sosik et al. 2015) for specified years
 from \url{https://hdl.handle.net/1912/7341}.
 The extracted \code{.png} files are saved in the specified destination folder.
 }
@@ -32,4 +32,8 @@ The extracted \code{.png} files are saved in the specified destination folder.
 \dontrun{
 ifcb_download_whoi_plankton(c(2006, 2007), "data")
 }
+
+}
+\references{
+Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. \doi{10.1575/1912/7341}
 }

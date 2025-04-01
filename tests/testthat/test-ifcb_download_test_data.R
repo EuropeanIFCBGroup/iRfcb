@@ -1,6 +1,6 @@
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline()
+  skip_if_offline(host = "figshare.scilifelab.se")
   skip_on_cran()
 
   # Setup test environment

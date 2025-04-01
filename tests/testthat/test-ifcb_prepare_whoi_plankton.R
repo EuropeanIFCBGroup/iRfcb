@@ -1,3 +1,48 @@
+test_that("ifcb_prepare_whoi_plankton works", {
+  # Skip if Python is not available
+  skip_if_no_scipy()
+
+  # Skip if offline
+  skip_if_offline(host = "ifcb-data.whoi.edu")
+
+  # Extract test data and define paths
+  zip_path <- test_path("test_data/test_data.zip")
+  temp_dir <- file.path(tempdir(), "ifcb_prepare_whoi_plankton")
+  unzip(zip_path, exdir = temp_dir)
+
+  # Define paths to the unzipped folders
+  png_folder <- file.path(temp_dir, "test_data", "png2", "Mesodinium_rubrum")
+  mesodinium_folder <- file.path(temp_dir, "test_data", "whoi_png", "2006", "Mesodinium_sp")
+
+  dir.create(mesodinium_folder, recursive = TRUE)
+
+  # Rename file to mock a MVCO filename
+  copy <- file.copy(file.path(png_folder, "D20220522T003051_IFCB134_00003.png"),
+                    file.path(mesodinium_folder, "IFCB1_2006_280_035827_00017.png"))
+
+  # Define paths
+  raw_folder <- file.path(temp_dir, "test_data", "whoi_raw")
+  manual_folder <- file.path(temp_dir, "test_data", "whoi_manual")
+  class2use_file <- file.path(temp_dir, "test_data", "whoi_config", "class2use.mat")
+  whoi_png_folder <- file.path(temp_dir, "test_data", "whoi_png")
+  whoi_blobs_folder <- file.path(temp_dir, "test_data", "whoi_blobs")
+
+  # Test the function
+  ifcb_prepare_whoi_plankton(2006,
+                             whoi_png_folder,
+                             raw_folder,
+                             manual_folder,
+                             class2use_file,
+                             download_blobs = TRUE,
+                             blobs_folder = whoi_blobs_folder)
+
+  expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.roi")))
+  expect_true(file.exists(file.path(manual_folder, "D20061007T035827_IFCB1.mat")))
+  expect_true(file.exists(file.path(whoi_blobs_folder, "2006", "D20061007", "D20061007T035827_IFCB1_blob.zip")))
+
+  unlink(temp_dir, recursive = TRUE)
+})
+
 test_that("ifcb_prepare_whoi_plankton throws errors", {
   # Skip if Python is not available
   skip_if_no_scipy()

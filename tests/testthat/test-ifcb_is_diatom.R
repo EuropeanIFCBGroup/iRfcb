@@ -1,6 +1,6 @@
 test_that("ifcb_is_diatom correctly identifies diatoms", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline()
+  skip_if_offline(host = "marinespecies.org")
   skip_on_cran()
 
   # Sample taxa list
@@ -18,7 +18,7 @@ test_that("ifcb_is_diatom correctly identifies diatoms", {
 
 test_that("ifcb_match_taxa_names retries and fails after max_retries", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline()
+  skip_if_offline(host = "marinespecies.org")
   skip_on_cran()
 
   # Mock the wm_records_names function to always throw an error

@@ -1,7 +1,7 @@
 utils::globalVariables(c("folder", "formatted_roi"))
 #' Download and Prepare WHOI-Plankton Data
 #'
-#' This function downloads manually annotated images from the WHOI-Plankton dataset (\url{https://hdl.handle.net/1912/7341}) and generates manual
+#' This function downloads manually annotated images from the WHOI-Plankton dataset (Sosik et al. 2015) and generates manual
 #' classification files in `.mat` format that can be used to train an image classifier using the `ifcb-analysis` MATLAB package (Sosik and Olson 2007).
 #'
 #' @details
@@ -49,6 +49,7 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' }
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+#' @references Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. \doi{10.1575/1912/7341}
 #'
 #' @export
 ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_folder, class2use_file,
