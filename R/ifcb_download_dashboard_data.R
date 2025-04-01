@@ -194,6 +194,16 @@ ifcb_download_dashboard_data <- function(dashboard_url,
           pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.csv$")
           any(grepl(pattern, exisiting_filenames))
         })
+      } else if (ext == "blobs") {
+        # Get the list of existing .zip filenames in the directory
+        existing_filenames <- list.files(dirname(chunk$destfile), pattern = "\\.zip$")
+
+        # Check if each file in chunk$filename (without extension) exists as a .zip
+        existing_files <- sapply(chunk$filename, function(f) {
+          base_no_ext <- tools::file_path_sans_ext(f)
+          pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.zip$")
+          any(grepl(pattern, existing_filenames))
+        })
       } else {
         # Remove already existing files *before* iterating over chunk
         existing_files <- file.exists(chunk$destfile)
@@ -246,19 +256,22 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
         # If Content-Disposition is found, extract the suffix after '_v'
         if (length(content_disposition) > 0) {
-          # Adjust the regex to not expect quotes since the header doesn't include them
-          file_suffix <- str_match(content_disposition, 'filename=.*_v([^\\s;]+)\\.csv')[, 2]
+          # Adjust the regex to match both .csv and .zip files
+          file_suffix <- str_match(content_disposition, 'filename=.*_v([^\\s;]+)\\.(csv|zip)')[, 2]
 
           if (!is.na(file_suffix)) {
+            # Determine the file extension
+            file_ext <- tools::file_ext(res$destfile[j])
+
             # Construct the new filename by appending '_v' and the extracted suffix to the custom destfile
-            custom_destfile <- res$destfile[i]
-            new_destfile <- sub("\\.csv$", paste0("_v", file_suffix, ".csv"), custom_destfile)
+            custom_destfile <- res$destfile[j]
+            new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
 
             # Rename the file
-            file_rename <- file.rename(res$destfile[i], new_destfile)
+            file_rename <- file.rename(res$destfile[j], new_destfile)
 
             # Update the destfile in the result (if needed)
-            res$destfile[i] <- new_destfile
+            res$destfile[j] <- new_destfile
           }
         }
       }

@@ -37,8 +37,10 @@ test_that("ifcb_prepare_whoi_plankton works", {
                              blobs_folder = whoi_blobs_folder)
 
   expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.roi")))
+  expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.adc")))
+  expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.hdr")))
   expect_true(file.exists(file.path(manual_folder, "D20061007T035827_IFCB1.mat")))
-  expect_true(file.exists(file.path(whoi_blobs_folder, "2006", "D20061007", "D20061007T035827_IFCB1_blob.zip")))
+  expect_equal(length(list.files(file.path(whoi_blobs_folder, "2006", "D20061007"), pattern = ".zip")), 1)
 
   unlink(temp_dir, recursive = TRUE)
 })
