@@ -55,6 +55,23 @@ test_that("ifcb_summarize_png_counts works correctly with sample data", {
   # Example: Check if n_images are calculated correctly
   expected_n_images_class <- 1  # Example value
   expect_equal(summary_class$n_images[1], expected_n_images_class)
+
+  # Check if the function handles missing GPS data gracefully
+  new_hdr_folder <- file.path(temp_dir, "new_hdr_folder")
+
+  # Create a new folder with a copy of the HDR file
+  dir.create(new_hdr_folder, showWarnings = FALSE)
+
+  # Copy the HDR file to the new folder
+  copy <- file.copy(file.path(hdr_folder, "D20220522T003051_IFCB134.hdr"),
+                    file.path(new_hdr_folder, "D20220522T003051_IFCB134.hdr"))
+
+  # Run the function with summarization level "sample" with missing GPS data
+  summary_class <- ifcb_summarize_png_counts(png_folder, new_hdr_folder, sum_level = "sample", verbose = FALSE)
+
+  # Expect NA values for GPS coordinates
+  expect_true(is.na(summary_class$gpsLatitude[1]))
+  expect_true(is.na(summary_class$gpsLongitude[1]))
 })
 
 test_that("ifcb_summarize_png_counts handles empty directories gracefully", {
