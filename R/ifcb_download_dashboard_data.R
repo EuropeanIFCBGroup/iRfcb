@@ -174,8 +174,9 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
       if (ext %in% c("features", "autoclass")) {
         destfile <- file.path(dest_dir, filename)
+      } else {
+        destfile <- file.path(dest_dir, date_object, filename)  # Use date_object with a D as directory
       }
-      destfile <- file.path(dest_dir, date_object, filename)  # Use date_object with a D as directory
     } else {
       destfile <- file.path(dest_dir, filename)  # If no date_object, just the filename
     }
@@ -192,7 +193,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
     for (i in seq(1, nrow(file_df), by = parallel_downloads)) {
       chunk <- file_df[i:min(i + parallel_downloads - 1, nrow(file_df)), ]
 
-      if (ext %in% c("features", "autoclass")) {
+      if (ext == "features") {
         # Get the list of existing filenames in the directory
         exisiting_filenames <- list.files(dirname(chunk$destfile), pattern = "\\.csv$")
 
@@ -204,6 +205,19 @@ ifcb_download_dashboard_data <- function(dashboard_url,
           pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.csv$")
           any(grepl(pattern, exisiting_filenames))
         })
+      } else if (ext == "autoclass") {
+        # Get the list of existing filenames in the directory
+        exisiting_filenames <- list.files(dirname(chunk$destfile), pattern = "\\.csv$")
+
+        # Create a vector of TRUE/FALSE for each file in chunk$filename based on the base name comparison
+        existing_files <- sapply(chunk$filename, function(f) {
+          # Remove the extension from the filename in chunk$filename
+          base_no_ext <- tools::file_path_sans_ext(f)
+          base_no_ext <- sub("_scores", "", base_no_ext)
+          # Construct a regex pattern that allows an optional version suffix before .csv
+          pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.csv$")
+          any(grepl(pattern, exisiting_filenames))
+        })
       } else if (ext == "blobs") {
         # Get the list of existing .zip filenames in the directory
         existing_filenames <- list.files(dirname(chunk$destfile), pattern = "\\.zip$")
@@ -211,7 +225,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
         # Check if each file in chunk$filename (without extension) exists as a .zip
         existing_files <- sapply(chunk$filename, function(f) {
           base_no_ext <- tools::file_path_sans_ext(f)
-          pattern <- paste0("^", base_no_ext, "(_v\\w+)?\\.zip$")
+          pattern <- paste0("^", base_no_ext, "(s_v\\w+)?\\.zip$")
           any(grepl(pattern, existing_filenames))
         })
       } else {
@@ -275,7 +289,14 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
             # Construct the new filename by appending '_v' and the extracted suffix to the custom destfile
             custom_destfile <- res$destfile[j]
-            new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
+            if (ext == "blobs") {
+              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("s_v", file_suffix, ".", file_ext), custom_destfile)
+            } else if (ext == "autoclass") {
+              custom_destfile <- sub("_scores", "", custom_destfile)
+              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
+            } else {
+              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
+            }
 
             # Rename the file
             file_rename <- file.rename(res$destfile[j], new_destfile)
