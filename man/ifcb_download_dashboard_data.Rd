@@ -30,7 +30,7 @@ Allowed values: \code{"blobs"}, \code{"features"}, \code{"autoclass"}, \code{"ro
 \item{dest_dir}{Character. The directory where downloaded files will be saved.}
 
 \item{convert_filenames}{Logical. If \code{TRUE}, converts filenames of the old format \code{"IFCBxxx_YYYY_DDD_HHMMSS"}
-to the new format (\code{DYYYYMMDDTHHMMSS_IFCBXXX}). Default is \code{FALSE}.
+to the new format (\code{DYYYYMMDDTHHMMSS_IFCBXXX} or \code{IYYYYMMDDTHHMMSS_IFCBXXX}). Default is \code{FALSE}.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
 \item{convert_adc}{Logical. If \code{TRUE}, adjusts \code{.adc} files from older IFCB instruments
@@ -63,6 +63,14 @@ It supports optional filename conversion and ADC file adjustments from the old I
 }
 \details{
 This function can download several files in parallel if the server allows it. The download parameters can be adjusted using the \code{parallel_downloads}, \code{sleep_time} and \code{multi_timeout} arguments.
+
+If \code{convert_filenames = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}, filenames in the \code{"IFCBxxx_YYYY_DDD_HHMMSS"} format (used by IFCB1-6)
+will be converted to \code{IYYYYMMDDTHHMMSS_IFCBXXX}, ensuring compatibility with blob extraction in \code{ifcb-analysis} (Sosik & Olson, 2007), which identified the old \code{.adc} format by the first letter of the filename.
+
+If \code{convert_adc = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} and \code{convert_filenames = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}, the \code{"IFCBxxx_YYYY_DDD_HHMMSS"} format will instead be converted to
+\code{DYYYYMMDDTHHMMSS_IFCBXXX}. Additionally, \code{.adc} files will be modified to include four empty columns
+(PMT-A peak, PMT-B peak, PMT-C peak, and PMT-D peak), aligning them with the structure of modern \code{.adc} files
+for full compatibility with \code{ifcb-analysis}.
 }
 \examples{
 \dontrun{
@@ -76,4 +84,7 @@ ifcb_download_dashboard_data(
 )
 }
 
+}
+\references{
+Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }

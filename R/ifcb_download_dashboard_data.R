@@ -7,6 +7,14 @@ utils::globalVariables("status_code")
 #' @details
 #' This function can download several files in parallel if the server allows it. The download parameters can be adjusted using the `parallel_downloads`, `sleep_time` and `multi_timeout` arguments.
 #'
+#' If `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, filenames in the `"IFCBxxx_YYYY_DDD_HHMMSS"` format (used by IFCB1-6)
+#' will be converted to `IYYYYMMDDTHHMMSS_IFCBXXX`, ensuring compatibility with blob extraction in `ifcb-analysis` (Sosik & Olson, 2007), which identified the old `.adc` format by the first letter of the filename.
+#'
+#' If `convert_adc = TRUE` `r lifecycle::badge("experimental")` and `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, the `"IFCBxxx_YYYY_DDD_HHMMSS"` format will instead be converted to
+#' `DYYYYMMDDTHHMMSS_IFCBXXX`. Additionally, `.adc` files will be modified to include four empty columns
+#' (PMT-A peak, PMT-B peak, PMT-C peak, and PMT-D peak), aligning them with the structure of modern `.adc` files
+#' for full compatibility with `ifcb-analysis`.
+#'
 #' @param dashboard_url Character. The base URL of the IFCB dashboard (e.g., `"https://ifcb-data.whoi.edu"`).
 #'                      If no subpath (e.g., `/data/` or `/mvco/`) is included, `/data/` will be added automatically. For the "features" and "autoclass" `file_types`, the dataset name needs to be
 #'                      included in the url (e.g. `"https://ifcb-data.whoi.edu/mvco/"`).
@@ -15,7 +23,7 @@ utils::globalVariables("status_code")
 #'                   Allowed values: `"blobs"`, `"features"`, `"autoclass"`, `"roi"`, `"zip"`, `"hdr"`, `"adc"`.
 #' @param dest_dir Character. The directory where downloaded files will be saved.
 #' @param convert_filenames Logical. If `TRUE`, converts filenames of the old format `"IFCBxxx_YYYY_DDD_HHMMSS"`
-#'   to the new format (`DYYYYMMDDTHHMMSS_IFCBXXX`). Default is `FALSE`.
+#'   to the new format (`DYYYYMMDDTHHMMSS_IFCBXXX` or `IYYYYMMDDTHHMMSS_IFCBXXX`). Default is `FALSE`.
 #'   `r lifecycle::badge("experimental")`
 #' @param convert_adc Logical. If `TRUE`, adjusts `.adc` files from older IFCB instruments
 #'   (IFCB1–6, with filenames in the format `"IFCBxxx_YYYY_DDD_HHMMSS"`) by inserting
@@ -47,6 +55,8 @@ utils::globalVariables("status_code")
 #'   convert_adc = FALSE
 #' )
 #' }
+#'
+#' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @export
 ifcb_download_dashboard_data <- function(dashboard_url,
