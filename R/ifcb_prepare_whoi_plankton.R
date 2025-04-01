@@ -5,11 +5,20 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' classification files in `.mat` format that can be used to train an image classifier using the `ifcb-analysis` MATLAB package (Sosik and Olson 2007).
 #'
 #' @details
-#' The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 #' This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 #' Please note that this function downloads and extracts large amounts of data, which can take considerable time.
 #'
+#' The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
+#'
 #' To exclude images from the training dataset, either exclude the class completely with the `skip_classes` argument, or manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+#'
+#' If `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, filenames in the `"IFCBxxx_YYYY_DDD_HHMMSS"` format (used by IFCB1-6)
+#' will be converted to `IYYYYMMDDTHHMMSS_IFCBXXX`, ensuring compatibility with blob extraction in `ifcb-analysis` (Sosik & Olson, 2007), which identified the old `.adc` format by the first letter of the filename.
+#'
+#' If `convert_adc = TRUE` `r lifecycle::badge("experimental")` and `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, the `"IFCBxxx_YYYY_DDD_HHMMSS"` format will instead be converted to
+#' `DYYYYMMDDTHHMMSS_IFCBXXX`. Additionally, `.adc` files will be modified to include four empty columns
+#' (PMT-A peak, PMT-B peak, PMT-C peak, and PMT-D peak), aligning them with the structure of modern `.adc` files
+#' for full compatibility with `ifcb-analysis`.
 #'
 #' @param years Character vector. Years to download and process. For available years, see \url{https://hdl.handle.net/1912/7341} or \code{\link{ifcb_download_whoi_plankton}}.
 #' @param png_folder Character. Directory where `.png` images will be stored.

@@ -72,11 +72,20 @@ This function downloads manually annotated images from the WHOI-Plankton dataset
 classification files in \code{.mat} format that can be used to train an image classifier using the \code{ifcb-analysis} MATLAB package (Sosik and Olson 2007).
 }
 \details{
-The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.
 
+The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
+
 To exclude images from the training dataset, either exclude the class completely with the \code{skip_classes} argument, or manually delete specific \code{.png} files from the \code{png_folder} and rerun \code{ifcb_prepare_whoi_plankton}.
+
+If \code{convert_filenames = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}, filenames in the \code{"IFCBxxx_YYYY_DDD_HHMMSS"} format (used by IFCB1-6)
+will be converted to \code{IYYYYMMDDTHHMMSS_IFCBXXX}, ensuring compatibility with blob extraction in \code{ifcb-analysis} (Sosik & Olson, 2007), which identified the old \code{.adc} format by the first letter of the filename.
+
+If \code{convert_adc = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} and \code{convert_filenames = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}, the \code{"IFCBxxx_YYYY_DDD_HHMMSS"} format will instead be converted to
+\code{DYYYYMMDDTHHMMSS_IFCBXXX}. Additionally, \code{.adc} files will be modified to include four empty columns
+(PMT-A peak, PMT-B peak, PMT-C peak, and PMT-D peak), aligning them with the structure of modern \code{.adc} files
+for full compatibility with \code{ifcb-analysis}.
 }
 \examples{
 \dontrun{
