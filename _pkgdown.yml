@@ -20,6 +20,8 @@ navbar:
           href: articles/image-export-tutorial.html
         - text: "Prepare IFCB Images for EcoTaxa"
           href: articles/ecotaxa-tutorial.html
+        - text: "WHOI-Plankton Data Integration"
+          href: articles/whoi-plankton-data-integration.html
     - text: "Reference"
       href: reference/index.html
 

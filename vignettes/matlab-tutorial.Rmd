@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette demonstrates how to process and refine annotated and automatically classified Imaging FlowCytobot (IFCB) data in R using the `iRfcb` package. The workflow assumes that MATLAB-based preprocessing has already been conducted using the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). This preprocessing includes generating `.mat` files for annotated and classified images.
+This vignette demonstrates how to process and refine annotated and automatically classified Imaging FlowCytobot (IFCB) data in R using the `iRfcb` package. The workflow assumes that MATLAB-based preprocessing has already been conducted using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). This preprocessing includes generating `.mat` files for annotated and classified images.
 
 With `iRfcb`, you can further analyze and manage IFCB data, including summarizing annotations and class results, refining annotations.
 
@@ -67,7 +67,7 @@ if (!dir.exists(data_dir)) {
 
 ## Classified Results from MATLAB
 
-The `iRfcb` package facilitates the processing and analysis of data classified using a random forest algorithm from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository. This workflow supports various tasks such as extracting classified results, reading summary files, and calculating biovolume and carbon content.
+The `iRfcb` package facilitates the processing and analysis of data classified using a random forest algorithm from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository. This workflow supports various tasks such as extracting classified results, reading summary files, and calculating biovolume and carbon content.
 
 This section provides an overview of key functions available in `iRfcb` for handling classified IFCB data. Step-by-step examples are included to guide users through extracting results, summarizing data, and leveraging functionalities for both automated and manually annotated datasets.
 
