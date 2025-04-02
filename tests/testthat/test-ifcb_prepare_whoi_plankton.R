@@ -31,7 +31,7 @@ test_that("ifcb_prepare_whoi_plankton works", {
   png_files <- list.files(path = whoi_png_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
 
   # Create dataframe with image information
-  image_df <- data.frame("2006",
+  image_df <- data.frame(year = "2006",
                          folder = folder_name <- basename(dirname(png_files)),
                          image = png_files)
 
@@ -50,9 +50,14 @@ test_that("ifcb_prepare_whoi_plankton works", {
                              manual_folder,
                              class2use_file,
                              download_blobs = TRUE,
-                             blobs_folder = whoi_blobs_folder)
+                             blobs_folder = whoi_blobs_folder,
+                             sleep = 0)
 
-  expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.roi")))
+  class2use <- ifcb_get_mat_variable(class2use_file)
+  classlist <- ifcb_get_mat_variable(file.path(manual_folder, "D20061007T035827_IFCB1.mat"), "classlist")
+
+  expect_equal(class2use, c("unclassified", "Mesodinium_sp"))
+  expect_equal(classlist[17,2], 2)
   expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.adc")))
   expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.hdr")))
   expect_true(file.exists(file.path(manual_folder, "D20061007T035827_IFCB1.mat")))

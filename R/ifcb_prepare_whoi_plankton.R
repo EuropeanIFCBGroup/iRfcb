@@ -101,6 +101,9 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     whoi_images <- ifcb_download_whoi_plankton(years, png_folder, quiet = quiet, extract_images = extract_images)
   }
 
+  # List all available classes
+  classes <- NULL
+
   # Update years with the successful downloads
   years <- basename(list.dirs(png_folder, recursive = FALSE))
 
@@ -132,6 +135,12 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     } else {
       selected_images <- image_df
     }
+
+    # Extract unique classes
+    class_year <- unique(selected_images$folder)
+
+    # Append to class vector
+    classes <- c(classes, class_year)
 
     # Store image data for later use
     write.table(image_df,
@@ -175,19 +184,8 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     }
   }
 
-  # List all available classes
-  classes <- "unclassified"
-
-  for (year in years) {
-    # List all classes from the current year
-    classes_year <- basename(list.dirs(file.path(png_folder, year), recursive = FALSE))
-
-    # Add to vector
-    classes <- c(classes, classes_year)
-  }
-
-  # Use only unique names
-  classes <- unique(classes)
+  # Add unclassified as index 1
+  classes <- c("unclassified", sort(unique(classes)))
 
   # Remove skipped classes
   classes <- classes[!classes %in% skip_classes]
