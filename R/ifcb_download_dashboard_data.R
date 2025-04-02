@@ -65,7 +65,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
                                          dest_dir,
                                          convert_filenames = FALSE,
                                          convert_adc = FALSE,
-                                         parallel_downloads = 10,
+                                         parallel_downloads = 5,
                                          sleep_time = 2,
                                          multi_timeout = 120,
                                          quiet = FALSE) {

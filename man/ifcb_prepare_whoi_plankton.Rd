@@ -12,11 +12,12 @@ ifcb_prepare_whoi_plankton(
   class2use_file,
   skip_classes = NULL,
   dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
+  extract_images = FALSE,
   download_blobs = FALSE,
   blobs_folder = NULL,
   download_features = FALSE,
   features_folder = NULL,
-  parallel_downloads = 10,
+  parallel_downloads = 5,
   sleep_time = 2,
   multi_timeout = 120,
   convert_filenames = TRUE,
@@ -38,6 +39,9 @@ ifcb_prepare_whoi_plankton(
 \item{skip_classes}{Character vector. Classes to be excluded during processing. For example images, refer to \url{https://whoigit.github.io/whoi-plankton/}.}
 
 \item{dashboard_url}{Character. URL for the IFCB dashboard data source (default: "https://ifcb-data.whoi.edu/mvco/").}
+
+\item{extract_images}{Logical. If \code{TRUE}, extracts \code{.png} images from the downloaded archives and removes the \code{.zip} files.
+If \code{FALSE}, only downloads the archives without extracting images. Default is \code{FALSE}.}
 
 \item{download_blobs}{Logical. Whether to download blob files (default: FALSE).}
 
@@ -77,7 +81,8 @@ Please note that this function downloads and extracts large amounts of data, whi
 
 The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 
-To exclude images from the training dataset, either exclude the class completely with the \code{skip_classes} argument, or manually delete specific \code{.png} files from the \code{png_folder} and rerun \code{ifcb_prepare_whoi_plankton}.
+To exclude images from the training dataset, either exclude the class completely with the \code{skip_classes} argument,
+or set \code{extract_images = TRUE} and manually delete specific \code{.png} files from the \code{png_folder} and rerun \code{ifcb_prepare_whoi_plankton}.
 
 If \code{convert_filenames = TRUE} \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}, filenames in the \code{"IFCBxxx_YYYY_DDD_HHMMSS"} format (used by IFCB1-6)
 will be converted to \code{IYYYYMMDDTHHMMSS_IFCBXXX}, ensuring compatibility with blob extraction in \code{ifcb-analysis} (Sosik & Olson, 2007), which identified the old \code{.adc} format by the first letter of the filename.

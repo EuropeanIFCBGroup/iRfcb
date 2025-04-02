@@ -6,10 +6,14 @@
 #'
 #' @param years A vector of years (numeric or character) indicating which datasets to download. The available years are currently 2006 to 2014.
 #' @param dest_folder A string specifying the destination folder where the files will be extracted.
+#' @param extract_images Logical. If `TRUE`, extracts `.png` images from the downloaded archives and removes the `.zip` files.
+#'   If `FALSE`, only downloads the archives without extracting images. Default is `TRUE`.
 #' @param max_retries An integer specifying the maximum number of attempts to retrieve data. Default is 10.
 #' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.
 #'
-#' @return No return value. Files are downloaded and extracted to `dest_folder`.
+#' @return If `extract_images = FALSE`, returns a data frame containing metadata of downloaded image files.
+#'   Otherwise, no return value; files are downloaded and extracted to `dest_folder`.
+#'
 #' @examples
 #' \dontrun{
 #' ifcb_download_whoi_plankton(c(2006, 2007), "data")
@@ -18,7 +22,7 @@
 #' @references Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. \doi{10.1575/1912/7341}
 #'
 #' @export
-ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, quiet = FALSE) {
+ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, extract_images = TRUE, quiet = FALSE) {
   # Define the URL mapping
   url_map <- list(
     "2006" = "https://darchive.mblwhoilibrary.org/bitstreams/6968c380-3713-57b1-bdca-5b21e514a996/download",
@@ -110,20 +114,60 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, qu
     }
   }
 
-  # Extract the files
-  for (yr in years) {
+  if (!extract_images) {
+    # Create an empty dataframe
+    output <- data.frame()
 
-    # Filter the dataframe to only include the specified year
-    url_df_year <- url_df_all %>%
-      filter(year == yr)
+    # Extract the files
+    for (yr in years) {
+      # Filter the dataframe to only include the specified year
+      url_df_year <- url_df_all %>%
+        filter(year == yr)
 
-    # Extract if the download was successful
-    if (file.exists(url_df_year$zip_files)) {
-      if (!quiet) message("Extracting .png images from year ", yr, "...")
-      unzip(url_df_year$zip_files, exdir = dest_folder)
-      file.remove(url_df_year$zip_files) # Remove zip file after extraction
+      # List files
+      file_list <- utils::unzip(url_df_year$zip_files, list = TRUE)
+
+      # Filter images only
+      file_list <- dplyr::filter(file_list, grepl(".png", Name))
+
+      # Create a data frame with image info
+      file_df <- data.frame(
+        year = yr,
+        folder = basename(dirname(file_list$Name)),
+        image = file.path(dest_folder, file_list$Name),
+        stringsAsFactors = FALSE,
+        row.names = NULL
+      )
+
+      # Define path
+      output_path <- file.path(dest_folder, yr, "images.txt")
+
+      if (!dir.exists(dirname(output_path))) {
+        dir.create(dirname(output_path), recursive = TRUE)
+      }
+
+      # Store image data for later use
+      write.table(file_df, output_path, na = "", sep = "\t", quote = FALSE, row.names = FALSE)
+
+      # Append to all years
+      output <- rbind(output, file_df)
+    }
+    return(output)
+  } else {
+    # Extract the files
+    for (yr in years) {
+
+      # Filter the dataframe to only include the specified year
+      url_df_year <- url_df_all %>%
+        filter(year == yr)
+
+      # Extract if the download was successful
+      if (file.exists(url_df_year$zip_files)) {
+        if (!quiet) message("Extracting .png images from year ", yr, "...")
+        unzip(url_df_year$zip_files, exdir = dest_folder)
+        file.remove(url_df_year$zip_files) # Remove zip file after extraction
+      }
     }
   }
-
   if (!quiet) message("Download and extraction complete.")
 }

@@ -10,7 +10,8 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #'
 #' The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 #'
-#' To exclude images from the training dataset, either exclude the class completely with the `skip_classes` argument, or manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+#' To exclude images from the training dataset, either exclude the class completely with the `skip_classes` argument,
+#' or set `extract_images = TRUE` and manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
 #'
 #' If `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, filenames in the `"IFCBxxx_YYYY_DDD_HHMMSS"` format (used by IFCB1-6)
 #' will be converted to `IYYYYMMDDTHHMMSS_IFCBXXX`, ensuring compatibility with blob extraction in `ifcb-analysis` (Sosik & Olson, 2007), which identified the old `.adc` format by the first letter of the filename.
@@ -26,6 +27,8 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' @param manual_folder Character. Directory where manual classification files (`.mat`) will be stored.
 #' @param class2use_file Character. File path to `.mat` file to store the list of available classes.
 #' @param skip_classes Character vector. Classes to be excluded during processing. For example images, refer to \url{https://whoigit.github.io/whoi-plankton/}.
+#' @param extract_images Logical. If `TRUE`, extracts `.png` images from the downloaded archives and removes the `.zip` files.
+#'   If `FALSE`, only downloads the archives without extracting images. Default is `FALSE`.
 #' @param dashboard_url Character. URL for the IFCB dashboard data source (default: "https://ifcb-data.whoi.edu/mvco/").
 #' @param download_blobs Logical. Whether to download blob files (default: FALSE).
 #' @param blobs_folder Character. Directory where blob files will be stored (required if `download_blobs = TRUE`).
@@ -65,9 +68,9 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' @export
 ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_folder, class2use_file,
                                        skip_classes = NULL, dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
-                                       download_blobs = FALSE, blobs_folder = NULL,
+                                       extract_images = FALSE, download_blobs = FALSE, blobs_folder = NULL,
                                        download_features = FALSE, features_folder = NULL,
-                                       parallel_downloads = 10, sleep_time = 2, multi_timeout = 120,
+                                       parallel_downloads = 5, sleep_time = 2, multi_timeout = 120,
                                        convert_filenames = TRUE, convert_adc = TRUE, quiet = FALSE) {
 
   # Initialize python check
@@ -95,7 +98,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
   } else {
     if (!quiet) message("Downloading and preparing WHOI-Plankton data for the following years: ", paste(years, collapse = ", "))
     # Download WHOI-Plankton png images
-    ifcb_download_whoi_plankton(years, png_folder, quiet = quiet)
+    whoi_images <- ifcb_download_whoi_plankton(years, png_folder, quiet = quiet, extract_images = extract_images)
   }
 
   # Update years with the successful downloads
@@ -110,13 +113,18 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     blobs_path <- file.path(blobs_folder, year)
     features_path <- file.path(features_folder, year)
 
-    # List all png files for the current year
-    png_files <- list.files(path = png_path, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
+    if (extract_images || !file.exists(file.path(png_path, "images.txt"))) {
+      # List all png files for the current year
+      png_files <- list.files(path = png_path, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
 
-    # Create dataframe with image information
-    image_df <- data.frame(year,
-                           folder = folder_name <- basename(dirname(png_files)),
-                           image = png_files)
+      # Create dataframe with image information
+      image_df <- data.frame(year,
+                             folder = folder_name <- basename(dirname(png_files)),
+                             image = png_files)
+    } else {
+      # Get information from whoi_images
+      image_df <- read.table(file.path(png_path, "images.txt"), header = TRUE)
+    }
 
     # Remove skipped classes
     if (!is.null(skip_classes)) {
@@ -126,7 +134,12 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     }
 
     # Store image data for later use
-    write.table(image_df, file.path(png_path, "images.txt"), na = "", sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(image_df,
+                file.path(png_path, "images.txt"),
+                na = "",
+                sep = "\t",
+                quote = FALSE,
+                row.names = FALSE)
 
     # Input string
     ifcb_string <- tools::file_path_sans_ext(basename(selected_images$image))

@@ -27,6 +27,22 @@ test_that("ifcb_prepare_whoi_plankton works", {
   whoi_png_folder <- file.path(temp_dir, "test_data", "whoi_png")
   whoi_blobs_folder <- file.path(temp_dir, "test_data", "whoi_blobs")
 
+  # List png files
+  png_files <- list.files(path = whoi_png_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
+
+  # Create dataframe with image information
+  image_df <- data.frame("2006",
+                         folder = folder_name <- basename(dirname(png_files)),
+                         image = png_files)
+
+  # Store image data for later use
+  write.table(image_df,
+              file.path(whoi_png_folder, "2006", "images.txt"),
+              na = "",
+              sep = "\t",
+              quote = FALSE,
+              row.names = FALSE)
+
   # Test the function
   ifcb_prepare_whoi_plankton(2006,
                              whoi_png_folder,
