@@ -1,3 +1,4 @@
+utils::globalVariables("Name")
 #' Download and Extract WHOI-Plankton Data
 #'
 #' This function downloads WHOI-Plankton annotated plankton images (Sosik et al. 2015) for specified years
