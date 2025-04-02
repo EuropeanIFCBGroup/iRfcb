@@ -55,16 +55,38 @@ First we define the download directories:
 
 ```{r, eval=FALSE}
 # Define paths to download destinations
-png_folder_whoi <- file.path(data_dir, "whoi_plankton", "png_images", "extracted_images")
-raw_folder_whoi <- file.path(data_dir, "whoi_plankton", "data")
-manual_folder_whoi <- file.path(data_dir, "whoi_plankton", "manual")
-class2use_file_whoi <- file.path(data_dir, "whoi_plankton", "config", "class2use_whoi.mat")
-blobs_folder_whoi <- file.path(data_dir, "whoi_plankton", "blobs")
+png_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "png_images", 
+  "extracted_images"
+)
+raw_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "data"
+)
+manual_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "manual"
+)
+class2use_file_whoi <- file.path(
+  data_dir,
+  "whoi_plankton", 
+  "config", 
+  "class2use_whoi.mat"
+)
+blobs_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "blobs"
+)
 ```
 
 ### Download and Prepare WHOI-Plankton Data
 
-The [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) function enables downloading zipped `.png` images from selected years of the [WHOI-Plankton dataset](https://hdl.handle.net/1912/7341), with an option to extract them using the `extract_images` argument. It also retrieves raw data (`.roi`, `.hdr` and `.adc` files), along with blobs and features (when available), from the [MVCO IFCB Dashboard](https://ifcb-data.whoi.edu/mvco). Interactions with the IFCB Dashboard is handled through the [`ifcb_download_dashboard_data`](../reference/ifcb_download_dashboard_data.html) function. Finally, the function generates manual `.mat` files for storing class information, ensuring compatibility with the MATLAB code in the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007).
+The [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) function enables downloading zipped `.png` images from selected years of the [WHOI-Plankton dataset](https://hdl.handle.net/1912/7341), with an option to extract them using the `extract_images` argument. It also retrieves raw data (`.roi`, `.hdr` and `.adc` files), along with blobs and features (when available), from the [MVCO IFCB Dashboard](https://ifcb-data.whoi.edu/mvco). Interactions with WHOI-Plankton are managed through the  [`ifcb_download_whoi_plankton`](../reference/ifcb_download_whoi_plankton.html) function, while the IFCB Dashboard is accessed via the [`ifcb_download_dashboard_data`](../reference/ifcb_download_dashboard_data.html) function. Finally, the function generates manual `.mat` files for storing class information, ensuring compatibility with the MATLAB code in the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007).
 
 In this example, we use data from the years 2013 and 2014.
 
@@ -91,14 +113,32 @@ To exclude certain images from the training dataset, either exclude the class co
 
 The [`ifcb_merge_manual`](../reference/ifcb_merge_manual.html) function allows you to integrate data from the WHOI-Plankton dataset with your existing training dataset created using the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) code (Sosik and Olson 2007). The merged dataset and class2use file will be saved in the locations specified by `manual_folder_output` and `class2use_file_output`.
 
+In this example, we merge the WHOI-Plankton dataset with the `iRfcb` sample dataset from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024), downloaded earlier in this tutorial.
+
 ```{r, eval=FALSE}
 # Define paths to existing manual dataset
-class2use_file_smhi <- file.path(data_dir, "config", "class2use.mat")
-manual_folder_smhi <- file.path(data_dir, "manual")
+class2use_file_smhi <- file.path(
+  data_dir, 
+  "config", 
+  "class2use.mat"
+)
+manual_folder_smhi <- file.path(
+  data_dir, 
+  "manual"
+)
 
 # Define paths to final merged dataset
-class2use_file_merged <- file.path(data_dir, "merged_data", "config", "class2use.mat")
-manual_folder_merged <- file.path(data_dir, "merged_data", "manual")
+class2use_file_merged <- file.path(
+  data_dir, 
+  "merged_data", 
+  "config", 
+  "class2use.mat"
+)
+manual_folder_merged <- file.path(
+  data_dir, 
+  "merged_data", 
+  "manual"
+)
 
 # Merge WHOI-Plankton with existing manual dataset
 ifcb_merge_manual(
