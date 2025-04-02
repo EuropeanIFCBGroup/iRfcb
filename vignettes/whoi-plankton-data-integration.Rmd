@@ -119,7 +119,7 @@ The function [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plank
 
 The [`ifcb_merge_manual`](../reference/ifcb_merge_manual.html) function allows you to integrate data from the WHOI-Plankton dataset with your existing training dataset created using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) code (Sosik and Olson 2007). The merged dataset and class2use file will be saved in the locations specified by `manual_folder_output` and `class2use_file_output`.
 
-In this example, we merge the WHOI-Plankton dataset with the `iRfcb` sample dataset from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024), downloaded earlier in this tutorial. Class names in the `class2use` files may need to be standardized if you intend to merge images into the same class.
+In this example, we merge the WHOI-Plankton dataset with the `iRfcb` sample dataset from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024), downloaded earlier in this tutorial. Please note that class names in the `class2use` files may need to be standardized if you intend to merge images into the same class (e.g. "Coscinodiscus" and "Coscinodiscus_spp").
 
 ```{r, eval=FALSE}
 # Define paths to existing manual dataset
