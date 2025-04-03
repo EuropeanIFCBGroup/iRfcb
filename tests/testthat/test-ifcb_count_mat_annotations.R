@@ -55,8 +55,16 @@ test_that("ifcb_count_mat_annotations works correctly", {
   # Ensure that the skipped class name does not appear in the result
   expect_true(all(!result_skip_names$class %in% skip_names))
 
-  # Define an empty list (MATLAB struct equivalent)
-  empty_data <- list()
+  # Add empty file
+  copy <- file.copy(system.file("exdata/D20220124T144202_IFCB139.mat", package = "iRfcb"),
+                    file.path(manual_folder, "D20220124T144202_IFCB139.mat"))
+
+  # Expect warning
+  expect_warning(ifcb_count_mat_annotations(
+    manual_files = manual_folder,
+    class2use_file = class2use_file
+  ), "Empty .mat file"
+  )
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)

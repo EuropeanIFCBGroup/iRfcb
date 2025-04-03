@@ -105,6 +105,22 @@ test_that("ifcb_download_dashboard_data download data correctly", {
   date_object <- process_ifcb_string("non-valid-format")
   expect_true(is.na(date_object))
 
+  # Download autoclass data
+  ifcb_download_dashboard_data(
+    dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
+    samples = "D20190402T200352_IFCB010",
+    file_types = "features",
+    dest_dir = dest_dir,
+    convert_filenames = FALSE,
+    convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
+    quiet = TRUE
+  )
+
+  # Expect that the destination folder contains the expected files
+  expect_equal(length(list.files(dest_dir, recursive = TRUE)), 5)
+
   # Clean up
   unlink(dest_dir, recursive = TRUE)
 })
