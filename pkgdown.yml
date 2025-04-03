@@ -9,7 +9,8 @@ articles:
   matlab-tutorial: matlab-tutorial.html
   metadata-template: metadata-template.html
   qc-tutorial: qc-tutorial.html
-last_built: 2025-03-28T10:58Z
+  whoi-plankton-data-integration: whoi-plankton-data-integration.html
+last_built: 2025-04-03T14:42Z
 urls:
   reference: https://europeanifcbgroup.github.io/iRfcb/reference
   article: https://europeanifcbgroup.github.io/iRfcb/articles

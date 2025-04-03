@@ -10,6 +10,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/matlab-tutorial.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/metadata-template.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/qc-tutorial.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/articles/whoi-plankton-data-integration.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/authors.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/index.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/create_package_manifest.html</loc></url>
@@ -23,7 +24,9 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manifest.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_test_data.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_classified_images.html</loc></url>
@@ -41,6 +44,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_near_land.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_prepare_whoi_plankton.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.html</loc></url>
@@ -53,7 +57,6 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_class_counts.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_counts.html</loc></url>
-<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_data.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_metadata.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.html</loc></url>
@@ -61,6 +64,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_matlab.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_pngs.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/index.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/process_ifcb_string.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/read_hdr_file.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/retrieve_worms_records.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/split_large_zip.html</loc></url>
