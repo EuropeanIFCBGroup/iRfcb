@@ -264,7 +264,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
         )
 
         # Extract the relevant portion from the Content-Disposition header and modify the filename
-        for (j in 1:nrow(res)) {
+        for (j in seq_len(nrow(res))) {
           # Get the headers for this download
           headers <- res$headers[[j]]
 
