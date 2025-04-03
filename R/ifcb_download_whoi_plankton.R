@@ -77,8 +77,7 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, ex
     dir.create(dest_folder, recursive = TRUE)
   }
 
-  # Retry logic (max 5 attempts)
-  max_retries <- max_retries
+  # Retry logic
   attempt <- 1
   success <- FALSE
 

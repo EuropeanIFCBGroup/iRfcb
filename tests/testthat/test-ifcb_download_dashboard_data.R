@@ -13,6 +13,8 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = FALSE,
     convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   )
 
@@ -30,6 +32,8 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = TRUE,
     convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   )
 
@@ -44,6 +48,8 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = TRUE,
     convert_adc = TRUE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   )
 
@@ -65,6 +71,8 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = TRUE,
     convert_adc = TRUE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = FALSE
   )
 
@@ -82,6 +90,8 @@ test_that("ifcb_download_dashboard_data download data correctly", {
     dest_dir = dest_dir,
     convert_filenames = FALSE,
     convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   )
 
@@ -111,6 +121,8 @@ test_that("ifcb_download_dashboard_data handles errors gracefully", {
     dest_dir = dest_dir,
     convert_filenames = FALSE,
     convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   ), "Invalid extension")
 
@@ -122,6 +134,8 @@ test_that("ifcb_download_dashboard_data handles errors gracefully", {
     dest_dir = dest_dir,
     convert_filenames = FALSE,
     convert_adc = FALSE,
+    max_retries = 1,
+    sleep_time = 0,
     quiet = TRUE
   ), "Some downloads failed")
 

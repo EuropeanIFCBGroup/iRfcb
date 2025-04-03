@@ -14,6 +14,7 @@ ifcb_download_dashboard_data(
   parallel_downloads = 5,
   sleep_time = 2,
   multi_timeout = 120,
+  max_retries = 3,
   quiet = FALSE
 )
 }
@@ -46,6 +47,8 @@ This helps manage network load and system performance. Default is \code{10}.}
 \item{multi_timeout}{Numeric. The maximum time in seconds that the \code{curl} multi-download request
 will wait for a response before timing out. This helps prevent
 hanging downloads in case of slow or unresponsive servers. Default is \code{120} seconds.}
+
+\item{max_retries}{An integer specifying the maximum number of attempts to retrieve data in case the server is unable to handle the request. Default is 3.}
 
 \item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.}
 }

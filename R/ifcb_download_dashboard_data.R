@@ -35,7 +35,7 @@ utils::globalVariables("status_code")
 #' @param multi_timeout Numeric. The maximum time in seconds that the `curl` multi-download request
 #'                      will wait for a response before timing out. This helps prevent
 #'                      hanging downloads in case of slow or unresponsive servers. Default is `120` seconds.
-
+#' @param max_retries An integer specifying the maximum number of attempts to retrieve data in case the server is unable to handle the request. Default is 3.
 #' @param quiet Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.
 #'
 #' @return
@@ -68,6 +68,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
                                          parallel_downloads = 5,
                                          sleep_time = 2,
                                          multi_timeout = 120,
+                                         max_retries = 3,
                                          quiet = FALSE) {
 
   # Remove possible dots from the file_types
@@ -247,15 +248,80 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       # If no files left to process, skip to the next chunk
       if (nrow(chunk) == 0) next
 
-      # Perform the download
-      res <- curl::multi_download(
-        urls = chunk$file_url,
-        destfiles = chunk$destfile,
-        resume = TRUE,
-        multi_timeout = multi_timeout,
-        progress = FALSE,
-        multiplex = FALSE
-      )
+      # Retry logic (max 5 attempts)
+      attempt <- 1
+      success <- FALSE
+
+      while (attempt <= max_retries && !success) {
+        # Perform the download
+        res <- curl::multi_download(
+          urls = chunk$file_url,
+          destfiles = chunk$destfile,
+          resume = TRUE,
+          multi_timeout = multi_timeout,
+          progress = FALSE,
+          multiplex = FALSE
+        )
+
+        # Extract the relevant portion from the Content-Disposition header and modify the filename
+        for (j in 1:nrow(res)) {
+          # Get the headers for this download
+          headers <- res$headers[[j]]
+
+          # Extract the Content-Disposition header
+          content_disposition <- headers[grep("Content-Disposition", headers)]
+
+          # If Content-Disposition is found, extract the suffix after '_v'
+          if (length(content_disposition) > 0) {
+            # Adjust the regex to match both .csv and .zip files
+            file_suffix <- str_match(content_disposition, 'filename=.*_v([^\\s;]+)\\.(csv|zip)')[, 2]
+
+            if (!is.na(file_suffix)) {
+              # Determine the file extension
+              file_ext <- tools::file_ext(res$destfile[j])
+
+              # Construct the new filename by appending '_v' and the extracted suffix to the custom destfile
+              custom_destfile <- res$destfile[j]
+              if (ext == "blobs") {
+                new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("s_v", file_suffix, ".", file_ext), custom_destfile)
+              } else if (ext == "autoclass") {
+                custom_destfile <- sub("_scores", "", custom_destfile)
+                new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
+              } else {
+                new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
+              }
+
+              # Rename the file
+              file_rename <- file.rename(res$destfile[j], new_destfile)
+
+              # Update the destfile in the result (if needed)
+              res$destfile[j] <- new_destfile
+            }
+          }
+
+          # Check if all downloads were successful
+          unsuccessful <- res %>%
+            filter(!status_code == 200)
+
+          # Check results
+          if (nrow(unsuccessful) == 0) {
+            success <- TRUE
+          } else {
+            # url_df_complete <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(complete$url)))
+            chunk <- dplyr::filter(chunk, file_url %in% unsuccessful$url)
+
+            # Remove partial downloads
+            bad_files <- dplyr::filter(res, !status_code == 200)
+            if (!is.null(bad_files) && nrow(bad_files) > 0) {
+              unlink(bad_files$destfile)
+            }
+
+            attempt <- attempt + 1
+            # Wait the next attempt
+            Sys.sleep(sleep_time)
+          }
+        }
+      }
 
       # Check for failed downloads
       if (any(!res$status_code == 200, na.rm = TRUE)) {
@@ -265,46 +331,11 @@ ifcb_download_dashboard_data <- function(dashboard_url,
                 "1. Verify the URL(s) for any errors or issues.\n",
                 "2. Retry the download in case of transient network issues.\n",
                 "3. Consider adjusting the `parallel_downloads`, `multi_timeout`, or `sleep_time` parameters to optimize the download process.")
-                # Remove partial downloads
-                bad_files <- dplyr::filter(res, !status_code == 200)
-                unlink(bad_files$destfile)
-      }
-
-      # Extract the relevant portion from the Content-Disposition header and modify the filename
-      for (j in 1:nrow(res)) {
-        # Get the headers for this download
-        headers <- res$headers[[j]]
-
-        # Extract the Content-Disposition header
-        content_disposition <- headers[grep("Content-Disposition", headers)]
-
-        # If Content-Disposition is found, extract the suffix after '_v'
-        if (length(content_disposition) > 0) {
-          # Adjust the regex to match both .csv and .zip files
-          file_suffix <- str_match(content_disposition, 'filename=.*_v([^\\s;]+)\\.(csv|zip)')[, 2]
-
-          if (!is.na(file_suffix)) {
-            # Determine the file extension
-            file_ext <- tools::file_ext(res$destfile[j])
-
-            # Construct the new filename by appending '_v' and the extracted suffix to the custom destfile
-            custom_destfile <- res$destfile[j]
-            if (ext == "blobs") {
-              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("s_v", file_suffix, ".", file_ext), custom_destfile)
-            } else if (ext == "autoclass") {
-              custom_destfile <- sub("_scores", "", custom_destfile)
-              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
-            } else {
-              new_destfile <- sub(paste0("\\.", file_ext, "$"), paste0("_v", file_suffix, ".", file_ext), custom_destfile)
-            }
-
-            # Rename the file
-            file_rename <- file.rename(res$destfile[j], new_destfile)
-
-            # Update the destfile in the result (if needed)
-            res$destfile[j] <- new_destfile
-          }
+        # Remove partial downloads
+        if (!is.null(bad_files) && nrow(bad_files) > 0) {
+          unlink(bad_files$destfile)
         }
+        unlink(bad_files$destfile)
       }
 
       # Wait the next batch of downloads
@@ -322,6 +353,11 @@ ifcb_download_dashboard_data <- function(dashboard_url,
     if (ext == "adc" & convert_adc) {
 
       for (file in destfile) {
+
+        if (!file.exists(file)) {
+          next
+        }
+
         # Read adc file
         adc_file <- read.csv(file, header = FALSE)
 
