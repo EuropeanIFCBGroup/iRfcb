@@ -85,8 +85,16 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
     dir.create(adc_folder, recursive = TRUE)
   }
 
-  file.copy(file.path(manual_folder, "D20220522T003051_IFCB134.adc"),
-            file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
+  copy <- file.copy(file.path(manual_folder, "D20220522T003051_IFCB134.adc"),
+                    file.path(adc_folder, "D20220522T003051_IFCB134.adc"))
+
+  # Expect warning for non exisiting class2use file
+  lifecycle::expect_deprecated(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
+                                                  "D20220522T003051_IFCB134_00003.png"),
+                                   class = "Nodularia_spumigena",
+                                   manual_folder = manual_folder,
+                                   adc_folder = manual_folder,
+                                   class2use_file = file.path(manual_folder, "class2use.mat")))
 
   # Expect error for non exisiting class2use file
   expect_error(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",

@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. This tutorial covers the export of both unclassified raw IFCB images and annotated Regions of Interest (ROIs) using the MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit automatically classified images using the [`ifcb_extract_classified_images`](../reference/ifcb_extract_classified_images.html) function.
+This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. This tutorial covers the export of both unclassified raw IFCB images and annotated Regions of Interest (ROIs) using the MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit automatically classified images using the [`ifcb_extract_classified_images`](../reference/ifcb_extract_classified_images.html) function.
 
 EcoTaxa is a web application widely used for hosting, classifying, and exporting images of individual objects, particularly in plankton imaging. It leverages machine learning to assign names based on a universal taxonomy and produces ecological data in standardized formats for scientific applications. To submit images, accompanying metadata is required, which can be generated using the `iRfcb` package.
 
@@ -139,7 +139,7 @@ ifcb_zip_pngs(
 
 ## Annotated Images
 
-This example demonstrates how to prepare a dataset of manually annotated images for submission to EcoTaxa. The annotations were generated using MATLAB code from the [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007).
+This example demonstrates how to prepare a dataset of manually annotated images for submission to EcoTaxa. The annotations were generated using MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007).
 
 ### Extract Annotated Images
 

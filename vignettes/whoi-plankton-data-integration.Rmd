@@ -1,0 +1,175 @@
+---
+title: "WHOI-Plankton Data Integration"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WHOI-Plankton Data Integration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+The [WHOI-Plankton](https://hdl.handle.net/1912/7341) dataset (Sosik et al. 2015) contains millions of microscopic marine plankton images captured by the IFCB, and manually classified into > 100 categories by researchers at the Woods Hole Oceanographic Institution (WHOI). The dataset is part of a larger collection of over 700 million images gathered since 2006 at the Martha's Vineyard Coastal Observatory (MVCO), with real-time and archived data accessible via the [IFCB Data Dashboard](https://ifcb-data.whoi.edu/mvco). Annotated images are stored in annual zip files, organized into class-specific subdirectories. Example images for each class are available on the WHOI-Plankton [GitHub page](https://whoigit.github.io/whoi-plankton/).
+
+`iRfcb` provides functions to interact with the WHOI-Plankton data and the IFCB Dashboard, making it easier to integrate annotated images into custom training datasets. It supports incorporation of these images using MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007), as demonstrated in this tutorial.
+
+## Getting Started
+
+### Installation
+
+You can install the package from CRAN using:
+```{r, eval=FALSE}
+install.packages("iRfcb")
+```
+Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
+
+Load the `iRfcb` library:
+```{r, eval=FALSE}
+library(iRfcb)
+```
+
+### Download Sample Data
+
+To get started, download sample data from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024). This dataset will serve as the primary dataset in this example, which we will expand by incorporating training images from the WHOI-Plankton dataset.
+
+```{r, eval=FALSE}
+# Define data directory
+data_dir <- "data"
+
+# Download and extract test data in the data folder
+ifcb_download_test_data(
+  dest_dir = data_dir,
+  max_retries = 10,
+  sleep_time = 30,
+  verbose = FALSE
+)
+```
+
+## Download WHOI-Plankton Data
+
+This section demonstrates how to download the WHOI-Plankton dataset `iRfcb`.
+
+### Define Download Paths
+
+First we define the download directories:
+
+```{r, eval=FALSE}
+# Define paths to download destinations
+png_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "png_images", 
+  "extracted_images"
+)
+raw_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "data"
+)
+manual_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "manual"
+)
+class2use_file_whoi <- file.path(
+  data_dir,
+  "whoi_plankton", 
+  "config", 
+  "class2use_whoi.mat"
+)
+blobs_folder_whoi <- file.path(
+  data_dir, 
+  "whoi_plankton", 
+  "blobs"
+)
+```
+
+### Download and Prepare WHOI-Plankton Data
+
+The [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) function enables downloading zipped `.png` images from selected years of the [WHOI-Plankton dataset](https://hdl.handle.net/1912/7341), with an option to extract them using the `extract_images` argument. It also retrieves raw data (`.roi`, `.hdr` and `.adc` files), along with blobs and features (when available), from the [MVCO IFCB Dashboard](https://ifcb-data.whoi.edu/mvco). Interactions with WHOI-Plankton are managed through the  [`ifcb_download_whoi_plankton`](../reference/ifcb_download_whoi_plankton.html) function, while the IFCB Dashboard is accessed via the [`ifcb_download_dashboard_data`](../reference/ifcb_download_dashboard_data.html) function. Finally, the function generates manual `.mat` files for storing class information, ensuring compatibility with the MATLAB code in the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007).
+
+In this example, we use data from the years 2013 and 2014.
+
+```{r, eval=FALSE}
+# Initialize python environment
+ifcb_py_install()
+
+# Download and prepare the WHOI-Plankton dataset
+ifcb_prepare_whoi_plankton(
+  years = 2013:2014,
+  png_folder = png_folder_whoi, 
+  raw_folder = raw_folder_whoi, 
+  manual_folder = manual_folder_whoi, 
+  class2use_file = class2use_file_whoi, 
+  extract_images = FALSE,
+  skip_classes = NULL,
+  download_blobs = TRUE, # Optionally download blobs
+  blobs_folder = blobs_folder_whoi,
+  download_features = FALSE,
+  quiet = TRUE
+)
+```
+
+To exclude certain images from the training dataset, either exclude the class completely with the `skip_classes` argument, or set `extract_images = TRUE` and manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+
+The function [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) converts the filename format of older IFCB models (IFCB1-6) to match the newer IFCB format (`DYYYYMMDDTHHMMSS_IFCBXXX`). By default, this conversion is performed using the `convert_filenames` and `convert_adc` arguments. This step ensures compatibility with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code. For further details, please refer to the help pages of the respective functions.
+
+## Merge Data with Existing Dataset
+
+The [`ifcb_merge_manual`](../reference/ifcb_merge_manual.html) function allows you to integrate data from the WHOI-Plankton dataset with your existing training dataset created using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) code (Sosik and Olson 2007). The merged dataset and class2use file will be saved in the locations specified by `manual_folder_output` and `class2use_file_output`.
+
+In this example, we merge the WHOI-Plankton dataset with the `iRfcb` sample dataset from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024), downloaded earlier in this tutorial. Please note that class names in the `class2use` files may need to be standardized if you intend to merge images into the same class (e.g. "Coscinodiscus" and "Coscinodiscus_spp").
+
+```{r, eval=FALSE}
+# Define paths to existing manual dataset
+class2use_file_smhi <- file.path(
+  data_dir, 
+  "config", 
+  "class2use.mat"
+)
+manual_folder_smhi <- file.path(
+  data_dir, 
+  "manual"
+)
+
+# Define paths to final merged dataset
+class2use_file_merged <- file.path(
+  data_dir, 
+  "merged_data", 
+  "config", 
+  "class2use.mat"
+)
+manual_folder_merged <- file.path(
+  data_dir, 
+  "merged_data", 
+  "manual"
+)
+
+# Merge WHOI-Plankton with existing manual dataset
+ifcb_merge_manual(
+  class2use_file_base = class2use_file_smhi,
+  class2use_file_additions = class2use_file_whoi,
+  class2use_file_output = class2use_file_merged,
+  manual_folder_base = manual_folder_smhi,
+  manual_folder_additions = manual_folder_whoi,
+  manual_folder_output = manual_folder_merged,
+  quiet = TRUE
+)
+```
+
+The newly merged dataset is now ready for use in training and testing machine learning models. To integrate it with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code, blobs and features are extracted for the merged dataset (if not already downloaded through the IFCB Dashboard). Random forest models can then be built using the `ifcb-analysis` code.
+
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+
+## Citation
+
+```{r, echo=FALSE}
+# Print citation
+citation("iRfcb")
+```
+
+## References
+- Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+- Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. https://doi.org/10.1575/1912/7341
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3

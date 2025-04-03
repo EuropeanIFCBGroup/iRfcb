@@ -1,10 +1,8 @@
 # I 'R' FlowCytobot (iRfcb): Tools for Managing Imaging FlowCytobot (IFCB) Data <a href="https://europeanifcbgroup.github.io/iRfcb/"><img src="man/figures/logo.png" align="right" height="139" alt="iRfcb website" /></a>
 
 [![R-CMD-check](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.12533225.svg)](https://doi.org/10.5281/zenodo.12533225)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
-[![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
 [![CRAN status](https://www.r-pkg.org/badges/version/iRfcb)](https://CRAN.R-project.org/package=iRfcb)
+[![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
 
 ## Overview
 

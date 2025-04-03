@@ -82,6 +82,10 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   # Extract species names from class2useTB
   class2useTB <- unlist(mat$class2useTB)
 
+  if (use_python) {
+    classcountTB <- as.matrix(t(classcountTB))
+  }
+
   # Assign column names for class counts
   colnames(classcountTB) <- paste("counts", class2useTB, sep = "_")
 

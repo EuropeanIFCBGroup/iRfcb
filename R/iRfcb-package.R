@@ -2,7 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom curl curl_download new_handle curl_fetch_memory
+#' @importFrom curl curl_download new_handle curl_fetch_memory handle_setopt multi_download
 #' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
 #'   filter first full_join group_by if_any left_join mutate n n_distinct
 #'   pull relocate rename rename_with rowwise select slice_min summarise summarize
@@ -28,6 +28,7 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
 #' @importFrom utils flush.console read.csv read.table setTxtProgressBar txtProgressBar
+#'   write.table
 #' @importFrom worrms wm_records_names
 #' @importFrom zip unzip zip zipr
 ## usethis namespace: end

@@ -161,7 +161,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
       ifcb_create_empty_manual_file(roi_length = as.integer(rois),
                                     class2use = as.character(class2use),
                                     output_file = file.path(manual_output, paste0(sample_name, ".mat")),
-                                    unclassified_id = as.integer(unclassified_id),
+                                    classlist = as.integer(unclassified_id),
                                     do_compression = do_compression)
 
       # Apply corrections to the new manual file

@@ -29,6 +29,7 @@ Other contributors:
   \item Alle Lie (\href{https://orcid.org/0009-0001-8709-4841}{ORCID}) [contributor]
   \item Jayme Smith (\href{https://orcid.org/0000-0002-9669-4427}{ORCID}) [contributor]
   \item DTO-BioFlow (Horizon Europe, HORIZON-MISS-2022-OCEAN-01-07) [funder]
+  \item SBDI (Swedish Research Council, 2019-00242) [funder]
 }
 
 }

@@ -1,6 +1,6 @@
 test_that("ifcb_match_taxa_names handles errors gracefully", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline()
+  skip_if_offline(host = "marinespecies.org")
   skip_on_cran()
 
   # Sample taxa list
@@ -18,7 +18,7 @@ test_that("ifcb_match_taxa_names handles errors gracefully", {
 })
 
 test_that("deprecated function is still working", {
-  skip_if_offline()
+  skip_if_offline(host = "marinespecies.org")
   skip_on_cran()
 
   name <- "Skeletonema"

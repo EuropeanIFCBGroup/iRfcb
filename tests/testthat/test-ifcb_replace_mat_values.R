@@ -30,6 +30,13 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   expected_classlist <- matrix(c(1, 1, 3, 1, 5, 6, 1, 8, 9), ncol = 1, byrow = TRUE)
   expect_equal(output_classlist, expected_classlist)
 
+  # Add empty file
+  copy <- file.copy(system.file("exdata/D20220124T144202_IFCB139.mat", package = "iRfcb"),
+                    file.path(manual_folder, "D20220124T144202_IFCB139.mat"))
+
+  # Run the function
+  expect_warning(ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index), "Empty .mat file")
+
   # Clean up the temporary virtual environment
   unlink(manual_folder)
 })

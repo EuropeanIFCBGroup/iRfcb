@@ -20,6 +20,8 @@ navbar:
           href: articles/image-export-tutorial.html
         - text: "Prepare IFCB Images for EcoTaxa"
           href: articles/ecotaxa-tutorial.html
+        - text: "WHOI-Plankton Data Integration"
+          href: articles/whoi-plankton-data-integration.html
     - text: "Reference"
       href: reference/index.html
 
@@ -34,7 +36,9 @@ reference:
   - '`ifcb_create_class2use`'
   - '`ifcb_create_empty_manual_file`'
   - '`ifcb_create_manifest`'
+  - '`ifcb_download_dashboard_data`'
   - '`ifcb_download_test_data`'
+  - '`ifcb_download_whoi_plankton`'
   - '`ifcb_extract_annotated_images`'
   - '`ifcb_extract_biovolumes`'
   - '`ifcb_extract_classified_images`'
@@ -52,6 +56,7 @@ reference:
   - '`ifcb_is_near_land`'
   - '`ifcb_match_taxa_names`'
   - '`ifcb_merge_manual`'
+  - '`ifcb_prepare_whoi_plankton`'
   - '`ifcb_psd`'
   - '`ifcb_psd_plot`'
   - '`ifcb_py_install`'
@@ -73,6 +78,7 @@ reference:
 - title: Helper functions
   contents:
   - '`create_package_manifest`'
+  - '`process_ifcb_string`'
   - '`read_hdr_file`'
   - '`split_large_zip`'
   - '`summarize_TBclass`'
@@ -81,4 +87,3 @@ reference:
 - title: Deprecated functions
   contents:
   - '`retrieve_worms_records`'
-  - '`ifcb_summarize_png_data`'

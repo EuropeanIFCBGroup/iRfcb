@@ -20,3 +20,9 @@ NULL
 ifcb_get_svea_position <- function(...) {
   lifecycle::deprecate_stop("0.3.4", "ifcb_get_svea_position()", "iRfcb::ifcb_get_ferrybox_data()")
 }
+
+#' @noRd
+#' @rdname defunct
+ifcb_summarize_png_data <- function(...) {
+  lifecycle::deprecate_stop("0.3.11", "ifcb_summarize_png_data()", "iRfcb::ifcb_summarize_png_counts()")
+}

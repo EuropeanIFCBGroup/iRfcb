@@ -8,8 +8,9 @@ ifcb_create_empty_manual_file(
   roi_length,
   class2use,
   output_file,
-  unclassified_id = 1,
-  do_compression = TRUE
+  classlist = 1,
+  do_compression = TRUE,
+  unclassified_id = deprecated()
 )
 }
 \arguments{
@@ -19,9 +20,18 @@ ifcb_create_empty_manual_file(
 
 \item{output_file}{Character. The path where the output MAT file will be saved.}
 
-\item{unclassified_id}{Integer. The value to use in the second column of the class list. Default is 1.}
+\item{classlist}{Integer or numeric vector.
+Defines the values for the second column of the class list:
+\itemize{
+\item If a single value is provided (default = 1), all rows will be assigned this value.
+\item If a numeric vector of the same length as \code{roi_length} is provided, the corresponding values will be used per row.
+\item The second column typically represents manual classification labels, with \code{1} indicating unclassified objects.
+}}
 
 \item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
+
+\item{unclassified_id}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+\code{ifcb_create_empty_manual_file} now handles multiple classlist values. Use \code{classlist} instead.}
 }
 \value{
 No return value. This function is called for its side effects.
@@ -48,7 +58,7 @@ ifcb_create_empty_manual_file(roi_length = 100,
 ifcb_create_empty_manual_file(roi_length = 100,
                               class2use = c("unclassified", "Aphanizomenon_spp"),
                               output_file = "output.mat",
-                              unclassified_id = 999)
+                              classlist = 999)
 }
 
 }

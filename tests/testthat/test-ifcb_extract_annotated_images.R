@@ -87,7 +87,23 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
   )
 
   # Remove unnecessary file
-  file.remove(file.path(manual_folder, "D20220712T210855_IFCB134.mat"))
+  remove <- file.remove(file.path(manual_folder, "D20220712T210855_IFCB134.mat"))
+
+  # Add empty file
+  copy <- file.copy(system.file("exdata/D20220124T144202_IFCB139.mat", package = "iRfcb"),
+                    file.path(manual_folder, "D20220124T144202_IFCB139.mat"))
+
+  # Expect warning
+  expect_warning(ifcb_extract_annotated_images(
+    manual_folder = manual_folder,
+    class2use_file = class2use_file,
+    roi_folders = roi_folder,
+    out_folder = out_folder,
+    skip_class = NULL,
+    verbose = FALSE,
+    use_python = TRUE,
+  ), "Empty .mat file"
+  )
 
   # Create the output directory
   if (!dir.exists(out_folder)) {

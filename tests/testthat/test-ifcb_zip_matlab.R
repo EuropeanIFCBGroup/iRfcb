@@ -72,3 +72,32 @@ test_that("ifcb_zip_matlab works correctly", {
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
+
+test_that("helpers works correctly", {
+
+  # Create a temporary directory
+  temp_dir <- file.path(tempdir(), "split_large_zip")
+  dir.create(temp_dir, showWarnings = FALSE)
+
+  # Define the path to the test data zip file
+  test_data_zip <- test_path("test_data/test_data.zip")
+
+  # Copy the test data zip file to the temporary directory
+  copy <- file.copy(test_data_zip, file.path(temp_dir, "test_data.zip"))
+
+  # Split the test data zip file
+  split_large_zip(file.path(temp_dir, "test_data.zip"), 500)
+
+  # Verify that the zip file was not split
+  expect_equal(length(list.files(temp_dir)), 1)
+
+  # Verify that the the function returns an error when the specified zip file does not exist
+  expect_error(suppressWarnings(split_large_zip(file.path(temp_dir, "not_a_file.zip"), 500)),
+               "The specified zip file does not exist")
+
+  # Verify that the zip file was not split
+  expect_equal(length(list.files(temp_dir)), 1)
+
+  # Clean up temporary files
+  unlink(temp_dir, recursive = TRUE)
+})
