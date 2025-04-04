@@ -32,7 +32,39 @@ To access a feature from the development version of `iRfcb`, install the latest 
 remotes::install_github("EuropeanIFCBGroup/iRfcb")
 ```
 
-Some functions in `iRfcb` require Python. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For more details, please visit the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/).
+### Python Dependency
+
+Some functions in `iRfcb` require Python. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For details on what function that require Python, please visit the project's [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/).
+
+The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the `iRfcb` package.
+
+#### USE_IRFCB_PYTHON
+
+- **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically uses a Python virtual environment named `iRfcb` for use when needed.
+- **Default**: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install` functions manually before using a Python feature.
+- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`.
+
+##### How to Set the `USE_IRFCB_PYTHON` Variable
+
+You can set the `USE_IRFCB_PYTHON` variable in your R session or make it persistent across sessions:
+
+1. **Temporary for the session**: 
+   You can set the variable in your R session before loading `iRfcb` using the following command:
+   ```r
+   Sys.setenv(USE_IRFCB_PYTHON = "TRUE")
+   ```
+
+2. **Permanent across sessions**:
+   To ensure this setting persists across R sessions, add it to your `.Renviron` file in your R home directory. You can easily edit the file using the following command:
+   ```r
+   usethis::edit_r_environ("user")
+   ```
+   
+   Then, add the following line to the file:
+   ```text
+   USE_IRFCB_PYTHON=TRUE
+   ```
+   This will automatically set the environment variable each time you start an R session.
 
 ## Documentation and Tutorials
 

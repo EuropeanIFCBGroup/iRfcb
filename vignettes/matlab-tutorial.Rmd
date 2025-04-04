@@ -24,6 +24,8 @@ install.packages("iRfcb")
 ```
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
+The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](../..).
+
 Load the `iRfcb` library:
 ```{r, eval=FALSE}
 library(iRfcb)
