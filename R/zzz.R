@@ -27,26 +27,27 @@
   # List required packages
   reticulate::py_require(reqs)
 
-  # Check if the system environment variable USE_IFCB_PYTHON is set
+  # You can store info in a package env to retrieve later if needed
+  iRfcbEnv <<- new.env(parent = emptyenv())
+  iRfcbEnv$venv <- NULL
+
+  # Only set up environment, no messages
   if (Sys.getenv("USE_IRFCB_PYTHON") == "TRUE") {
-
-    # Check if Python venvs are available
     venv_list <- reticulate::virtualenv_list()
-
-    # Check if any iRfcb virtual environments are available
     iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
 
-    # Use any iRfcb virtual environments that are available
     if (length(iRfcb_venvs) > 0) {
-      packageStartupMessage("Using existing Python virtual environment: ", iRfcb_venvs[1])
+      iRfcbEnv$venv <- iRfcb_venvs[1]
 
-      # Identify OS
       py_exec <- if (.Platform$OS.type == "windows") "Scripts/python.exe" else "bin/python"
-
-      # Use exisiting venv
-      Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcb_venvs[1], py_exec))
-      # Initialize python
-      init <- reticulate::py_available(initialize = TRUE)
+      Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcbEnv$venv, py_exec))
+      reticulate::py_available(initialize = TRUE)
     }
+  }
+}
+
+.onAttach <- function(libname, pkgname) {
+  if (!is.null(iRfcbEnv$venv)) {
+    packageStartupMessage("Using existing Python virtual environment: ", iRfcbEnv$venv)
   }
 }
