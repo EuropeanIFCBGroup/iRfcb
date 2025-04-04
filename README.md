@@ -40,9 +40,9 @@ The `iRfcb` package can be configured to automatically activate an installed Pyt
 
 #### USE_IRFCB_PYTHON
 
-- **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically uses a Python virtual environment named `iRfcb` for use when needed.
+- **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically activates a pre-installed Python virtual environment named `iRfcb` when the package is loaded.
 - **Default**: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install` functions manually before using a Python feature.
-- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`.
+- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`. Ensure that a virtual environment named `iRfcb` is installed (e.g. through `ifcb_py_install`) and available via `reticulate::virtualenv_list()`.
 
 ##### How to Set the `USE_IRFCB_PYTHON` Variable
 

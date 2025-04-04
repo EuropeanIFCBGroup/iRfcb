@@ -24,6 +24,14 @@ No return value. This function is called for its side effect of configuring the 
 This function sets up the Python environment for \code{iRfcb}. By default, it creates and activates a Python virtual environment (\code{venv}) named "iRfcb" and installs the required Python packages from the "requirements.txt" file.
 Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting \code{use_venv = FALSE} (not recommended).
 }
+\details{
+This function requires Python to be available on the system. It uses the \code{reticulate} package to
+manage Python environments and packages.
+
+The \code{USE_IRFCB_PYTHON} environment variable can be set to automatically activate an
+installed Python virtual environment named \code{iRfcb} when the \code{iRfcb} package is loaded.
+Set \code{USE_IRFCB_PYTHON} to \code{"TRUE"} to enable automatic setup. For more details, see the package README.
+}
 \examples{
 \dontrun{
 # Install the iRfcb Python environment using a virtual environment (default)
