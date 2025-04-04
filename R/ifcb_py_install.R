@@ -9,6 +9,14 @@
 #'
 #' @return No return value. This function is called for its side effect of configuring the Python environment.
 #'
+#' @details
+#' This function requires Python to be available on the system. It uses the `reticulate` package to
+#' manage Python environments and packages.
+#'
+#' The `USE_IRFCB_PYTHON` environment variable can be set to automatically activate an
+#' installed Python virtual environment named `iRfcb` when the `iRfcb` package is loaded.
+#' Set `USE_IRFCB_PYTHON` to `"TRUE"` to enable automatic setup. For more details, see the package README.
+#'
 #' @examples
 #' \dontrun{
 #' # Install the iRfcb Python environment using a virtual environment (default)

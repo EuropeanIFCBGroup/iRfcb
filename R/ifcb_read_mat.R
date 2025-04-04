@@ -1,4 +1,4 @@
-utils::globalVariables("read_mat_file")
+utils::globalVariables("r_read_mat_file")
 #' Read a MATLAB .mat File in R
 #'
 #' This function reads a MATLAB `.mat` file using a Python function via `reticulate`.
@@ -28,5 +28,22 @@ ifcb_read_mat <- function(file_path) {
   reticulate::source_python(system.file("python", "read_mat_file.py", package = "iRfcb"))
 
   # Call the Python function
-  read_mat_file(file_path)
+  py_data <- r_read_mat_file(file_path)
+
+  # Converts lists to matrices to ressemble R.matlab::readMat
+  convert_lists_to_matrix <- function(x) {
+    lapply(x, function(el) {
+      if (is.list(el)) {
+        # Convert 1x1 list to 1x1 matrix if it's a scalar string
+        if (length(el) == 1 && is.character(el[[1]])) {
+          matrix(el[[1]], nrow = 1, ncol = 1)
+        }
+      } else {
+        el
+      }
+    })
+  }
+
+  # Convert Python lists to R matrices where appropriate
+  convert_lists_to_matrix(py_data)
 }

@@ -14,6 +14,12 @@ test_that("ifcb_summarize_class_counts works correctly", {
   # Call the function to summarize class counts
   summary_data <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range)
 
+  # Call the function using Python
+  summary_data_py <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range, use_python = TRUE)
+
+  # Expect that the .mat data from R and Python are identical
+  expect_identical(summary_data, summary_data_py)
+
   # Check that the summary data has the correct structure and elements
   expect_type(summary_data, "list")
   expect_named(summary_data, c("class2useTB", "classcountTB", "classcountTB_above_optthresh", "ml_analyzedTB", "mdateTB", "filelistTB", "classpath_generic", "classcountTB_above_adhocthresh", "adhocthresh"))

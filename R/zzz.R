@@ -26,4 +26,20 @@
 
   # List required packages
   reticulate::py_require(reqs)
+
+  # Check if the system environment variable USE_IFCB_PYTHON is set
+  if (Sys.getenv("USE_IRFCB_PYTHON") == "TRUE") {
+
+    # Check if Python venvs are available
+    venv_list <- reticulate::virtualenv_list()
+
+    # Check if any iRfcb virtual environments are available
+    if (length(venv_list) > 0) {
+      iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
+      if (length(iRfcb_venvs) > 0) {
+        # Use exisiting venv
+        ifcb_py_install(iRfcb_venvs[1])
+      }
+    }
+  }
 }
