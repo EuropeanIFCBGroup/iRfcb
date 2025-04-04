@@ -24,6 +24,11 @@ ifcb_read_mat <- function(file_path) {
   # Initialize python check
   check_python_and_module()
 
+  # Check if the file exists
+  if (!file.exists(file_path)) {
+    stop("File does not exist: ", file_path)
+  }
+
   # Load Python script
   reticulate::source_python(system.file("python", "read_mat_file.py", package = "iRfcb"))
 

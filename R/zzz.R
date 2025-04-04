@@ -34,12 +34,15 @@
     venv_list <- reticulate::virtualenv_list()
 
     # Check if any iRfcb virtual environments are available
-    if (length(venv_list) > 0) {
-      iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
-      if (length(iRfcb_venvs) > 0) {
-        # Use exisiting venv
-        ifcb_py_install(iRfcb_venvs[1])
-      }
+    iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
+
+    # Use any iRfcb virtual environments that are available
+    if (length(iRfcb_venvs) > 0) {
+      message("Using existing Python virtual environment: ", iRfcb_venvs[1])
+      # Use exisiting venv
+      Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcb_venvs[1], "bin", "python"))
+      # Initialize python
+      init <- reticulate::py_available(initialize = TRUE)
     }
   }
 }
