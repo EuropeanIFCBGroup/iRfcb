@@ -83,6 +83,14 @@ Alternatively, users can opt to use the system Python instead of creating a virt
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>No return value. This function is called for its side effect of configuring the Python environment.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function requires Python to be available on the system. It uses the <code>reticulate</code> package to
+manage Python environments and packages.</p>
+<p>The <code>USE_IRFCB_PYTHON</code> environment variable can be set to automatically activate an
+installed Python virtual environment named <code>iRfcb</code> when the <code>iRfcb</code> package is loaded.
+Set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code> to enable automatic setup. For more details, see the package README.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

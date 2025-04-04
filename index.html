@@ -111,7 +111,44 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"EuropeanIFCBGroup/iRfcb"</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions in <code>iRfcb</code> require Python. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For more details, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/">webpage</a>.</p>
+</div>
+<div class="section level3">
+<h3 id="python-dependency">Python Dependency<a class="anchor" aria-label="anchor" href="#python-dependency"></a>
+</h3>
+<p>Some functions in <code>iRfcb</code> require Python. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For details on what function that require Python, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/reference/">Function Reference</a>.</p>
+<p>The <code>iRfcb</code> package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the <code>iRfcb</code> package.</p>
+<div class="section level4">
+<h4 id="use_irfcb_python">USE_IRFCB_PYTHON<a class="anchor" aria-label="anchor" href="#use_irfcb_python"></a>
+</h4>
+<ul>
+<li>
+<strong>Description</strong>: The <code>USE_IRFCB_PYTHON</code> environment variable controls whether the package automatically activates a pre-installed Python virtual environment named <code>iRfcb</code> when the package is loaded.</li>
+<li>
+<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code>ifcb_py_install</code> functions manually before using a Python feature.</li>
+<li>
+<strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. Ensure that a virtual environment named <code>iRfcb</code> is installed (e.g. through <code>ifcb_py_install</code>) and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>.</li>
+</ul>
+<div class="section level5">
+<h5 id="how-to-set-the-use_irfcb_python-variable">How to Set the <code>USE_IRFCB_PYTHON</code> Variable<a class="anchor" aria-label="anchor" href="#how-to-set-the-use_irfcb_python-variable"></a>
+</h5>
+<p>You can set the <code>USE_IRFCB_PYTHON</code> variable in your R session or make it persistent across sessions:</p>
+<ol style="list-style-type: decimal">
+<li>
+<p><strong>Temporary for the session</strong>: You can set the variable in your R session before loading <code>iRfcb</code> using the following command:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>USE_IRFCB_PYTHON <span class="op">=</span> <span class="st">"TRUE"</span><span class="op">)</span></span></code></pre></div>
+</li>
+<li>
+<p><strong>Permanent across sessions</strong>: To ensure this setting persists across R sessions, add it to your <code>.Renviron</code> file in your R home directory. You can easily edit the file using the following command:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_environ</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></span></code></pre></div>
+<p>Then, add the following line to the file:</p>
+<pre class="text"><code><span><span class="va">USE_IRFCB_PYTHON</span><span class="op">=</span><span class="cn">TRUE</span></span></code></pre>
+<p>This will automatically set the environment variable each time you start an R session.</p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 <div class="section level2">
