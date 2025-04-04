@@ -105,6 +105,9 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
   ), "Empty .mat file"
   )
 
+  # Remove empty file
+  unlink(file.path(manual_folder, "D20220124T144202_IFCB139.mat"))
+
   # Create the output directory
   if (!dir.exists(out_folder)) {
     dir.create(out_folder)
