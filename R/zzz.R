@@ -39,8 +39,12 @@
     # Use any iRfcb virtual environments that are available
     if (length(iRfcb_venvs) > 0) {
       packageStartupMessage("Using existing Python virtual environment: ", iRfcb_venvs[1])
+
+      # Identify OS
+      py_exec <- if (.Platform$OS.type == "windows") "Scripts/python.exe" else "bin/python"
+
       # Use exisiting venv
-      Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcb_venvs[1], "bin", "python"))
+      Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcb_venvs[1], py_exec))
       # Initialize python
       init <- reticulate::py_available(initialize = TRUE)
     }
