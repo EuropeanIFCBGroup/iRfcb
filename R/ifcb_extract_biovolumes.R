@@ -305,7 +305,5 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
     )) %>%
     select(-biovolume, -is_diatom)
 
-  biovolume_df <- type_convert(biovolume_df)
-
-  return(biovolume_df)
+  type_convert(biovolume_df)
 }

@@ -27,8 +27,8 @@ def convert_data(x):
             return x
 
     if isinstance(x, list):
-        def flatten(l):
-            for item in l:
+        def flatten(lst):
+            for item in lst:
                 if isinstance(item, list):
                     yield from flatten(item)
                 else:
