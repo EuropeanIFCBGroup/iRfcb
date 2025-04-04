@@ -16,7 +16,26 @@ class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
 test_that("ifcb_extract_biovolumes works correctly", {
 
   # Run the function with test data
-  biovolume_df <- ifcb_extract_biovolumes(feature_folder, class_folder, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
+  biovolume_df <- ifcb_extract_biovolumes(feature_folder,
+                                          class_folder,
+                                          micron_factor = 1 / 3.4,
+                                          diatom_class = "Bacillariophyceae",
+                                          threshold = "opt",
+                                          multiblob = FALSE)
+
+  # Run the function with test data
+  biovolume_py <- ifcb_extract_biovolumes(feature_folder,
+                                          class_folder,
+                                          micron_factor = 1 / 3.4,
+                                          diatom_class = "Bacillariophyceae",
+                                          threshold = "opt",
+                                          multiblob = FALSE,
+                                          use_python = TRUE)
+
+  # Check that the .mat data from R and Python are identical
+  expect_identical(biovolume_df$sample, biovolume_py$sample)
+  expect_identical(biovolume_df$biovolume_um3, biovolume_py$biovolume_um3)
+  expect_identical(biovolume_df$roi_number, biovolume_py$roi_number)
 
   # Check that the returned object is a data frame
   expect_s3_class(biovolume_df, "data.frame")

@@ -40,6 +40,25 @@ test_that("ifcb_extract_classified_images works correctly with default parameter
   extracted_images <- list.files(out_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
   expect_true(length(extracted_images) > 0)
 
+  unlink(out_folder, recursive = TRUE)
+
+  # Run the function by reading .mat files using Python
+  ifcb_extract_classified_images(
+    sample = sample,
+    classified_folder = classified_folder,
+    roi_folder = roi_folder,
+    out_folder = out_folder,
+    taxa = "All",
+    threshold = "opt",
+    use_python = TRUE
+  )
+
+  # Verify that the output directory contains the extracted images
+  extracted_images_py <- list.files(out_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
+
+  # Check that the images extracted using Python are identical to those extracted using R
+  expect_identical(extracted_images, extracted_images_py)
+
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
