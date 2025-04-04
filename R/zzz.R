@@ -38,7 +38,7 @@
 
     # Use any iRfcb virtual environments that are available
     if (length(iRfcb_venvs) > 0) {
-      message("Using existing Python virtual environment: ", iRfcb_venvs[1])
+      packageStartupMessage("Using existing Python virtual environment: ", iRfcb_venvs[1])
       # Use exisiting venv
       Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), iRfcb_venvs[1], "bin", "python"))
       # Initialize python
