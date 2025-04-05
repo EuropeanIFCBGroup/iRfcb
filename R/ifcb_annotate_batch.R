@@ -76,7 +76,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   if (lifecycle::is_present(adc_folder)) {
 
     # Signal the deprecation to the user
-    deprecate_warn("0.4.4", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
+    deprecate_warn("0.5.0", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
 
     # Deal with the deprecated argument for compatibility
     adc_files <- adc_folder

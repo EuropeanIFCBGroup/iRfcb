@@ -21,11 +21,10 @@ ifcb_create_empty_manual_file(
 \item{output_file}{Character. The path where the output MAT file will be saved.}
 
 \item{classlist}{Integer or numeric vector.
-Defines the values for the second column of the class list:
+Defines the values for the second column of the class list, typically representing the manual classification labels:
 \itemize{
-\item If a single value is provided (default = 1), all rows will be assigned this value.
+\item If a single value is provided, all rows will be assigned this value. For example, all ROIs can be assigned to class index 1 (default), which typically represents the unclassified category.
 \item If a numeric vector of the same length as \code{roi_length} is provided, the corresponding values will be used per row.
-\item The second column typically represents manual classification labels, with \code{1} indicating unclassified objects.
 }}
 
 \item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}

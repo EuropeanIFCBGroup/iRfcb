@@ -10,9 +10,10 @@ ifcb_is_near_land(
   distance = 500,
   shape = NULL,
   crs = 4326,
-  utm_zone = 33,
   remove_small_islands = TRUE,
-  small_island_threshold = 2e+06
+  small_island_threshold = 2e+06,
+  plot = FALSE,
+  utm_zone = deprecated()
 )
 }
 \arguments{
@@ -22,38 +23,44 @@ ifcb_is_near_land(
 
 \item{distance}{Buffer distance in meters around the coastline. Default is 500 m.}
 
-\item{shape}{Optional path to a shapefile containing coastline data. If provided,
+\item{shape}{Optional path to a shapefile containing coastline polygon data. If provided,
 the function will use this shapefile instead of the default Natural Earth 1:10m land vectors.
-Using a more detailed shapefile allows for a smaller buffer distance.
+Using a more detailed shapefile allows for a better estimation of the buffer distance.
 For detailed European coastlines, download polygons from the EEA at
-\url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.
-For more detailed world maps, download from Natural Earth at
-\url{https://www.naturalearthdata.com/downloads/10m-physical-vectors/}.}
+\url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.}
 
 \item{crs}{Coordinate reference system (CRS) to use for positions and output.
 Default is EPSG code 4326 (WGS84).}
-
-\item{utm_zone}{UTM zone for buffering the coastline. Default is 33 (between 12°E and 18°E, northern hemisphere).}
 
 \item{remove_small_islands}{Logical indicating whether to remove small islands from
 the coastline if a custom shapefile is provided. Default is TRUE.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
 will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.}
+
+\item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is FALSE.}
+
+\item{utm_zone}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+\code{utm_zone} is now calculated from the median longitude of the input coordinates.}
 }
 \value{
-Logical vector indicating whether each position is near land.
+If \code{plot = FALSE} (default), a logical vector is returned indicating whether each position
+is near land or not, with \code{NA} for positions where coordinates are missing.
+If \code{plot = TRUE}, a \code{ggplot} object is returned showing the land polygon, buffer area,
+and position points colored by their proximity to land.
 }
 \description{
-Determines whether given positions are near land based on a coastline shape file.
-The Natural Earth 1:10m land vectors are included as default shapefile in \code{iRfcb}.
+Determines whether given positions are near land based on a land polygon shape file.
+The Natural Earth 1:10m land vectors are downloaded as a default shapefile in \code{iRfcb}.
 }
 \details{
-This function calculates a buffered area around the coastline and checks if
-given positions (specified by longitudes and latitudes) are within this buffer
-or intersect with land.
+This function calculates a buffered area around the coastline using a polygon shapefile and
+determines if each input position intersects with this buffer or the landmass itself.
+By default, it downloads and uses the Natural Earth 1:10m land vector dataset.
 }
 \examples{
+\dontrun{
 # Define coordinates
 latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338)
 longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174)
@@ -63,5 +70,6 @@ near_land <- ifcb_is_near_land(latitudes, longitudes, distance = 300, crs = 4326
 
 # Print the result
 print(near_land)
+}
 
 }
