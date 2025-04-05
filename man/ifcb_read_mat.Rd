@@ -23,7 +23,14 @@ The required python packages can be installed in a virtual environment using \co
 }
 \examples{
 \dontrun{
-data <- read_mat_file_r("C:/data/sample.mat")
+# Initialize Python environment and install required packages
+ifcb_py_install()
+
+# Example .mat file included in the package
+mat_file <- system.file("exdata/example.mat", package = "iRfcb")
+
+# Read mat file using Python
+data <- ifcb_read_mat(mat_file)
 }
 
 }
