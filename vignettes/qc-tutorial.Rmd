@@ -200,16 +200,15 @@ gps_data <- ifcb_read_hdr_data(
 gps_data$near_land <- ifcb_is_near_land(
   gps_data$gpsLatitude,
   gps_data$gpsLongitude,
-  distance = 100,
-  # 100 meters from shore
-  shape = NULL
-) # Using the default NE 1:10m Land Polygon
+  distance = 100, # 100 meters from shore
+  shape = NULL # Using the default NE 1:10m Land Polygon
+) 
 
 # Print output
 head(gps_data)
 ```
 
-For more accurate determination, a detailed coastline .shp file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of [`ifcb_is_near_land`](../reference/ifcb_is_near_land.html) for further information.
+For more accurate determination, a detailed coastline `.shp` file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of [`ifcb_is_near_land`](../reference/ifcb_is_near_land.html) for further information.
 
 ### Check Which Sub-Basin an IFCB Sample Is From
 
