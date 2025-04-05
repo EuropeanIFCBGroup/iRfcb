@@ -9,7 +9,7 @@
 #'   ungroup %>% as_tibble tibble all_of contains row_number
 #' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text
 #'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
-#'   annotate
+#'   annotate coord_sf
 #' @importFrom png writePNG
 #' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
