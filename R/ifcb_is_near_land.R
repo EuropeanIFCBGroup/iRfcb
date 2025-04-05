@@ -179,7 +179,7 @@ ifcb_is_near_land <- function(latitudes,
       geom_sf(data = positions_sf, aes(color = near_land), size = 2) +
       scale_color_manual(values = c("TRUE" = "red", "FALSE" = "green")) +
       coord_sf(crs = crs) +
-      labs(title = "Points Near Land Buffer",
+      labs(title = paste("Points Inside Land Buffer:", distance, "m"),
            color = "Near Land") +
       theme_minimal()
 
