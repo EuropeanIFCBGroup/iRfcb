@@ -30,7 +30,7 @@ install.packages("iRfcb")
 ```
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
-The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](../..).
+The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](https://europeanifcbgroup.github.io/iRfcb/).
 
 Load the `iRfcb` and `ggplot2` libraries:
 ```{r, eval=FALSE}
@@ -224,7 +224,7 @@ near_land_plot <- ifcb_is_near_land(
 print(near_land_plot)
 ```
 
-For more accurate determination, a detailed coastline `.shp` file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of [`ifcb_is_near_land`](../reference/ifcb_is_near_land.html) for further information.
+For more accurate determination, a detailed coastline `.shp` file may be required (e.g. the [EEA Coastline Polygon](https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon)). Refer to the help pages of `ifcb_is_near_land()` for further information.
 
 ### Check Which Sub-Basin an IFCB Sample Is From
 
@@ -297,7 +297,7 @@ head(positions)
 
 ### Find Contextual Ferrybox Data from RV Svea
 
-The [`ifcb_get_ferrybox_data`](../reference/ifcb_get_ferrybox_data.html) function can also be used to extract additional ferrybox parameters, such as temperature (parameter number **8180**) and salinity (parameter number **8181**). 
+The `ifcb_get_ferrybox_data()` function can also be used to extract additional ferrybox parameters, such as temperature (parameter number **8180**) and salinity (parameter number **8181**). 
 
 ```{r}
 # Get salinity and temperature from ferrybox data
@@ -309,7 +309,7 @@ ferrybox_data <- ifcb_get_ferrybox_data(gps_data$timestamp,
 head(ferrybox_data)
 ```
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ```{r, include=FALSE}
 # Clean up

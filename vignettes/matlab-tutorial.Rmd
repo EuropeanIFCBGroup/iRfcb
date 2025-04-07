@@ -24,7 +24,7 @@ install.packages("iRfcb")
 ```
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
-The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](../..).
+The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](https://europeanifcbgroup.github.io/iRfcb/).
 
 Load the `iRfcb` library:
 ```{r, eval=FALSE}
@@ -105,13 +105,13 @@ summary_data <- ifcb_read_summary(
 head(summary_data)
 ```
 
-Alternatively, `iRfcb` can directly aggregate data and compute carbon content from classification files using the [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) function demonstrated below.
+Alternatively, `iRfcb` can directly aggregate data and compute carbon content from classification files using the `ifcb_summarize_biovolumes()` function demonstrated below.
 
 ### Summarize Counts, Biovolumes and Carbon Content from Classified IFCB Data
 
 This function calculates aggregated biovolumes and carbon content from IFCB samples based on feature and MATLAB classification result files, without summarizing the data in MATLAB. The function can also be adapted to process classification results from other non-MATLAB machine learning algorithms (e.g., a CNN model) by providing custom lists of image names and class labels through the `custom_images` and `custom_classes` arguments.
 
-Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual ROIs, where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from `.hdr` files to compute biovolume and carbon content per liter of sample. See details in the help pages for [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) and [`ifcb_extract_biovolumes`](../reference/ifcb_extract_biovolumes.html). 
+Biovolumes are converted to carbon according to Menden-Deuer and Lessard (2000) for individual ROIs, where different conversion factors are applied to diatoms and non-diatom protist. If provided, it also incorporates sample volume data from `.hdr` files to compute biovolume and carbon content per liter of sample. See details in the help pages for `ifcb_summarize_biovolumes()` and `ifcb_extract_biovolumes()`. 
 
 ```{r}
 # Summarize biovolume data using IFCB data from classified data folder
@@ -131,7 +131,7 @@ head(biovolume_data)
 
 ### Summarize Counts, Biovolumes and Carbon Content from Manually Annotated IFCB Data
 
-The [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) function can also be used to calculate aggregated biovolumes and carbon content from manually annotated IFCB image data. See details in the help pages for [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html), [`ifcb_extract_biovolumes`](../reference/ifcb_extract_biovolumes.html) and [`ifcb_count_mat_annotations`](../reference/ifcb_count_mat_annotations.html).
+The `ifcb_summarize_biovolumes()` function can also be used to calculate aggregated biovolumes and carbon content from manually annotated IFCB image data. See details in the help pages for `ifcb_summarize_biovolumes()`, `ifcb_extract_biovolumes()` and `ifcb_count_mat_annotations()`.
 
 ```{r}
 # Summarize biovolume data using IFCB data from manual data folder
@@ -175,7 +175,7 @@ head(png_per_class)
 
 #### MATLAB Files
 
-Count the annotations in the MATLAB files, similar to [`ifcb_summarize_png_counts`](../reference/ifcb_summarize_png_counts.html):
+Count the annotations in the MATLAB files, similar to `ifcb_summarize_png_counts()`:
 ```{r}
 # Summarize counts from MATLAB files
 mat_count <- ifcb_count_mat_annotations(
@@ -199,7 +199,7 @@ ifcb_run_image_gallery()
 
 ![image_gallery](../man/figures/image_gallery.png)
 
-Individual images can be selected and a list of selected images can be downloaded as a `correction` file. This file can be used to correct `.mat` annotations below using the [`ifcb_correct_annotation`](../reference/ifcb_correct_annotation.html) function.
+Individual images can be selected and a list of selected images can be downloaded as a `correction` file. This file can be used to correct `.mat` annotations below using the `ifcb_correct_annotation()` function.
 
 ### Correct .mat Files After Checking Images in the App
 
@@ -316,7 +316,7 @@ head(mat_count)
 
 ### Annotate Images in Batch
 
-Images can be batch annotated using the [`ifcb_annotate_batch`](../reference/ifcb_annotate_batch.html) function. If a manual file already exists for the sample, the ROI class list will be updated accordingly. If no file is found, a new `.mat` file will be created, with all unannotated ROIs marked as unclassified.
+Images can be batch annotated using the `ifcb_annotate_batch()` function. If a manual file already exists for the sample, the ROI class list will be updated accordingly. If no file is found, a new `.mat` file will be created, with all unannotated ROIs marked as unclassified.
 
 ```{r}
 # Read a file with selected images, generated by the image gallery app
@@ -349,7 +349,7 @@ mat_count <- ifcb_count_mat_annotations(
 head(mat_count)
 ```
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 

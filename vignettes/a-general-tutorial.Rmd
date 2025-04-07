@@ -134,7 +134,7 @@ head(multiblob_features[[1]])[,1:10]
 
 IFCB images stored in `.roi` files can be extracted as `.png` files using the `iRfcb` package, as demonstrated below.
 
-Extract all images from a sample using the [`ifcb_extract_pngs`](../reference/ifcb_extract_pngs.html) function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file. The `gamma` can be adjusted to enhance image contrast, and an optional scale bar can be added by specifying `scale_bar_um`.
+Extract all images from a sample using the `ifcb_extract_pngs()` function. You can specify the `out_folder`, but by default, images will be saved in a subdirectory within the same directory as the ROI file. The `gamma` can be adjusted to enhance image contrast, and an optional scale bar can be added by specifying `scale_bar_um`.
 ```{r}
 # All ROIs in sample
 ifcb_extract_pngs(
@@ -151,7 +151,7 @@ ifcb_extract_pngs("data/data/2023/D20230314/D20230314T003836_IFCB134.roi",
                   ROInumbers = c(2, 5))
 ```
 
-To extract annotated images or classified results from MATLAB files, please see the [Sharing Annotated IFCB Images](../articles/image-export-tutorial.html) and [Handling MATLAB Results](../articles/matlab-tutorial.html) tutorials.
+To extract annotated images or classified results from MATLAB files, please see the `vignette("image-export-tutorial")` and `vignette("matlab-tutorial")` tutorials.
 
 ## Taxonomical Data
 
@@ -177,7 +177,7 @@ tibble(worms_records)
 
 ### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See [`vol2C_nondiatom`](../reference/vol2C_nondiatom.html) and [`vol2C_lgdiatom`](../reference/vol2C_lgdiatom.html) for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See `vol2C_nondiatom()` and `vol2C_lgdiatom()` for carbon calculations (not included in NAMESPACE).
 
 ```{r}
 # Read class2use file and select five taxa
@@ -231,7 +231,7 @@ shark_example <- ifcb_get_shark_example()
 head(shark_example)[1:10]
 ```
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 
