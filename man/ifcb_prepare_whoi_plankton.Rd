@@ -76,6 +76,8 @@ This function downloads manually annotated images from the WHOI-Plankton dataset
 classification files in \code{.mat} format that can be used to train an image classifier using the \code{ifcb-analysis} MATLAB package (Sosik and Olson 2007).
 }
 \details{
+This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+
 This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.
 

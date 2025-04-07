@@ -38,7 +38,7 @@ It replaces the class ID of specified regions of interest (ROIs) in the classlis
 a correction file or a character vector.
 }
 \details{
-This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 
 The correction file is expected to contain at least one column: \code{image_filename}, which includes the filenames of the images (with or without additional trailing information).
 The function processes each file, corrects the annotations, and saves the updated files in the output folder.

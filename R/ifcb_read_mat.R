@@ -7,16 +7,23 @@ utils::globalVariables("r_read_mat_file")
 #' @return A list containing the MATLAB variables.
 #'
 #' @details
-#' This function requires a Python interpreter with `SciPy` installed.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @examples
 #' \dontrun{
-#' data <- read_mat_file_r("C:/data/sample.mat")
+#' # Initialize Python environment and install required packages
+#' ifcb_py_install()
+#'
+#' # Example .mat file included in the package
+#' mat_file <- system.file("exdata/example.mat", package = "iRfcb")
+#'
+#' # Read mat file using Python
+#' data <- ifcb_read_mat(mat_file)
 #' }
 #'
 #' @details
 #' This function requires a python interpreter to be installed.
-#' The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @export
 #' @seealso \code{\link{ifcb_py_install}}

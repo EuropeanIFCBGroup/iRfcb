@@ -2,7 +2,7 @@
 #'
 #' This function processes IFCB data by reading images, matching them to the corresponding
 #' header and feature files, and joining them into a single dataframe. This function may be
-#' useful when preparing metadata files for an Ecotaxa submission.
+#' useful when preparing metadata files for an EcoTaxa submission.
 #'
 #' @param png_folder Character. The file path to the folder containing the PNG images.
 #' @param feature_folder Character. The file path to the folder containing the feature files (optional).
@@ -83,5 +83,5 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
     left_join(hdr_data, by = c("sample", "timestamp", "date", "year", "month", "day", "time", "ifcb_number")) %>%
     left_join(features_df, by = c("sample", "roi" = "roi_number"))
 
-  return(joined_df)
+  joined_df
 }

@@ -46,7 +46,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    mockery
+    mockery,
+    spelling
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 URL: https://europeanifcbgroup.github.io/iRfcb/, https://github.com/EuropeanIFCBGroup/iRfcb
+Language: en-US

@@ -27,11 +27,13 @@ You can initialize the Python environment and install necessary packages using \
 If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
-\dontrun{
+# Example .mat file included in the package
+mat_file <- system.file("exdata/example.mat", package = "iRfcb")
+
 # Get variable names from a MAT file
-variables <- ifcb_get_mat_names("path/to/file.mat")
+variables <- ifcb_get_mat_names(mat_file)
 print(variables)
-}
+
 }
 \references{
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.

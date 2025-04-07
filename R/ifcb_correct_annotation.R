@@ -19,7 +19,7 @@ utils::globalVariables("edit_manual_file")
 #' @return This function does not return any value; it updates the classlist files in the specified output directory.
 #'
 #' @details
-#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' The correction file is expected to contain at least one column: `image_filename`, which includes the filenames of the images (with or without additional trailing information).
 #' The function processes each file, corrects the annotations, and saves the updated files in the output folder.

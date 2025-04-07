@@ -10,7 +10,7 @@ The `iRfcb` R package offers a suite of tools for managing and performing qualit
 
 ### Functional Highlights
 
-- **Data Management**: Functions for reading raw and processed IFCB files, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.
+- **Data Management**: Functions for reading raw and processed IFCB files, counting and summarizing annotated or classified image data, and accessing, correcting, and merging manually annotated datasets.
 - **Quality Control**: Tools for geospatial quality control of IFCB data and analysis of [Particle Size Distribution](https://github.com/kudelalab/PSD).
 - **Image Extraction**: Tools to extract and prepare images for publication.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data.
@@ -50,6 +50,7 @@ Explore the key features and capabilities of `iRfcb` through the tutorials:
 - [Creating a DwC-A from IFCB Data](https://europeanifcbgroup.github.io/iRfcb/articles/dwca-tutorial.html)
 - [Sharing Annotated IFCB Images](https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.html)
 - [Prepare IFCB Images for EcoTaxa](https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.html)
+- [WHOI-Plankton Data Integration](https://europeanifcbgroup.github.io/iRfcb/articles/whoi-plankton-data-integration.html)
 
 ### Example Usage
 
@@ -62,13 +63,15 @@ Explore the key features and capabilities of `iRfcb` through the tutorials:
 
 Some functions in `iRfcb` require Python, and you will be notified when you call one of these functions. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For details on what function that require Python, please visit the project's [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/).
 
-A Python virtual environment (venv) can be created using the `ifcb_py_install` function. The `iRfcb` package can also be configured to automatically activate an installed Python venv upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the `iRfcb` package.
+A Python virtual environment (venv) can be created using the `ifcb_py_install()` function before calling the function that require Python. 
+
+The `iRfcb` package can also be configured to automatically activate an installed Python venv upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the `iRfcb` package.
 
 ### USE_IRFCB_PYTHON
 
 - **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically activates a pre-installed Python venv named `iRfcb` when the package is loaded.
-- **Default**: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install` functions manually before using a Python feature.
-- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`. Ensure that a venv named `iRfcb` is installed (e.g. through `ifcb_py_install`) in `reticulate::virtualenv_root()` and available via `reticulate::virtualenv_list()`.
+- **Default**: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install()` functions manually before using a Python feature.
+- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`. Ensure that a venv named `iRfcb` is installed (e.g. through `ifcb_py_install()`) in `reticulate::virtualenv_root()` and available via `reticulate::virtualenv_list()`.
 
 #### How to Set the `USE_IRFCB_PYTHON` Variable
 

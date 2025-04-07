@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. This tutorial covers the export of both unclassified raw IFCB images and annotated Regions of Interest (ROIs) using the MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit automatically classified images using the [`ifcb_extract_classified_images`](../reference/ifcb_extract_classified_images.html) function.
+This vignette demonstrates how to prepare Imaging FlowCytobot (IFCB) data for [EcoTaxa](https://ecotaxa.obs-vlfr.fr/) in R using the `iRfcb` package. This tutorial covers the export of both unclassified raw IFCB images and annotated Regions of Interest (ROIs) using the MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson, 2007). However, the code can be adapted to process images from other software platforms. The code can also be adapted to submit automatically classified images using the `ifcb_extract_classified_images()` function.
 
 EcoTaxa is a web application widely used for hosting, classifying, and exporting images of individual objects, particularly in plankton imaging. It leverages machine learning to assign names based on a universal taxonomy and produces ecological data in standardized formats for scientific applications. To submit images, accompanying metadata is required, which can be generated using the `iRfcb` package.
 
@@ -96,7 +96,7 @@ metadata_sample <- ifcb_summarize_png_metadata(sample_path)
 
 ### Map EcoTaxa Headers
 
-The image metadata are mapped to the Ecotaxa metadata headers that are required when submitting data to EcoTaxa. In this example, a minimal dataset is used, containing only the image name. More comprehensive headers can be specified through the arguments of [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html).
+The image metadata are mapped to the EcoTaxa metadata headers that are required when submitting data to EcoTaxa. In this example, a minimal dataset is used, containing only the image name. More comprehensive headers can be specified through the arguments of `ifcb_get_ecotaxa_example()`.
 
 ```{r}
 # Get the minimal EcoTaxa metadata header names
@@ -105,7 +105,7 @@ ecotaxa_minimal_headers <- ifcb_get_ecotaxa_example("minimal")[0, ]
 # Create a data frame with empty rows matching the length of data
 ecotaxa_minimal_headers[1:nrow(metadata_sample), ] <- NA
 
-# Map metadata to Ecotaxa headers
+# Map metadata to EcoTaxa headers
 ecotaxa_minimal <- ecotaxa_minimal_headers %>%
   mutate(
     img_file_name = metadata_sample$image,
@@ -235,7 +235,7 @@ metadata <- metadata %>%
 
 ### Map EcoTaxa Headers
 
-The metadata can be mapped with the headers in [`ifcb_get_ecotaxa_example`](../reference/ifcb_get_ecotaxa_example.html) to produce metadata files suitable for submitting images to EcoTaxa. The example below is comprehensive and includes several feature fields. For a simpler dataset, minimal fields can be retrieved using `ifcb_get_ecotaxa_example(example = "minimal")`.
+The metadata can be mapped with the headers in `ifcb_get_ecotaxa_example()` to produce metadata files suitable for submitting images to EcoTaxa. The example below is comprehensive and includes several feature fields. For a simpler dataset, minimal fields can be retrieved using `ifcb_get_ecotaxa_example(example = "minimal")`.
 
 ```{r}
 # Get EcoTaxa metadata header names
@@ -614,7 +614,7 @@ ifcb_zip_pngs(
 )
 ```
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 

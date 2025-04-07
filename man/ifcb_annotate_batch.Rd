@@ -50,7 +50,7 @@ based on input vector of IFCB image names.
 These \code{.mat} can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
-This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 
 If an image belongs to a sample that already has a corresponding manual \code{.mat} file,
 the function updates the class IDs for the specified regions of interest (ROIs) in that file.

@@ -7,8 +7,8 @@
 ifcb_download_whoi_plankton(
   years,
   dest_folder,
-  max_retries = 10,
   extract_images = TRUE,
+  max_retries = 10,
   quiet = FALSE
 )
 }
@@ -17,10 +17,10 @@ ifcb_download_whoi_plankton(
 
 \item{dest_folder}{A string specifying the destination folder where the files will be extracted.}
 
-\item{max_retries}{An integer specifying the maximum number of attempts to retrieve data. Default is 10.}
-
 \item{extract_images}{Logical. If \code{TRUE}, extracts \code{.png} images from the downloaded archives and removes the \code{.zip} files.
 If \code{FALSE}, only downloads the archives without extracting images. Default is \code{TRUE}.}
+
+\item{max_retries}{An integer specifying the maximum number of attempts to retrieve data. Default is 10.}
 
 \item{quiet}{Logical. If TRUE, suppresses messages about the progress and completion of the download process. Default is FALSE.}
 }
@@ -31,11 +31,14 @@ Otherwise, no return value; files are downloaded and extracted to \code{dest_fol
 \description{
 This function downloads WHOI-Plankton annotated plankton images (Sosik et al. 2015) for specified years
 from \url{https://hdl.handle.net/1912/7341}.
-The extracted \code{.png} files are saved in the specified destination folder.
+The extracted \code{.png} data are saved in the specified destination folder.
 }
 \examples{
 \dontrun{
-ifcb_download_whoi_plankton(c(2006, 2007), "data")
+# Download and extract images for 2006 and 2007 in the data folder
+ifcb_download_whoi_plankton(c(2006, 2007),
+                            "data",
+                            extract_images = TRUE)
 }
 
 }

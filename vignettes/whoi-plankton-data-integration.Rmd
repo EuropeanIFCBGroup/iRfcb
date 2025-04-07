@@ -24,7 +24,7 @@ install.packages("iRfcb")
 ```
 Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
 
-The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](../..).
+The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](https://europeanifcbgroup.github.io/iRfcb/).
 
 Load the `iRfcb` library:
 ```{r, eval=FALSE}
@@ -89,7 +89,9 @@ blobs_folder_whoi <- file.path(
 
 ### Download and Prepare WHOI-Plankton Data
 
-The [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) function enables downloading zipped `.png` images from selected years of the [WHOI-Plankton dataset](https://hdl.handle.net/1912/7341), with an option to extract them using the `extract_images` argument. It also retrieves raw data (`.roi`, `.hdr` and `.adc` files), along with blobs and features (when available), from the [MVCO IFCB Dashboard](https://ifcb-data.whoi.edu/mvco). Interactions with WHOI-Plankton are managed through the  [`ifcb_download_whoi_plankton`](../reference/ifcb_download_whoi_plankton.html) function, while the IFCB Dashboard is accessed via the [`ifcb_download_dashboard_data`](../reference/ifcb_download_dashboard_data.html) function. Finally, the function generates manual `.mat` files for storing class information, ensuring compatibility with the MATLAB code in the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007).
+`help("ifcb_prepare_whoi_plankton")`
+
+The `ifcb_prepare_whoi_plankton()` function enables downloading zipped `.png` images from selected years of the [WHOI-Plankton dataset](https://hdl.handle.net/1912/7341), with an option to extract them using the `extract_images` argument. It also retrieves raw data (`.roi`, `.hdr` and `.adc` files), along with blobs and features (when available), from the [MVCO IFCB Dashboard](https://ifcb-data.whoi.edu/mvco). Interactions with WHOI-Plankton are managed through the  `ifcb_download_whoi_plankton()` function, while the IFCB Dashboard is accessed via the `ifcb_download_dashboard_data()` function. Finally, the function generates manual `.mat` files for storing class information, ensuring compatibility with the MATLAB code in the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007).
 
 In this example, we use data from the years 2013 and 2014.
 
@@ -115,11 +117,11 @@ ifcb_prepare_whoi_plankton(
 
 To exclude certain images from the training dataset, either exclude the class completely with the `skip_classes` argument, or set `extract_images = TRUE` and manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
 
-The function [`ifcb_prepare_whoi_plankton`](../reference/ifcb_prepare_whoi_plankton.html) converts the filename format of older IFCB models (IFCB1-6) to match the newer IFCB format (`DYYYYMMDDTHHMMSS_IFCBXXX`). By default, this conversion is performed using the `convert_filenames` and `convert_adc` arguments. This step ensures compatibility with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code. For further details, please refer to the help pages of the respective functions.
+The function `ifcb_prepare_whoi_plankton()` converts the filename format of older IFCB models (IFCB1-6) to match the newer IFCB format (`DYYYYMMDDTHHMMSS_IFCBXXX`). By default, this conversion is performed using the `convert_filenames` and `convert_adc` arguments. This step ensures compatibility with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code. For further details, please refer to the help pages of the respective functions.
 
 ## Merge Data with Existing Dataset
 
-The [`ifcb_merge_manual`](../reference/ifcb_merge_manual.html) function allows you to integrate data from the WHOI-Plankton dataset with your existing training dataset created using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) code (Sosik and Olson 2007). The merged dataset and class2use file will be saved in the locations specified by `manual_folder_output` and `class2use_file_output`.
+The `ifcb_merge_manual()` function allows you to integrate data from the WHOI-Plankton dataset with your existing training dataset created using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) code (Sosik and Olson 2007). The merged dataset and class2use file will be saved in the locations specified by `manual_folder_output` and `class2use_file_output`.
 
 In this example, we merge the WHOI-Plankton dataset with the `iRfcb` sample dataset from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455) (Torstensson et al. 2024), downloaded earlier in this tutorial. Please note that class names in the `class2use` files may need to be standardized if you intend to merge images into the same class (e.g. "Coscinodiscus" and "Coscinodiscus_spp").
 
@@ -160,9 +162,9 @@ ifcb_merge_manual(
 )
 ```
 
-The newly merged dataset is now ready for use in training and testing machine learning models. To integrate it with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code, blobs and features are extracted for the merged dataset (if not already downloaded through the IFCB Dashboard). Random forest models can then be built using the `ifcb-analysis` code.
+The newly merged dataset is now ready for use in training and testing machine learning models. To integrate it with the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) MATLAB code, blobs and features are extracted for the merged dataset (if not already downloaded through the IFCB Dashboard). Random forest models can then be built using the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) code.
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 

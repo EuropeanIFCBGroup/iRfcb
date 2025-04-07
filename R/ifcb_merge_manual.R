@@ -23,7 +23,7 @@
 #'  and merged `.mat` files into the output folder.
 #'
 #' @details
-#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' The **base** set consists of the original classifications that are used as a reference for the merging process.
 #' The **additions** set contains the additional classifications that need to be merged with the base set.

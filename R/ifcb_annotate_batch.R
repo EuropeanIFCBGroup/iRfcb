@@ -18,7 +18,7 @@
 #'    Use \code{adc_files} instead.
 #'
 #' @details
-#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' If an image belongs to a sample that already has a corresponding manual `.mat` file,
 #' the function updates the class IDs for the specified regions of interest (ROIs) in that file.
@@ -76,7 +76,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   if (lifecycle::is_present(adc_folder)) {
 
     # Signal the deprecation to the user
-    deprecate_warn("0.4.4", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
+    deprecate_warn("0.5.0", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
 
     # Deal with the deprecated argument for compatibility
     adc_files <- adc_folder

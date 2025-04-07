@@ -21,11 +21,10 @@ ifcb_create_empty_manual_file(
 \item{output_file}{Character. The path where the output MAT file will be saved.}
 
 \item{classlist}{Integer or numeric vector.
-Defines the values for the second column of the class list:
+Defines the values for the second column of the class list, typically representing the manual classification labels:
 \itemize{
-\item If a single value is provided (default = 1), all rows will be assigned this value.
+\item If a single value is provided, all rows will be assigned this value. For example, all ROIs can be assigned to class index 1 (default), which typically represents the unclassified category.
 \item If a numeric vector of the same length as \code{roi_length} is provided, the corresponding values will be used per row.
-\item The second column typically represents manual classification labels, with \code{1} indicating unclassified objects.
 }}
 
 \item{do_compression}{A logical value indicating whether to compress the .mat file. Default is TRUE.}
@@ -42,7 +41,7 @@ Generates a MAT file for IFCB data with an empty manual classification structure
 class names, and saves it to a specified output file. This function utilizes a Python script for creating the structure.
 }
 \details{
-This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 }
 \examples{
 \dontrun{
@@ -54,11 +53,11 @@ ifcb_create_empty_manual_file(roi_length = 100,
                               class2use = c("unclassified", "Aphanizomenon_spp"),
                               output_file = "output.mat")
 
-# Create a MAT file with a different unclassified_id
+# Create a MAT file with 50 unclassified ROIs (1) and 50 Aphanizomenon_spp (2) ROIs
 ifcb_create_empty_manual_file(roi_length = 100,
                               class2use = c("unclassified", "Aphanizomenon_spp"),
                               output_file = "output.mat",
-                              classlist = 999)
+                              classlist = c(rep(1, 50), rep(2, 50)))
 }
 
 }

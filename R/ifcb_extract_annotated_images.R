@@ -29,7 +29,7 @@ utils::globalVariables(c("name", "manual"))
 #'
 #' @details
 #' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
-#' This approach may be fasterthan the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
+#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
 #' To enable this functionality, ensure Python is properly configured with the required dependencies.
 #' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
 #'
@@ -45,7 +45,7 @@ utils::globalVariables(c("name", "manual"))
 #'   class2use_file = "path/to/class2use_file.mat",
 #'   roi_folders = "path/to/roi_folder",
 #'   out_folder = "path/to/out_folder",
-#'   skip_class = 1
+#'   skip_class = 1 # Skip "unclassified"
 #' )
 #' }
 ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folders, out_folder,

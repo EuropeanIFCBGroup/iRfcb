@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_get_ecotaxa_example.R
 \name{ifcb_get_ecotaxa_example}
 \alias{ifcb_get_ecotaxa_example}
-\title{Get Ecotaxa Column Names}
+\title{Get EcoTaxa Column Names}
 \usage{
 ifcb_get_ecotaxa_example(example = "ifcb")
 }

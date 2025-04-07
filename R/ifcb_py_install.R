@@ -15,7 +15,8 @@
 #'
 #' The `USE_IRFCB_PYTHON` environment variable can be set to automatically activate an
 #' installed Python virtual environment named `iRfcb` when the `iRfcb` package is loaded.
-#' Set `USE_IRFCB_PYTHON` to `"TRUE"` to enable automatic setup. For more details, see the package README.
+#' Set `USE_IRFCB_PYTHON` to `"TRUE"` to enable automatic setup. For more details, see the package README
+#' at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 #'
 #' @examples
 #' \dontrun{
@@ -46,7 +47,7 @@ ifcb_py_install <- function(envname = ".virtualenvs/iRfcb", use_venv = TRUE, pac
     python_path <- py_config$python
 
     if (is.null(python_path)) {
-      stop("Could not find a valid Python interpreter. Please ensure Python is installed.")
+      stop("Could not find a valid Python installation. Please ensure Python is installed.")
     }
 
     # Use the discovered Python path

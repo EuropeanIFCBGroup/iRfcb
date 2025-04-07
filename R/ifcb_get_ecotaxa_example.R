@@ -1,4 +1,4 @@
-#' Get Ecotaxa Column Names
+#' Get EcoTaxa Column Names
 #'
 #' This function reads an example EcoTaxa metadata file included in the `iRfcb` package.
 #'

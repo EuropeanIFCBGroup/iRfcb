@@ -18,7 +18,7 @@ if (!requireNamespace("LivingNorwayR", quietly = TRUE)) {
 
 ## Introduction
 
-This tutorial demonstrates how to create a Darwin Core Archive (DwC-A) from Imaging FlowCytobot (IFCB) results processed using MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). However, the code can be adapted to process classifications from other machine learning algorithms as well by passing custom lists of classes and image names to the [`ifcb_summarize_biovolumes`](../reference/ifcb_summarize_biovolumes.html) function. The example below is based on a subset of manually annotated image data from the [SMHI IFCB Plankton Image Reference Library (version 3)](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024), and aligns with the *best practices* outlined by Martin-Cabrera et al. (2022).
+This tutorial demonstrates how to create a Darwin Core Archive (DwC-A) from Imaging FlowCytobot (IFCB) results processed using MATLAB code from the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) repository (Sosik and Olson 2007). However, the code can be adapted to process classifications from other machine learning algorithms as well by passing custom lists of classes and image names to the `ifcb_summarize_biovolumes()` function. The example below is based on a subset of manually annotated image data from the [SMHI IFCB Plankton Image Reference Library (version 3)](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024), and aligns with the *best practices* outlined by Martin-Cabrera et al. (2022).
 
 The DwC-A is a widely accepted standard for sharing biodiversity data. It organizes data into structured tables, such as sampling events, occurrences, and measurement or facts (MoF), which can be linked through unique identifiers. This standardized format facilitates data sharing, integration, and reuse across platforms, enabling interoperability with global biodiversity databases like the Global Biodiversity Information Facility ([GBIF](https://www.gbif.org/)), Ocean Biodiversity Information System ([OBIS](https://obis.org/)) and the European Marine Observation and Data Network Biology ([EMODNet](https://emodnet.ec.europa.eu/en)).
 
@@ -291,7 +291,7 @@ The Occurrence table captures information about individual organisms or observat
 
 Each class observation is considered an occurrence in the IFCB data. The following code transforms the data into an occurrence table, adding essential fields such as **type**, **collectionCode**, **occurrenceID**, **basisOfRecord**, **identificationVerificationStatus**, **identificationReferences**, **identifiedBy**, and **associatedMedia**. These fields provide context and provenance information for each occurrence. 
 
-Links to raw images can be included in **associatedMedia**. These links may point to resources such as the IFCB Dashboard, Ecotaxa, or other image archives. Learn how to prepare images for Ecotaxa using `iRfcb` in this  [tutorial](../articles/ecotaxa-tutorial.html), or how to export images to an [image repository](../articles/image-export-tutorial.html).
+Links to raw images can be included in **associatedMedia**. These links may point to resources such as the IFCB Dashboard, EcoTaxa, or other image archives. Learn how to prepare images for EcoTaxa using `iRfcb` in this  `vignette("ecotaxa-tutorial")`, or how to export images to an image library in `vignette("image-export-tutorial")`.
 
 ```{r}
 # Create an occurrence table by transforming event data and adding fields
@@ -611,7 +611,7 @@ Metadata is an integral part of biodiversity datasets, as it ensures data discov
 
 To create metadata for the IFCB dataset in a standardized format, we use the `initializeDwCMetadata` function. This function generates a template that follows DwC guidelines, which can then be customized with specific details about the dataset.
 
-Here, we create the metadata starting with a Markdown file ([`metadata-template.rmd`](../articles/metadata-template.html)), which will be rendered into an EML-compliant XML file for GBIF submission:
+Here, we create the metadata starting with a Markdown file `vignette("metadata-template")`, which will be rendered into an EML-compliant XML file for GBIF submission:
 
 ```{r, eval=requireNamespace("LivingNorwayR", quietly = TRUE)}
 # Initialize DwC metadata using a R Markdown template
@@ -637,7 +637,7 @@ dwca_archive$exportAsDwCArchive(file.path("files", "iRfcb-DwC-A.zip"))
 
 The finalized DwC-A can be downloaded as a [zip archive](https://github.com/EuropeanIFCBGroup/iRfcb/raw/main/vignettes/files/iRfcb-DwC-A.zip).
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](../articles/index.html), and the [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/) documentation. See how more complex data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/), and the [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/) documentation. See how more complex data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 

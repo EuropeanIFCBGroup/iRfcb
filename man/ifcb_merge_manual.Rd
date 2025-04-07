@@ -52,7 +52,7 @@ and aligning class labels from a base set and an additional set of classificatio
 The merged \code{.mat} data can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
-This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 
 The \strong{base} set consists of the original classifications that are used as a reference for the merging process.
 The \strong{additions} set contains the additional classifications that need to be merged with the base set.

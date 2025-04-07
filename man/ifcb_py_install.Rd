@@ -30,7 +30,8 @@ manage Python environments and packages.
 
 The \code{USE_IRFCB_PYTHON} environment variable can be set to automatically activate an
 installed Python virtual environment named \code{iRfcb} when the \code{iRfcb} package is loaded.
-Set \code{USE_IRFCB_PYTHON} to \code{"TRUE"} to enable automatic setup. For more details, see the package README.
+Set \code{USE_IRFCB_PYTHON} to \code{"TRUE"} to enable automatic setup. For more details, see the package README
+at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 }
 \examples{
 \dontrun{
