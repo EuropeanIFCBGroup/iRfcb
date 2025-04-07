@@ -48,6 +48,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -112,7 +113,7 @@ tutorial require <code>Python</code> to be installed. You can download
 <p>The <code>iRfcb</code> package can be configured to automatically
 activate an installed Python virtual environment (venv) upon loading by
 setting an environment variable. For more details, please refer to the
-package <a href="../..">README</a>.</p>
+package <a href="https://europeanifcbgroup.github.io/iRfcb/">README</a>.</p>
 <p>Load the <code>iRfcb</code> library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span></code></pre></div>
@@ -196,8 +197,9 @@ files.</p>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   counts_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 <p>Alternatively, <code>iRfcb</code> can directly aggregate data and
-compute carbon content from classification files using the <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
-function demonstrated below.</p>
+compute carbon content from classification files using the
+<code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> function demonstrated
+below.</p>
 </div>
 <div class="section level3">
 <h3 id="summarize-counts-biovolumes-and-carbon-content-from-classified-ifcb-data">Summarize Counts, Biovolumes and Carbon Content from Classified IFCB
@@ -215,8 +217,8 @@ Lessard (2000) for individual ROIs, where different conversion factors
 are applied to diatoms and non-diatom protist. If provided, it also
 incorporates sample volume data from <code>.hdr</code> files to compute
 biovolume and carbon content per liter of sample. See details in the
-help pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
-and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>.</p>
+help pages for <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> and
+<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
@@ -254,12 +256,12 @@ and <a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovo
 <h3 id="summarize-counts-biovolumes-and-carbon-content-from-manually-annotated-ifcb-data">Summarize Counts, Biovolumes and Carbon Content from Manually
 Annotated IFCB Data<a class="anchor" aria-label="anchor" href="#summarize-counts-biovolumes-and-carbon-content-from-manually-annotated-ifcb-data"></a>
 </h3>
-<p>The <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
-function can also be used to calculate aggregated biovolumes and carbon
-content from manually annotated IFCB image data. See details in the help
-pages for <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>,
-<a href="../reference/ifcb_extract_biovolumes.html"><code>ifcb_extract_biovolumes</code></a>
-and <a href="../reference/ifcb_count_mat_annotations.html"><code>ifcb_count_mat_annotations</code></a>.</p>
+<p>The <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> function can also be
+used to calculate aggregated biovolumes and carbon content from manually
+annotated IFCB image data. See details in the help pages for
+<code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>,
+<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and
+<code><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations()</a></code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
@@ -345,7 +347,8 @@ sample data frame:</p>
 <div class="section level4">
 <h4 id="matlab-files">MATLAB Files<a class="anchor" aria-label="anchor" href="#matlab-files"></a>
 </h4>
-<p>Count the annotations in the MATLAB files, similar to <a href="../reference/ifcb_summarize_png_counts.html"><code>ifcb_summarize_png_counts</code></a>:</p>
+<p>Count the annotations in the MATLAB files, similar to
+<code><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts()</a></code>:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize counts from MATLAB files</span></span>
 <span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
@@ -381,8 +384,8 @@ gallery.</p>
 </div>
 <p>Individual images can be selected and a list of selected images can
 be downloaded as a <code>correction</code> file. This file can be used
-to correct <code>.mat</code> annotations below using the <a href="../reference/ifcb_correct_annotation.html"><code>ifcb_correct_annotation</code></a>
-function.</p>
+to correct <code>.mat</code> annotations below using the
+<code><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation()</a></code> function.</p>
 </div>
 <div class="section level3">
 <h3 id="correct--mat-files-after-checking-images-in-the-app">Correct .mat Files After Checking Images in the App<a class="anchor" aria-label="anchor" href="#correct--mat-files-after-checking-images-in-the-app"></a>
@@ -461,11 +464,11 @@ files using the <code>correction</code> file with selected images:</p>
 <div class="section level3">
 <h3 id="annotate-images-in-batch">Annotate Images in Batch<a class="anchor" aria-label="anchor" href="#annotate-images-in-batch"></a>
 </h3>
-<p>Images can be batch annotated using the <a href="../reference/ifcb_annotate_batch.html"><code>ifcb_annotate_batch</code></a>
-function. If a manual file already exists for the sample, the ROI class
-list will be updated accordingly. If no file is found, a new
-<code>.mat</code> file will be created, with all unannotated ROIs marked
-as unclassified.</p>
+<p>Images can be batch annotated using the
+<code><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch()</a></code> function. If a manual file already
+exists for the sample, the ROI class list will be updated accordingly.
+If no file is found, a new <code>.mat</code> file will be created, with
+all unannotated ROIs marked as unclassified.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a file with selected images, generated by the image gallery app</span></span>
 <span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
@@ -507,9 +510,9 @@ as unclassified.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> Cryptomonadales               245</span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
-other <a href="../articles/index.html">tutorials</a>. See how data
-pipelines can be constructed using <code>iRfcb</code> in the following
-<a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
+other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
+See how data pipelines can be constructed using <code>iRfcb</code> in
+the following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
 Project</a>. Happy analyzing!</p>
 </div>
 </div>

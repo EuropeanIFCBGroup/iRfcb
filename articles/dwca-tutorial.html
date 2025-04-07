@@ -48,6 +48,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -91,9 +92,9 @@
 code from the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 repository (Sosik and Olson 2007). However, the code can be adapted to
 process classifications from other machine learning algorithms as well
-by passing custom lists of classes and image names to the <a href="../reference/ifcb_summarize_biovolumes.html"><code>ifcb_summarize_biovolumes</code></a>
-function. The example below is based on a subset of manually annotated
-image data from the <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link">SMHI IFCB
+by passing custom lists of classes and image names to the
+<code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> function. The example below is
+based on a subset of manually annotated image data from the <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link">SMHI IFCB
 Plankton Image Reference Library (version 3)</a> (Torstensson et
 al. 2024), and aligns with the <em>best practices</em> outlined by
 Martin-Cabrera et al. (2022).</p>
@@ -373,16 +374,16 @@ combine the Event and Parent Event tables into a single data frame.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 26</span></span></span>
 <span><span class="co">##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               d72438… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> d724380c-919a-4… 3b4955… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> d724380c-919a-4… 0d32c5… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> d724380c-919a-4… 72df97… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> d724380c-919a-4… 1334f1… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> d724380c-919a-4… 20c2c7… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> d724380c-919a-4… 71ee47… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> d724380c-919a-4… f3de78… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> d724380c-919a-4… 91f594… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> d724380c-919a-4… 035626… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               fe3aa8… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> fe3aa8ef-fd13-4… 7499ad… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> fe3aa8ef-fd13-4… b0b822… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> fe3aa8ef-fd13-4… 076928… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> fe3aa8ef-fd13-4… e3b933… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> fe3aa8ef-fd13-4… 7a1342… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> fe3aa8ef-fd13-4… f4819e… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> fe3aa8ef-fd13-4… 42207d… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> fe3aa8ef-fd13-4… 7bf080… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> fe3aa8ef-fd13-4… 7b76f8… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 20 more variables: institutionCode &lt;chr&gt;, institutionID &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   license &lt;chr&gt;, samplingProtocol &lt;chr&gt;, sampleSizeValue &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   sampleSizeUnit &lt;chr&gt;, eventTime &lt;time&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;, day &lt;int&gt;,</span></span></span>
@@ -426,10 +427,10 @@ These fields provide context and provenance information for each
 occurrence.</p>
 <p>Links to raw images can be included in
 <strong>associatedMedia</strong>. These links may point to resources
-such as the IFCB Dashboard, Ecotaxa, or other image archives. Learn how
-to prepare images for Ecotaxa using <code>iRfcb</code> in this <a href="../articles/ecotaxa-tutorial.html">tutorial</a>, or how to export
-images to an <a href="../articles/image-export-tutorial.html">image
-repository</a>.</p>
+such as the IFCB Dashboard, EcoTaxa, or other image archives. Learn how
+to prepare images for EcoTaxa using <code>iRfcb</code> in this
+<code><a href="../articles/ecotaxa-tutorial.html">vignette("ecotaxa-tutorial")</a></code>, or how to export images to an
+image library in <code><a href="../articles/image-export-tutorial.html">vignette("image-export-tutorial")</a></code>.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an occurrence table by transforming event data and adding fields</span></span>
 <span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -564,16 +565,16 @@ formatting.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 101 × 22</span></span></span>
 <span><span class="co">##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type </span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> a5f62bfe-e47d-4af3-… 3b4955… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 307785d0-111e-4723-… 3b4955… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 61c13e75-37fc-4034-… 3b4955… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> f52f460e-8ed5-4b2f-… 3b4955… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 97e78725-619c-497b-… 0d32c5… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> af920c03-457b-4694-… 72df97… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> d8e7f5a7-0550-4d97-… 72df97… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2720e9be-c584-48bc-… 72df97… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 83d81a53-fd27-4a1d-… 1334f1… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 360632fb-2fdb-419c-… 1334f1… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> e803f915-74a1-405c-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> cc3e906f-665a-4a32-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> a6a3bea1-0ce9-4f3d-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 34a1c9d9-3a63-4127-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 29a397a9-55d5-430e-… b0b822… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> afbc7162-dc4f-4247-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> bfcd8214-c33b-47b9-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 81b39252-ac31-41c6-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 439c0b73-3a91-42eb-… e3b933… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 96fbceed-6797-443e-… e3b933… 2022-07-12 present          iRfcb          Stil…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 91 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: basisOfRecord &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   identificationVerificationStatus &lt;chr&gt;, identificationReferences &lt;chr&gt;,</span></span></span>
@@ -763,16 +764,16 @@ for each <strong>measurementType</strong>.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 415 × 10</span></span></span>
 <span><span class="co">##    measurementID              eventID parentEventID occurrenceID measurementType</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> ef307df0-057b-44ba-b4d3-0… d72438… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 1600f833-facd-4dac-a8b9-e… d72438… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> e402dce7-22b5-4ab2-a00b-4… 3b4955… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 6cdb639f-1c77-46f8-ac7a-7… 0d32c5… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 38ae2608-0ff6-473a-823c-7… 72df97… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> e14d02a4-d1b6-4c87-8b1d-5… 1334f1… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> cb71f262-2496-4066-9e02-e… 20c2c7… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 8af9d4a7-7c24-4087-8552-3… 71ee47… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> f4379e19-f13b-44a5-8061-6… f3de78… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 02437cc0-26fa-403b-b76e-9… 91f594… d724380c-919… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 492e8cc0-0cb6-4d7f-8705-c… fe3aa8… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> d1eade27-7c45-4966-9954-d… fe3aa8… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2b2cb822-9ec8-4957-a65d-6… 7499ad… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 4fc76960-9705-4448-9e13-b… b0b822… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 28923cc0-e7c1-487e-8c80-d… 076928… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> eb98140c-938a-4d64-a47d-8… e3b933… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 4f61e7ca-2a38-4112-8c58-f… 7a1342… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 5ef4794b-8a9b-4742-a158-9… f4819e… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 37b5334b-061f-4d30-9668-a… 42207d… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> ff15aa59-5961-41f0-abc1-6… 7bf080… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 405 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: measurementTypeID &lt;chr&gt;, measurementValue &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   measurementValueID &lt;chr&gt;, measurementUnit &lt;chr&gt;, measurementUnitID &lt;chr&gt;</span></span></span></code></pre>
@@ -803,9 +804,9 @@ scope, methods, and contributors.</p>
 use the <code>initializeDwCMetadata</code> function. This function
 generates a template that follows DwC guidelines, which can then be
 customized with specific details about the dataset.</p>
-<p>Here, we create the metadata starting with a Markdown file (<a href="../articles/metadata-template.html"><code>metadata-template.rmd</code></a>),
-which will be rendered into an EML-compliant XML file for GBIF
-submission:</p>
+<p>Here, we create the metadata starting with a Markdown file
+<code><a href="../articles/metadata-template.html">vignette("metadata-template")</a></code>, which will be rendered into
+an EML-compliant XML file for GBIF submission:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize DwC metadata using a R Markdown template</span></span>
 <span><span class="va">GBIF_Metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeDwCMetadata.html" class="external-link">initializeDwCMetadata</a></span><span class="op">(</span><span class="st">"metadata-template.rmd"</span>, </span>
@@ -833,7 +834,8 @@ GBIF using an Integrated Publishing Toolkit (IPT), e.g. the <a href="https://ip
 archive</a>.</p>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
-other <a href="../articles/index.html">tutorials</a>, and the <a href="https://livingnorway.github.io/LivingNorwayR/" class="external-link"><code>LivingNorwayR</code></a>
+other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>,
+and the <a href="https://livingnorway.github.io/LivingNorwayR/" class="external-link"><code>LivingNorwayR</code></a>
 documentation. See how more complex data pipelines can be constructed
 using <code>iRfcb</code> in the following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
 Project</a>. Happy analyzing!</p>

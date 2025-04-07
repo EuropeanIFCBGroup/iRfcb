@@ -34,6 +34,7 @@ ifcb-analysis repository (Sosik and Olson 2007)."><meta property="og:image" cont
     <li><a class="dropdown-item" href="../articles/whoi-plankton-data-integration.html">WHOI-Plankton Data Integration</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -93,8 +94,7 @@ Defaults to TRUE.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function requires a python interpreter to be installed.
-The required python packages can be installed in a virtual environment using <code>ifcb_py_install</code>.</p>
+    <p>Python must be installed to use this function. The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -108,7 +108,11 @@ The required python packages can be installed in a virtual environment using <co
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">ifcb_adjust_classes</span><span class="op">(</span><span class="st">"C:/training/config/class2use"</span>, <span class="st">"C:/training/manual/2014/"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Initialize a python session if not already set up</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">ifcb_adjust_classes</span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span>,</span></span>
+<span class="r-in"><span>                    <span class="st">"data/manual/2014/"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

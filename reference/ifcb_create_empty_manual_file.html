@@ -28,6 +28,7 @@ class names, and saves it to a specified output file. This function utilizes a P
     <li><a class="dropdown-item" href="../articles/whoi-plankton-data-integration.html">WHOI-Plankton Data Integration</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -84,9 +85,8 @@ class names, and saves it to a specified output file. This function utilizes a P
 
 <dt id="arg-classlist">classlist<a class="anchor" aria-label="anchor" href="#arg-classlist"></a></dt>
 <dd><p>Integer or numeric vector.
-Defines the values for the second column of the class list:</p><ul><li><p>If a single value is provided (default = 1), all rows will be assigned this value.</p></li>
+Defines the values for the second column of the class list, typically representing the manual classification labels:</p><ul><li><p>If a single value is provided, all rows will be assigned this value. For example, all ROIs can be assigned to class index 1 (default), which typically represents the unclassified category.</p></li>
 <li><p>If a numeric vector of the same length as <code>roi_length</code> is provided, the corresponding values will be used per row.</p></li>
-<li><p>The second column typically represents manual classification labels, with <code>1</code> indicating unclassified objects.</p></li>
 </ul></dd>
 
 
@@ -106,7 +106,7 @@ The created MAT file is saved at the specified <code>output_file</code> location
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using <code>ifcb_py_install</code>.</p>
+    <p>Python must be installed to use this function. The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
     </div>
 
     <div class="section level2">
@@ -120,11 +120,11 @@ The created MAT file is saved at the specified <code>output_file</code> location
 <span class="r-in"><span>                              class2use <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unclassified"</span>, <span class="st">"Aphanizomenon_spp"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                              output_file <span class="op">=</span> <span class="st">"output.mat"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create a MAT file with a different unclassified_id</span></span></span>
+<span class="r-in"><span><span class="co"># Create a MAT file with 50 unclassified ROIs (1) and 50 Aphanizomenon_spp (2) ROIs</span></span></span>
 <span class="r-in"><span><span class="fu">ifcb_create_empty_manual_file</span><span class="op">(</span>roi_length <span class="op">=</span> <span class="fl">100</span>,</span></span>
 <span class="r-in"><span>                              class2use <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"unclassified"</span>, <span class="st">"Aphanizomenon_spp"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                              output_file <span class="op">=</span> <span class="st">"output.mat"</span>,</span></span>
-<span class="r-in"><span>                              classlist <span class="op">=</span> <span class="fl">999</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                              classlist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">50</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

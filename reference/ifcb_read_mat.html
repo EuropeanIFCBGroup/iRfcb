@@ -26,6 +26,7 @@
     <li><a class="dropdown-item" href="../articles/whoi-plankton-data-integration.html">WHOI-Plankton Data Integration</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -70,9 +71,9 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function requires a Python interpreter with <code>SciPy</code> installed.</p>
+    <p>Python must be installed to use this function. The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
 <p>This function requires a python interpreter to be installed.
-The required python packages can be installed in a virtual environment using <code>ifcb_py_install</code>.</p>
+The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -82,7 +83,14 @@ The required python packages can be installed in a virtual environment using <co
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">read_mat_file_r</span><span class="op">(</span><span class="st">"C:/data/sample.mat"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Initialize Python environment and install required packages</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example .mat file included in the package</span></span></span>
+<span class="r-in"><span><span class="va">mat_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/example.mat"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Read mat file using Python</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">ifcb_read_mat</span><span class="op">(</span><span class="va">mat_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

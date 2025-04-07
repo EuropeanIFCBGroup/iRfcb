@@ -48,6 +48,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -118,7 +119,7 @@ tutorial require <code>Python</code> to be installed. You can download
 <p>The <code>iRfcb</code> package can be configured to automatically
 activate an installed Python virtual environment (venv) upon loading by
 setting an environment variable. For more details, please refer to the
-package <a href="../..">README</a>.</p>
+package <a href="https://europeanifcbgroup.github.io/iRfcb/">README</a>.</p>
 <p>Load the <code>iRfcb</code> library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span></code></pre></div>
@@ -186,18 +187,20 @@ dataset.</p>
 <div class="section level3">
 <h3 id="download-and-prepare-whoi-plankton-data">Download and Prepare WHOI-Plankton Data<a class="anchor" aria-label="anchor" href="#download-and-prepare-whoi-plankton-data"></a>
 </h3>
-<p>The <a href="../reference/ifcb_prepare_whoi_plankton.html"><code>ifcb_prepare_whoi_plankton</code></a>
-function enables downloading zipped <code>.png</code> images from
-selected years of the <a href="https://hdl.handle.net/1912/7341" class="external-link">WHOI-Plankton dataset</a>, with
-an option to extract them using the <code>extract_images</code>
+<p><code><a href="../reference/ifcb_prepare_whoi_plankton.html">help("ifcb_prepare_whoi_plankton")</a></code></p>
+<p>The <code><a href="../reference/ifcb_prepare_whoi_plankton.html">ifcb_prepare_whoi_plankton()</a></code> function enables
+downloading zipped <code>.png</code> images from selected years of the
+<a href="https://hdl.handle.net/1912/7341" class="external-link">WHOI-Plankton dataset</a>,
+with an option to extract them using the <code>extract_images</code>
 argument. It also retrieves raw data (<code>.roi</code>,
 <code>.hdr</code> and <code>.adc</code> files), along with blobs and
 features (when available), from the <a href="https://ifcb-data.whoi.edu/mvco" class="external-link">MVCO IFCB Dashboard</a>.
-Interactions with WHOI-Plankton are managed through the <a href="../reference/ifcb_download_whoi_plankton.html"><code>ifcb_download_whoi_plankton</code></a>
-function, while the IFCB Dashboard is accessed via the <a href="../reference/ifcb_download_dashboard_data.html"><code>ifcb_download_dashboard_data</code></a>
-function. Finally, the function generates manual <code>.mat</code> files
-for storing class information, ensuring compatibility with the MATLAB
-code in the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
+Interactions with WHOI-Plankton are managed through the
+<code><a href="../reference/ifcb_download_whoi_plankton.html">ifcb_download_whoi_plankton()</a></code> function, while the IFCB
+Dashboard is accessed via the
+<code><a href="../reference/ifcb_download_dashboard_data.html">ifcb_download_dashboard_data()</a></code> function. Finally, the
+function generates manual <code>.mat</code> files for storing class
+information, ensuring compatibility with the MATLAB code in the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 repository (Sosik and Olson 2007).</p>
 <p>In this example, we use data from the years 2013 and 2014.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -223,12 +226,12 @@ the class completely with the <code>skip_classes</code> argument, or set
 <code>extract_images = TRUE</code> and manually delete specific
 <code>.png</code> files from the <code>png_folder</code> and rerun
 <code>ifcb_prepare_whoi_plankton</code>.</p>
-<p>The function <a href="../reference/ifcb_prepare_whoi_plankton.html"><code>ifcb_prepare_whoi_plankton</code></a>
-converts the filename format of older IFCB models (IFCB1-6) to match the
-newer IFCB format (<code>DYYYYMMDDTHHMMSS_IFCBXXX</code>). By default,
-this conversion is performed using the <code>convert_filenames</code>
-and <code>convert_adc</code> arguments. This step ensures compatibility
-with the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
+<p>The function <code><a href="../reference/ifcb_prepare_whoi_plankton.html">ifcb_prepare_whoi_plankton()</a></code> converts the
+filename format of older IFCB models (IFCB1-6) to match the newer IFCB
+format (<code>DYYYYMMDDTHHMMSS_IFCBXXX</code>). By default, this
+conversion is performed using the <code>convert_filenames</code> and
+<code>convert_adc</code> arguments. This step ensures compatibility with
+the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 MATLAB code. For further details, please refer to the help pages of the
 respective functions.</p>
 </div>
@@ -236,9 +239,9 @@ respective functions.</p>
 <div class="section level2">
 <h2 id="merge-data-with-existing-dataset">Merge Data with Existing Dataset<a class="anchor" aria-label="anchor" href="#merge-data-with-existing-dataset"></a>
 </h2>
-<p>The <a href="../reference/ifcb_merge_manual.html"><code>ifcb_merge_manual</code></a>
-function allows you to integrate data from the WHOI-Plankton dataset
-with your existing training dataset created using the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
+<p>The <code><a href="../reference/ifcb_merge_manual.html">ifcb_merge_manual()</a></code> function allows you to integrate
+data from the WHOI-Plankton dataset with your existing training dataset
+created using the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 code (Sosik and Olson 2007). The merged dataset and class2use file will
 be saved in the locations specified by <code>manual_folder_output</code>
 and <code>class2use_file_output</code>.</p>
@@ -288,12 +291,13 @@ to merge images into the same class (e.g. “Coscinodiscus” and
 machine learning models. To integrate it with the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 MATLAB code, blobs and features are extracted for the merged dataset (if
 not already downloaded through the IFCB Dashboard). Random forest models
-can then be built using the <code>ifcb-analysis</code> code.</p>
+can then be built using the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
+code.</p>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
-other <a href="../articles/index.html">tutorials</a>. See how data
-pipelines can be constructed using <code>iRfcb</code> in the following
-<a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
+other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
+See how data pipelines can be constructed using <code>iRfcb</code> in
+the following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
 Project</a>. Happy analyzing!</p>
 </div>
 <div class="section level2">

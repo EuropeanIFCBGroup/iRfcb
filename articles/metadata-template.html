@@ -48,6 +48,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -84,8 +85,8 @@
     
     
 <p>This R Markdown document is based on a template provided by the <a href="https://livingnorway.github.io/LivingNorwayR/" class="external-link"><code>LivingNorwayR</code></a>
-package, and is used for creating a <code>.eml</code> file in the <a href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB
-Data</a> tutorial. package.</p>
+package, and is used for creating a <code>.eml</code> file in
+<code><a href="../articles/dwca-tutorial.html">vignette("dwca-tutorial")</a></code>.</p>
 <p>When documenting project metadata in Markdown, the
 <code>LivingNorwayR</code> package provides various functions to flag
 specific text sections for export into an EML file. The code chunk below
@@ -114,18 +115,18 @@ is to assign an ID to the <code>dataset</code> tag (e.g.,
 <strong>iRfcbDataset</strong>), enabling other elements to reference it.
 Additionally, you can provide a title for the dataset using the
 <code>title.tagText</code> argument within the function.</p>
-<p><span id="LNdataset_iRfcbDataset" class="LNmetadata" style="display:none"></span><span id="LNtitle_ace44bba-b49f-4d39-a0d1-2014990246d9_iRfcbDataset" class="LNmetadata" style="display:none">iRfcb Test Data</span></p>
+<p><span id="LNdataset_iRfcbDataset" class="LNmetadata" style="display:none"></span><span id="LNtitle_976d6da9-2572-4e97-92e3-e17c49664037_iRfcbDataset" class="LNmetadata" style="display:none">iRfcb Test Data</span></p>
 <p>We can associate keywords with the dataset by creating a
 <code>keywordSet</code> tag using the appropriate tagging function. For
 example:
 <span id="LNkeywordSet_iRfcbKeywordSet_iRfcbDataset" class="LNmetadata" style="display:none"></span>.
 Next, individual keywords can be specified within this keywordSet using
-the LNkeyword function. Examples include: <span id="LNkeyword_6d8aac94-3258-4301-b3b8-441dbdfdcbab_iRfcbKeywordSet" class="LNmetadata">Imaging FlowCytobot</span>, <span id="LNkeyword_42a6df7c-1721-4387-926b-a05df5e54ffe_iRfcbKeywordSet" class="LNmetadata">phytoplankton</span>, <span id="LNkeyword_684815b5-d230-4318-81d7-1ac1fc099494_iRfcbKeywordSet" class="LNmetadata">microzooplankton</span>, <span id="LNkeyword_281e1704-62a0-4abe-ad31-6d399f2ffcc8_iRfcbKeywordSet" class="LNmetadata">imaging</span> and <span id="LNkeyword_68e7c651-5a5d-4952-9dad-071316595815_iRfcbKeywordSet" class="LNmetadata">sampling event</span>.</p>
+the LNkeyword function. Examples include: <span id="LNkeyword_5d06477d-8210-4112-840e-f79550ad0e69_iRfcbKeywordSet" class="LNmetadata">Imaging FlowCytobot</span>, <span id="LNkeyword_072df820-04a0-44b0-8fa8-033165ea1298_iRfcbKeywordSet" class="LNmetadata">phytoplankton</span>, <span id="LNkeyword_8d4c25c3-c974-49dd-bd02-dced92edf94d_iRfcbKeywordSet" class="LNmetadata">microzooplankton</span>, <span id="LNkeyword_1db9f9ec-8e26-49ce-a6fe-4e244907bd29_iRfcbKeywordSet" class="LNmetadata">imaging</span> and <span id="LNkeyword_da222e90-d82f-44b5-911a-8d4d58b2f7c5_iRfcbKeywordSet" class="LNmetadata">sampling event</span>.</p>
 <p>We must also specify some contact information for the individual or
-organiation responsible for coordinating with users of the dataset. Here
-the responsible user is
+organization responsible for coordinating with users of the dataset.
+Here the responsible user is
 <span id="LNcontact_iRfcbContact_iRfcbDataset" class="LNmetadata"></span>
-<span id="LNindividualName_9c873a27-7b48-4981-913a-bde6de73f629_iRfcbContact" class="LNmetadata"></span><span id="LNgivenName_f037cbd0-819e-4db2-9874-26d811489da6_9c873a27-7b48-4981-913a-bde6de73f629" class="LNmetadata">Anders</span> <span id="LNsurName_07a2c5ad-0afb-4ab9-8bf7-9296222a5b2f_9c873a27-7b48-4981-913a-bde6de73f629" class="LNmetadata">Torstensson</span>. This approach ensures that all
+<span id="LNindividualName_5c23d6e0-3654-4366-a573-e0ef0fa28e2d_iRfcbContact" class="LNmetadata"></span><span id="LNgivenName_99bc86c1-239b-4a4c-a6a5-4a185d4f42f5_5c23d6e0-3654-4366-a573-e0ef0fa28e2d" class="LNmetadata">Anders</span> <span id="LNsurName_2c242e92-e68a-4270-86ed-184f54f6b7cd_5c23d6e0-3654-4366-a573-e0ef0fa28e2d" class="LNmetadata">Torstensson</span>. This approach ensures that all
 keywords are grouped under the <code>iRfcbKeywordSet</code> tag, which
 is linked to the dataset through its <code>parentID</code>.</p>
 </div>
@@ -141,7 +142,7 @@ alternative translations for EML elements. In the inline code above, we
 specified the <code>tagID</code> argument. To provide an alternative
 translation for the element associated with that <code>tagID</code>, you
 can use the following code:</p>
-<p><span id="LNvalue_5dd9d362-c3b9-49bb-9563-750b04d636ec_iRfcbAbstract" class="LNmetadata" style="display:none" xml:lang="nb">Exempeldata från
+<p><span id="LNvalue_2af0ed67-7bec-433f-b1a2-b5cf80e59a5a_iRfcbAbstract" class="LNmetadata" style="display:none" xml:lang="nb">Exempeldata från
 Imaging FlowCytobot i iRfcb R-paketet, insamlade ombord R/V Svea mellan
 2022 och 2023.</span></p>
 <p>By default, alternative translations are hidden in the rendered HTML
@@ -158,8 +159,8 @@ the argument <code>isHidden = FALSE</code> to the
 <p>The dataset was created by the following people:</p>
 <ul>
 <li>
-<span id="LNcreator_iRfcbCreator_iRfcbDataset" class="LNmetadata"></span><span id="LNindividualName_17dd0060-c503-4269-8fab-60a8143efd02_iRfcbCreator" class="LNmetadata"></span><span id="LNgivenName_b4ef4246-3de5-4392-a1e2-b7fa884fc98d_17dd0060-c503-4269-8fab-60a8143efd02" class="LNmetadata">Anders</span> <span id="LNsurName_96ec2dd4-0e95-40ad-82b0-f3b0b47e49e3_17dd0060-c503-4269-8fab-60a8143efd02" class="LNmetadata">Torstensson</span> who is a <span id="LNpositionName_203e73bf-3f1a-4033-ba40-da8ceab9d116_iRfcbCreator" class="LNmetadata">researcher</span> at the <span id="LNorganizationName_370359f1-1b73-4427-8ef0-6dae15dbc455_iRfcbCreator" class="LNmetadata">Swedish Meteorological and Hydrological
-Institute</span> (<span id="LNelectronicMailAddress_4efb6dff-1f5c-4d8a-8620-25e2d40757f8_iRfcbCreator" class="LNmetadata"><a href="mailto:anders.torstensson@smhi.se" class="email">anders.torstensson@smhi.se</a></span>).</li>
+<span id="LNcreator_iRfcbCreator_iRfcbDataset" class="LNmetadata"></span><span id="LNindividualName_0075034e-873e-4897-8c33-4e3d8ebb3092_iRfcbCreator" class="LNmetadata"></span><span id="LNgivenName_f7ebe4d5-bc0d-4e7d-a2fb-4a7e73de3cd9_0075034e-873e-4897-8c33-4e3d8ebb3092" class="LNmetadata">Anders</span> <span id="LNsurName_e8503901-8bc2-4e07-b359-9ed233e800a7_0075034e-873e-4897-8c33-4e3d8ebb3092" class="LNmetadata">Torstensson</span> who is a <span id="LNpositionName_8bc8b745-3074-4d84-8033-4f139977a92f_iRfcbCreator" class="LNmetadata">researcher</span> at the <span id="LNorganizationName_1fa1a5f9-7a37-4076-b41f-9f3345b2854f_iRfcbCreator" class="LNmetadata">Swedish Meteorological and Hydrological
+Institute</span> (<span id="LNelectronicMailAddress_455230c1-ffd4-4ba2-8500-10f5b4736f92_iRfcbCreator" class="LNmetadata"><a href="mailto:anders.torstensson@smhi.se" class="email">anders.torstensson@smhi.se</a></span>).</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

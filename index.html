@@ -51,6 +51,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -88,7 +89,7 @@
 </h3>
 <ul>
 <li>
-<strong>Data Management</strong>: Functions for reading raw and processed IFCB files, counting and summarizing annotated and classified image data, correcting and merging manually annotated datasets.</li>
+<strong>Data Management</strong>: Functions for reading raw and processed IFCB files, counting and summarizing annotated or classified image data, and accessing, correcting, and merging manually annotated datasets.</li>
 <li>
 <strong>Quality Control</strong>: Tools for geospatial quality control of IFCB data and analysis of <a href="https://github.com/kudelalab/PSD" class="external-link">Particle Size Distribution</a>.</li>
 <li>
@@ -135,6 +136,7 @@
 <li><a href="https://europeanifcbgroup.github.io/iRfcb/articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
 <li><a href="https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.html">Sharing Annotated IFCB Images</a></li>
 <li><a href="https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.html">Prepare IFCB Images for EcoTaxa</a></li>
+<li><a href="https://europeanifcbgroup.github.io/iRfcb/articles/whoi-plankton-data-integration.html">WHOI-Plankton Data Integration</a></li>
 </ul>
 </div>
 <div class="section level3">
@@ -150,7 +152,8 @@
 <h2 id="python-dependency">Python Dependency<a class="anchor" aria-label="anchor" href="#python-dependency"></a>
 </h2>
 <p>Some functions in <code>iRfcb</code> require Python, and you will be notified when you call one of these functions. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For details on what function that require Python, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/reference/">Function Reference</a>.</p>
-<p>A Python virtual environment (venv) can be created using the <code>ifcb_py_install</code> function. The <code>iRfcb</code> package can also be configured to automatically activate an installed Python venv upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the <code>iRfcb</code> package.</p>
+<p>A Python virtual environment (venv) can be created using the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function before calling the function that require Python.</p>
+<p>The <code>iRfcb</code> package can also be configured to automatically activate an installed Python venv upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the <code>iRfcb</code> package.</p>
 <div class="section level3">
 <h3 id="use_irfcb_python">USE_IRFCB_PYTHON<a class="anchor" aria-label="anchor" href="#use_irfcb_python"></a>
 </h3>
@@ -158,9 +161,9 @@
 <li>
 <strong>Description</strong>: The <code>USE_IRFCB_PYTHON</code> environment variable controls whether the package automatically activates a pre-installed Python venv named <code>iRfcb</code> when the package is loaded.</li>
 <li>
-<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code>ifcb_py_install</code> functions manually before using a Python feature.</li>
+<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> functions manually before using a Python feature.</li>
 <li>
-<strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. Ensure that a venv named <code>iRfcb</code> is installed (e.g. through <code>ifcb_py_install</code>) in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>.</li>
+<strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. Ensure that a venv named <code>iRfcb</code> is installed (e.g. through <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code>) in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>.</li>
 </ul>
 <div class="section level4">
 <h4 id="how-to-set-the-use_irfcb_python-variable">How to Set the <code>USE_IRFCB_PYTHON</code> Variable<a class="anchor" aria-label="anchor" href="#how-to-set-the-use_irfcb_python-variable"></a>

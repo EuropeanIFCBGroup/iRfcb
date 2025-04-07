@@ -32,6 +32,7 @@ a correction file or a character vector."><meta property="og:image" content="htt
     <li><a class="dropdown-item" href="../articles/whoi-plankton-data-integration.html">WHOI-Plankton Data Integration</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/EuropeanIFCBGroup/iRfcb/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -108,7 +109,7 @@ Use <code>correction</code> instead.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using <code>ifcb_py_install</code>.</p>
+    <p>Python must be installed to use this function. The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
 <p>The correction file is expected to contain at least one column: <code>image_filename</code>, which includes the filenames of the images (with or without additional trailing information).
 The function processes each file, corrects the annotations, and saves the updated files in the output folder.</p>
 <p>If a character vector is provided as <code>correction</code>, it will be used directly as a list of filenames for correction.</p>

@@ -48,6 +48,7 @@
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -93,8 +94,8 @@ unclassified raw IFCB images and annotated Regions of Interest (ROIs)
 using the MATLAB code from the <a href="https://github.com/hsosik/ifcb-analysis" class="external-link"><code>ifcb-analysis</code></a>
 repository (Sosik and Olson, 2007). However, the code can be adapted to
 process images from other software platforms. The code can also be
-adapted to submit automatically classified images using the <a href="../reference/ifcb_extract_classified_images.html"><code>ifcb_extract_classified_images</code></a>
-function.</p>
+adapted to submit automatically classified images using the
+<code><a href="../reference/ifcb_extract_classified_images.html">ifcb_extract_classified_images()</a></code> function.</p>
 <p>EcoTaxa is a web application widely used for hosting, classifying,
 and exporting images of individual objects, particularly in plankton
 imaging. It leverages machine learning to assign names based on a
@@ -166,10 +167,11 @@ submission to EcoTaxa as a zip-archive.</p>
 <div class="section level3">
 <h3 id="map-ecotaxa-headers">Map EcoTaxa Headers<a class="anchor" aria-label="anchor" href="#map-ecotaxa-headers"></a>
 </h3>
-<p>The image metadata are mapped to the Ecotaxa metadata headers that
+<p>The image metadata are mapped to the EcoTaxa metadata headers that
 are required when submitting data to EcoTaxa. In this example, a minimal
 dataset is used, containing only the image name. More comprehensive
-headers can be specified through the arguments of <a href="../reference/ifcb_get_ecotaxa_example.html"><code>ifcb_get_ecotaxa_example</code></a>.</p>
+headers can be specified through the arguments of
+<code><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get the minimal EcoTaxa metadata header names</span></span>
 <span><span class="va">ecotaxa_minimal_headers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example</a></span><span class="op">(</span><span class="st">"minimal"</span><span class="op">)</span><span class="op">[</span><span class="fl">0</span>, <span class="op">]</span></span>
@@ -177,7 +179,7 @@ headers can be specified through the arguments of <a href="../reference/ifcb_get
 <span><span class="co"># Create a data frame with empty rows matching the length of data</span></span>
 <span><span class="va">ecotaxa_minimal_headers</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">metadata_sample</span><span class="op">)</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span></span>
-<span><span class="co"># Map metadata to Ecotaxa headers</span></span>
+<span><span class="co"># Map metadata to EcoTaxa headers</span></span>
 <span><span class="va">ecotaxa_minimal</span> <span class="op">&lt;-</span> <span class="va">ecotaxa_minimal_headers</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    img_file_name <span class="op">=</span> <span class="va">metadata_sample</span><span class="op">$</span><span class="va">image</span>,</span>
@@ -321,10 +323,11 @@ from WoRMS, such as <strong>AphiaID</strong>.</p>
 <div class="section level3">
 <h3 id="map-ecotaxa-headers-1">Map EcoTaxa Headers<a class="anchor" aria-label="anchor" href="#map-ecotaxa-headers-1"></a>
 </h3>
-<p>The metadata can be mapped with the headers in <a href="../reference/ifcb_get_ecotaxa_example.html"><code>ifcb_get_ecotaxa_example</code></a>
-to produce metadata files suitable for submitting images to EcoTaxa. The
-example below is comprehensive and includes several feature fields. For
-a simpler dataset, minimal fields can be retrieved using
+<p>The metadata can be mapped with the headers in
+<code><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code> to produce metadata files
+suitable for submitting images to EcoTaxa. The example below is
+comprehensive and includes several feature fields. For a simpler
+dataset, minimal fields can be retrieved using
 <code>ifcb_get_ecotaxa_example(example = "minimal")</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get EcoTaxa metadata header names</span></span>
@@ -714,9 +717,9 @@ limitation, the zip archive can be split into multiple files by setting
 <span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/iRfcb_ecotaxa.zip</span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
-other <a href="../articles/index.html">tutorials</a>. See how data
-pipelines can be constructed using <code>iRfcb</code> in the following
-<a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
+other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
+See how data pipelines can be constructed using <code>iRfcb</code> in
+the following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
 Project</a>. Happy analyzing!</p>
 </div>
 </div>
