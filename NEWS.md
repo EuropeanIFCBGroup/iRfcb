@@ -23,3 +23,207 @@
 # iRfcb 0.4.3
 
 First CRAN release
+
+## Minor changes:
+* Update documentation.
+* Update vignettes.
+* Speed up tests and vignette rendering.
+* Remove unnecessary dependencies.
+
+# iRfcb 0.4.2
+
+## Minor changes
+* Update documentation to pass CRAN checks.
+
+# iRfcb 0.4.1
+
+## Minor changes:
+* Drop imager and base64enc dependency.
+* Add gamma option to image extraction.
+* Update vignettes.
+
+# iRfcb 0.4.0
+
+## New features:
+* Reorganize vignettes into multiple tutorials.
+* Add verbose options to multiple functions.
+* Move WoRMS helper to main function `ifcb_match_taxa_names()`.
+
+# iRfcb 0.3.15
+
+## Bug fixes:
+* Fix duplicate row output in `ifcb_get_ferrybox_data()`
+
+# iRfcb 0.3.14
+
+## Minor changes:
+* Update SHARK example.
+
+# iRfcb 0.3.13
+
+## New features:
+
+* `ifcb_merge_manual()` to merge manual mat datasets.
+* `ifcb_adjust_classes()` to adjust classes in a manual mat dataset.
+* `ifcb_create_class2use()` to create a class2use file for a manual mat dataset.
+
+# iRfcb 0.3.12
+
+## New features:
+* Add function `ifcb_create_empty_manual_file()` to create new manual mat files.
+
+## Minor changes:
+* Compress `.mat` files.
+
+# iRfcb 0.3.11
+
+## New features:
+* Add functions `ifcb_summarize_png_metadata()` and `ifcb_get_ecotaxa_example()` to extract EcoTaxa headers and metadata information.
+
+## Minor changes:
+* Possibility to split large zip files in `ifcb_zip_pngs()`.
+
+# iRfcb 0.3.10
+
+## Minor changes:
+* Update documentation.
+
+## Deprecated
+* Defunct deprecated function `ifcb_get_svea_position()`.
+* Defunct arguments `ifcb_extract_biovolumes(manual_folder = )`, `fcb_extract_biovolumes(feature_folder = )`, `ifcb_extract_biovolumes(feature_folder = )` and `ifcb_extract_biovolumes(class_folder = )`
+
+# iRfcb 0.3.9
+
+## Minor changes:
+* Fix issue if `nrow(taxa_list) == 0` in `ifcb_count_mat_annotations()`.
+* Add recursive search option to `ifcb_count_mat_annotations()`, `ifcb_extract_annotated_images()` and `ifcb_zip_matlab()`.
+
+# iRfcb 0.3.8
+
+## Minor changes:
+* Parameterize marine_only and recursive file listing.
+* Break-out useful helper function from `ifcb_is_diatom()`.
+
+# iRfcb 0.3.7
+
+## Minor changes:
+* Add classifer name to mat extraction.
+
+# iRfcb 0.3.6
+
+## Minor changes:
+* Remove Öresund from included Baltic Sea shape file.
+* Update SHARK column names.
+
+# iRfcb 0.3.5
+
+## Minor changes:
+* Add multiple attemps to WoRMS API call.
+* Update title.
+
+## Deprecated
+* Deprecate `ifcb_get_svea_position()` and replace with `ifcb_get_ferrybox_data()`.
+
+# iRfcb 0.3.4
+
+## Minor changes:
+* Add option to summarize biovolume data from manual files.
+* Add sleep time parameter for `ifcb_download_test_data()`.
+
+# iRfcb 0.3.3
+
+## Minor changes:
+* Manual MAT count fix.
+* Download using curl.
+* Parameterize PSD micron factor.
+* Minor bug fixes.
+
+# iRfcb 0.3.2
+
+## Minor changes:
+* Use a smaller test dataset.
+* Improve test coverage.
+
+# iRfcb 0.3.1
+
+## Minor changes:
+* Documentation corrections.
+
+# iRfcb 0.3.0
+
+## Major changes:
+* Add unit testing.
+* Improve functionality of serveral functions.
+
+# iRfcb 0.2.6
+
+## Minor changes
+* Minor update of documentation.
+
+# iRfcb 0.2.5
+
+## Minor changes
+* Improve webpage.
+* Improve tutorial.
+* Code cleanup.
+
+# iRfcb 0.2.4
+
+## Minor changes:
+* Move documentation to vignette and provide verbose option to functions.
+
+# iRfcb 0.2.3
+
+## Minor changes:
+* Improve NA handling, and make examples runable.
+
+# iRfcb 0.2.2
+
+## Bug fixes:
+* Fix issue when NAs are passed to ifcb_is_near_land.
+
+# iRfcb 0.2.1
+
+## New features:
+* Add new function: `ifcb_get_trophic_type()`.
+
+## Minor changes:
+* Update SHARK column names in ifcb_get_shark_colnames.
+
+# iRfcb 0.2.0
+
+## New features:
+* `extract_aphia_id()`: Extract the AphiaID from the first row of each worms_records tibble.
+* `extract_class()`: Extract the class from the first row of each worms_records tibble.
+* `handle_missing_positions()`: Handle Missing Positions by Rounding Timestamps.
+* `ifcb_extract_biovolumes()`: Extract biovolumes from IFCB data and compute carbon content.
+* `ifcb_get_shark_colnames()`: Get Shark Column Names.
+* `ifcb_get_svea_position()`: Get GPS coordinates from ferrybox data based on timestamps.
+* `ifcb_is_diatom()`: Identify Diatoms in Taxa List.
+* `ifcb_is_in_basin()`: Check if Points are in a Specific Sea Basin.
+* `ifcb_psd_plot()`: Generate PSD Plot for a Given Sample.
+* `ifcb_read_features()`: Read feature files from a specified folder.
+* `ifcb_summarize_biovolumes()`: Summarize biovolumes and carbon content from IFCB data.
+* `ifcb_summarize_class_counts()`: Count Cells from TreeBagger Classifier Output.
+* `ifcb_which_basin()`: Determine if Points are in a Specified Sea Basin.
+* `summarize_TBclass()`: Summarize TreeBagger Classifier Results.
+* `vol2C_lgdiatom()`: Convert Biovolume to Carbon for Large Diatoms.
+* `vol2C_nondiatom()`: Convert Biovolume to Carbon for Non-Diatom Protists.
+
+## Bug fixes:
+* Correct documenation.
+
+# iRfcb 0.1.2
+
+## Bug fixes:
+* Fix error in `ifcb_volume_analyzed()` when inhibition `time == 0` (#2).
+
+# iRfcb 0.1.1
+
+## Bug fixes:
+* Fix warning for `ifcb_is_near_land()`.
+* Update documentation.
+
+# iRfcb 0.1.0
+
+First release of `iRfcb`.
