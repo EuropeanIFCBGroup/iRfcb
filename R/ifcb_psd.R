@@ -182,5 +182,5 @@ ifcb_psd <- function(feature_folder, hdr_folder, save_data = FALSE, output_file 
     }
   }
 
-  return(list(data = data_df, fits = fits_df, flags = flags_df))
+  list(data = data_df, fits = fits_df, flags = flags_df)
 }

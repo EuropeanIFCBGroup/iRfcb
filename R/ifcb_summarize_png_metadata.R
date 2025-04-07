@@ -83,5 +83,5 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
     left_join(hdr_data, by = c("sample", "timestamp", "date", "year", "month", "day", "time", "ifcb_number")) %>%
     left_join(features_df, by = c("sample", "roi" = "roi_number"))
 
-  return(joined_df)
+  joined_df
 }

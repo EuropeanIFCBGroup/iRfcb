@@ -187,5 +187,5 @@ ifcb_is_near_land <- function(latitudes,
   }
 
   # Return the logical vector indicating near land with NAs for original NA positions
-  return(result)
+  result
 }
