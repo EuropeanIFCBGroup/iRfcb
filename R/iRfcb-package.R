@@ -18,6 +18,7 @@
 #' @importFrom reticulate import py_available py_module_available py_run_string
 #'   source_python use_virtualenv virtualenv_create virtualenv_list virtualenv_root
 #'   use_python py_discover_config py_require py_list_packages py_install py_config
+#'   virtualenv_exists
 #' @importFrom R.matlab readMat
 #' @importFrom sf st_area st_as_sf st_as_sfc st_bbox st_crs st_geometry_type
 #'   st_intersection st_intersects st_make_valid st_read st_transform
