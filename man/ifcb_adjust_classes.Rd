@@ -27,8 +27,7 @@ This is the R equivalent function of \code{start_mc_adjust_classes_user_training
 \verb{ifcb-analysis repository} (Sosik and Olson 2007).
 }
 \details{
-This function requires a python interpreter to be installed.
-The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 }
 \examples{
 \dontrun{

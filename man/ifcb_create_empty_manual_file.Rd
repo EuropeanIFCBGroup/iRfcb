@@ -41,7 +41,7 @@ Generates a MAT file for IFCB data with an empty manual classification structure
 class names, and saves it to a specified output file. This function utilizes a Python script for creating the structure.
 }
 \details{
-This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 }
 \examples{
 \dontrun{

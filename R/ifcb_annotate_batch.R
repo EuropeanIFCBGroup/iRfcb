@@ -18,7 +18,7 @@
 #'    Use \code{adc_files} instead.
 #'
 #' @details
-#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' If an image belongs to a sample that already has a corresponding manual `.mat` file,
 #' the function updates the class IDs for the specified regions of interest (ROIs) in that file.

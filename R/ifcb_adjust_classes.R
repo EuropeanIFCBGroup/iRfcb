@@ -16,8 +16,7 @@ utils::globalVariables("start_mc_adjust_classes_user_training")
 #' @return None
 #'
 #' @details
-#' This function requires a python interpreter to be installed.
-#' The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @examples
 #' \dontrun{

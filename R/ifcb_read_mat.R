@@ -7,7 +7,7 @@ utils::globalVariables("r_read_mat_file")
 #' @return A list containing the MATLAB variables.
 #'
 #' @details
-#' This function requires a Python interpreter with `SciPy` installed.
+#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @examples
 #' \dontrun{

@@ -46,7 +46,7 @@ ifcb_py_install <- function(envname = ".virtualenvs/iRfcb", use_venv = TRUE, pac
     python_path <- py_config$python
 
     if (is.null(python_path)) {
-      stop("Could not find a valid Python interpreter. Please ensure Python is installed.")
+      stop("Could not find a valid Python installation. Please ensure Python is installed.")
     }
 
     # Use the discovered Python path

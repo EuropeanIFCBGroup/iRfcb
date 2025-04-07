@@ -16,7 +16,7 @@ A list containing the MATLAB variables.
 This function reads a MATLAB \code{.mat} file using a Python function via \code{reticulate}.
 }
 \details{
-This function requires a Python interpreter with \code{SciPy} installed.
+Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 
 This function requires a python interpreter to be installed.
 The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
