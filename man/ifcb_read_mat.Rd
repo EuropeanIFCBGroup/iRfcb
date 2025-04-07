@@ -19,7 +19,7 @@ This function reads a MATLAB \code{.mat} file using a Python function via \code{
 This function requires a Python interpreter with \code{SciPy} installed.
 
 This function requires a python interpreter to be installed.
-The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 }
 \examples{
 \dontrun{

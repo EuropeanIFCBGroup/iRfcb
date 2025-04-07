@@ -16,7 +16,7 @@ utils::globalVariables("create_and_save_mat_structure")
 #'    `ifcb_create_empty_manual_file` now handles multiple classlist values. Use \code{classlist} instead.
 #'
 #' @details
-#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @return No return value. This function is called for its side effects.
 #' The created MAT file is saved at the specified `output_file` location.

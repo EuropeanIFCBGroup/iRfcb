@@ -13,7 +13,7 @@ utils::globalVariables("save_class2use_to_mat")
 #'
 #' @details
 #' This function requires a python interpreter to be installed.
-#' The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @return No return value. This function is called for its side effect of creating a `.mat` file.
 #'

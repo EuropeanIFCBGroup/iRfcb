@@ -28,13 +28,8 @@ navbar:
 reference:
 - title: Main functions
   contents:
-  - '`ifcb_adjust_classes`'
-  - '`ifcb_annotate_batch`'
   - '`ifcb_convert_filenames`'
-  - '`ifcb_correct_annotation`'
   - '`ifcb_count_mat_annotations`'
-  - '`ifcb_create_class2use`'
-  - '`ifcb_create_empty_manual_file`'
   - '`ifcb_create_manifest`'
   - '`ifcb_download_dashboard_data`'
   - '`ifcb_download_test_data`'
@@ -55,16 +50,10 @@ reference:
   - '`ifcb_is_in_basin`'
   - '`ifcb_is_near_land`'
   - '`ifcb_match_taxa_names`'
-  - '`ifcb_merge_manual`'
-  - '`ifcb_prepare_whoi_plankton`'
-  - '`ifcb_psd`'
   - '`ifcb_psd_plot`'
-  - '`ifcb_py_install`'
   - '`ifcb_read_features`'
   - '`ifcb_read_hdr_data`'
-  - '`ifcb_read_mat`'
   - '`ifcb_read_summary`'
-  - '`ifcb_replace_mat_values`'
   - '`ifcb_run_image_gallery`'
   - '`ifcb_summarize_biovolumes`'
   - '`ifcb_summarize_class_counts`'
@@ -75,6 +64,20 @@ reference:
   - '`ifcb_which_basin`'
   - '`ifcb_zip_matlab`'
   - '`ifcb_zip_pngs`'
+- subtitle: Python Dependency ![Python Powered](../python-powered-w-70x28.png)
+  desc: These functions require Python to be installed. For more information, see [README](https://europeanifcbgroup.github.io/iRfcb/).
+  contents:
+  - '`ifcb_adjust_classes`'
+  - '`ifcb_annotate_batch`'
+  - '`ifcb_correct_annotation`'
+  - '`ifcb_create_class2use`'
+  - '`ifcb_create_empty_manual_file`'
+  - '`ifcb_merge_manual`'
+  - '`ifcb_prepare_whoi_plankton`'
+  - '`ifcb_psd`'
+  - '`ifcb_py_install`'
+  - '`ifcb_replace_mat_values`'
+  - '`ifcb_read_mat`'
 - title: Helper functions
   contents:
   - '`create_package_manifest`'

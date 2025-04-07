@@ -23,7 +23,7 @@ repository (Sosik and Olson 2007).
 }
 \details{
 This function requires a python interpreter to be installed.
-The required python packages can be installed in a virtual environment using \code{ifcb_py_install}.
+The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 }
 \examples{
 \dontrun{

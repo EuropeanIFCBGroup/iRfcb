@@ -23,7 +23,7 @@ utils::globalVariables("r_read_mat_file")
 #'
 #' @details
 #' This function requires a python interpreter to be installed.
-#' The required python packages can be installed in a virtual environment using `ifcb_py_install`.
+#' The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
 #'
 #' @export
 #' @seealso \code{\link{ifcb_py_install}}
