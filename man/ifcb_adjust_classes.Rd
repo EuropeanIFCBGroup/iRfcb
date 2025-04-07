@@ -32,7 +32,11 @@ The required python packages can be installed in a virtual environment using \co
 }
 \examples{
 \dontrun{
-ifcb_adjust_classes("C:/training/config/class2use", "C:/training/manual/2014/")
+# Initialize a python session if not already set up
+ifcb_py_install()
+
+ifcb_adjust_classes("data/config/class2use.mat",
+                    "data/manual/2014/")
 }
 
 }

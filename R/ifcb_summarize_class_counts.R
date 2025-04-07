@@ -31,8 +31,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' ifcb_summarize_class_counts('C:/work/IFCB/user_training_test_data/class/classxxxx_v1/',
-#'                             'C:/work/IFCB/user_training_test_data/data/', 2014)
+#' ifcb_summarize_class_counts('path/to/class/classxxxx_v1/',
+#'                             'path/to/data/', 2014)
 #' }
 #'
 #' @export

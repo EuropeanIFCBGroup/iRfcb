@@ -3,7 +3,7 @@ utils::globalVariables("Name")
 #'
 #' This function downloads WHOI-Plankton annotated plankton images (Sosik et al. 2015) for specified years
 #' from \url{https://hdl.handle.net/1912/7341}.
-#' The extracted `.png` files are saved in the specified destination folder.
+#' The extracted `.png` data are saved in the specified destination folder.
 #'
 #' @param years A vector of years (numeric or character) indicating which datasets to download. The available years are currently 2006 to 2014.
 #' @param dest_folder A string specifying the destination folder where the files will be extracted.
@@ -17,13 +17,16 @@ utils::globalVariables("Name")
 #'
 #' @examples
 #' \dontrun{
-#' ifcb_download_whoi_plankton(c(2006, 2007), "data")
+#' # Download and extract images for 2006 and 2007 in the data folder
+#' ifcb_download_whoi_plankton(c(2006, 2007),
+#'                             "data",
+#'                             extract_images = TRUE)
 #' }
 #'
 #' @references Sosik, H. M., Peacock, E. E. and Brownlee E. F. (2015), Annotated Plankton Images - Data Set for Developing and Evaluating Classification Methods. \doi{10.1575/1912/7341}
 #'
 #' @export
-ifcb_download_whoi_plankton <- function(years, dest_folder, max_retries = 10, extract_images = TRUE, quiet = FALSE) {
+ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRUE, max_retries = 10, quiet = FALSE) {
   # Define the URL mapping
   url_map <- list(
     "2006" = "https://darchive.mblwhoilibrary.org/bitstreams/6968c380-3713-57b1-bdca-5b21e514a996/download",

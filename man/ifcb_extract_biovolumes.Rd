@@ -91,8 +91,10 @@ depending on whether the class is identified as a diatom.
 # Using MATLAB results:
 feature_files <- "data/features"
 mat_folder <- "data/classified"
+
 biovolume_df <- ifcb_extract_biovolumes(feature_files,
                                         mat_folder)
+
 print(biovolume_df)
 
 # Using custom classification result:
@@ -100,9 +102,11 @@ class = c("Mesodinium_rubrum",
           "Mesodinium_rubrum")
 image <- c("D20220522T003051_IFCB134_00002",
            "D20220522T003051_IFCB134_00003")
+
 biovolume_df_custom <- ifcb_extract_biovolumes(feature_files,
-                                        custom_images = image,
-                                        custom_classes = class)
+                                               custom_images = image,
+                                               custom_classes = class)
+
 print(biovolume_df_custom)
 }
 

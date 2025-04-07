@@ -31,16 +31,16 @@
 #'
 #' # Summarize by sample
 #' summary_sample <- ifcb_summarize_png_counts(png_folder,
-#'                                           hdr_folder,
-#'                                           sum_level = "sample",
-#'                                           verbose = TRUE)
+#'                                             hdr_folder,
+#'                                             sum_level = "sample",
+#'                                             verbose = TRUE)
 #' print(summary_sample)
 #'
 #' # Summarize by class
 #' summary_class <- ifcb_summarize_png_counts(png_folder,
-#'                                          hdr_folder,
-#'                                          sum_level = "class",
-#'                                          verbose = TRUE)
+#'                                            hdr_folder,
+#'                                            sum_level = "class",
+#'                                            verbose = TRUE)
 #' print(summary_class)
 #' }
 ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level = "sample", verbose = TRUE) {

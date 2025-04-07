@@ -45,7 +45,7 @@ utils::globalVariables(c("name", "manual"))
 #'   class2use_file = "path/to/class2use_file.mat",
 #'   roi_folders = "path/to/roi_folder",
 #'   out_folder = "path/to/out_folder",
-#'   skip_class = 1
+#'   skip_class = 1 # Skip "unclassified"
 #' )
 #' }
 ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_folders, out_folder,

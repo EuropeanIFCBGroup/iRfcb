@@ -25,10 +25,10 @@ utils::globalVariables(c("gpsLatitude", "gpsLongitude", "type", "value", "counts
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @examples
-#' \dontrun{
-#' summary_data <- ifcb_read_summary("path/to/summary_file.mat", biovolume = TRUE, threshold = "opt")
+#' mat_file <- system.file("exdata/example_summary.mat", package = "iRfcb")
+#'
+#' summary_data <- ifcb_read_summary(mat_file, biovolume = FALSE, threshold = "opt")
 #' print(summary_data)
-#' }
 ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, threshold = "opt", use_python = FALSE) {
 
   if (is.list(summary)) {

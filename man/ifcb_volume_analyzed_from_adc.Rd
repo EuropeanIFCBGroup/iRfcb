@@ -27,7 +27,7 @@ the R equivalent function of \code{IFCB_volume_analyzed_fromADC} from the \verb{
 \examples{
 \dontrun{
 # Example: Estimate volume analyzed from an IFCB ADC file
-adc_file <- "path/to/IFCB_adc_file.csv"
+adc_file <- "path/to/IFCB_adc_file.adc"
 adc_info <- ifcb_volume_analyzed_from_adc(adc_file)
 print(adc_info$ml_analyzed)
 }

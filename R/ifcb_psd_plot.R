@@ -18,6 +18,9 @@ utils::globalVariables(c("x", "y"))
 #'
 #' @examples
 #' \dontrun{
+#' #' # Initialize a python session if not already set up
+#' ifcb_py_install()
+#'
 #' # Analyze PSD
 #' psd <- ifcb_psd(feature_folder = 'path/to/features',
 #'                 hdr_folder = 'path/to/hdr_data',
@@ -40,6 +43,7 @@ utils::globalVariables(c("x", "y"))
 #'                       data = psd$data,
 #'                       fits = psd$fits,
 #'                       start_fit = 10)
+#'
 #' # Inspect plot
 #' print(plot)
 #' }

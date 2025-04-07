@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_create_class2use.R
 \name{ifcb_create_class2use}
 \alias{ifcb_create_class2use}
-\title{Create a class2use .mat File}
+\title{Create a class2use \code{.mat} File}
 \usage{
 ifcb_create_class2use(classes, filename, do_compression = TRUE)
 }
@@ -27,6 +27,9 @@ The required python packages can be installed in a virtual environment using \co
 }
 \examples{
 \dontrun{
+# Initialize a python session if not already set up
+ifcb_py_install()
+
 # Example usage:
 classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
 

@@ -14,6 +14,7 @@
 #' \dontrun{
 #' # Example: Read and extract information from an IFCB header file
 #' hdr_info <- ifcb_get_runtime("path/to/IFCB_hdr_file.hdr")
+#'
 #' print(hdr_info)
 #' }
 ifcb_get_runtime <- function(hdr_file) {

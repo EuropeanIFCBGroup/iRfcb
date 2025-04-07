@@ -1,5 +1,5 @@
 utils::globalVariables("save_class2use_to_mat")
-#' Create a class2use .mat File
+#' Create a class2use `.mat` File
 #'
 #' This function creates a `.mat` file containing a character vector of class names.
 #' A class2use file can be used for manual annotation using the code in the `ifcb-analysis`
@@ -23,6 +23,9 @@ utils::globalVariables("save_class2use_to_mat")
 #'
 #' @examples
 #' \dontrun{
+#' # Initialize a python session if not already set up
+#' ifcb_py_install()
+#'
 #' # Example usage:
 #' classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
 #'

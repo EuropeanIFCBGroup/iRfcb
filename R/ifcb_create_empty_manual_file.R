@@ -31,11 +31,11 @@ utils::globalVariables("create_and_save_mat_structure")
 #'                               class2use = c("unclassified", "Aphanizomenon_spp"),
 #'                               output_file = "output.mat")
 #'
-#' # Create a MAT file with a different unclassified_id
+#' # Create a MAT file with 50 unclassified ROIs (1) and 50 Aphanizomenon_spp (2) ROIs
 #' ifcb_create_empty_manual_file(roi_length = 100,
 #'                               class2use = c("unclassified", "Aphanizomenon_spp"),
 #'                               output_file = "output.mat",
-#'                               classlist = 999)
+#'                               classlist = c(rep(1, 50), rep(2, 50)))
 #' }
 #'
 #' @export

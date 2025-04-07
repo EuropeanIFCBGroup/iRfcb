@@ -44,6 +44,8 @@ It retries the operation if an error occurs, up to a specified number of attempt
 \dontrun{
 # Example: Retrieve WoRMS records for a list of taxa names
 taxa <- c("Calanus finmarchicus", "Thalassiosira pseudonana", "Phaeodactylum tricornutum")
+
+# Call the function
 records <- ifcb_match_taxa_names(taxa_names = taxa,
                                  max_retries = 3,
                                  sleep_time = 5,
