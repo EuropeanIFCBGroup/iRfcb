@@ -31,6 +31,9 @@ navbar:
 
 reference:
 - title: Main functions
+
+- subtitle: Core functions
+  desc: Core functions for processing and analyzing IFCB data.
   contents:
   - '`ifcb_convert_filenames`'
   - '`ifcb_count_mat_annotations`'
@@ -68,8 +71,8 @@ reference:
   - '`ifcb_which_basin`'
   - '`ifcb_zip_matlab`'
   - '`ifcb_zip_pngs`'
-- subtitle: Python Dependency ![Python Powered](../python-powered-w-70x28.png)
-  desc: These functions require Python to be installed. For more information, see [README](https://europeanifcbgroup.github.io/iRfcb/).
+- subtitle: Python dependency ![Python Powered](../python-powered-w-70x28.png)
+  desc: These functions depend on a working Python installation. For more information, see the [README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
   contents:
   - '`ifcb_adjust_classes`'
   - '`ifcb_annotate_batch`'
