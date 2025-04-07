@@ -2,6 +2,8 @@ url: https://europeanifcbgroup.github.io/iRfcb/
 template:
   bootstrap: 5
   light-switch: true
+news:
+  one_page: true
 
 navbar:
   left:
@@ -24,6 +26,8 @@ navbar:
           href: articles/whoi-plankton-data-integration.html
     - text: "Reference"
       href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
 
 reference:
 - title: Main functions
