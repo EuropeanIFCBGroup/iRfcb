@@ -36,7 +36,7 @@ Default is EPSG code 4326 (WGS84).}
 the coastline if a custom shapefile is provided. Default is TRUE.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
-will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.}
+will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 square km.}
 
 \item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is FALSE.}
 

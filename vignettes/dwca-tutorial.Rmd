@@ -291,7 +291,7 @@ The Occurrence table captures information about individual organisms or observat
 
 Each class observation is considered an occurrence in the IFCB data. The following code transforms the data into an occurrence table, adding essential fields such as **type**, **collectionCode**, **occurrenceID**, **basisOfRecord**, **identificationVerificationStatus**, **identificationReferences**, **identifiedBy**, and **associatedMedia**. These fields provide context and provenance information for each occurrence. 
 
-Links to raw images can be included in **associatedMedia**. These links may point to resources such as the IFCB Dashboard, Ecotaxa, or other image archives. Learn how to prepare images for Ecotaxa using `iRfcb` in this  `vignette("ecotaxa-tutorial")`, or how to export images to an image library in `vignette("image-export-tutorial")`.
+Links to raw images can be included in **associatedMedia**. These links may point to resources such as the IFCB Dashboard, EcoTaxa, or other image archives. Learn how to prepare images for EcoTaxa using `iRfcb` in this  `vignette("ecotaxa-tutorial")`, or how to export images to an image library in `vignette("image-export-tutorial")`.
 
 ```{r}
 # Create an occurrence table by transforming event data and adding fields

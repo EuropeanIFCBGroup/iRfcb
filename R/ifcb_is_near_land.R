@@ -16,7 +16,7 @@
 #' @param remove_small_islands Logical indicating whether to remove small islands from
 #'   the coastline if a custom shapefile is provided. Default is TRUE.
 #' @param small_island_threshold Area threshold in square meters below which islands
-#'   will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 sqkm.
+#'   will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 square km.
 #' @param plot A boolean indicating whether to plot the points, land polygon and buffer. Default is FALSE.
 #' @param utm_zone `r lifecycle::badge("deprecated")`
 #'

@@ -96,7 +96,7 @@ metadata_sample <- ifcb_summarize_png_metadata(sample_path)
 
 ### Map EcoTaxa Headers
 
-The image metadata are mapped to the Ecotaxa metadata headers that are required when submitting data to EcoTaxa. In this example, a minimal dataset is used, containing only the image name. More comprehensive headers can be specified through the arguments of `ifcb_get_ecotaxa_example()`.
+The image metadata are mapped to the EcoTaxa metadata headers that are required when submitting data to EcoTaxa. In this example, a minimal dataset is used, containing only the image name. More comprehensive headers can be specified through the arguments of `ifcb_get_ecotaxa_example()`.
 
 ```{r}
 # Get the minimal EcoTaxa metadata header names
@@ -105,7 +105,7 @@ ecotaxa_minimal_headers <- ifcb_get_ecotaxa_example("minimal")[0, ]
 # Create a data frame with empty rows matching the length of data
 ecotaxa_minimal_headers[1:nrow(metadata_sample), ] <- NA
 
-# Map metadata to Ecotaxa headers
+# Map metadata to EcoTaxa headers
 ecotaxa_minimal <- ecotaxa_minimal_headers %>%
   mutate(
     img_file_name = metadata_sample$image,

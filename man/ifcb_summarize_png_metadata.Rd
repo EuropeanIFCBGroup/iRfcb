@@ -23,7 +23,7 @@ A dataframe that joins image data, header data, and feature data based on the sa
 \description{
 This function processes IFCB data by reading images, matching them to the corresponding
 header and feature files, and joining them into a single dataframe. This function may be
-useful when preparing metadata files for an Ecotaxa submission.
+useful when preparing metadata files for an EcoTaxa submission.
 }
 \examples{
 \dontrun{
