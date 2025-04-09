@@ -1,6 +1,5 @@
 Anglès
 AphiaID
-Aquire
 Bacillariophyceae
 Bengt
 BioFlow
@@ -17,6 +16,7 @@ DTO
 DYYYYMMDD
 DYYYYMMDDTHHMMSS
 DataFrames
+Deprecations
 Deuer
 DwC
 EDMO
@@ -167,6 +167,7 @@ parentEventID
 pgC
 phytoplankton
 picograms
+pkgdown
 png
 pre
 protist
@@ -175,6 +176,7 @@ reusability
 roi
 runBeads
 runType
+runnable
 scientificName
 se
 smhi
