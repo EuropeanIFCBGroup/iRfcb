@@ -17,6 +17,7 @@
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
 #' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
@@ -58,6 +59,7 @@ ifcb_extract_classified_images <- function(sample,
                                            scale_bar_position = "bottomright",
                                            scale_bar_color = "black",
                                            old_adc = FALSE,
+                                           gamma = 1,
                                            use_python = FALSE,
                                            verbose = TRUE) {
 
@@ -123,7 +125,8 @@ ifcb_extract_classified_images <- function(sample,
           scale_bar_position = scale_bar_position,
           scale_bar_color = scale_bar_color,
           overwrite = overwrite,
-          old_adc = old_adc
+          old_adc = old_adc,
+          gamma = gamma
         )
       }, error = function(e) {
         cat("Error occurred while processing taxon", taxon, ":", conditionMessage(e), "\n")

@@ -20,6 +20,7 @@ ifcb_extract_annotated_images(
   scale_bar_color = "black",
   old_adc = FALSE,
   use_python = FALSE,
+  gamma = 1,
   roi_folder = deprecated()
 )
 }
@@ -53,6 +54,8 @@ ifcb_extract_annotated_images(
 \item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
+\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
 
 \item{roi_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 Use \code{roi_folders} instead.}
