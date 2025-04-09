@@ -14,20 +14,26 @@
 #' manage Python environments and packages.
 #'
 #' The `USE_IRFCB_PYTHON` environment variable can be set to automatically activate an
-#' installed Python virtual environment named `iRfcb` when the `iRfcb` package is loaded.
-#' Set `USE_IRFCB_PYTHON` to `"TRUE"` to enable automatic setup. For more details, see the package README
+#' installed Python venv named `iRfcb` when the `iRfcb` package is loaded.
+#' Ensure that the `iRfcb` venv is installed in `reticulate::virtualenv_root()`
+#' and available via `reticulate::virtualenv_list()` (see examples). You can set
+#' `USE_IRFCB_PYTHON` to `"TRUE"` in your `.Renviron` file to enable automatic setup.
+#' For more details, see the package README
 #' at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 #'
 #' @examples
 #' \dontrun{
-#' # Install the iRfcb Python environment using a virtual environment (default)
-#' ifcb_py_install()
+#' # Define the name of the virtual environment in your virtual_root directory
+#' envpath <- file.path(reticulate::virtualenv_root(), "iRfcb")
+#'
+#' # Install the iRfcb Python venv in your virtual_root directory
+#' ifcb_py_install(envname = envpath)
 #'
 #' # Install the iRfcb Python environment with additional packages
-#' ifcb_py_install(packages = c("numpy", "plotly"))
+#' ifcb_py_install(envname = envpath, packages = c("numpy", "plotly"))
 #'
 #' # Use system Python instead of a virtual environment
-#' ifcb_py_install(use_venv = FALSE)
+#' ifcb_py_install(envname = envpath, use_venv = FALSE)
 #' }
 #' @export
 ifcb_py_install <- function(envname = ".virtualenvs/iRfcb", use_venv = TRUE, packages = NULL) {
