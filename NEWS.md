@@ -4,8 +4,8 @@
 
 * Added `NEWS.md` to track package changes.
 * New functions:
-  * `ifcb_download_dashboard_data()` for fetching data from the WHOI dashboard.
-  * `ifcb_download_whoi_plankton()` for downloading WHOI plankton CSV datasets.
+  * `ifcb_download_dashboard_data()` for fetching data from the WHOI IFCB Dashboard.
+  * `ifcb_download_whoi_plankton()` for downloading WHOI-Plankton PNG datasets.
   * `ifcb_prepare_whoi_plankton()` to process WHOI data for integration.
 * New vignette: `vignette("whoi-plankton-data-integration")`.
 * Python virtual environments can now be automatically activated by setting the
@@ -18,8 +18,6 @@
 * `ifcb_is_near_land()`:
   * Now returns a plot if `plot = TRUE`.
   * Downloads default NE land polygons instead of shipping with the package.
-* `ifcb_create_empty_manual_file()` now accepts a complete class list via
-  `classlist`, replacing the older `unclassified_id`.
 
 ## Minor improvements and fixes
 
@@ -44,6 +42,8 @@
     `classlist`).
   * `utm_zone` in `ifcb_is_near_land()` (now determined automatically from
     longitude).
+* `ifcb_create_empty_manual_file()` now accepts a complete class list via
+  `classlist`, replacing the older `unclassified_id`.
 
 # iRfcb 0.4.3
 
@@ -139,7 +139,7 @@
 ## Deprecations
 
 * Removed deprecated function `ifcb_get_svea_position()`.
-* Removed helper `handle_missing_positions()`.
+* Removed helper `iRfcb:::handle_missing_positions()`.
 * Deprecated arguments `manual_folder`, `feature_folder`, and `class_folder`
   in several functions (`ifcb_count_mat_annotations()`,
   `ifcb_extract_biovolumes()`, `ifcb_read_features()`,
