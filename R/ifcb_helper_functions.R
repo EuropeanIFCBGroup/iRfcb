@@ -368,7 +368,7 @@ handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, roundi
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#' This helper function was deprecated as it has been replaced by a main function: `ifcb_match_taxon_name()`.
 #'
 #' This helper function attempts to retrieve WoRMS records using the provided taxa names.
 #' It retries the operation if an error occurs, up to a specified number of attempts.
@@ -638,7 +638,7 @@ install_missing_packages <- function(packages, envname = NULL) {
 }
 #' Read MATLAB (.mat) Files
 #'
-#' A helper function to read MATLAB `.mat` files using the `R.matlab` package.
+#' A helper function to read MATLAB `.mat` files using the `R.matlab::readMat()` package.
 #' Optionally, it can fix variable names during import.
 #'
 #' @param file_path Character. Path to the `.mat` file.
@@ -667,7 +667,7 @@ read_mat <- function(file_path, fixNames = FALSE) {
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#' This helper function was deprecated as it has been replaced by a main function: `ifcb_match_taxon_name()`.
 #'
 #' This function extracts the class from the first row of a given worms_records tibble.
 #' If the tibble is empty, it returns NA.
@@ -700,7 +700,7 @@ extract_class <- function(record) {
 #' @description
 #' `r lifecycle::badge("deprecated")`
 #'
-#' This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name}.
+#' This helper function was deprecated as it has been replaced by a main function: `ifcb_match_taxon_name()`.
 #'
 #' This function extracts the AphiaID from the first row of a given worms_records tibble.
 #' If the tibble is empty, it returns NA.
