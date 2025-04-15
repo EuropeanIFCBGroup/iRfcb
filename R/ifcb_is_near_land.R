@@ -105,6 +105,7 @@ ifcb_is_near_land <- function(latitudes,
 
       # Get coastline and land data within the bounding box
       shp_path <- list.files(exdir, pattern = "\\.shp$", full.names = TRUE)[1]
+      land <- st_read(shp_path, quiet = TRUE)
 
     } else if (source == "eea") {
       url <- "https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon/at_download/file"
@@ -120,11 +121,11 @@ ifcb_is_near_land <- function(latitudes,
       }
       unzip(temp_zip, exdir = exdir)
       shp_path <- list.files(exdir, pattern = "\\.shp$", full.names = TRUE)[1]
-    }
 
-    # Read the shapefile
-    land <- st_read(shp_path, quiet = TRUE)
-    land <- st_transform(land, crs = crs)
+      # Read the shapefile
+      land <- st_read(shp_path, quiet = TRUE)
+      land <- st_transform(land, crs = crs)
+    }
   } else {
     land <- st_read(shape, quiet = TRUE)
     land <- st_transform(land, crs = crs)
