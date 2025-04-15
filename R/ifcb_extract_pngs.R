@@ -39,6 +39,11 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
                               scale_bar_position = "bottomright", scale_bar_color = "black", old_adc = FALSE,
                               verbose = TRUE) {
 
+  # Ensure roi_file has .roi extension
+  if (!grepl("\\.roi$", roi_file, ignore.case = TRUE)) {
+    roi_file <- paste0(roi_file, ".roi")
+  }
+
   # Valid positions for scale bar
   valid_positions <- c("topright", "topleft", "bottomright", "bottomleft")
   if (!(scale_bar_position %in% valid_positions)) {

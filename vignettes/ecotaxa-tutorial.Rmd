@@ -83,7 +83,7 @@ Extract all ROIs from a sample as `.png` images:
 sample_path <- "data/data/2023/D20230314/D20230314T003836_IFCB134"
 
 # Extract .png images
-ifcb_extract_pngs(paste0(sample_path, ".roi"))
+ifcb_extract_pngs(sample_path)
 ```
 
 ### Summarize Image Metadata
