@@ -10,9 +10,9 @@ vignette: >
 
 ## Introduction
 
-The `iRfcb` package is an open-source R package designed to streamline the analysis of Imaging FlowCytobot (IFCB) data, with a focus on supporting marine ecological research and monitoring. By integrating R and Python functionalities, the package facilitates efficient handling of IFCB image data, extraction of key metadata, and preparation of outputs for further taxonomic, ecological, or spatial analyses.
+The `iRfcb` package is an open-source R package designed to streamline the analysis of Imaging FlowCytobot (IFCB) data, with a focus on supporting marine ecological research and monitoring. By integrating R and Python functionalities, the package facilitates efficient handling and sharing of IFCB image data, extraction of key metadata, and preparation of outputs for further taxonomic, ecological, or spatial analyses.
 
-This tutorial serves as an introduction to the core functionalities of `iRfcb`, providing step-by-step instructions for data preprocessing, taxonomic analysis, and SHARK-compliant data export. 
+This tutorial serves as an introduction to the core functionalities of `iRfcb`, providing step-by-step instructions for data preprocessing, taxonomic analysis, and SHARK-compliant data export. For additional guides—such as quality control of IFCB data, data sharing, and integration with MATLAB—please refer to the other tutorials available on the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/articles/).
 
 ## Getting Started
 

@@ -60,6 +60,7 @@ ifcb_is_near_land <- function(latitudes,
                               small_island_threshold = 2000000,
                               plot = FALSE,
                               utm_zone = deprecated()) {
+
   stopifnot(length(latitudes) == length(longitudes))
 
   # Warn the user if utm_zone is used
@@ -97,9 +98,6 @@ ifcb_is_near_land <- function(latitudes,
     }
 
     if (source == "ne") {
-      # Directory to extract files
-      exdir <- tempdir()  # Temporary directory
-
       # Extract the files
       unzip(system.file("exdata/ne_10m_land.zip", package = "iRfcb"), exdir = exdir)
 
