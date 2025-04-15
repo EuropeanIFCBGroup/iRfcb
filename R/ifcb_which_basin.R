@@ -79,7 +79,12 @@ ifcb_which_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
            color = "Sea basin") +
       ylim(c(min(latitudes)-1, max(latitudes)+1)) +
       xlim(c(min(longitudes)-1, max(longitudes)+1)) +
-      theme_minimal()
+      theme_minimal() +
+      # Set white background and ensure plot background is white
+      theme(
+        panel.background = element_rect(fill = "white", color = NA),
+        plot.background = element_rect(fill = "white", color = NA)
+      )
   }
 
   # Return a logical vector indicating whether each point is in a basin, or the plot if requested
