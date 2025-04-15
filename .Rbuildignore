@@ -20,7 +20,6 @@ vignettes/data/
 ^vignettes/matlab-tutorial\.Rmd$
 ^vignettes/ecotaxa-tutorial\.Rmd$
 ^vignettes/image-export-tutorial\.Rmd$
-^vignettes/qc-tutorial\.Rmd$
 ^vignettes/whoi-plankton-data-integration\.Rmd$
 ^vignettes/files/
 .virtualenvs/

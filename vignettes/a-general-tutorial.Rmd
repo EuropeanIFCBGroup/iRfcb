@@ -242,7 +242,8 @@ citation("iRfcb")
 
 ```{r, include=FALSE}
 # Clean up
-unlink(data_dir, recursive = TRUE)
+unlink(file.path(data_dir, "data/2023/D20230314/D20230314T001205_IFCB134"), recursive = TRUE)
+unlink(file.path(data_dir, "data/2023/D20230314/D20230314T003836_IFCB134"), recursive = TRUE)
 ```
 
 ## References
