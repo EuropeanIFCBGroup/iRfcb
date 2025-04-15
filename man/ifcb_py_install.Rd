@@ -5,13 +5,13 @@
 \title{Install iRfcb Python Environment}
 \usage{
 ifcb_py_install(
-  envname = ".virtualenvs/iRfcb",
+  envname = "~/.virtualenvs/iRfcb",
   use_venv = TRUE,
   packages = NULL
 )
 }
 \arguments{
-\item{envname}{A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".}
+\item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
 
 \item{use_venv}{Logical. If \code{TRUE} (default), a virtual environment is created. If \code{FALSE}, the system Python is used instead, and missing packages are installed globally for the user.}
 

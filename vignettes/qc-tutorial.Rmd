@@ -113,7 +113,7 @@ IFCB data can be quality controlled by analyzing the particle size distribution 
 
 ```{r, eval=FALSE}
 # Define path to virtual environment
-env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
+env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
 
 # Install python virtual environment
 ifcb_py_install(envname = env_path)
@@ -171,12 +171,7 @@ plot <- ifcb_psd_plot(
   data = psd$data,
   fits = psd$fits,
   start_fit = 10
-) +
-  # Set white background and ensure plot background is white
-  theme(
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
+)
 
 # Print the plot
 print(plot)
@@ -213,12 +208,7 @@ near_land_plot <- ifcb_is_near_land(
   gps_data$gpsLongitude,
   distance = 2500, # 2500 meters from shore
   plot = TRUE,
-) +
-  # Set white background and ensure plot background is white
-  theme(
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
+)
 
 # Print the plot
 print(near_land_plot)
@@ -240,12 +230,7 @@ points_in_the_baltic <- ifcb_which_basin(latitudes, longitudes, shape_file = NUL
 print(points_in_the_baltic)
 
 # Plot the points and the basins
-ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL) +
-  # Set white background and ensure plot background is white
-  theme(
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
+ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 ```
 
 This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a user-supplied shapefile if provided. The shapefiles provided in `iRfcb` originate from [SHARK](https://shark.smhi.se/hamta-data/). 
@@ -266,12 +251,7 @@ points_in_the_baltic <- ifcb_is_in_basin(latitudes, longitudes)
 print(points_in_the_baltic)
 
 # Plot the points and the basin
-ifcb_is_in_basin(latitudes, longitudes, plot = TRUE) +
-  # Set white background and ensure plot background is white
-  theme(
-    panel.background = element_rect(fill = "white", color = NA),
-    plot.background = element_rect(fill = "white", color = NA)
-  )
+ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
 ```
 
 This function reads a land-buffered shapefile of the Baltic Sea Basin from the `iRfcb` package by default, or a user-supplied shapefile if provided.

@@ -3,7 +3,7 @@
 #' This function sets up the Python environment for `iRfcb`. By default, it creates and activates a Python virtual environment (`venv`) named "iRfcb" and installs the required Python packages from the "requirements.txt" file.
 #' Alternatively, users can opt to use the system Python instead of creating a virtual environment by setting `use_venv = FALSE` (not recommended).
 #'
-#' @param envname A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".
+#' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
 #' @param use_venv Logical. If `TRUE` (default), a virtual environment is created. If `FALSE`, the system Python is used instead, and missing packages are installed globally for the user.
 #' @param packages A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.
 #'
@@ -36,7 +36,7 @@
 #' ifcb_py_install(envname = envpath, use_venv = FALSE)
 #' }
 #' @export
-ifcb_py_install <- function(envname = ".virtualenvs/iRfcb", use_venv = TRUE, packages = NULL) {
+ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, packages = NULL) {
   # Get the path to the requirements file
   req_file <- system.file("python", "requirements.txt", package = "iRfcb")
 
