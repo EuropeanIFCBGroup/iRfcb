@@ -83,8 +83,8 @@ ifcb_is_in_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
 
   # Return a logical vector indicating whether each point is in a basin, or the plot if requested
   if (plot) {
-    return(plot_obj)
+    plot_obj
   } else {
-    return(labels)
+    labels
   }
 }

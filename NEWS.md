@@ -28,6 +28,8 @@
   (#41).
 * `ifcb_convert_filenames()` is more efficient and now correctly parses
   filenames like `"IFCB1_2010_309_192918"` (#40).
+* The default location of the venv path in `ifcb_py_install()` has changed to
+  "~/.virtualenvs/iRfcb".
 * Added support for old `.adc` file format (IFCB1-6) by argument `old_adc` in:
   * `ifcb_extract_pngs()`
   * `ifcb_extract_classified_images()`
