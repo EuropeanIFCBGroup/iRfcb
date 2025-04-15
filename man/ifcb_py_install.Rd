@@ -5,13 +5,13 @@
 \title{Install iRfcb Python Environment}
 \usage{
 ifcb_py_install(
-  envname = ".virtualenvs/iRfcb",
+  envname = "~/.virtualenvs/iRfcb",
   use_venv = TRUE,
   packages = NULL
 )
 }
 \arguments{
-\item{envname}{A character string specifying the name of the virtual environment to create. Default is ".virtualenvs/iRfcb".}
+\item{envname}{A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".}
 
 \item{use_venv}{Logical. If \code{TRUE} (default), a virtual environment is created. If \code{FALSE}, the system Python is used instead, and missing packages are installed globally for the user.}
 
@@ -29,19 +29,25 @@ This function requires Python to be available on the system. It uses the \code{r
 manage Python environments and packages.
 
 The \code{USE_IRFCB_PYTHON} environment variable can be set to automatically activate an
-installed Python virtual environment named \code{iRfcb} when the \code{iRfcb} package is loaded.
-Set \code{USE_IRFCB_PYTHON} to \code{"TRUE"} to enable automatic setup. For more details, see the package README
+installed Python venv named \code{iRfcb} when the \code{iRfcb} package is loaded.
+Ensure that the \code{iRfcb} venv is installed in \code{reticulate::virtualenv_root()}
+and available via \code{reticulate::virtualenv_list()} (see examples). You can set
+\code{USE_IRFCB_PYTHON} to \code{"TRUE"} in your \code{.Renviron} file to enable automatic setup.
+For more details, see the package README
 at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 }
 \examples{
 \dontrun{
-# Install the iRfcb Python environment using a virtual environment (default)
-ifcb_py_install()
+# Define the name of the virtual environment in your virtual_root directory
+envpath <- file.path(reticulate::virtualenv_root(), "iRfcb")
+
+# Install the iRfcb Python venv in your virtual_root directory
+ifcb_py_install(envname = envpath)
 
 # Install the iRfcb Python environment with additional packages
-ifcb_py_install(packages = c("numpy", "plotly"))
+ifcb_py_install(envname = envpath, packages = c("numpy", "plotly"))
 
 # Use system Python instead of a virtual environment
-ifcb_py_install(use_venv = FALSE)
+ifcb_py_install(envname = envpath, use_venv = FALSE)
 }
 }

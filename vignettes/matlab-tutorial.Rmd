@@ -246,7 +246,7 @@ class2use <- ifcb_get_mat_variable("data/config/class2use.mat", variable_name = 
 unclassified_id <- which(grepl("unclassified", class2use))
 
 # Initialize the python session if not already set up
-env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
+env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
 ifcb_py_install(envname = env_path)
 
 # Correct the annotation with the output from the image gallery

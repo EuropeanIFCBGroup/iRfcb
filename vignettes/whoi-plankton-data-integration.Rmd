@@ -96,8 +96,11 @@ The `ifcb_prepare_whoi_plankton()` function enables downloading zipped `.png` im
 In this example, we use data from the years 2013 and 2014.
 
 ```{r, eval=FALSE}
+# Initialize the python session if not already set up
+env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
+
 # Initialize python environment
-ifcb_py_install()
+ifcb_py_install(envname = env_path)
 
 # Download and prepare the WHOI-Plankton dataset
 ifcb_prepare_whoi_plankton(

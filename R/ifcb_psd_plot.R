@@ -87,7 +87,9 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit) {
     theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
-      panel.border = element_rect(color = "black", fill = NA)
+      panel.border = element_rect(color = "black", fill = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA)
     )
 
   # Add the power curve fit if R2 is not -Inf
