@@ -1,7 +1,7 @@
 #' Determine if Positions are Near Land
 #'
 #' Determines whether given positions are near land based on a land polygon shape file.
-#' The Natural Earth 1:10m land vectors are downloaded as a default shapefile in `iRfcb`.
+#' The Natural Earth 1:10m land vectors are included as a default shapefile in `iRfcb`.
 #'
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions. Must be the same length as `latitudes`.
@@ -33,13 +33,12 @@
 #' @details
 #' This function calculates a buffered area around the coastline using a polygon shapefile and
 #' determines if each input position intersects with this buffer or the landmass itself.
-#' By default, it downloads and uses the Natural Earth 1:10m land vector dataset.
+#' By default, it uses the Natural Earth 1:10m land vector dataset.
 #'
 #' The EEA shapefile is downloaded from \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
 #' when `source = "eea"`.
 #'
 #' @examples
-#' \dontrun{
 #' # Define coordinates
 #' latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338)
 #' longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174)
@@ -49,7 +48,6 @@
 #'
 #' # Print the result
 #' print(near_land)
-#' }
 #'
 #' @export
 ifcb_is_near_land <- function(latitudes,
@@ -99,19 +97,13 @@ ifcb_is_near_land <- function(latitudes,
     }
 
     if (source == "ne") {
-      url <- "https://naturalearth.s3.amazonaws.com/10m_physical/ne_10m_land.zip"
-      temp_zip <- file.path(exdir, "ne_10m_land.zip")
+      # Directory to extract files
+      exdir <- tempdir()  # Temporary directory
 
-      if (!file.exists(temp_zip)) {
-        tryCatch({
-          curl::curl_download(url, temp_zip)
-        }, error = function(e) {
-          stop("Could not download Natural Earth land data. Please manually download it from:\n",
-               "https://www.naturalearthdata.com/", "\nThen provide the path to the `.shp` file (or a custom shape file) using the `shape` argument.")
-        })
-      }
+      # Extract the files
+      unzip(system.file("exdata/ne_10m_land.zip", package = "iRfcb"), exdir = exdir)
 
-      unzip(temp_zip, exdir = exdir)
+      # Get coastline and land data within the bounding box
       shp_path <- list.files(exdir, pattern = "\\.shp$", full.names = TRUE)[1]
 
     } else if (source == "eea") {

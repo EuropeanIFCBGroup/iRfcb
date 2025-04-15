@@ -17,5 +17,11 @@ pkgdown/
 vignettes/data/
 ^vignettes/dwca-tutorial\.Rmd$
 ^vignettes/metadata-template\.Rmd$
+^vignettes/matlab-tutorial\.Rmd$
+^vignettes/ecotaxa-tutorial\.Rmd$
+^vignettes/image-export-tutorial\.Rmd$
+^vignettes/qc-tutorial\.Rmd$
+^vignettes/whoi-plankton-data-integration\.Rmd$
 ^vignettes/files/
 .virtualenvs/
+^man/figures/image_gallery.png

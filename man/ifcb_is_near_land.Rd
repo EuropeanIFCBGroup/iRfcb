@@ -56,18 +56,17 @@ and position points colored by their proximity to land.
 }
 \description{
 Determines whether given positions are near land based on a land polygon shape file.
-The Natural Earth 1:10m land vectors are downloaded as a default shapefile in \code{iRfcb}.
+The Natural Earth 1:10m land vectors are included as a default shapefile in \code{iRfcb}.
 }
 \details{
 This function calculates a buffered area around the coastline using a polygon shapefile and
 determines if each input position intersects with this buffer or the landmass itself.
-By default, it downloads and uses the Natural Earth 1:10m land vector dataset.
+By default, it uses the Natural Earth 1:10m land vector dataset.
 
 The EEA shapefile is downloaded from \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
 when \code{source = "eea"}.
 }
 \examples{
-\dontrun{
 # Define coordinates
 latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338)
 longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174)
@@ -77,6 +76,5 @@ near_land <- ifcb_is_near_land(latitudes, longitudes, distance = 300, crs = 4326
 
 # Print the result
 print(near_land)
-}
 
 }

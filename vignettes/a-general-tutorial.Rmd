@@ -231,7 +231,7 @@ shark_example <- ifcb_get_shark_example()
 head(shark_example)[1:10]
 ```
 
-This concludes this tutorial for the `iRfcb` package. For more detailed information, refer to the package documentation or the other [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
+This concludes this tutorial for the `iRfcb` package. For additional guides—such as quality control of IFCB data, data sharing, and integration with MATLAB—please refer to the other tutorials available on the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/articles/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ## Citation
 
@@ -242,8 +242,7 @@ citation("iRfcb")
 
 ```{r, include=FALSE}
 # Clean up
-unlink(file.path(data_dir, "data/2023/D20230314/D20230314T001205_IFCB134"), recursive = TRUE)
-unlink(file.path(data_dir, "data/2023/D20230314/D20230314T003836_IFCB134"), recursive = TRUE)
+unlink(data_dir, recursive = TRUE)
 ```
 
 ## References
