@@ -9,6 +9,7 @@ ifcb_is_near_land(
   longitudes,
   distance = 500,
   shape = NULL,
+  source = "ne",
   crs = 4326,
   remove_small_islands = TRUE,
   small_island_threshold = 2e+06,
@@ -19,30 +20,33 @@ ifcb_is_near_land(
 \arguments{
 \item{latitudes}{Numeric vector of latitudes for positions.}
 
-\item{longitudes}{Numeric vector of longitudes for positions.}
+\item{longitudes}{Numeric vector of longitudes for positions. Must be the same length as \code{latitudes}.}
 
-\item{distance}{Buffer distance in meters around the coastline. Default is 500 m.}
+\item{distance}{Buffer distance (in meters) from the coastline to consider "near land." Default is 500 meters.}
 
-\item{shape}{Optional path to a shapefile containing coastline polygon data. If provided,
-the function will use this shapefile instead of the default Natural Earth 1:10m land vectors.
-Using a more detailed shapefile allows for a better estimation of the buffer distance.
-For detailed European coastlines, download polygons from the EEA at
-\url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}.}
+\item{shape}{Optional path to a shapefile (\code{.shp}) containing coastline data. If provided,
+this file will be used instead of the default Natural Earth 1:10m land vectors.
+A high-resolution shapefile can improve the accuracy of buffer distance calculations.
+Alternatively, you can retrieve a more detailed European coastline automatically by
+setting the \code{source} argument to \code{"eea"}.}
 
-\item{crs}{Coordinate reference system (CRS) to use for positions and output.
+\item{source}{Character string indicating which default coastline source to use when \code{shape = NULL}.
+Options are \code{"ne"} (Natural Earth, default) and \code{"eea"} (European Environment Agency).
+Ignored if \code{shape} is provided.}
+
+\item{crs}{Coordinate reference system (CRS) to use for input and output.
 Default is EPSG code 4326 (WGS84).}
 
 \item{remove_small_islands}{Logical indicating whether to remove small islands from
-the coastline if a custom shapefile is provided. Default is TRUE.}
+the coastline. Useful in archipelagos. Default is \code{TRUE}.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
-will be considered small and removed, if remove_small_islands is set to TRUE. Default is 2 square km.}
+will be considered small and removed, if remove_small_islands is set to \code{TRUE}. Default is 2 square km.}
 
-\item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is FALSE.}
+\item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is \code{FALSE}.}
 
 \item{utm_zone}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-
-\code{utm_zone} is now calculated from the median longitude of the input coordinates.}
+This argument is deprecated. UTM zones are now determined automatically based on the longitude of the input positions.}
 }
 \value{
 If \code{plot = FALSE} (default), a logical vector is returned indicating whether each position
@@ -58,6 +62,9 @@ The Natural Earth 1:10m land vectors are downloaded as a default shapefile in \c
 This function calculates a buffered area around the coastline using a polygon shapefile and
 determines if each input position intersects with this buffer or the landmass itself.
 By default, it downloads and uses the Natural Earth 1:10m land vector dataset.
+
+The EEA shapefile is downloaded from \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
+when \code{source = "eea"}.
 }
 \examples{
 \dontrun{

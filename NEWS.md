@@ -18,6 +18,9 @@
 * `ifcb_is_near_land()`:
   * Now returns a plot if `plot = TRUE`.
   * Downloads default NE land polygons instead of shipping with the package.
+  * Added option to download EEA coastline data using the new argument `source`.
+  * Deprecated the argument `utm_zone`, which is now determined automatically from
+    longitude.
 
 ## Minor improvements and fixes
 

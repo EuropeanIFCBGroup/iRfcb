@@ -18,6 +18,26 @@ test_that("ifcb_is_near_land works correctly", {
   expect_equal(near_land_default, expected_near_land)
 })
 
+test_that("ifcb_is_near_land works correctly with EEA data", {
+  # Skip slow test on CRAN
+  skip_on_cran()
+  skip_if_offline(host = "eea.europa.eu")
+
+  # Define test latitudes and longitudes
+  latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338, NA, 60.0)
+  longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174, 15.0, NA)
+
+  # Test with default parameters
+  near_land_eea <- ifcb_is_near_land(latitudes, longitudes, source = "eea")
+  expect_type(near_land_eea, "logical")
+  expect_length(near_land_eea, length(latitudes))
+  expect_true(all(is.na(near_land_eea[is.na(latitudes)])))
+
+  # Check that positions are near land correctly identified (dummy check)
+  expected_near_land <- c(TRUE, FALSE, TRUE, TRUE, NA, NA)
+  expect_equal(near_land_eea, expected_near_land)
+})
+
 test_that("ifcb_is_near_land works correctly", {
   # Skip slow test on CRAN
   skip_on_cran()
