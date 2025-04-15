@@ -219,8 +219,8 @@ ifcb_is_near_land <- function(latitudes,
       geom_sf(data = land, fill = "gray80", color = "black", alpha = 0.5) +
       geom_sf(data = positions_sf, aes(color = near_land), size = 2) +
       scale_color_manual(values = c("TRUE" = "red", "FALSE" = "green")) +
-      xlim(c(min(coords$lon), max(coords$lon))) +
-      ylim(c(min(coords$lat), max(coords$lat))) +
+      xlim(c(min(coords$lon) - .1, max(coords$lon) + .1)) +
+      ylim(c(min(coords$lat) - .1, max(coords$lat) + .1)) +
       coord_sf(crs = crs) +
       labs(title = paste("Buffer Distance:", distance, "m"),
            color = "Near Land") +
