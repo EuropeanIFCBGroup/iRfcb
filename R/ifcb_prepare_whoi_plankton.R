@@ -36,7 +36,7 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' @param blobs_folder Character. Directory where blob files will be stored (required if `download_blobs = TRUE`).
 #' @param download_features Logical. Whether to download feature files (default: FALSE).
 #' @param features_folder Character. Directory where feature files will be stored (required if `download_features = TRUE`).
-#' @param parallel_downloads Integer. Number of parallel IFCB Dashboard downloads (default: 10).
+#' @param parallel_downloads Integer. Number of parallel IFCB Dashboard downloads (default: 5).
 #' @param sleep_time Numeric. Seconds to wait between download requests (default: 2).
 #' @param multi_timeout Numeric. Timeout for multiple requests in seconds (default: 120).
 #' @param convert_filenames Logical. If `TRUE` (default), converts filenames of the old format `"IFCBxxx_YYYY_DDD_HHMMSS"`

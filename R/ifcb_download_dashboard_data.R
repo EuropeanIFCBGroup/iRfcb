@@ -30,7 +30,7 @@ utils::globalVariables("status_code")
 #'   four empty columns after column 7 to match the newer format. Default is `FALSE`.
 #'   `r lifecycle::badge("experimental")`
 #' @param parallel_downloads Integer. The number of files to download in parallel per batch.
-#'                           This helps manage network load and system performance. Default is `10`.
+#'                           This helps manage network load and system performance. Default is `5`.
 #' @param sleep_time A numeric value indicating the number of seconds to wait between each batch of downloads. Default is `2`.
 #' @param multi_timeout Numeric. The maximum time in seconds that the `curl` multi-download request
 #'                      will wait for a response before timing out. This helps prevent
