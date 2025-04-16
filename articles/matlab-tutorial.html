@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -229,16 +229,9 @@ help pages for <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># Do not print progress bars</span></span>
-<span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">## cols(</span></span>
-<span><span class="co">##   sample = <span style="color: #BB0000;">col_character()</span>,</span></span>
-<span><span class="co">##   classifier = <span style="color: #BB0000;">col_character()</span>,</span></span>
-<span><span class="co">##   class = <span style="color: #BB0000;">col_character()</span></span></span>
-<span><span class="co">## )</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print output</span></span>
+<span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
 <span><span class="co">##   sample             classifier class counts biovolume_mm3 carbon_ug ml_analyzed</span></span>
@@ -262,7 +255,7 @@ annotated IFCB image data. See details in the help pages for
 <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>,
 <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and
 <code><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations()</a></code>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
 <span>  feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
@@ -272,15 +265,9 @@ annotated IFCB image data. See details in the help pages for
 <span>  micron_factor <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3.4</span>,</span>
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span> <span class="co"># Do not print progress bars</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">## cols(</span></span>
-<span><span class="co">##   sample = <span style="color: #BB0000;">col_character()</span>,</span></span>
-<span><span class="co">##   class = <span style="color: #BB0000;">col_character()</span></span></span>
-<span><span class="co">## )</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Print output</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
 <span><span class="co">##   sample             classifier class counts biovolume_mm3 carbon_ug ml_analyzed</span></span>
@@ -307,7 +294,7 @@ annotated IFCB image data. See details in the help pages for
 <p>Summarize counts of annotated images at the sample and class levels.
 The <code>hdr_folder</code> can be included to add GPS positions to the
 sample data frame:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on sample level</span></span>
 <span><span class="va">png_per_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                            hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
@@ -327,7 +314,7 @@ sample data frame:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> D2022071… IFCB134     Strombidi…        2 34, 79               <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 6 more variables: timestamp &lt;dttm&gt;, date &lt;date&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   day &lt;int&gt;, time &lt;chr&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarise counts on class level</span></span>
 <span><span class="va">png_per_class</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
 <span>                                           sum_level <span class="op">=</span> <span class="st">"class"</span><span class="op">)</span></span>
@@ -349,7 +336,7 @@ sample data frame:</p>
 </h4>
 <p>Count the annotations in the MATLAB files, similar to
 <code><a href="../reference/ifcb_summarize_png_counts.html">ifcb_summarize_png_counts()</a></code>:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize counts from MATLAB files</span></span>
 <span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
 <span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -376,7 +363,7 @@ sample data frame:</p>
 </h3>
 <p>To visually inspect and correct annotations, run the image
 gallery.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Run Shiny app</span></span>
 <span><span class="fu"><a href="../reference/ifcb_run_image_gallery.html">ifcb_run_image_gallery</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
@@ -392,7 +379,7 @@ to correct <code>.mat</code> annotations below using the
 </h3>
 <p>After reviewing images in the gallery, correct the <code>.mat</code>
 files using the <code>correction</code> file with selected images:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get class2use</span></span>
 <span><span class="va">class_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_names.html">ifcb_get_mat_names</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span>, variable_name <span class="op">=</span> <span class="va">class_name</span><span class="op">)</span></span>
@@ -401,7 +388,7 @@ files using the <code>correction</code> file with selected images:</p>
 <span><span class="va">unclassified_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"unclassified"</span>, <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"iRfcb"</span><span class="op">)</span> <span class="co"># Or your preferred venv path</span></span>
+<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Correct the annotation with the output from the image gallery</span></span>
@@ -417,7 +404,7 @@ files using the <code>correction</code> file with selected images:</p>
 </h3>
 <p>Replace all instances of a specific class with
 <strong>unclassified</strong> (class id 1):</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get class2use</span></span>
 <span><span class="va">class_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_names.html">ifcb_get_mat_names</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span>, variable_name <span class="op">=</span> <span class="va">class_name</span><span class="op">)</span></span>
@@ -440,7 +427,7 @@ files using the <code>correction</code> file with selected images:</p>
 <h3 id="verify-correction">Verify Correction<a class="anchor" aria-label="anchor" href="#verify-correction"></a>
 </h3>
 <p>Verify that the corrections have been applied:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
 <span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
 <span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -469,7 +456,7 @@ files using the <code>correction</code> file with selected images:</p>
 exists for the sample, the ROI class list will be updated accordingly.
 If no file is found, a new <code>.mat</code> file will be created, with
 all unannotated ROIs marked as unclassified.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a file with selected images, generated by the image gallery app</span></span>
 <span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
@@ -479,7 +466,7 @@ all unannotated ROIs marked as unclassified.</p>
 <span><span class="co"># Print image names to be annotated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "D20220712T210855_IFCB134_00164.png" "D20220712T222710_IFCB134_00044.png"</span></span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Re-annotate the images that were moved to unclassified earlier in the tutorial</span></span>
 <span><span class="fu"><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch</a></span><span class="op">(</span></span>
 <span>  png_images <span class="op">=</span> <span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span>,</span>
@@ -522,7 +509,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.5.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -531,7 +518,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.3},</span></span>
+<span><span class="co">##     note = {R package version 0.5.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -195,15 +195,9 @@ setting the <code>mat_folder</code> parameter to point to your
 <span>  hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">## cols(</span></span>
-<span><span class="co">##   sample = <span style="color: #BB0000;">col_character()</span>,</span></span>
-<span><span class="co">##   class = <span style="color: #BB0000;">col_character()</span></span></span>
-<span><span class="co">## )</span></span></code></pre>
 <p>The coordinates and biovolume data are now combined into a single
 unified dataframe.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize manually annotated biovolume data</span></span>
 <span><span class="va">data_manual</span> <span class="op">&lt;-</span> <span class="va">gps_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">manual_biovolume_data</span>, by <span class="op">=</span> <span class="st">"sample"</span><span class="op">)</span></span></code></pre></div>
@@ -231,7 +225,7 @@ the temporal span of the observations or data collection. This helps
 provide clear temporal context for the data. Other project-specific
 terms can be defined here as well, such as
 <strong>datasetName</strong>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add a single parentEventID for all samples in the dataset</span></span>
 <span><span class="va">data_event</span> <span class="op">&lt;-</span> <span class="va">data_manual</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>parentEventID <span class="op">=</span> <span class="fu">uuid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/uuid/man/UUIDgenerate.html" class="external-link">UUIDgenerate</a></span><span class="op">(</span>use.time <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span>
@@ -264,7 +258,7 @@ such as the <a href="https://edmo.seadatanet.org/" class="external-link">Europea
 Marine Organisations (EDMO)</a>. Each term represents specific metadata
 associated with the collected data. Below is the annotated R code that
 processes and structures the data into an event-focused format.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add metadata columns to the data</span></span>
 <span><span class="va">data_event</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -315,7 +309,7 @@ estimated and paired with a
 samples originate from the Swedish west coast, and we assign coordinates
 within the Skagerrak and Kattegat region and specify an uncertainty of
 150 km, which encompasses most of these areas.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add estimated coordinates and uncertainty for events with missing positions</span></span>
 <span><span class="va">data_event</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -326,7 +320,7 @@ within the Skagerrak and Kattegat region and specify an uncertainty of
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Next, we extract the relevant columns for the Event tables and
 combine the Event and Parent Event tables into a single data frame.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a clean data frame with selected columns</span></span>
 <span><span class="va">event_df</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
@@ -374,16 +368,16 @@ combine the Event and Parent Event tables into a single data frame.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 10 × 26</span></span></span>
 <span><span class="co">##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               fe3aa8… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> fe3aa8ef-fd13-4… 7499ad… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> fe3aa8ef-fd13-4… b0b822… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> fe3aa8ef-fd13-4… 076928… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> fe3aa8ef-fd13-4… e3b933… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> fe3aa8ef-fd13-4… 7a1342… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> fe3aa8ef-fd13-4… f4819e… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> fe3aa8ef-fd13-4… 42207d… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> fe3aa8ef-fd13-4… 7bf080… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> fe3aa8ef-fd13-4… 7b76f8… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>               73a77c… Project   iRfcb-DwC-A 2022-05-… <span style="color: #BB0000;">NA</span>                  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 73a77ce9-4feb-4… 425604… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 73a77ce9-4feb-4… 090d8e… Sample    <span style="color: #BB0000;">NA</span>          2022-05-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 73a77ce9-4feb-4… 1a032e… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 73a77ce9-4feb-4… d8b501… Sample    <span style="color: #BB0000;">NA</span>          2022-07-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 73a77ce9-4feb-4… 7b90fe… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 73a77ce9-4feb-4… 1a4363… Sample    <span style="color: #BB0000;">NA</span>          2023-03-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 73a77ce9-4feb-4… 5cda5a… Sample    <span style="color: #BB0000;">NA</span>          2023-08-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 73a77ce9-4feb-4… d22afd… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 73a77ce9-4feb-4… a78155… Sample    <span style="color: #BB0000;">NA</span>          2023-09-… SMHI                </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 20 more variables: institutionCode &lt;chr&gt;, institutionID &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   license &lt;chr&gt;, samplingProtocol &lt;chr&gt;, sampleSizeValue &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   sampleSizeUnit &lt;chr&gt;, eventTime &lt;time&gt;, year &lt;dbl&gt;, month &lt;dbl&gt;, day &lt;int&gt;,</span></span></span>
@@ -394,7 +388,7 @@ combine the Event and Parent Event tables into a single data frame.</p>
 <p>The final stage is to initialize an event object in the
 <code>livingNorwayR</code> package - this will be used later to build
 the DwC compliant data package.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GBIF_Event</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeGBIFEvent.html" class="external-link">initializeGBIFEvent</a></span><span class="op">(</span><span class="va">event_df</span>, </span>
 <span>                                  idColumnInfo <span class="op">=</span> <span class="st">"eventID"</span>, </span>
 <span>                                  nameAutoMap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -431,7 +425,7 @@ such as the IFCB Dashboard, EcoTaxa, or other image archives. Learn how
 to prepare images for EcoTaxa using <code>iRfcb</code> in this
 <code><a href="../articles/ecotaxa-tutorial.html">vignette("ecotaxa-tutorial")</a></code>, or how to export images to an
 image library in <code><a href="../articles/image-export-tutorial.html">vignette("image-export-tutorial")</a></code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create an occurrence table by transforming event data and adding fields</span></span>
 <span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_event</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rowwise.html" class="external-link">rowwise</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -461,7 +455,7 @@ assignment of proper taxonomical names needed for the occurrence table.
 These names need to be cleaned before mapping them to higher taxonomic
 levels using external sources like <a href="https://www.marinespecies.org/" class="external-link">WoRMS</a>, as demonstrated
 below.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get taxa names</span></span>
 <span><span class="va">taxa_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">data_occurrences</span><span class="op">$</span><span class="va">class</span><span class="op">)</span></span>
 <span></span>
@@ -518,7 +512,7 @@ below.</p>
 <p>The <strong>scientificName</strong> and
 <strong>verbatimIdentification</strong> fields are populated using the
 cleaned taxonomic names and the original class names, respectively.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_occurrences</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>class_name <span class="op">=</span> <span class="va">class</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">class_names</span>, by <span class="op">=</span> <span class="st">"class_name"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -532,7 +526,7 @@ cleaned taxonomic names and the original class names, respectively.</p>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>The final Occurrence table includes all relevant fields for DwC-A
 formatting.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Select relevant fields</span></span>
 <span><span class="va">occurrence_df</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
@@ -565,16 +559,16 @@ formatting.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 101 × 22</span></span></span>
 <span><span class="co">##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type </span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> e803f915-74a1-405c-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> cc3e906f-665a-4a32-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> a6a3bea1-0ce9-4f3d-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 34a1c9d9-3a63-4127-… 7499ad… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 29a397a9-55d5-430e-… b0b822… 2022-05-22 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> afbc7162-dc4f-4247-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> bfcd8214-c33b-47b9-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 81b39252-ac31-41c6-… 076928… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 439c0b73-3a91-42eb-… e3b933… 2022-07-12 present          iRfcb          Stil…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> 96fbceed-6797-443e-… e3b933… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> fc48aa59-59aa-44d2-… 425604… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 9c099e18-2432-4890-… 425604… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 417fd395-49f5-4f3c-… 425604… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> be716995-3937-4215-… 425604… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> e418d7b1-9e40-4810-… 090d8e… 2022-05-22 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> 72a450d1-e3eb-4f71-… 1a032e… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> dbc325fd-fb45-4193-… 1a032e… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 2d4460ca-794d-4afc-… 1a032e… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> c8da90e0-cfc7-4590-… d8b501… 2022-07-12 present          iRfcb          Stil…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 4f5a93ef-2f0e-4020-… d8b501… 2022-07-12 present          iRfcb          Stil…</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 91 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 16 more variables: basisOfRecord &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   identificationVerificationStatus &lt;chr&gt;, identificationReferences &lt;chr&gt;,</span></span></span>
@@ -585,7 +579,7 @@ formatting.</p>
 <p>The occurrence data is initialized for GBIF submission using the
 <code>initializeGBIFOccurrence</code> function, which maps fields
 automatically based on the specified column.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GBIF_Occurrence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeGBIFOccurrence.html" class="external-link">initializeGBIFOccurrence</a></span><span class="op">(</span><span class="va">occurrence_df</span>, </span>
 <span>                                            idColumnInfo <span class="op">=</span> <span class="st">"occurrenceID"</span>, </span>
 <span>                                            nameAutoMap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -601,7 +595,7 @@ For IFCB data, we can include information such as counts, abundance,
 biovolume concentration, and carbon content. These measurements provide
 essential context for understanding the ecological significance of the
 observations.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a dataset for occurrences (no modifications made here)</span></span>
 <span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrences</span></span>
 <span></span>
@@ -616,7 +610,7 @@ observations.</p>
 used in the MoF table. This includes the measurement ID, associated
 event and occurrence IDs, and key IFCB-derived measurements such as
 counts, abundance, biovolume, and carbon concentration.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert biovolume units and select the relevant columns for occurrence MoF</span></span>
 <span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>biovolume_um3_per_liter <span class="op">=</span> <span class="va">biovolume_mm3_per_liter</span> <span class="op">*</span> <span class="fl">10</span><span class="op">^</span><span class="fl">9</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -647,7 +641,7 @@ measurements are placed into a single column called
 vocabularies (e.g., <em>Abundance</em>, <em>Biovolume
 concentration</em>) for better compatibility with global biodiversity
 standards.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pivot and standardize occurrence measurements</span></span>
 <span><span class="va">data_occurrence_mof</span> <span class="op">&lt;-</span> <span class="va">data_occurrence_mof</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span></span>
@@ -708,7 +702,7 @@ its corresponding controlled vocabulary terms from the <a href="https://vocab.ne
 includes assigning <strong>measurementTypeID</strong>,
 <strong>measurementUnit</strong>, and <strong>measurementUnitID</strong>
 for each <strong>measurementType</strong>.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create a lookup table for NERC vocabularies</span></span>
 <span><span class="va">nerc_vocab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  measurementValueID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -764,16 +758,16 @@ for each <strong>measurementType</strong>.</p>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 415 × 10</span></span></span>
 <span><span class="co">##    measurementID              eventID parentEventID occurrenceID measurementType</span></span>
 <span><span class="co">##    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> 492e8cc0-0cb6-4d7f-8705-c… fe3aa8… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> d1eade27-7c45-4966-9954-d… fe3aa8… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> 2b2cb822-9ec8-4957-a65d-6… 7499ad… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 4fc76960-9705-4448-9e13-b… b0b822… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 28923cc0-e7c1-487e-8c80-d… 076928… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> eb98140c-938a-4d64-a47d-8… e3b933… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> 4f61e7ca-2a38-4112-8c58-f… 7a1342… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> 5ef4794b-8a9b-4742-a158-9… f4819e… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 37b5334b-061f-4d30-9668-a… 42207d… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">10</span> ff15aa59-5961-41f0-abc1-6… 7bf080… fe3aa8ef-fd1… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 1</span> a624df2c-c09c-4c3d-bf1a-d… 73a77c… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Imaging instru…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 2</span> 388e2eff-e728-4668-9be6-4… 73a77c… <span style="color: #BB0000;">NA</span>            <span style="color: #BB0000;">NA</span>           Instrument ide…</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 3</span> bb30248f-f4bb-4957-96b0-4… 425604… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 4</span> 274f1de7-3e80-4ac2-973a-b… 090d8e… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 5</span> 5a018534-332d-48c2-b442-6… 1a032e… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 6</span> b6695835-81c6-47dc-b086-d… d8b501… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 7</span> bfe9781c-5525-44a8-921d-a… 7b90fe… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 8</span> da571be3-14a9-4712-9b1e-a… 1a4363… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;"> 9</span> 5e6cccc8-367e-494f-8469-a… 5cda5a… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">10</span> 32040908-108c-487a-9e9d-4… d22afd… 73a77ce9-4fe… <span style="color: #BB0000;">NA</span>           Sample volume  </span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 405 more rows</span></span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 5 more variables: measurementTypeID &lt;chr&gt;, measurementValue &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   measurementValueID &lt;chr&gt;, measurementUnit &lt;chr&gt;, measurementUnitID &lt;chr&gt;</span></span></span></code></pre>
@@ -782,7 +776,7 @@ by initializing the dataset in a compatible format using the
 <code>initializeGBIFMeasurementOrFact</code> function. The measurement
 IDs are used as unique identifiers, and columns are mapped
 automatically.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GBIF_MoF</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeGBIFMeasurementOrFact.html" class="external-link">initializeGBIFMeasurementOrFact</a></span><span class="op">(</span><span class="va">mof_df</span>, </span>
 <span>                                            idColumnInfo <span class="op">=</span> <span class="st">"measurementID"</span>, </span>
 <span>                                            nameAutoMap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -807,7 +801,7 @@ customized with specific details about the dataset.</p>
 <p>Here, we create the metadata starting with a Markdown file
 <code><a href="../articles/metadata-template.html">vignette("metadata-template")</a></code>, which will be rendered into
 an EML-compliant XML file for GBIF submission:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize DwC metadata using a R Markdown template</span></span>
 <span><span class="va">GBIF_Metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeDwCMetadata.html" class="external-link">initializeDwCMetadata</a></span><span class="op">(</span><span class="st">"metadata-template.rmd"</span>, </span>
 <span>                                       fileType <span class="op">=</span> <span class="st">"rmarkdown"</span><span class="op">)</span></span></code></pre></div>
@@ -822,7 +816,7 @@ metadata (<code>GBIF_Metadata</code>) are bundled together into a DwC-A
 <code>.zip</code> file that is ready for submission to platforms like
 GBIF using an Integrated Publishing Toolkit (IPT), e.g. the <a href="https://ipt.vliz.be/eurobis/" class="external-link">EurOBIS IPT</a>.</p>
 <p>Here is the code for initializing and exporting the DwC-A:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Initialize the DwC-A</span></span>
 <span><span class="va">dwca_archive</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://livingnorway.github.io/LivingNorwayR/reference/initializeDwCArchive.html" class="external-link">initializeDwCArchive</a></span><span class="op">(</span><span class="va">GBIF_Event</span>, </span>
 <span>                                     <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">GBIF_Occurrence</span>, <span class="va">GBIF_MoF</span><span class="op">)</span>, </span>
@@ -846,7 +840,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.5.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -855,7 +849,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.3},</span></span>
+<span><span class="co">##     note = {R package version 0.5.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

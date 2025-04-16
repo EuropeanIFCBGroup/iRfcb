@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,10 +121,9 @@ tutorial require <code>Python</code> to be installed. You can download
 activate an installed Python virtual environment (venv) upon loading by
 setting an environment variable. For more details, please refer to the
 package <a href="https://europeanifcbgroup.github.io/iRfcb/">README</a>.</p>
-<p>Load the <code>iRfcb</code> and <code>ggplot2</code> libraries:</p>
+<p>Load the <code>iRfcb</code> library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="download-sample-data">Download Sample Data<a class="anchor" aria-label="anchor" href="#download-sample-data"></a>
@@ -156,7 +155,7 @@ runs etc. Before running the PSD quality check, ensure the necessary
 Python environment is set up and activated:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path to virtual environment</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"iRfcb"</span><span class="op">)</span> <span class="co"># Or your preferred venv path</span></span>
+<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
 <span></span>
 <span><span class="co"># Install python virtual environment</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
@@ -205,12 +204,7 @@ Python environment is set up and activated:</p>
 <span>  data <span class="op">=</span> <span class="va">psd</span><span class="op">$</span><span class="va">data</span>,</span>
 <span>  fits <span class="op">=</span> <span class="va">psd</span><span class="op">$</span><span class="va">fits</span>,</span>
 <span>  start_fit <span class="op">=</span> <span class="fl">10</span></span>
-<span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Set white background and ensure plot background is white</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    panel.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>    plot.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
@@ -264,12 +258,7 @@ latitudes and longitudes):</p>
 <span>  <span class="va">gps_data</span><span class="op">$</span><span class="va">gpsLongitude</span>,</span>
 <span>  distance <span class="op">=</span> <span class="fl">2500</span>, <span class="co"># 2500 meters from shore</span></span>
 <span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Set white background and ensure plot background is white</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    panel.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>    plot.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">near_land_plot</span><span class="op">)</span></span></code></pre></div>
@@ -298,12 +287,7 @@ position data:</p>
 <span><span class="co">## [4] "17 - Skagerrak"</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basins</span></span>
-<span><span class="fu"><a href="../reference/ifcb_which_basin.html">ifcb_which_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, shape_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Set white background and ensure plot background is white</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    panel.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>    plot.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_which_basin.html">ifcb_which_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, shape_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><img src="qc-tutorial_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 <p>This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the <code>iRfcb</code> package by
@@ -328,12 +312,7 @@ specifically to phytoplankton from the Baltic Sea.</p>
 <pre><code><span><span class="co">## [1]  TRUE  TRUE FALSE FALSE</span></span></code></pre>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basin</span></span>
-<span><span class="fu"><a href="../reference/ifcb_is_in_basin.html">ifcb_is_in_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># Set white background and ensure plot background is white</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
-<span>    panel.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span>,</span>
-<span>    plot.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ifcb_is_in_basin.html">ifcb_is_in_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="qc-tutorial_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
 <p>This function reads a land-buffered shapefile of the Baltic Sea Basin
 from the <code>iRfcb</code> package by default, or a user-supplied
@@ -404,10 +383,10 @@ to extract additional ferrybox parameters, such as temperature
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> 2023-03-14 <span style="color: #949494;">00:12:05</span>   <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span>   </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> 2023-03-14 <span style="color: #949494;">00:38:36</span>   <span style="color: #BB0000;">NA</span>    <span style="color: #BB0000;">NA</span></span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
-more detailed information, refer to the package documentation or the
-other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
-See how data pipelines can be constructed using <code>iRfcb</code> in
-the following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
+additional guides—such as data sharing and MATLAB integration—please
+refer to the other tutorials available on the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/">webpage</a>. See how
+data pipelines can be constructed using <code>iRfcb</code> in the
+following <a href="https://github.com/nodc-sweden/ifcb-data-pipeline" class="external-link">Example
 Project</a>. Happy analyzing!</p>
 </div>
 </div>
@@ -417,7 +396,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.4.3.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.5.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -426,7 +405,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2025},</span></span>
-<span><span class="co">##     note = {R package version 0.4.3},</span></span>
+<span><span class="co">##     note = {R package version 0.5.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

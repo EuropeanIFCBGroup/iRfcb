@@ -13,7 +13,7 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,6 +79,7 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 <span>  scale_bar_color <span class="op">=</span> <span class="st">"black"</span>,</span>
 <span>  old_adc <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  gamma <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  roi_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -145,6 +146,10 @@ the corresponding Region of Interest (ROI) images, saving them to the specified 
 
 <dt id="arg-use-python">use_python<a class="anchor" aria-label="anchor" href="#arg-use-python"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, attempts to read the <code>.mat</code> file using a Python-based method. Default is <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
+<dd><p>A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values &lt;1 increase contrast in dark regions, while values &gt;1 decrease contrast.</p></dd>
 
 
 <dt id="arg-roi-folder">roi_folder<a class="anchor" aria-label="anchor" href="#arg-roi-folder"></a></dt>
