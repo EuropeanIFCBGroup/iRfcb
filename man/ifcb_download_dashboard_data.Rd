@@ -40,7 +40,7 @@ four empty columns after column 7 to match the newer format. Default is \code{FA
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
 \item{parallel_downloads}{Integer. The number of files to download in parallel per batch.
-This helps manage network load and system performance. Default is \code{10}.}
+This helps manage network load and system performance. Default is \code{5}.}
 
 \item{sleep_time}{A numeric value indicating the number of seconds to wait between each batch of downloads. Default is \code{2}.}
 

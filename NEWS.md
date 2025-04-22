@@ -1,4 +1,8 @@
-# iRfcb (development version)
+# iRfcb 0.5.1
+
+## Minor improvements and fixes
+* Skipping certain internet-required tests on CRAN servers.
+* Corrected help pages for `ifcb_download_dashboard_data()` and `ifcb_download_whoi_plankton()`.
 
 # iRfcb 0.5.0
 

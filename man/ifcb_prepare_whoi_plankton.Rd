@@ -51,7 +51,7 @@ If \code{FALSE}, only downloads the archives without extracting images. Default 
 
 \item{features_folder}{Character. Directory where feature files will be stored (required if \code{download_features = TRUE}).}
 
-\item{parallel_downloads}{Integer. Number of parallel IFCB Dashboard downloads (default: 10).}
+\item{parallel_downloads}{Integer. Number of parallel IFCB Dashboard downloads (default: 5).}
 
 \item{sleep_time}{Numeric. Seconds to wait between download requests (default: 2).}
 

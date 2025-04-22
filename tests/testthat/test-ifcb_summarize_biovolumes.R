@@ -9,6 +9,9 @@ hdr_folder <- file.path(temp_dir, "test_data", "data")
 manual_folder <- file.path(temp_dir, "test_data", "manual")
 
 test_that("ifcb_summarize_biovolumes works correctly", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Call the function with the test data
   result <- ifcb_summarize_biovolumes(feature_folder, class_folder, hdr_folder = hdr_folder)
@@ -57,6 +60,9 @@ test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
 })
 
 test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Define custom list
   classes = c("Mesodinium_rubrum", "Mesodinium_rubrum")
