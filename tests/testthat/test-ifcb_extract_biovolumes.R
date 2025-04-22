@@ -14,6 +14,9 @@ manual_folder <- file.path(temp_dir, "test_data/manual")
 class2use_file <- file.path(temp_dir, "test_data/config/class2use.mat")
 
 test_that("ifcb_extract_biovolumes works correctly", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Run the function with test data
   biovolume_df <- ifcb_extract_biovolumes(feature_folder,
@@ -88,6 +91,9 @@ test_that("ifcb_extract_biovolumes handles invalid directories gracefully", {
 })
 
 test_that("ifcb_extract_biovolumes calculates carbon content correctly for diatoms and non-diatoms", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Use test data to check specific calculations
   biovolume_df <- ifcb_extract_biovolumes(feature_folder, class_folder, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
@@ -102,6 +108,9 @@ test_that("ifcb_extract_biovolumes calculates carbon content correctly for diato
 })
 
 test_that("ifcb_extract_biovolumes manual data correctly", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use must be specified when extracting manual biovolume data")
 
@@ -133,6 +142,9 @@ test_that("ifcb_extract_biovolumes manual data correctly", {
 })
 
 test_that("ifcb_extract_biovolumes handles customs classifications correctly", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Define custom list
   class = c("Mesodinium_rubrum", "Mesodinium_rubrum")
@@ -166,6 +178,9 @@ test_that("ifcb_extract_biovolumes handles customs classifications correctly", {
 })
 
 test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline(host = "marinespecies.org")
+  skip_on_cran()
 
   # Define custom list
   class = c("Mesodinium_rubrum", "Mesodinium_rubrum")
