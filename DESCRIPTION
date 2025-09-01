@@ -38,7 +38,8 @@ Imports:
   png,
   R.matlab,
   curl (>= 6.0.0),
-  lubridate
+  lubridate,
+  httr
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
