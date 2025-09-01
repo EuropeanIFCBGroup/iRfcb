@@ -17,6 +17,7 @@ ifcb_extract_biovolumes(
   multiblob = FALSE,
   feature_recursive = TRUE,
   mat_recursive = TRUE,
+  drop_zero_volume = FALSE,
   use_python = FALSE,
   verbose = TRUE
 )
@@ -48,6 +49,8 @@ used as a substitute for MATLAB files.}
 \item{feature_recursive}{Logical. If \code{TRUE}, searches recursively for feature files when \code{feature_files} is a folder. Default: \code{TRUE}.}
 
 \item{mat_recursive}{Logical. If \code{TRUE}, searches recursively for MATLAB files in \code{mat_folder}. Default: \code{TRUE}.}
+
+\item{drop_zero_volume}{Logical. If \code{TRUE}, rows where \code{Biovolume} equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: \code{FALSE}.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a Python-based method (\code{SciPy}). Default: \code{FALSE}.}
 

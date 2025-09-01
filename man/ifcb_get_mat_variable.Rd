@@ -35,6 +35,7 @@ You can initialize the Python environment and install necessary packages using \
 If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
 }
 \examples{
+\dontrun{
 # Example .mat file included in the package
 mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 
@@ -45,6 +46,7 @@ print(classifier_name)
 # Get class names from a classifier file
 class2useTB <- ifcb_get_mat_variable(mat_file, "class2useTB")
 print(class2useTB)
+}
 
 }
 \references{

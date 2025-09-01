@@ -43,34 +43,27 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
 
   # Implement retry logic
   while (attempts < max_retries && !success) {
-    try({
-      # Attempt the download using curl with resume capability
-      handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
-      curl_download(url, dest_file, handle = handle, quiet = TRUE)
-
-      # Check if the download was successful
-      if (file.exists(dest_file)) {
-        success <- TRUE
-      }
-    }, silent = TRUE)
-
-    # Increment the attempt counter
     attempts <- attempts + 1
 
-    if (!success) {
-      if (verbose) {
-        message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
-      }
+    handle <- new_handle(
+      resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+      httpheader = if (Sys.info()["sysname"] == "Darwin") c("User-Agent" = "R/4.5.1") else NULL,
+      verbose = TRUE
+    )
 
+    result <- tryCatch({
+      curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
+      if (!file.exists(dest_file)) stop("File not found after download attempt.")
+      success <- TRUE
+      TRUE
+    }, error = function(e) {
+      message("Attempt ", attempts, " failed: ", e$message)
       Sys.sleep(sleep_time)
-    }
+      FALSE
+    })
   }
 
-  # If download failed after max_retries, stop the function
-  if (!success) {
-    stop("Download failed after ", max_retries, " attempts.")
-  }
-
+  if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)
