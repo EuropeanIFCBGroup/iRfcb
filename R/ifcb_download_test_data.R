@@ -46,11 +46,12 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     attempts <- attempts + 1
 
     # Use a browser-like UA. include package id for trace.
-    ua <- paste0("Mozilla/5.0 (", Sys.info()[["sysname"]], ") iRfcb/1.0")
+    ua <- "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36"
 
     # create handle and force the useragent option
     handle <- curl::new_handle(
       resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+      followlocation = TRUE,
       verbose     = TRUE
     )
     curl::handle_setopt(handle, useragent = ua)
