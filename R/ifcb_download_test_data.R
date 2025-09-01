@@ -51,11 +51,13 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
         curl_download(url, dest_file, quiet = FALSE)
       } else {
         # Other OS: attempt resume if file exists
-        handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
-        curl_download(url, dest_file, handle = handle, quiet = TRUE)
+        handle <- new_handle(
+          resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+          verbose = TRUE  # enable curl verbose output
+        )
+        curl_download(url, dest_file, handle = handle, quiet = FALSE)
       }
 
-      # Check if file exists after download
       if (!file.exists(dest_file)) {
         stop("File not found after download attempt.")
       }
@@ -65,6 +67,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     }, error = function(e) {
       if (verbose) {
         message("Attempt ", attempts, " failed with error: ", e$message)
+        message("Check the curl verbose output above for more details.")
       }
       FALSE
     })
@@ -78,7 +81,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   }
 
   if (!success) {
-    stop("Download failed after ", max_retries, " attempts.")
+    stop("Download failed after ", max_retries, " attempts. See messages above for details.")
   }
 
   # Unzip the file into the appropriate subdirectory
