@@ -45,11 +45,15 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   while (attempts < max_retries && !success) {
     attempts <- attempts + 1
 
-    handle <- new_handle(
+    # Use a browser-like UA. include package id for trace.
+    ua <- paste0("Mozilla/5.0 (", Sys.info()[["sysname"]], ") iRfcb/1.0")
+
+    # create handle and force the useragent option
+    handle <- curl::new_handle(
       resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-      httpheader = if (Sys.info()["sysname"] == "Darwin") c("User-Agent" = "R/4.5.1") else NULL,
-      verbose = TRUE
+      verbose     = TRUE
     )
+    curl::handle_setopt(handle, useragent = ua)
 
     result <- tryCatch({
       curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
@@ -62,7 +66,6 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
       FALSE
     })
   }
-
   if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
 
   # Unzip the file into the appropriate subdirectory
