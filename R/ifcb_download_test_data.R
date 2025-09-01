@@ -45,26 +45,31 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   while (attempts < max_retries && !success) {
     attempts <- attempts + 1
 
-    tryCatch({
+    result <- tryCatch({
       if (.Platform$OS.type == "unix" && Sys.info()["sysname"] == "Darwin") {
-        curl_download(url, dest_file, quiet = FALSE)  # skip resume on macOS
+        # macOS: simple download without resume
+        curl_download(url, dest_file, quiet = FALSE)
       } else {
+        # Other OS: attempt resume if file exists
         handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
         curl_download(url, dest_file, handle = handle, quiet = TRUE)
       }
 
-      # Check if the download was successful
-      if (file.exists(dest_file)) {
-        success <- TRUE
+      # Check if file exists after download
+      if (!file.exists(dest_file)) {
+        stop("File not found after download attempt.")
       }
-    },
-    error = function(e) {
+
+      success <- TRUE
+      TRUE
+    }, error = function(e) {
       if (verbose) {
         message("Attempt ", attempts, " failed with error: ", e$message)
       }
+      FALSE
     })
 
-    if (!success) {
+    if (!result) {
       if (verbose) {
         message("Retrying in ", sleep_time, " seconds...")
       }
@@ -72,11 +77,9 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     }
   }
 
-  # If download failed after max_retries, stop the function
   if (!success) {
     stop("Download failed after ", max_retries, " attempts.")
   }
-
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)
