@@ -162,22 +162,32 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
     file_data <- features[[file_name]]
 
     if (drop_zero_volume) {
-      file_data <- file_data[!file_data$Biovolume == 0,]
+      file_data <- file_data[file_data$Biovolume != 0, ]
     }
 
-    # Create a data frame with sample, roi_number, and biovolume
-    temp_df <- data.frame(
-      sample = ifelse(multiblob, str_replace(file_name, "_multiblob_v\\d+.csv", ""), str_replace(file_name, "_fea_v\\d+.csv", "")),
-      roi_number = file_data$roi_number,
-      biovolume = file_data$Biovolume
-    )
+    if (nrow(file_data) > 0) {
+      temp_df <- data.frame(
+        sample = ifelse(multiblob,
+                        str_replace(file_name, "_multiblob_v\\d+.csv", ""),
+                        str_replace(file_name, "_fea_v\\d+.csv", "")),
+        roi_number = file_data$roi_number,
+        biovolume = file_data$Biovolume
+      )
 
-    # Append to the list
-    data_list <- append(data_list, list(temp_df))
+      # Append to the list
+      data_list <- append(data_list, list(temp_df))
+    } else if (drop_zero_volume) {
+      warning(sprintf("All rows were dropped for file '%s' because Biovolume == 0.", file_name))
+    }
   }
 
   # Combine all data frames into one
   biovolume_df <- do.call(rbind, data_list)
+
+  # Stop if the combined data frame is empty
+  if (is.null(biovolume_df)) {
+    stop("No biovolume data available in feature files.")
+  }
 
   # If custom class list is supplied
   if (!is.null(custom_images) && !is.null(custom_classes)) {
