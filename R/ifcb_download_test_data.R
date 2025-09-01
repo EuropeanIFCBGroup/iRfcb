@@ -54,7 +54,10 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
       followlocation = TRUE,
       verbose     = TRUE
     )
-    curl::handle_setopt(handle, useragent = ua)
+    curl::handle_setopt(handle,
+                        useragent = ua,
+                        httpheader = c("Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
+                        http_version = 2L)  # 2L = CURL_HTTP_VERSION_1_1
 
     result <- tryCatch({
       curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
