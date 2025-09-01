@@ -58,5 +58,5 @@ ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, verbose 
     close(pb)
   }
 
-  return(feature)
+  feature
 }

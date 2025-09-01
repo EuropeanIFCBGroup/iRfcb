@@ -147,5 +147,5 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder = NULL, class2u
     biovolume_aggregated$biovolume_mm3_per_liter <- biovolume_aggregated$biovolume_mm3 / (biovolume_aggregated$ml_analyzed / 1000)
     biovolume_aggregated$carbon_ug_per_liter <- biovolume_aggregated$carbon_ug / (biovolume_aggregated$ml_analyzed / 1000)
   }
-  return(biovolume_aggregated)
+  biovolume_aggregated
 }
