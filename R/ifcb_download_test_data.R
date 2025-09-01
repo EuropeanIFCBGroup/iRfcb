@@ -45,30 +45,22 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   while (attempts < max_retries && !success) {
     attempts <- attempts + 1
 
+    handle <- new_handle(
+      resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+      httpheader = if (Sys.info()["sysname"] == "Darwin") c("User-Agent" = "R/4.5.1") else NULL,
+      verbose = TRUE
+    )
+
     result <- tryCatch({
-      handle <- new_handle(
-        resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-        verbose = TRUE  # enable curl verbose output on all OSes
-      )
-
-      curl_download(url, dest_file, handle = handle, quiet = FALSE)
-
+      curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
       if (!file.exists(dest_file)) stop("File not found after download attempt.")
-
       success <- TRUE
       TRUE
     }, error = function(e) {
-      if (verbose) {
-        message("Attempt ", attempts, " failed with error: ", e$message)
-        message("Check the curl verbose output above for more details.")
-      }
+      message("Attempt ", attempts, " failed: ", e$message)
+      Sys.sleep(sleep_time)
       FALSE
     })
-
-    if (!result) {
-      if (verbose) message("Retrying in ", sleep_time, " seconds...")
-      Sys.sleep(sleep_time)
-    }
   }
 
   if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
