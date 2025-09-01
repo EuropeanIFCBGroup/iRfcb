@@ -90,14 +90,15 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
 
   if (is.character(feature_files)) {
     if (length(feature_files) == 1) {
-      # feature_files is a single path, check if it's a directory
-      if (dir.exists(feature_files)) {
-        # It's a directory, proceed
+      if (file.exists(feature_files)) {
+        # It's a single file
+      } else if (dir.exists(feature_files)) {
+        # It's a directory
       } else {
-        stop("The specified directory does not exist: ", feature_files)
+        stop("The specified file or directory does not exist: ", feature_files)
       }
     } else {
-      # feature_files is a vector of filenames, check if all files exist
+      # feature_files is a vector of files
       if (!all(file.exists(feature_files))) {
         stop("One or more specified feature files do not exist.")
       }
@@ -107,7 +108,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
   }
 
   # Check if feature_files is a single folder path or a vector of file paths
-  if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
+  if (length(feature_files) == 1 && dir.exists(feature_files)) {
     feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = feature_recursive)
   }
 
