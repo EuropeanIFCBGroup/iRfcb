@@ -43,25 +43,31 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
 
   # Implement retry logic
   while (attempts < max_retries && !success) {
-    try({
-      # Attempt the download using curl with resume capability
-      handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
-      curl_download(url, dest_file, handle = handle, quiet = TRUE)
+    attempts <- attempts + 1
+
+    tryCatch({
+      if (.Platform$OS.type == "unix" && Sys.info()["sysname"] == "Darwin") {
+        curl_download(url, dest_file, quiet = FALSE)  # skip resume on macOS
+      } else {
+        handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
+        curl_download(url, dest_file, handle = handle, quiet = TRUE)
+      }
 
       # Check if the download was successful
       if (file.exists(dest_file)) {
         success <- TRUE
       }
-    }, silent = TRUE)
-
-    # Increment the attempt counter
-    attempts <- attempts + 1
+    },
+    error = function(e) {
+      if (verbose) {
+        message("Attempt ", attempts, " failed with error: ", e$message)
+      }
+    })
 
     if (!success) {
       if (verbose) {
-        message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
+        message("Retrying in ", sleep_time, " seconds...")
       }
-
       Sys.sleep(sleep_time)
     }
   }
