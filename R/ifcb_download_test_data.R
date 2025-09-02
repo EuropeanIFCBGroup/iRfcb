@@ -37,121 +37,59 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   # Determine the local destination file path
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Initialize retry counter
-  attempts <- 0
-  success <- FALSE
+  # Expected checksum
+  expected_checksum <- "3f393747663f9586212e9cb6bfa090e3"
 
-  # Implement retry logic
-  while (attempts < max_retries && !success) {
-    attempts <- attempts + 1
-
-    # browser-like UA for compatibility with CDNs
-    ua <- "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36"
-
-    # 1) Ask Figshare for the download URL but DO NOT follow redirects.
-    #    We use httr::GET with followlocation = FALSE to capture the Location header.
-    head_resp <- tryCatch(
-      httr::GET(
-        url,
-        httr::user_agent(ua),
-        httr::accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"),
-        httr::config(followlocation = FALSE),
-        httr::timeout(60)
-      ),
-      error = function(e) e
-    )
-
-    if (inherits(head_resp, "error")) {
-      message("Attempt ", attempts, " failed when fetching redirect: ", head_resp$message)
-      if (attempts < max_retries) {
-        message("Sleeping ", sleep_time, " s before retry...")
-        Sys.sleep(sleep_time)
-        next
-      } else break
-    }
-
-    status <- httr::status_code(head_resp)
-    if (status %in% c(302L, 301L)) {
-      location <- httr::headers(head_resp)[["location"]]
-      if (!nzchar(location)) {
-        message("Attempt ", attempts, ": received redirect without Location header.")
-        if (attempts < max_retries) Sys.sleep(sleep_time) else break
-        next
-      }
-
-      # 2) Download the presigned S3 URL (should not require cookies)
-      handle <- curl::new_handle(
-        followlocation = TRUE,
-        resume_from   = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-        verbose       = TRUE
-      )
-      curl::handle_setopt(
-        handle,
-        useragent   = ua,
-        http_version = 2L # 2L = CURL_HTTP_VERSION_1_1 in libcurl's enum (force 1.1)
-      )
-      # Optionally set Accept header for the download as well:
-      curl::handle_setheaders(handle, "Accept" = "application/zip,application/octet-stream,*/*")
-
-      dl_ok <- tryCatch({
-        curl::curl_download(location, dest_file, handle = handle, quiet = FALSE)
-        file.exists(dest_file)
-      }, error = function(e) {
-        message("Attempt ", attempts, " download error: ", e$message)
-        FALSE
-      })
-
-      if (isTRUE(dl_ok)) {
-        success <- TRUE
-        message("Download succeeded on attempt ", attempts, ".")
-        break
-      } else {
-        message("Attempt ", attempts, " failed to download presigned URL.")
-        if (attempts < max_retries) Sys.sleep(sleep_time) else break
-        next
-      }
-
-    } else if (status == 200L) {
-      # Some servers may directly serve the content without redirect.
-      message("Received 200 from ndownloader; downloading body directly.")
-      handle <- curl::new_handle(
-        resume_from   = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-        followlocation = TRUE,
-        verbose        = TRUE
-      )
-      curl::handle_setopt(handle, useragent = ua, http_version = 2L)
-      dl_ok <- tryCatch({
-        curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
-        file.exists(dest_file)
-      }, error = function(e) {
-        message("Attempt ", attempts, " direct download error: ", e$message)
-        FALSE
-      })
-
-      if (isTRUE(dl_ok)) {
-        success <- TRUE
-        message("Direct download succeeded on attempt ", attempts, ".")
-        break
-      } else {
-        message("Attempt ", attempts, " direct body download failed.")
-        if (attempts < max_retries) Sys.sleep(sleep_time) else break
-        next
-      }
-
-    } else if (status == 403L) {
-      message("Attempt ", attempts, ": server returned 403 Forbidden at ndownloader endpoint.")
-      # 403 could be temporary (rate-limiting, CDN block). retry with sleep.
-      if (attempts < max_retries) Sys.sleep(sleep_time) else break
-      next
-
+  # Validate file
+  file_valid <- FALSE
+  if (file.exists(dest_file)) {
+    actual_checksum <- tools::md5sum(file = dest_file)
+    if (identical(actual_checksum[[1]], expected_checksum)) {
+      if (verbose) message("File already exists and checksum is valid.")
+      file_valid <- TRUE
     } else {
-      message("Attempt ", attempts, ": unexpected status ", status, " from ndownloader.")
-      if (attempts < max_retries) Sys.sleep(sleep_time) else break
-      next
+      if (verbose) message("File exists but checksum does not match.")
     }
-  } # end while
+  } else {
+    if (verbose) message("File does not exist.")
+  }
 
-  if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
+  if (!file_valid) {
+    # Initialize retry counter
+    attempts <- 0
+    success <- FALSE
+
+    # Implement retry logic
+    while (attempts < max_retries && !success) {
+      attempts <- attempts + 1
+
+      # Always set a custom User-Agent
+      ua <- if (Sys.info()[["sysname"]] == "Darwin") {
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) iRfcb/1.0"
+      } else {
+        "R/4.5.1"
+      }
+
+      handle <- new_handle(
+        resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+        httpheader  = c("User-Agent" = ua),
+        verbose     = TRUE
+      )
+
+      result <- tryCatch({
+        curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
+        if (!file.exists(dest_file)) stop("File not found after download attempt.")
+        success <- TRUE
+        TRUE
+      }, error = function(e) {
+        message("Attempt ", attempts, " failed: ", e$message)
+        Sys.sleep(sleep_time)
+        FALSE
+      })
+    }
+
+    if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
+  }
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)
