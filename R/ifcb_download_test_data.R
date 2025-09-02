@@ -3,15 +3,15 @@
 #' This function downloads a zip archive containing MATLAB files from the `iRfcb`
 #' dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 #' unzips them into the specified folder and extracts png images. These data can be used, for instance,
-#' for testing iRfcb and for creating the tutorial vignette
+#' for testing `iRfcb` and for creating the tutorial vignette
 #' using \code{vignette("a-general-tutorial", package = "iRfcb")}
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
-#' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
-#' @param expected_checksum The expected MD5 checksum of the downloaded zip file.
-#' This is used to verify that the downloaded file has not been corrupted or altered
-#' and should correspond to the checksum of the specified Figshare article.
+#' By default, the `iRfcb` test dataset (48158716) from Torstensson et al. (2024) is used.
+#' @param expected_checksum Optional. The expected MD5 checksum of the downloaded zip file.
+#'   If not provided, it is automatically looked up from an internal table based on
+#'   \code{figshare_article}.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
 #' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
@@ -29,54 +29,61 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", expected_checksum = "3f393747663f9586212e9cb6bfa090e3", max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
-  # URL of the zip file
-  url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
-
-  # Create destination directories if they do not exist
-  if (!dir.exists(dest_dir)) {
-    dir.create(dest_dir, recursive = TRUE)
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", expected_checksum = NULL, max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
+  # Resolve expected checksum from internal lookup if not provided
+  if (is.null(expected_checksum)) {
+    if (figshare_article %in% names(.ifcb_checksums)) {
+      expected_checksum <- .ifcb_checksums[[figshare_article]]
+    } else {
+      warning("No checksum available for article ", figshare_article,
+              ". Proceeding without checksum verification.\n")
+      expected_checksum <- NA
+    }
   }
 
-  # Determine the local destination file path
+  url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
+  if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Validate file
+  # Retry download loop
+  attempts <- 0
   file_valid <- FALSE
-  if (file.exists(dest_file)) {
-    actual_checksum <- tools::md5sum(file = dest_file)
-    if (identical(actual_checksum[[1]], expected_checksum)) {
-      file_valid <- TRUE
+  while (attempts < max_retries && !file_valid) {
+    attempts <- attempts + 1
+
+    # Only check checksum if we have one
+    if (!is.na(expected_checksum) && file.exists(dest_file)) {
+      actual_checksum <- tools::md5sum(dest_file)[[1]]
+      if (identical(actual_checksum, expected_checksum)) {
+        file_valid <- TRUE
+        break
+      } else {
+        warning("Checksum mismatch (attempt ", attempts, "): ", actual_checksum,
+                ". Downloading again...")
+        file.remove(dest_file)
+      }
     }
+
+    # Download
+    tryCatch({
+      curl::curl_download(url, dest_file, quiet = TRUE)
+    }, error = function(e) {
+      warning("Download attempt ", attempts, " failed: ", e$message)
+      Sys.sleep(sleep_time)
+    })
   }
 
-  if (!file_valid) {
-    # Initialize retry counter
-    attempts <- 0
-    success <- FALSE
+  if (!file.exists(dest_file)) {
+    stop("Failed to download file after ", max_retries, " attempts.")
+  }
 
-    # Implement retry logic
-    while (attempts < max_retries && !success) {
-      attempts <- attempts + 1
-
-      handle <- new_handle(
-        resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-        verbose     = FALSE
-      )
-
-      result <- tryCatch({
-        curl::curl_download(url, dest_file, handle = handle, quiet = TRUE)
-        if (!file.exists(dest_file)) stop("File not found after download attempt.")
-        success <- TRUE
-        TRUE
-      }, error = function(e) {
-        message("Attempt ", attempts, " failed: ", e$message)
-        Sys.sleep(sleep_time)
-        FALSE
-      })
+  # If checksum is available, warn if mismatch but continue
+  if (!is.na(expected_checksum)) {
+    actual_checksum <- tools::md5sum(dest_file)[[1]]
+    if (!identical(actual_checksum, expected_checksum)) {
+      warning("Final file checksum does not match expected: expected ", expected_checksum,
+              " but got ", actual_checksum, ". Proceeding anyway.")
     }
-
-    if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
   }
 
   # Unzip the file into the appropriate subdirectory

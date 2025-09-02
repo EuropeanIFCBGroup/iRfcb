@@ -59,3 +59,7 @@
     packageStartupMessage("Using existing Python virtual environment: ", .iRfcbEnv$venv)
   }
 }
+
+.ifcb_checksums <- list(
+  "48158716" = "3f393747663f9586212e9cb6bfa090e3"  # iRfcb test dataset
+)
