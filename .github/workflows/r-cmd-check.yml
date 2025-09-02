@@ -51,17 +51,19 @@ jobs:
       - name: Download vignette data (macOS, Python fallback)
         if: runner.os == 'macOS'
         run: |
-          python3 -c "import requests
-      url = 'https://figshare.scilifelab.se/ndownloader/files/48158716'
-      headers = {
-          'User-Agent': 'Mozilla/5.0',
-          'Accept': 'application/octet-stream'
-      }
-      r = requests.get(url, headers=headers)
-      r.raise_for_status()
-      with open('vignettes/data/48158716.zip', 'wb') as f:
-          f.write(r.content)
-      "
+          python3 - <<'EOF'
+          import requests
+
+          url = 'https://figshare.scilifelab.se/ndownloader/files/48158716'
+          headers = {
+              'User-Agent': 'Mozilla/5.0',
+              'Accept': 'application/octet-stream'
+          }
+          r = requests.get(url, headers=headers)
+          r.raise_for_status()
+          with open('vignettes/data/48158716.zip', 'wb') as f:
+              f.write(r.content)
+          EOF
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
