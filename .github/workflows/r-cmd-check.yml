@@ -35,18 +35,6 @@ jobs:
     steps:
 
       - uses: actions/checkout@v4
-      - name: Install wget (macOS only)
-        if: runner.os == 'macOS'
-        run: brew install wget
-
-      - name: Download vignette data (macOS only, using wget)
-        if: runner.os == 'macOS'
-        run: |
-          mkdir -p vignettes/data
-          wget --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            --user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36" \
-            https://figshare.scilifelab.se/ndownloader/files/48158716 \
-            -O vignettes/data/48158716.zip
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -59,6 +47,21 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
+
+      - name: Download vignette data (macOS, Python fallback)
+        if: runner.os == 'macOS'
+        run: |
+          python3 -c "import requests
+      url = 'https://figshare.scilifelab.se/ndownloader/files/48158716'
+      headers = {
+          'User-Agent': 'Mozilla/5.0',
+          'Accept': 'application/octet-stream'
+      }
+      r = requests.get(url, headers=headers)
+      r.raise_for_status()
+      with open('vignettes/data/48158716.zip', 'wb') as f:
+          f.write(r.content)
+      "
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
