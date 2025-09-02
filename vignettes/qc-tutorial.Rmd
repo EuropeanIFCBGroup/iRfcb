@@ -290,8 +290,17 @@ head(ferrybox_data)
 This concludes this tutorial for the `iRfcb` package. For additional guides—such as data sharing and MATLAB integration—please refer to the other tutorials available on the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
 
 ```{r, include=FALSE}
+# File to keep
+keep_file <- file.path(data_dir, "48158716.zip")
+
+# List all contents of data_dir (files + directories)
+all_contents <- list.files(data_dir, full.names = TRUE, recursive = FALSE, include.dirs = TRUE)
+
+# Exclude the file you want to keep
+to_remove <- setdiff(all_contents, keep_file)
+
 # Clean up
-unlink(data_dir, recursive = TRUE)
+unlink(to_remove, recursive = TRUE, force = TRUE)
 unlink(env_path, recursive = TRUE)
 ```
 

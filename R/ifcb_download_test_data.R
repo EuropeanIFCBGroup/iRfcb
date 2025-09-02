@@ -11,6 +11,7 @@
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
+#' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.
@@ -25,7 +26,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, verbose = TRUE) {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -45,13 +46,8 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   if (file.exists(dest_file)) {
     actual_checksum <- tools::md5sum(file = dest_file)
     if (identical(actual_checksum[[1]], expected_checksum)) {
-      if (verbose) message("File already exists and checksum is valid.")
       file_valid <- TRUE
-    } else {
-      if (verbose) message("File exists but checksum does not match.")
     }
-  } else {
-    if (verbose) message("File does not exist.")
   }
 
   if (!file_valid) {
@@ -63,21 +59,13 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     while (attempts < max_retries && !success) {
       attempts <- attempts + 1
 
-      # Always set a custom User-Agent
-      ua <- if (Sys.info()[["sysname"]] == "Darwin") {
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) iRfcb/1.0"
-      } else {
-        "R/4.5.1"
-      }
-
       handle <- new_handle(
         resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
-        httpheader  = c("User-Agent" = ua),
-        verbose     = TRUE
+        verbose     = FALSE
       )
 
       result <- tryCatch({
-        curl::curl_download(url, dest_file, handle = handle, quiet = FALSE)
+        curl::curl_download(url, dest_file, handle = handle, quiet = TRUE)
         if (!file.exists(dest_file)) stop("File not found after download attempt.")
         success <- TRUE
         TRUE
@@ -95,7 +83,9 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   unzip(dest_file, exdir = dest_dir)
 
   # Remove the downloaded zip file
-  file.remove(dest_file)
+  if (!keep_zip) {
+    file.remove(dest_file)
+  }
 
   # Extract png images
   ifcb_extract_annotated_images(file.path(dest_dir, "manual"),

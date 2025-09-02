@@ -32,6 +32,5 @@
 #'   write.table
 #' @importFrom worrms wm_records_names
 #' @importFrom zip unzip zip zipr
-#' @importFrom httr GET user_agent accept config timeout status_code headers
 ## usethis namespace: end
 NULL

@@ -9,6 +9,7 @@ ifcb_download_test_data(
   figshare_article = "48158716",
   max_retries = 5,
   sleep_time = 10,
+  keep_zip = FALSE,
   verbose = TRUE
 )
 }
@@ -21,6 +22,8 @@ By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is 
 \item{max_retries}{The maximum number of retry attempts in case of download failure. Default is 5.}
 
 \item{sleep_time}{The sleep time between download attempts, in seconds. Default is 10.}
+
+\item{keep_zip}{A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
