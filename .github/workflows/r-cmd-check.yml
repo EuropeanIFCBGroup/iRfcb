@@ -33,16 +33,20 @@ jobs:
       NOT_CRAN: true
 
     steps:
-      - uses: actions/checkout@v4
 
-      - name: Download vignette data (macOS only)
+      - uses: actions/checkout@v4
+      - name: Install wget (macOS only)
+        if: runner.os == 'macOS'
+        run: brew install wget
+
+      - name: Download vignette data (macOS only, using wget)
         if: runner.os == 'macOS'
         run: |
           mkdir -p vignettes/data
-          curl -v -L -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36" \
-            -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
-            --http1.1 https://figshare.scilifelab.se/ndownloader/files/48158716 \
-            -o vignettes/data/48158716.zip
+          wget --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" \
+            --user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36" \
+            https://figshare.scilifelab.se/ndownloader/files/48158716 \
+            -O vignettes/data/48158716.zip
 
       - uses: r-lib/actions/setup-pandoc@v2
 
