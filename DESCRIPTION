@@ -1,10 +1,10 @@
-Package: iRfcb
 Type: Package
+Package: iRfcb
 Title: Tools for Managing Imaging FlowCytobot (IFCB) Data
-Version: 0.5.1.9000
+Version: 0.5.2
 Authors@R: c(
     person("Anders", "Torstensson", email = "anders.torstensson@smhi.se", role = c("aut", "cre"),
-           comment = c(affiliation = "Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
+           comment = c("Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
     person("Kendra", "Hayashi", role = "ctb",
            comment = c(ORCID = "0000-0003-1600-9504")),
     person("Jamie", "Enslein", role = "ctb"),
@@ -15,40 +15,55 @@ Authors@R: c(
     person("Jayme", "Smith", role = "ctb",
            comment = c(ORCID = "0000-0002-9669-4427")),
     person("DTO-BioFlow", role = "fnd",
-           comment = c(funding = "Horizon Europe, HORIZON-MISS-2022-OCEAN-01-07")),
+           comment = "Horizon Europe, HORIZON-MISS-2022-OCEAN-01-07"),
     person("SBDI", role = "fnd",
-           comment = c(funding = "Swedish Research Council, 2019-00242"))
+           comment = "Swedish Research Council, 2019-00242")
   )
-Description: A comprehensive suite of tools for managing, processing, and analyzing data from the IFCB. I R FlowCytobot ('iRfcb') supports quality control, geospatial analysis, and preparation of IFCB data for publication in databases like <https://www.gbif.org>, <https://www.obis.org>, <https://emodnet.ec.europa.eu/en>, <https://shark.smhi.se/>, and <https://www.ecotaxa.org>. The package integrates with the MATLAB 'ifcb-analysis' tool, which is described in Sosik and Olson (2007) <doi:10.4319/lom.2007.5.204>, and provides features for working with raw, manually classified, and machine learning–classified image datasets. Key functionalities include image extraction, particle size distribution analysis, taxonomic data handling, and biomass concentration calculations, essential for plankton research.
+Description: A comprehensive suite of tools for managing, processing, and
+    analyzing data from the IFCB. I R FlowCytobot ('iRfcb') supports
+    quality control, geospatial analysis, and preparation of IFCB data for
+    publication in databases like <https://www.gbif.org>,
+    <https://www.obis.org>, <https://emodnet.ec.europa.eu/en>,
+    <https://shark.smhi.se/>, and <https://www.ecotaxa.org>. The package
+    integrates with the MATLAB 'ifcb-analysis' tool, which is described in
+    Sosik and Olson (2007) <doi:10.4319/lom.2007.5.204>, and provides
+    features for working with raw, manually classified, and machine
+    learning–classified image datasets. Key functionalities include image
+    extraction, particle size distribution analysis, taxonomic data
+    handling, and biomass concentration calculations, essential for
+    plankton research.
 License: MIT + file LICENSE
-Encoding: UTF-8
-LazyData: true
+URL: https://europeanifcbgroup.github.io/iRfcb/,
+    https://github.com/EuropeanIFCBGroup/iRfcb
 Imports:
-  zip,
-  lifecycle,
-  shiny,
-  stringr,
-  dplyr,
-  sf,
-  reticulate (>= 1.41.0),
-  tidyr,
-  ggplot2,
-  readr,
-  worrms,
-  png,
-  R.matlab,
-  curl (>= 6.0.0),
-  lubridate
-RoxygenNote: 7.3.2
-Roxygen: list(markdown = TRUE)
-Note: This package includes code from https://github.com/kudelalab/PSD by kudelalab licensed under the MIT License.
+    curl (>= 6.0.0),
+    dplyr,
+    ggplot2,
+    lifecycle,
+    lubridate,
+    png,
+    R.matlab,
+    readr,
+    reticulate (>= 1.41.0),
+    sf,
+    shiny,
+    stringr,
+    tidyr,
+    worrms,
+    zip
 Suggests: 
     knitr,
-    rmarkdown,
-    testthat (>= 3.0.0),
     mockery,
-    spelling
-VignetteBuilder: knitr
+    rmarkdown,
+    spelling,
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
-URL: https://europeanifcbgroup.github.io/iRfcb/, https://github.com/EuropeanIFCBGroup/iRfcb
+Encoding: UTF-8
 Language: en-US
+LazyData: true
+Note: This package includes code from https://github.com/kudelalab/PSD by
+    kudelalab licensed under the MIT License.
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
