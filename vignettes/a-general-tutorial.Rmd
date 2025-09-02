@@ -45,8 +45,7 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(dest_dir = data_dir,
                         max_retries = 10,
-                        sleep_time = 30,
-                        keep_zip = TRUE)
+                        sleep_time = 30)
 ```
 
 ## Extract IFCB Data
