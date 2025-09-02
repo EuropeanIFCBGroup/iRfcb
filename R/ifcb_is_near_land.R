@@ -39,6 +39,7 @@
 #' when `source = "eea"`.
 #'
 #' @examples
+#' \dontrun{
 #' # Define coordinates
 #' latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338)
 #' longitudes <- c(17.845993, 20.394418, 18.284523, 16.227174)
@@ -48,6 +49,7 @@
 #'
 #' # Print the result
 #' print(near_land)
+#' }
 #'
 #' @export
 ifcb_is_near_land <- function(latitudes,
