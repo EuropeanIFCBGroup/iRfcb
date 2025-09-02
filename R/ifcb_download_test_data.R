@@ -35,8 +35,10 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", exp
     if (figshare_article %in% names(.ifcb_checksums)) {
       expected_checksum <- .ifcb_checksums[[figshare_article]]
     } else {
-      warning("No checksum available for article ", figshare_article,
-              ". Proceeding without checksum verification.\n")
+      if (verbose) {
+        message("No checksum available for article ", figshare_article,
+                ". Proceeding without checksum verification.")
+      }
       expected_checksum <- NA
     }
   }
@@ -58,8 +60,10 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", exp
         file_valid <- TRUE
         break
       } else {
-        warning("Checksum mismatch (attempt ", attempts, "): ", actual_checksum,
-                ". Downloading again...")
+        if (verbose) {
+          message("Checksum mismatch (attempt ", attempts, "): ", actual_checksum,
+                  ". Downloading again...")
+        }
         file.remove(dest_file)
       }
     }
@@ -68,21 +72,22 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", exp
     tryCatch({
       curl::curl_download(url, dest_file, quiet = TRUE)
     }, error = function(e) {
-      warning("Download attempt ", attempts, " failed: ", e$message)
       Sys.sleep(sleep_time)
     })
   }
 
   if (!file.exists(dest_file)) {
-    stop("Failed to download file after ", max_retries, " attempts.")
+    stop("Download failed after ", max_retries, " attempts.")
   }
 
   # If checksum is available, warn if mismatch but continue
   if (!is.na(expected_checksum)) {
     actual_checksum <- tools::md5sum(dest_file)[[1]]
     if (!identical(actual_checksum, expected_checksum)) {
-      warning("Final file checksum does not match expected: expected ", expected_checksum,
-              " but got ", actual_checksum, ". Proceeding anyway.")
+      if (verbose) {
+        message("Final file checksum does not match expected: expected ", expected_checksum,
+                " but got ", actual_checksum, ". Proceeding anyway.")
+      }
     }
   }
 
