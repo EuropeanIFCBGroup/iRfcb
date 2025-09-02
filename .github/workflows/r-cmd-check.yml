@@ -12,7 +12,24 @@ name: R-CMD-check
 permissions: read-all
 
 jobs:
+  download-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download vignette data
+        run: |
+          mkdir -p vignettes/data
+          curl -L -A "Mozilla/5.0" https://figshare.scilifelab.se/ndownloader/files/48158716 -o vignettes/data/48158716.zip
+
+      - name: Upload vignette data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vignette-data
+          path: vignettes/data/48158716.zip
+
   R-CMD-check:
+    needs: download-data
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -33,7 +50,14 @@ jobs:
       NOT_CRAN: true
 
     steps:
+
       - uses: actions/checkout@v4
+
+      - name: Download vignette data artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vignette-data
+          path: vignettes/data
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -53,6 +77,14 @@ jobs:
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
+        if: runner.os == 'macOS'
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          args: 'c("--no-vignettes","--no-manual")'
+
+      - uses: r-lib/actions/check-r-package@v2
+        if: runner.os != 'macOS'
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
