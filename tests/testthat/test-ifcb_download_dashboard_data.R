@@ -1,7 +1,8 @@
 test_that("ifcb_download_dashboard_data download data correctly", {
 
   # Skip the test if the internet connection is not available
-  skip_if_offline(host = "ifcb-data.whoi.edu")
+  skip_if_offline()
+  skip_if_resource_unavailable("https://ifcb-data.whoi.edu")
 
   dest_dir <- file.path(tempdir(), "ifcb_download_dashboard_data")
 

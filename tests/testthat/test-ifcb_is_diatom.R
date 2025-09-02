@@ -1,7 +1,8 @@
 test_that("ifcb_is_diatom correctly identifies diatoms", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline(host = "marinespecies.org")
+  skip_if_offline()
   skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
 
   # Sample taxa list
   taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
@@ -18,8 +19,9 @@ test_that("ifcb_is_diatom correctly identifies diatoms", {
 
 test_that("ifcb_match_taxa_names retries and fails after max_retries", {
   # Check for internet connection and skip the test if offline
-  skip_if_offline(host = "marinespecies.org")
+  skip_if_offline()
   skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
 
   # Mock the wm_records_names function to always throw an error
   mockery::stub(ifcb_match_taxa_names, "wm_records_names", mocked_wm_records_names_error)

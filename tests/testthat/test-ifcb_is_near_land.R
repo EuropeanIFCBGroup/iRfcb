@@ -20,7 +20,8 @@ test_that("ifcb_is_near_land works correctly", {
 test_that("ifcb_is_near_land works correctly with EEA data", {
   # Skip slow test on CRAN
   skip_on_cran()
-  skip_if_offline(host = "eea.europa.eu")
+  skip_if_offline()
+  skip_if_resource_unavailable("https://eea.europa.eu")
 
   # Define test latitudes and longitudes
   latitudes <- c(62.500353, 58.964498, 57.638725, 56.575338, NA, 60.0)

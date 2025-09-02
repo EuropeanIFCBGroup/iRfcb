@@ -107,3 +107,18 @@ skip_if_no_python <- function() {
     if (!reticulate::py_available(initialize = TRUE))
     skip("Python not available for testing")
 }
+
+# Skip test if a remote resource is not responding
+skip_if_resource_unavailable <- function(url, msg = NULL) {
+  ok <- tryCatch({
+    curl::curl_fetch_memory(url)
+    TRUE
+  }, error = function(e) FALSE)
+
+  if (!ok) {
+    if (is.null(msg)) {
+      msg <- paste("Resource not responding:", url)
+    }
+    testthat::skip(msg)
+  }
+}

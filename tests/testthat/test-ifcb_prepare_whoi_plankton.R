@@ -3,7 +3,8 @@ test_that("ifcb_prepare_whoi_plankton works", {
   skip_if_no_scipy()
 
   # Skip if offline
-  skip_if_offline(host = "ifcb-data.whoi.edu")
+  skip_if_offline()
+  skip_if_resource_unavailable("https://ifcb-data.whoi.edu")
 
   # Extract test data and define paths
   zip_path <- test_path("test_data/test_data.zip")
