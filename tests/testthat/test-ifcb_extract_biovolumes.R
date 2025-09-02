@@ -193,7 +193,7 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
                "No classification information supplied")
 
   expect_error(ifcb_extract_biovolumes("not_a_dir", class_folder, verbose = FALSE),
-               "The specified directory does not exist")
+               "The specified file or directory does not exist")
 
   expect_error(ifcb_extract_biovolumes(0, class_folder, verbose = FALSE),
                "feature_files must be a character vector of filenames")

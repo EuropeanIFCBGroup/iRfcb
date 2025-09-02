@@ -22,6 +22,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
 #' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `mat_folder`. Default is TRUE.
 #' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
+#' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
@@ -77,8 +78,8 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder = NULL, class2u
                                       hdr_folder = NULL, custom_images = NULL, custom_classes = NULL,
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae",
                                       marine_only = FALSE, threshold = "opt", feature_recursive = TRUE,
-                                      mat_recursive = TRUE, hdr_recursive = TRUE, use_python = FALSE,
-                                      verbose = TRUE) {
+                                      mat_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
+                                      use_python = FALSE, verbose = TRUE) {
 
   # Extract biovolumes and carbon content from feature and class files
   biovolumes <- ifcb_extract_biovolumes(feature_files = feature_folder,
@@ -92,6 +93,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder = NULL, class2u
                                         threshold = threshold,
                                         feature_recursive = feature_recursive,
                                         mat_recursive = mat_recursive,
+                                        drop_zero_volume = drop_zero_volume,
                                         use_python = use_python,
                                         verbose = verbose)
 
@@ -145,5 +147,5 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_folder = NULL, class2u
     biovolume_aggregated$biovolume_mm3_per_liter <- biovolume_aggregated$biovolume_mm3 / (biovolume_aggregated$ml_analyzed / 1000)
     biovolume_aggregated$carbon_ug_per_liter <- biovolume_aggregated$carbon_ug / (biovolume_aggregated$ml_analyzed / 1000)
   }
-  return(biovolume_aggregated)
+  biovolume_aggregated
 }

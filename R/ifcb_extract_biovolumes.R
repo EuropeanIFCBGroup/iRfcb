@@ -22,6 +22,7 @@ utils::globalVariables(c("biovolume", "roi"))
 #' @param multiblob Logical. If `TRUE`, includes multiblob features. Default: `FALSE`.
 #' @param feature_recursive Logical. If `TRUE`, searches recursively for feature files when `feature_files` is a folder. Default: `TRUE`.
 #' @param mat_recursive Logical. If `TRUE`, searches recursively for MATLAB files in `mat_folder`. Default: `TRUE`.
+#' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param use_python Logical. If `TRUE`, attempts to read `.mat` files using a Python-based method (`SciPy`). Default: `FALSE`.
 #' @param verbose Logical. If `TRUE`, prints progress messages. Default: `TRUE`.
 #'
@@ -77,7 +78,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", marine_only = FALSE,
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
-                                    mat_recursive = TRUE, use_python = FALSE, verbose = TRUE) {
+                                    mat_recursive = TRUE, drop_zero_volume = FALSE, use_python = FALSE, verbose = TRUE) {
 
   if (is.null(mat_folder) && (is.null(custom_images) || is.null(custom_classes))) {
     stop("Error: No classification information supplied. Provide either `mat_folder` for MATLAB data or both `custom_images` and `custom_classes` for a custom list.")
@@ -89,14 +90,15 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
 
   if (is.character(feature_files)) {
     if (length(feature_files) == 1) {
-      # feature_files is a single path, check if it's a directory
-      if (dir.exists(feature_files)) {
-        # It's a directory, proceed
+      if (file.exists(feature_files)) {
+        # It's a single file
+      } else if (dir.exists(feature_files)) {
+        # It's a directory
       } else {
-        stop("The specified directory does not exist: ", feature_files)
+        stop("The specified file or directory does not exist: ", feature_files)
       }
     } else {
-      # feature_files is a vector of filenames, check if all files exist
+      # feature_files is a vector of files
       if (!all(file.exists(feature_files))) {
         stop("One or more specified feature files do not exist.")
       }
@@ -106,7 +108,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
   }
 
   # Check if feature_files is a single folder path or a vector of file paths
-  if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
+  if (length(feature_files) == 1 && dir.exists(feature_files)) {
     feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = feature_recursive)
   }
 
@@ -159,19 +161,33 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
 
     file_data <- features[[file_name]]
 
-    # Create a data frame with sample, roi_number, and biovolume
-    temp_df <- data.frame(
-      sample = ifelse(multiblob, str_replace(file_name, "_multiblob_v\\d+.csv", ""), str_replace(file_name, "_fea_v\\d+.csv", "")),
-      roi_number = file_data$roi_number,
-      biovolume = file_data$Biovolume
-    )
+    if (drop_zero_volume) {
+      file_data <- file_data[file_data$Biovolume != 0, ]
+    }
 
-    # Append to the list
-    data_list <- append(data_list, list(temp_df))
+    if (nrow(file_data) > 0) {
+      temp_df <- data.frame(
+        sample = ifelse(multiblob,
+                        str_replace(file_name, "_multiblob_v\\d+.csv", ""),
+                        str_replace(file_name, "_fea_v\\d+.csv", "")),
+        roi_number = file_data$roi_number,
+        biovolume = file_data$Biovolume
+      )
+
+      # Append to the list
+      data_list <- append(data_list, list(temp_df))
+    } else if (drop_zero_volume) {
+      warning(sprintf("All rows were dropped for file '%s' because Biovolume == 0.", file_name))
+    }
   }
 
   # Combine all data frames into one
   biovolume_df <- do.call(rbind, data_list)
+
+  # Stop if the combined data frame is empty
+  if (is.null(biovolume_df)) {
+    stop("No biovolume data available in feature files.")
+  }
 
   # If custom class list is supplied
   if (!is.null(custom_images) && !is.null(custom_classes)) {
