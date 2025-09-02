@@ -9,8 +9,12 @@
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.
+#' @param expected_checksum The expected MD5 checksum of the downloaded zip file.
+#' This is used to verify that the downloaded file has not been corrupted or altered
+#' and should correspond to the checksum of the specified Figshare article.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
+#' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.
@@ -25,7 +29,7 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, verbose = TRUE) {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", expected_checksum = "3f393747663f9586212e9cb6bfa090e3", max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
   # URL of the zip file
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
 
@@ -37,46 +41,51 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   # Determine the local destination file path
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Initialize retry counter
-  attempts <- 0
-  success <- FALSE
-
-  # Implement retry logic
-  while (attempts < max_retries && !success) {
-    try({
-      # Attempt the download using curl with resume capability
-      handle <- new_handle(resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0)
-      curl_download(url, dest_file, handle = handle, quiet = TRUE)
-
-      # Check if the download was successful
-      if (file.exists(dest_file)) {
-        success <- TRUE
-      }
-    }, silent = TRUE)
-
-    # Increment the attempt counter
-    attempts <- attempts + 1
-
-    if (!success) {
-      if (verbose) {
-        message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " seconds...")
-      }
-
-      Sys.sleep(sleep_time)
+  # Validate file
+  file_valid <- FALSE
+  if (file.exists(dest_file)) {
+    actual_checksum <- tools::md5sum(file = dest_file)
+    if (identical(actual_checksum[[1]], expected_checksum)) {
+      file_valid <- TRUE
     }
   }
 
-  # If download failed after max_retries, stop the function
-  if (!success) {
-    stop("Download failed after ", max_retries, " attempts.")
-  }
+  if (!file_valid) {
+    # Initialize retry counter
+    attempts <- 0
+    success <- FALSE
 
+    # Implement retry logic
+    while (attempts < max_retries && !success) {
+      attempts <- attempts + 1
+
+      handle <- new_handle(
+        resume_from = if (file.exists(dest_file)) file.info(dest_file)$size else 0,
+        verbose     = FALSE
+      )
+
+      result <- tryCatch({
+        curl::curl_download(url, dest_file, handle = handle, quiet = TRUE)
+        if (!file.exists(dest_file)) stop("File not found after download attempt.")
+        success <- TRUE
+        TRUE
+      }, error = function(e) {
+        message("Attempt ", attempts, " failed: ", e$message)
+        Sys.sleep(sleep_time)
+        FALSE
+      })
+    }
+
+    if (!success) stop("Download failed after ", max_retries, " attempts. See messages above for details.")
+  }
 
   # Unzip the file into the appropriate subdirectory
   unzip(dest_file, exdir = dest_dir)
 
   # Remove the downloaded zip file
-  file.remove(dest_file)
+  if (!keep_zip) {
+    file.remove(dest_file)
+  }
 
   # Extract png images
   ifcb_extract_annotated_images(file.path(dest_dir, "manual"),

@@ -19,6 +19,7 @@
 #' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @examples
+#' \dontrun{
 #' # Example .mat file included in the package
 #' mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 #'
@@ -29,6 +30,7 @@
 #' # Get class names from a classifier file
 #' class2useTB <- ifcb_get_mat_variable(mat_file, "class2useTB")
 #' print(class2useTB)
+#' }
 #'
 #' @export
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.

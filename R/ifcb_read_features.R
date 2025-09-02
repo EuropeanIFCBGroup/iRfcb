@@ -26,7 +26,7 @@
 ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, verbose = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
-  if (length(feature_files) == 1 && file.info(feature_files)$isdir) {
+  if (length(feature_files) == 1 && dir.exists(feature_files)) {
     feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = TRUE)
   }
 
@@ -58,5 +58,5 @@ ifcb_read_features <- function(feature_files = NULL, multiblob = FALSE, verbose 
     close(pb)
   }
 
-  return(feature)
+  feature
 }
