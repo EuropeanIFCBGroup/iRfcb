@@ -1,5 +1,9 @@
 # iRfcb (development version)
 
+## Minor improvements and fixes
+* `ifcb_download_test_data()` gains checksum validation, `keep_zip` option, and improved retry logic.
+* `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` gain a `drop_zero_volume` option to exclude artifacts with zero biovolume
+
 # iRfcb 0.5.1
 
 ## Minor improvements and fixes
