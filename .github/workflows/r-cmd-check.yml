@@ -48,6 +48,12 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Python dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install requests
+
       - name: Download vignette data (macOS, Python fallback)
         if: runner.os == 'macOS'
         run: |
