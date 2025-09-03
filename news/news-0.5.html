@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,6 +112,19 @@
 <h3 id="minor-improvements-and-fixes-0-5-1">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-0-5-1"></a></h3>
 <ul><li>Skipping certain internet-required tests on CRAN servers.</li>
 <li>Corrected help pages for <code><a href="../reference/ifcb_download_dashboard_data.html">ifcb_download_dashboard_data()</a></code> and <code><a href="../reference/ifcb_download_whoi_plankton.html">ifcb_download_whoi_plankton()</a></code>.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.2" id="irfcb-052">iRfcb 0.5.2<a class="anchor" aria-label="anchor" href="#irfcb-052"></a></h2><p class="text-muted">CRAN release: 2025-09-03</p>
+<div class="section level3">
+<h3 id="minor-improvements-and-fixes-0-5-2">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-0-5-2"></a></h3>
+<ul><li>
+<code><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data()</a></code> gains checksum validation, <code>keep_zip</code> option, and improved retry logic.</li>
+<li>
+<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> gain a <code>drop_zero_volume</code> option to exclude artifacts with zero biovolume</li>
+<li>
+<code><a href="../reference/ifcb_read_features.html">ifcb_read_features()</a></code> and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> now handles single <code>feature_files</code> correctly.</li>
+<li>Tests are now skipped if required resources are unavailable, improving stability in environments with limited access to external dependencies.</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

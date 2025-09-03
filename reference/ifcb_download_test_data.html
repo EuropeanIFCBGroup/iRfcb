@@ -15,7 +15,7 @@ using vignette("a-general-tutorial", package = "iRfcb")'><meta property="og:imag
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@ using vignette("a-general-tutorial", package = "iRfcb")'><meta property="og:imag
     <p>This function downloads a zip archive containing MATLAB files from the <code>iRfcb</code>
 dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
-for testing iRfcb and for creating the tutorial vignette
+for testing <code>iRfcb</code> and for creating the tutorial vignette
 using <code><a href="../articles/a-general-tutorial.html">vignette("a-general-tutorial", package = "iRfcb")</a></code></p>
     </div>
 
@@ -69,7 +69,7 @@ using <code><a href="../articles/a-general-tutorial.html">vignette("a-general-tu
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_download_test_data</span><span class="op">(</span></span>
 <span>  <span class="va">dest_dir</span>,</span>
 <span>  figshare_article <span class="op">=</span> <span class="st">"48158716"</span>,</span>
-<span>  expected_checksum <span class="op">=</span> <span class="st">"3f393747663f9586212e9cb6bfa090e3"</span>,</span>
+<span>  expected_checksum <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_retries <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  sleep_time <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  keep_zip <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -87,13 +87,13 @@ using <code><a href="../articles/a-general-tutorial.html">vignette("a-general-tu
 
 <dt id="arg-figshare-article">figshare_article<a class="anchor" aria-label="anchor" href="#arg-figshare-article"></a></dt>
 <dd><p>The file article number at the SciLifeLab Figshare data repository.
-By default, the iRfcb test dataset (48158716) from Torstensson et al. (2024) is used.</p></dd>
+By default, the <code>iRfcb</code> test dataset (48158716) from Torstensson et al. (2024) is used.</p></dd>
 
 
 <dt id="arg-expected-checksum">expected_checksum<a class="anchor" aria-label="anchor" href="#arg-expected-checksum"></a></dt>
-<dd><p>The expected MD5 checksum of the downloaded zip file.
-This is used to verify that the downloaded file has not been corrupted or altered
-and should correspond to the checksum of the specified Figshare article.</p></dd>
+<dd><p>Optional. The expected MD5 checksum of the downloaded zip file.
+If not provided, it is automatically looked up from an internal table based on
+<code>figshare_article</code>.</p></dd>
 
 
 <dt id="arg-max-retries">max_retries<a class="anchor" aria-label="anchor" href="#arg-max-retries"></a></dt>
