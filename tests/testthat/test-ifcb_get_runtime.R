@@ -57,8 +57,9 @@ test_that("ifcb_get_runtime handles header file from URL", {
   url <- "https://habon-ifcb.whoi.edu/tangosund/D20161017T161534_IFCB110.hdr"
 
   # Check for internet connection and skip the test if offline
-  skip_if_offline(host = "habon-ifcb.whoi.edu")
+  skip_if_offline()
   skip_on_cran()
+  skip_if_resource_unavailable("https://habon-ifcb.whoi.edu")
 
   # Attempt to read the header file from the URL, handle potential errors
   hdr_info_db <- tryCatch(
