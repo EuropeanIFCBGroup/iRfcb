@@ -29,7 +29,7 @@ A list of WoRMS records or NULL if the retrieval fails after the maximum number 
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxon_name()}.
+This helper function was deprecated as it has been replaced by a main function: \code{ifcb_match_taxa_names()}.
 
 This helper function attempts to retrieve WoRMS records using the provided taxa names.
 It retries the operation if an error occurs, up to a specified number of attempts.
