@@ -1,7 +1,11 @@
 # iRfcb (development version)
 
+## New features
+* New functions for interacting with the IFCB Dashboard API: `ifcb_download_dashboard_metadata()` and `ifcb_list_dashboard_bins()`.
+
 ## Minor improvements and fixes
-* `ifcb_extract_biovolumes()` now now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats. (#61)
+* `ifcb_extract_biovolumes()` now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats. (#61)
+* `ifcb_read_features()`, `ifcb_summarize_png_metadata()`, `ifcb_summarize_biovolumes()`, and `ifcb_extract_biovolumes()` now include an optional parameter to select specific feature file versions (e.g., `_v2`, `_v4`), allowing finer control over which feature data are read and processed.
 
 # iRfcb 0.5.2
 

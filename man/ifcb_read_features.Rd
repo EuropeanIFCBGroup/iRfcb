@@ -4,12 +4,19 @@
 \alias{ifcb_read_features}
 \title{Read Feature Files from a Specified Folder or File Paths}
 \usage{
-ifcb_read_features(feature_files = NULL, multiblob = FALSE, verbose = TRUE)
+ifcb_read_features(
+  feature_files = NULL,
+  multiblob = FALSE,
+  feature_version = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
 \item{multiblob}{Logical indicating whether to filter for multiblob files (default: FALSE).}
+
+\item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
 \item{verbose}{Logical. Whether to display progress information. Default is TRUE.}
 }
@@ -28,6 +35,9 @@ features <- ifcb_read_features("path/to/feature_folder")
 
 # Read only multiblob feature files
 multiblob_features <- ifcb_read_features("path/to/feature_folder", multiblob = TRUE)
+
+# Read only version 4 feature files
+v4_features <- ifcb_read_features("path/to/feature_folder", feature_version = 4)
 
 # Read feature files from a list of file paths
 features <- ifcb_read_features(c("path/to/file1.csv", "path/to/file2.csv"))

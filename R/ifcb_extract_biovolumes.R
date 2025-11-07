@@ -23,6 +23,7 @@ utils::globalVariables(c("biovolume", "roi"))
 #' @param feature_recursive Logical. If `TRUE`, searches recursively for feature files when `feature_files` is a folder. Default: `TRUE`.
 #' @param mat_recursive Logical. If `TRUE`, searches recursively for MATLAB files in `mat_folder`. Default: `TRUE`.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
+#' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param use_python Logical. If `TRUE`, attempts to read `.mat` files using a Python-based method (`SciPy`). Default: `FALSE`.
 #' @param verbose Logical. If `TRUE`, prints progress messages. Default: `TRUE`.
 #'
@@ -78,7 +79,8 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", marine_only = FALSE,
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
-                                    mat_recursive = TRUE, drop_zero_volume = FALSE, use_python = FALSE, verbose = TRUE) {
+                                    mat_recursive = TRUE, drop_zero_volume = FALSE,
+                                    feature_version = NULL, use_python = FALSE, verbose = TRUE) {
 
   if (is.null(mat_folder) && (is.null(custom_images) || is.null(custom_classes))) {
     stop("Error: No classification information supplied. Provide either `mat_folder` for MATLAB data or both `custom_images` and `custom_classes` for a custom list.")
@@ -147,7 +149,10 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
   }
 
   # Read feature files
-  features <- ifcb_read_features(feature_files, multiblob = multiblob, verbose = verbose)
+  features <- ifcb_read_features(feature_files,
+                                 multiblob = multiblob,
+                                 feature_version = feature_version,
+                                 verbose = verbose)
 
   if (length(features) == 0) {
     stop("No feature data files found")

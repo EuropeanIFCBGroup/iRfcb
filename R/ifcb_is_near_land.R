@@ -69,7 +69,7 @@ ifcb_is_near_land <- function(latitudes,
   if (lifecycle::is_present(utm_zone)) {
 
     # Signal the deprecation to the user
-    lifecycle::deprecate_warn("0.5.0", "iRfcb::ifcb_annotate_batch(utm_zone = )",
+    lifecycle::deprecate_warn("0.5.0", "iRfcb::ifcb_is_near_land(utm_zone = )",
                               details = "utm_zone is now calculated from the median longitude of the input coordinates.")
   }
 
