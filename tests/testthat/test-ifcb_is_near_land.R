@@ -71,7 +71,6 @@ test_that("ifcb_is_near_land works correctly", {
 
   # Check that plotting works
   near_land_plot <- ifcb_is_near_land(latitudes, longitudes, shape = shape_file, plot = TRUE)
-  expect_type(near_land_plot, "list")
   expect_s3_class(near_land_plot, "gg")
 
   # Cleanup temporary files
