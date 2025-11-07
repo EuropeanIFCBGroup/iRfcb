@@ -18,6 +18,7 @@ ifcb_extract_biovolumes(
   feature_recursive = TRUE,
   mat_recursive = TRUE,
   drop_zero_volume = FALSE,
+  feature_version = NULL,
   use_python = FALSE,
   verbose = TRUE
 )
@@ -51,6 +52,8 @@ used as a substitute for MATLAB files.}
 \item{mat_recursive}{Logical. If \code{TRUE}, searches recursively for MATLAB files in \code{mat_folder}. Default: \code{TRUE}.}
 
 \item{drop_zero_volume}{Logical. If \code{TRUE}, rows where \code{Biovolume} equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: \code{FALSE}.}
+
+\item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a Python-based method (\code{SciPy}). Default: \code{FALSE}.}
 

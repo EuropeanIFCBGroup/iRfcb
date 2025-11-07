@@ -7,6 +7,7 @@
 ifcb_summarize_png_metadata(
   png_folder,
   feature_folder = NULL,
+  feature_version = NULL,
   hdr_folder = NULL
 )
 }
@@ -14,6 +15,8 @@ ifcb_summarize_png_metadata(
 \item{png_folder}{Character. The file path to the folder containing the PNG images.}
 
 \item{feature_folder}{Character. The file path to the folder containing the feature files (optional).}
+
+\item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
 \item{hdr_folder}{Character. The file path to the folder containing the header files (optional).}
 }

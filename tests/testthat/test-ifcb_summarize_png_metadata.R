@@ -15,7 +15,9 @@ on.exit({
 
 test_that("ifcb_summarize_png_metadata works correctly with sample data", {
   # Run the function with summarization level "sample"
-  summary_sample <- ifcb_summarize_png_metadata(png_folder, feature_folder, hdr_folder)
+  summary_sample <- ifcb_summarize_png_metadata(png_folder = png_folder,
+                                                feature_folder = feature_folder,
+                                                hdr_folder = hdr_folder)
 
   # Check that the returned object is a data frame
   expect_s3_class(summary_sample, "data.frame")
@@ -53,8 +55,12 @@ test_that("ifcb_summarize_png_metadata handles empty directories gracefully", {
   expect_error(ifcb_summarize_png_metadata(empty_png_dir), "No PNG files found in")
 
   # Run the function with empty hdr directory and expect a warning
-  expect_warning(ifcb_summarize_png_metadata(png_folder, feature_folder, empty_hdr_dir), "No HDR files found")
+  expect_warning(ifcb_summarize_png_metadata(png_folder,
+                                             feature_folder = feature_folder,
+                                             hdr_folder = empty_hdr_dir), "No HDR files found")
 
   # Run the function with empty hdr directory and expect a warning
-  expect_warning(ifcb_summarize_png_metadata(png_folder, empty_feature_dir, hdr_folder), "No feature files found")
+  expect_warning(ifcb_summarize_png_metadata(png_folder,
+                                             feature_folder = empty_feature_dir,
+                                             hdr_folder = hdr_folder), "No feature files found")
 })

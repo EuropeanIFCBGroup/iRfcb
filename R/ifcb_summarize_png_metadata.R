@@ -6,6 +6,7 @@
 #'
 #' @param png_folder Character. The file path to the folder containing the PNG images.
 #' @param feature_folder Character. The file path to the folder containing the feature files (optional).
+#' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param hdr_folder Character. The file path to the folder containing the header files (optional).
 #'
 #' @return A dataframe that joins image data, header data, and feature data based on the sample and roi number.
@@ -19,7 +20,7 @@
 #' }
 #'
 #' @export
-ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_folder = NULL) {
+ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, feature_version = NULL, hdr_folder = NULL) {
 
   # Get list of images and extract sample names
   image_paths <- list.files(png_folder, pattern = "D.*\\.png", recursive = TRUE)
@@ -66,7 +67,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, hdr_f
       feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
       feature_file_names <- sub("(^[^_]+_[^_]+)_.*", "\\1", feature_file_names)
       feature_files_selected <- feature_files[sapply(feature_file_names, function(file_name) any(grepl(file_name, samples)))]
-      features <- ifcb_read_features(feature_files_selected, multiblob = FALSE, verbose = FALSE)
+      features <- ifcb_read_features(feature_files_selected, multiblob = FALSE, feature_version = feature_version, verbose = FALSE)
 
       # Combine all features into a single dataframe
       features_df <- bind_rows(lapply(names(features), function(sample_name) {
