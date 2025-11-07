@@ -2,6 +2,7 @@
 
 [![R-CMD-check](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml/badge.svg?event=push)](https://github.com/EuropeanIFCBGroup/iRfcb/actions/workflows/r-cmd-check.yml)
 [![CRAN status](https://www.r-pkg.org/badges/version/iRfcb)](https://CRAN.R-project.org/package=iRfcb)
+[![CRAN checks](https://badges.cranchecks.info/worst/iRfcb.svg)](https://cran.r-project.org/web/checks/check_results_iRfcb.html)
 [![Codecov test coverage](https://codecov.io/gh/EuropeanIFCBGroup/iRfcb/branch/main/graph/badge.svg)](https://app.codecov.io/gh/EuropeanIFCBGroup/iRfcb?branch=main)
 
 ## Overview
