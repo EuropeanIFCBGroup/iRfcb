@@ -28,4 +28,10 @@ Download metadata from the IFCB Dashboard API
   # Download metadata for a specific dataset
   metadata_svea <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/", "mvco")
 }
+
+}
+\seealso{
+\code{\link[=ifcb_download_dashboard_data]{ifcb_download_dashboard_data()}} to download data from the IFCB Dashboard API.
+
+\code{\link[=ifcb_list_dashboard_bins]{ifcb_list_dashboard_bins()}} to retrieve list of available bins from the IFCB Dashboard API.
 }

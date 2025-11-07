@@ -10,6 +10,10 @@
 #'   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
 #'   head(bins)
 #' }
+#'
+#' @seealso [ifcb_download_dashboard_data()] to download data from the IFCB Dashboard API.
+#' @seealso [ifcb_download_dashboard_metadata()] to retrieve metadata from the IFCB Dashboard API.
+#'
 #' @export
 ifcb_list_dashboard_bins <- function(base_url, quiet = FALSE) {
   # Ensure base_url has no trailing slash

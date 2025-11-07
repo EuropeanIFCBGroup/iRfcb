@@ -23,4 +23,10 @@ Download bin list from the IFCB Dashboard API
   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
   head(bins)
 }
+
+}
+\seealso{
+\code{\link[=ifcb_download_dashboard_data]{ifcb_download_dashboard_data()}} to download data from the IFCB Dashboard API.
+
+\code{\link[=ifcb_download_dashboard_metadata]{ifcb_download_dashboard_metadata()}} to retrieve metadata from the IFCB Dashboard API.
 }

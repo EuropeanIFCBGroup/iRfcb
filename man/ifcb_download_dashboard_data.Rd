@@ -91,3 +91,8 @@ ifcb_download_dashboard_data(
 \references{
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
+\seealso{
+\code{\link[=ifcb_download_dashboard_metadata]{ifcb_download_dashboard_metadata()}} to retrieve metadata from the IFCB Dashboard API.
+
+\code{\link[=ifcb_list_dashboard_bins]{ifcb_list_dashboard_bins()}} to retrieve list of available bins from the IFCB Dashboard API.
+}

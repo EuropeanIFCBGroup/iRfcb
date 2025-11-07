@@ -14,6 +14,10 @@
 #'   # Download metadata for a specific dataset
 #'   metadata_svea <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/", "mvco")
 #' }
+#'
+#' @seealso [ifcb_download_dashboard_data()] to download data from the IFCB Dashboard API.
+#' @seealso [ifcb_list_dashboard_bins()] to retrieve list of available bins from the IFCB Dashboard API.
+#'
 #' @export
 ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quiet = FALSE) {
   # Ensure base_url has no trailing slash
