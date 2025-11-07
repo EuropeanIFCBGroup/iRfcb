@@ -1,0 +1,167 @@
+# Extract Annotated Images from IFCB Data
+
+This function extracts labeled images from IFCB (Imaging FlowCytobot)
+data, annotated using the MATLAB code from the `ifcb-analysis`
+repository (Sosik and Olson 2007). It reads manually classified data,
+maps class indices to class names, and extracts the corresponding Region
+of Interest (ROI) images, saving them to the specified directory.
+
+## Usage
+
+``` r
+ifcb_extract_annotated_images(
+  manual_folder,
+  class2use_file,
+  roi_folders,
+  out_folder,
+  skip_class = NA,
+  verbose = TRUE,
+  manual_recursive = FALSE,
+  roi_recursive = TRUE,
+  overwrite = FALSE,
+  scale_bar_um = NULL,
+  scale_micron_factor = 1/3.4,
+  scale_bar_position = "bottomright",
+  scale_bar_color = "black",
+  old_adc = FALSE,
+  use_python = FALSE,
+  gamma = 1,
+  roi_folder = deprecated()
+)
+```
+
+## Arguments
+
+- manual_folder:
+
+  A character string specifying the path to the directory containing the
+  manually classified .mat files.
+
+- class2use_file:
+
+  A character string specifying the path to the file containing class
+  names.
+
+- roi_folders:
+
+  A character vector specifying one or more directories containing the
+  ROI files.
+
+- out_folder:
+
+  A character string specifying the output directory where the extracted
+  images will be saved.
+
+- skip_class:
+
+  A numeric vector of class IDs or a character vector of class names to
+  be excluded from the count. Default is NULL.
+
+- verbose:
+
+  A logical value indicating whether to print progress messages. Default
+  is TRUE.
+
+- manual_recursive:
+
+  Logical. If TRUE, the function will search for MATLAB files
+  recursively within the `manual_folder`. Default is FALSE.
+
+- roi_recursive:
+
+  Logical. If TRUE, the function will search for data files recursively
+  within the `roi_folder` (if provided). Default is TRUE.
+
+- overwrite:
+
+  A logical value indicating whether to overwrite existing PNG files.
+  Default is FALSE.
+
+- scale_bar_um:
+
+  An optional numeric value specifying the length of the scale bar in
+  micrometers. If NULL, no scale bar is added.
+
+- scale_micron_factor:
+
+  A numeric value defining the conversion factor from micrometers to
+  pixels. Defaults to 1/3.4.
+
+- scale_bar_position:
+
+  A character string specifying the position of the scale bar in the
+  image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or
+  `"bottomleft"`. Defaults to `"bottomright"`.
+
+- scale_bar_color:
+
+  A character string specifying the scale bar color. Options are
+  `"black"` or `"white"`. Defaults to `"black"`.
+
+- old_adc:
+
+  A logical value indicating whether the `adc` file is of the old format
+  (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is
+  FALSE.
+
+- use_python:
+
+  Logical. If `TRUE`, attempts to read the `.mat` file using a
+  Python-based method. Default is `FALSE`.
+
+- gamma:
+
+  A numeric value for gamma correction applied to the image. Default is
+  1 (no correction). Values \<1 increase contrast in dark regions, while
+  values \>1 decrease contrast.
+
+- roi_folder:
+
+  **\[deprecated\]** Use `roi_folders` instead.
+
+## Value
+
+None. The function saves the extracted PNG images to the specified
+output directory.
+
+## Details
+
+If `use_python = TRUE`, the function tries to read the `.mat` file using
+[`ifcb_read_mat()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_mat.md),
+which relies on `SciPy`. This approach may be faster than the default
+approach using
+[`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html),
+especially for large `.mat` files. To enable this functionality, ensure
+Python is properly configured with the required dependencies. You can
+initialize the Python environment and install necessary packages using
+[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+
+If `use_python = FALSE` or if `SciPy` is not available, the function
+falls back to using
+[`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html).
+
+## References
+
+Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification
+of phytoplankton sampled with imaging-in-flow cytometry. Limnol.
+Oceanogr: Methods 5, 204–216.
+
+## See also
+
+[`ifcb_extract_pngs`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_pngs.md)
+[`ifcb_extract_classified_images`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_classified_images.md)
+<https://github.com/hsosik/ifcb-analysis>
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+ifcb_extract_annotated_images(
+  manual_folder = "path/to/manual_folder",
+  class2use_file = "path/to/class2use_file.mat",
+  roi_folders = "path/to/roi_folder",
+  out_folder = "path/to/out_folder",
+  skip_class = 1 # Skip "unclassified"
+)
+} # }
+```

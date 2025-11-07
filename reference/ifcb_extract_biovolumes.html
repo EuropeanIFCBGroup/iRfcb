@@ -80,6 +80,7 @@ depending on whether the class is identified as a diatom.</p>
 <span>  feature_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  mat_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  drop_zero_volume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -142,6 +143,10 @@ used as a substitute for MATLAB files.</p></dd>
 
 <dt id="arg-drop-zero-volume">drop_zero_volume<a class="anchor" aria-label="anchor" href="#arg-drop-zero-volume"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, rows where <code>Biovolume</code> equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-feature-version">feature_version<a class="anchor" aria-label="anchor" href="#arg-feature-version"></a></dt>
+<dd><p>Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).</p></dd>
 
 
 <dt id="arg-use-python">use_python<a class="anchor" aria-label="anchor" href="#arg-use-python"></a></dt>
@@ -218,7 +223,7 @@ used as a substitute for MATLAB files.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

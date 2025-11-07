@@ -1,0 +1,832 @@
+# Creating a DwC-A from IFCB Data
+
+## Introduction
+
+This tutorial demonstrates how to create a Darwin Core Archive (DwC-A)
+from Imaging FlowCytobot (IFCB) results processed using MATLAB code from
+the [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis)
+repository (Sosik and Olson 2007). However, the code can be adapted to
+process classifications from other machine learning algorithms as well
+by passing custom lists of classes and image names to the
+[`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+function. The example below is based on a subset of manually annotated
+image data from the [SMHI IFCB Plankton Image Reference Library (version
+3)](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et
+al. 2024), and aligns with the *best practices* outlined by
+Martin-Cabrera et al. (2022).
+
+The DwC-A is a widely accepted standard for sharing biodiversity data.
+It organizes data into structured tables, such as sampling events,
+occurrences, and measurement or facts (MoF), which can be linked through
+unique identifiers. This standardized format facilitates data sharing,
+integration, and reuse across platforms, enabling interoperability with
+global biodiversity databases like the Global Biodiversity Information
+Facility ([GBIF](https://www.gbif.org/)), Ocean Biodiversity Information
+System ([OBIS](https://obis.org/)) and the European Marine Observation
+and Data Network Biology ([EMODNet](https://emodnet.ec.europa.eu/en)).
+
+By using the `iRfcb` package in combination with the
+[`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/)
+package, this tutorial guides you through creating a sampling
+event-based DwC-A. The archive includes occurrence and MoF tables,
+ensuring the IFCB results meet the requirements of major biodiversity
+repositories.
+
+With DwC-A, your data can become part of a global ecosystem of
+interoperable datasets, contributing to biodiversity research and
+monitoring on an international scale. Standardized datasets like these
+enable diverse applications, such as the development of digital
+twins—virtual models of ecosystems used to simulate and predict
+environmental changes. This tutorial provides a reproducible workflow to
+help you prepare your IFCB data for submission to these large databases
+while adhering to international data standards, broadening its potential
+for innovative uses in biodiversity science.
+
+## Getting Started
+
+### Installation
+
+You can install the `iRfcb` package from CRAN, and the `LivingNorwayR`
+package from GitHub using the `remotes` package:
+
+``` r
+install.packages("iRfcb")
+
+# install.packages("remotes")
+remotes::install_github("LivingNorway/LivingNorwayR")
+```
+
+Load the required libraries:
+
+``` r
+library(iRfcb)
+library(LivingNorwayR) # For DwC-A creation
+library(dplyr) # For data wrangling
+library(tidyr) # For data wrangling
+library(uuid) # For generating unique identifiers
+```
+
+### Download Sample Data
+
+To get started, download sample data from the [SMHI IFCB Plankton Image
+Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
+(Torstensson et al. 2024) with the following function:
+
+``` r
+# Define data directory
+data_dir <- "data"
+
+# Download and extract test data in the data folder
+ifcb_download_test_data(
+  dest_dir = data_dir,
+  max_retries = 10,
+  sleep_time = 30,
+  verbose = FALSE
+)
+```
+
+## Extract Data
+
+### Extract Positions and Timestamps
+
+In this example, most of the coordinates are stored within the `.hdr`
+files and are extracted along with the corresponding timestamps in the
+following step:
+
+``` r
+# Read HDR data and extract GPS position (when available) and timestamps
+gps_data <- ifcb_read_hdr_data("data/data/",
+                               gps_only = TRUE,
+                               verbose = FALSE)
+```
+
+### Summarize Counts, Biovolumes and Carbon Content from Manually Annotated IFCB Data
+
+You can also apply this process to automatically classified data by
+setting the `mat_folder` parameter to point to your `class` folder, and
+setting `class2use_file` to `NULL`.
+
+``` r
+# Summarize biovolume data using IFCB data from manual data folder
+manual_biovolume_data <- ifcb_summarize_biovolumes(
+  feature_folder = "data/features",
+  mat_folder = "data/manual",
+  class2use_file = "data/config/class2use.mat",
+  hdr_folder = "data/data",
+  verbose = FALSE
+)
+```
+
+The coordinates and biovolume data are now combined into a single
+unified dataframe.
+
+``` r
+# Summarize manually annotated biovolume data
+data_manual <- gps_data %>%
+  left_join(manual_biovolume_data, by = "sample")
+```
+
+## Event Core
+
+### Parent Events
+
+Each event can belong to a higher-level event, referred to as a Parent
+Event. In this example, the Parent Event is the dataset itself, and the
+main events are the samples. However, in more extensive datasets, Parent
+Events could represent broader categories, such as cruises, instrument
+numbers, specific years, or other hierarchical groupings. Later we can
+add MoF data to each event level.
+
+Each Parent Event must have a unique, persistent identifier, referred to
+as **parentEventID**. We generate these identifiers using the `uuid`
+package (Urbanek and Ts’o 2021), ensuring they are both globally unique
+and consistent.
+
+Additionally, each Parent Event is associated with specific date ranges,
+which must be captured as **eventDate** to reflect the temporal span of
+the observations or data collection. This helps provide clear temporal
+context for the data. Other project-specific terms can be defined here
+as well, such as **datasetName**.
+
+``` r
+# Add a single parentEventID for all samples in the dataset
+data_event <- data_manual %>%
+  mutate(parentEventID = uuid::UUIDgenerate(use.time = FALSE))
+
+# Event Date and info for parentEvents
+data_parent_event <- data_event  %>%
+  group_by(parentEventID) %>%
+  summarise(
+    min = min(date),
+    max = max(date),
+    ifcb_number = unique(ifcb_number)
+  ) %>%
+  mutate(
+    eventID = parentEventID,
+    parentEventID = NA,
+    eventType = "Project",
+    datasetName = "iRfcb-DwC-A",
+    eventDate = paste0(min, "/", max)
+  )  %>%
+  select(-min, -max)
+```
+
+### Sample Events
+
+To organize our data effectively, we start by defining key event terms.
+These include general terms like **eventType** and
+**ownerInstitutionCode**. **institutionID** for many European
+institutions can be retrieved from various registries, such as the
+[European Directory of Marine Organisations
+(EDMO)](https://edmo.seadatanet.org/). Each term represents specific
+metadata associated with the collected data. Below is the annotated R
+code that processes and structures the data into an event-focused
+format.
+
+``` r
+# Add metadata columns to the data
+data_event <- data_event %>%
+  mutate(
+    # Defining the institution who own and are responsible for the data
+    ownerInstitutionCode = "SMHI",
+    institutionID = "https://edmo.seadatanet.org/report/545",
+    institutionCode = "SMHI",
+    
+    # Defining CC-BY data licence
+    license = "http://creativecommons.org/licenses/by/4.0/legalcodeY",
+    
+    # Specifying the type of record, which is Sample in this case
+    eventType = "Sample",
+    
+    # Mapping existing date and time fields to standard terms
+    eventDate = date,
+    eventTime = time,
+    
+    # Adding geographical information
+    decimalLatitude = gpsLatitude,
+    decimalLongitude = gpsLongitude,
+    # The specific description of the place, if available
+    locality = NA,
+    # The original textual description of the place
+    verbatimLocality = NA,
+    geodeticDatum = "EPSG:4326",
+    countryCode = "SE",
+    country = "Sweden",
+    
+    # Specifying the size and unit of the sample analyzed
+    sampleSizeValue = ml_analyzed,
+    sampleSizeUnit = "Millilitres",
+    
+    # Indicating the depth at which samples were taken
+    minimumDepthInMeters = 4,
+    maximumDepthInMeters = 4,
+    
+    # Describing the sampling protocol
+    samplingProtocol = "Imaging FlowCytobot integrated into the Ferrybox system aboard the R/V Svea, continuously capturing plankton images from a depth of 4 meters"
+  ) %>%
+  # Grouping by sample to assign unique event IDs
+  group_by(sample) %>%
+  mutate(eventID = uuid::UUIDgenerate(use.time = FALSE)) %>%
+  ungroup()
+```
+
+If the exact sample position is unknown, the coordinates can be
+estimated and paired with a **coordinateUncertaintyInMeters** value. In
+this case, the samples originate from the Swedish west coast, and we
+assign coordinates within the Skagerrak and Kattegat region and specify
+an uncertainty of 150 km, which encompasses most of these areas.
+
+``` r
+# Add estimated coordinates and uncertainty for events with missing positions
+data_event <- data_event %>%
+  mutate(
+    coordinateUncertaintyInMeters = if_else(is.na(decimalLongitude) &
+                                              is.na(decimalLatitude), 150000, NA),
+    decimalLongitude = if_else(is.na(decimalLongitude), 11.3, decimalLongitude),
+    decimalLatitude = if_else(is.na(decimalLatitude), 57.4, decimalLatitude)
+  )
+```
+
+Next, we extract the relevant columns for the Event tables and combine
+the Event and Parent Event tables into a single data frame.
+
+``` r
+# Create a clean data frame with selected columns
+event_df <- data_event %>%
+  select(
+    eventType,
+    ownerInstitutionCode,
+    institutionCode,
+    institutionID,
+    parentEventID,
+    eventID,
+    license,
+    samplingProtocol,
+    sampleSizeValue,
+    sampleSizeUnit,
+    eventDate,
+    eventTime,
+    year,
+    month,
+    day,
+    country,
+    countryCode,
+    decimalLatitude,
+    decimalLongitude,
+    geodeticDatum,
+    coordinateUncertaintyInMeters,
+    locality,
+    verbatimLocality,
+    minimumDepthInMeters,
+    maximumDepthInMeters
+  ) %>%
+  mutate(eventDate = as.character(eventDate)) %>%
+  # Ensure rows are unique
+  distinct()
+
+# Create a clean data frame with selected columns
+parent_event_df <- data_parent_event %>%
+  select(-ifcb_number)
+
+# Adjust eventDate to character format and append additional parent event data
+event_df <- parent_event_df %>%
+  mutate(eventDate = as.character(eventDate)) %>%
+  bind_rows(event_df)
+
+# Print the final table as tibble
+tibble(event_df)
+```
+
+    ## # A tibble: 10 × 26
+    ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
+    ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
+    ##  1 NA               7ddcab… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 7ddcab38-573e-4… 7e612f… Sample    NA          2022-05-… SMHI                
+    ##  3 7ddcab38-573e-4… fd867f… Sample    NA          2022-05-… SMHI                
+    ##  4 7ddcab38-573e-4… affe35… Sample    NA          2022-07-… SMHI                
+    ##  5 7ddcab38-573e-4… 1d5605… Sample    NA          2022-07-… SMHI                
+    ##  6 7ddcab38-573e-4… 02a2c9… Sample    NA          2023-03-… SMHI                
+    ##  7 7ddcab38-573e-4… 781b55… Sample    NA          2023-03-… SMHI                
+    ##  8 7ddcab38-573e-4… e3d27e… Sample    NA          2023-08-… SMHI                
+    ##  9 7ddcab38-573e-4… 26d545… Sample    NA          2023-09-… SMHI                
+    ## 10 7ddcab38-573e-4… 404a9b… Sample    NA          2023-09-… SMHI                
+    ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
+    ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
+    ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
+    ## #   country <chr>, countryCode <chr>, decimalLatitude <dbl>,
+    ## #   decimalLongitude <dbl>, geodeticDatum <chr>,
+    ## #   coordinateUncertaintyInMeters <dbl>, locality <lgl>,
+    ## #   verbatimLocality <lgl>, minimumDepthInMeters <dbl>, …
+
+The final stage is to initialize an event object in the `livingNorwayR`
+package - this will be used later to build the DwC compliant data
+package.
+
+``` r
+GBIF_Event <- initializeGBIFEvent(event_df, 
+                                  idColumnInfo = "eventID", 
+                                  nameAutoMap = TRUE)
+```
+
+## Occurrence Extension
+
+The Occurrence table captures information about individual organisms or
+observations, linking them to a specific event. For IFCB data, the
+**basisOfRecord** indicates how the observation was made. IFCB data are
+defined as *MachineObservation*, and since this example uses manually
+annotated images, the **identificationVerificationStatus** is set to
+*ValidatedByHuman*. For best practices in plankton imaging data
+management, see [Martin-Cabrera et
+al. (2022)](https://dx.doi.org/10.25607/OBP-1742).
+
+### Annotated Code: Define Occurrence Data
+
+Each class observation is considered an occurrence in the IFCB data. The
+following code transforms the data into an occurrence table, adding
+essential fields such as **type**, **collectionCode**, **occurrenceID**,
+**basisOfRecord**, **identificationVerificationStatus**,
+**identificationReferences**, **identifiedBy**, and **associatedMedia**.
+These fields provide context and provenance information for each
+occurrence.
+
+Links to raw images can be included in **associatedMedia**. These links
+may point to resources such as the IFCB Dashboard, EcoTaxa, or other
+image archives. Learn how to prepare images for EcoTaxa using `iRfcb` in
+this
+[`vignette("ecotaxa-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.md),
+or how to export images to an image library in
+[`vignette("image-export-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.md).
+
+``` r
+# Create an occurrence table by transforming event data and adding fields
+data_occurrences <- data_event %>%
+  rowwise() %>%
+  mutate(
+    # Specifies the record type as an image
+    type = "StillImage",
+    # Provides a collection identifier
+    collectionCode = "iRfcb",
+    # Generates a unique identifier for each occurrence
+    occurrenceID = uuid::UUIDgenerate(use.time = FALSE),
+    # Indicates the data was recorded by a machine
+    basisOfRecord = "MachineObservation",
+    # Indicate that the images have been validated
+    identificationVerificationStatus = "ValidatedByHuman",
+    identificationReferences = "https://github.com/hsosik/ifcb-analysis/wiki/Instructions-for-manual-annotation-of-images",
+    # Indicate who validated the image
+    identifiedBy = "John Doe",
+    associatedMedia = "https://ecotaxa.obs-vlfr.fr/prj/14392" # Link to images (if available)
+  )  
+```
+
+### Taxonomic Data Cleaning and Retrieval
+
+Class names often include excess or inconsistent information, such as
+underscores or morphological descriptors, which can complicate the
+assignment of proper taxonomical names needed for the occurrence table.
+These names need to be cleaned before mapping them to higher taxonomic
+levels using external sources like
+[WoRMS](https://www.marinespecies.org/), as demonstrated below.
+
+``` r
+# Get taxa names
+taxa_names <- unique(data_occurrences$class)
+
+# Clean taxa_names by substituting specific patterns with spaces or empty strings
+taxa_names_clean <- gsub("_", " ", taxa_names)
+taxa_names_clean <- gsub(" single cell", "", taxa_names_clean)
+taxa_names_clean <- gsub(" chain", "", taxa_names_clean)
+taxa_names_clean <- gsub(" group", "", taxa_names_clean)
+taxa_names_clean <- gsub("-like", "", taxa_names_clean)
+taxa_names_clean <- gsub(" larger than 30unidentified", "", taxa_names_clean)
+taxa_names_clean <- gsub(" smaller than 30unidentified", "", taxa_names_clean)
+
+# Remove species flags from class names
+taxa_names_clean <- gsub("\\<spp\\>", "", taxa_names_clean)
+taxa_names_clean <- gsub("  ", " ", taxa_names_clean)
+
+# Turn f to f. for forma
+taxa_names_clean <- gsub("\\bf\\b", "f.", taxa_names_clean)
+
+# Add "/" for multiple names with capital letters
+# e.g. Heterocapsa_Azadinium to Heterocapsa/Azadinium
+taxa_names_clean <- gsub(" ([A-Z])", "/\\1", taxa_names_clean)
+taxa_names_clean <- gsub(" ([A-Z])", "/\\1", taxa_names_clean)
+
+# Remove any whitespace
+taxa_names_clean <- trimws(taxa_names_clean)
+
+# Correct misspellings
+taxa_names_clean <- gsub("Amphidnium", "Amphidinium", taxa_names_clean)
+taxa_names_clean <- gsub("Enisiculifera", "Ensiculifera", taxa_names_clean)
+
+# Standardize ambiguous class names by renaming them to their closest taxonomic relatives
+taxa_names_clean <- gsub("Dinoflagellate", "Dinophyceae", taxa_names_clean)
+taxa_names_clean <- gsub("Leptocylindrus danicus minimus",
+                         "Leptocylindrus",
+                         taxa_names_clean)
+taxa_names_clean <- gsub("Heterocapsa/Azadinium",
+                         "Peridiniphycidae",
+                         taxa_names_clean)
+taxa_names_clean <- gsub("Cylindrotheca/Nitzschia longissima",
+                         "Bacillariaceae",
+                         taxa_names_clean)
+
+# Retrieve worms records
+worms_records <- ifcb_match_taxa_names(
+  taxa_names_clean, 
+  marine_only = FALSE, 
+  verbose = FALSE
+)
+
+# Create data frame with taxa information and class names
+class_names <- worms_records %>%
+  mutate(class_name = taxa_names, class_clean = taxa_names_clean)
+```
+
+The **scientificName** and **verbatimIdentification** fields are
+populated using the cleaned taxonomic names and the original class
+names, respectively.
+
+``` r
+data_occurrences <- data_occurrences %>%
+  rename(class_name = class) %>%
+  left_join(class_names, by = "class_name") %>%
+  mutate(
+    scientificName = name,
+    scientificNameAuthorship = authority,
+    verbatimIdentification = class_name,
+    scientificNameID = lsid,
+    taxonRank = rank,
+    occurrenceStatus = "present"
+  )
+```
+
+The final Occurrence table includes all relevant fields for DwC-A
+formatting.
+
+``` r
+# Select relevant fields
+occurrence_df <- data_occurrences %>%
+  select(
+    occurrenceID,
+    eventID,
+    eventDate,
+    occurrenceStatus,
+    collectionCode,
+    type,
+    basisOfRecord,
+    identificationVerificationStatus,
+    identificationReferences,
+    identifiedBy,
+    associatedMedia,
+    scientificName,
+    scientificNameAuthorship,
+    scientificNameID,
+    taxonRank,
+    kingdom,
+    phylum,
+    class,
+    order,
+    family,
+    genus,
+    verbatimIdentification
+  )
+
+# Print the final table as tibble
+tibble(occurrence_df)
+```
+
+    ## # A tibble: 101 × 22
+    ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
+    ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
+    ##  1 5a4653f3-02cb-4ee0-… 7e612f… 2022-05-22 present          iRfcb          Stil…
+    ##  2 57a78e86-5394-424a-… 7e612f… 2022-05-22 present          iRfcb          Stil…
+    ##  3 6ae6cb3a-8bd6-4bf4-… 7e612f… 2022-05-22 present          iRfcb          Stil…
+    ##  4 b2e8694a-6d3c-4078-… 7e612f… 2022-05-22 present          iRfcb          Stil…
+    ##  5 de94793d-e349-44e5-… fd867f… 2022-05-22 present          iRfcb          Stil…
+    ##  6 1630d263-c63b-4d7f-… affe35… 2022-07-12 present          iRfcb          Stil…
+    ##  7 5f874698-e7c4-4c6d-… affe35… 2022-07-12 present          iRfcb          Stil…
+    ##  8 e0e58bec-1eb3-4c11-… affe35… 2022-07-12 present          iRfcb          Stil…
+    ##  9 b6f9e19a-c636-498b-… 1d5605… 2022-07-12 present          iRfcb          Stil…
+    ## 10 fdd69a8a-82ac-4b1d-… 1d5605… 2022-07-12 present          iRfcb          Stil…
+    ## # ℹ 91 more rows
+    ## # ℹ 16 more variables: basisOfRecord <chr>,
+    ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
+    ## #   identifiedBy <chr>, associatedMedia <chr>, scientificName <chr>,
+    ## #   scientificNameAuthorship <chr>, scientificNameID <chr>, taxonRank <chr>,
+    ## #   kingdom <chr>, phylum <chr>, class <chr>, order <chr>, family <chr>,
+    ## #   genus <chr>, verbatimIdentification <chr>
+
+The occurrence data is initialized for GBIF submission using the
+`initializeGBIFOccurrence` function, which maps fields automatically
+based on the specified column.
+
+``` r
+GBIF_Occurrence <- initializeGBIFOccurrence(occurrence_df, 
+                                            idColumnInfo = "occurrenceID", 
+                                            nameAutoMap = TRUE)
+```
+
+## MoF Extension
+
+The MoF table allows us to capture any additional measurements and facts
+associated with occurrences, such as biological or environmental
+measurements associated with the events (samples) or the occurrences.
+For IFCB data, we can include information such as counts, abundance,
+biovolume concentration, and carbon content. These measurements provide
+essential context for understanding the ecological significance of the
+observations.
+
+``` r
+# Create a dataset for occurrences (no modifications made here)
+data_occurrence_mof <- data_occurrences
+
+# Add placeholder for occurrence IDs in the event dataset
+data_event_mof <- data_event %>%
+  mutate(occurrenceID = NA)
+
+# Add placeholders for occurrence IDs and specify instrument type in the parent event dataset
+data_parent_mof <- data_parent_event %>%
+  mutate(occurrenceID = NA, instrument = "IFCB")
+```
+
+Next, we extract the necessary columns from the dataset that will be
+used in the MoF table. This includes the measurement ID, associated
+event and occurrence IDs, and key IFCB-derived measurements such as
+counts, abundance, biovolume, and carbon concentration.
+
+``` r
+# Convert biovolume units and select the relevant columns for occurrence MoF
+data_occurrence_mof <- data_occurrence_mof %>%
+  mutate(biovolume_um3_per_liter = biovolume_mm3_per_liter * 10^9) %>%
+  select(
+    eventID,
+    parentEventID,
+    occurrenceID,
+    counts,
+    counts_per_liter,
+    biovolume_um3_per_liter,
+    carbon_ug_per_liter
+  )
+
+# Select the relevant columns for parentEvent MoF
+data_parent_mof <- data_parent_mof %>%
+  select(eventID, parentEventID, occurrenceID, instrument, ifcb_number)
+
+# Select the relevant columns for event MoF
+data_event_mof <- data_event_mof %>%
+  select(eventID, parentEventID, occurrenceID, ml_analyzed) %>%
+  distinct()
+```
+
+The table needs to be transformed into a “long format,” where all
+measurements are placed into a single column called **measurementType**,
+with their corresponding values in **measurementValue**. This is done
+using the `pivot_longer` function.
+
+We also standardize the measurement types to align with controlled
+vocabularies (e.g., *Abundance*, *Biovolume concentration*) for better
+compatibility with global biodiversity standards.
+
+``` r
+# Pivot and standardize occurrence measurements
+data_occurrence_mof <- data_occurrence_mof %>%
+  pivot_longer(
+    cols = c(
+      counts,
+      counts_per_liter,
+      biovolume_um3_per_liter,
+      carbon_ug_per_liter
+    ),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
+  drop_na(measurementValue) %>%
+  mutate(measurementType = gsub("counts_per_liter", "Abundance", measurementType)) %>%
+  mutate(
+    measurementType = gsub(
+      "biovolume_um3_per_liter",
+      "Biovolume concentration",
+      measurementType
+    )
+  ) %>%
+  mutate(measurementType = gsub("carbon_ug_per_liter", "Carbon content", measurementType)) %>%
+  mutate(measurementType = gsub("counts", "Count", measurementType)) %>%
+  mutate(measurementValue = as.character(measurementValue))
+
+# Pivot and standardize event measurements
+data_event_mof <- data_event_mof %>%
+  mutate(ml_analyzed = as.character(ml_analyzed)) %>%
+  pivot_longer(
+    cols = c(ml_analyzed),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
+  mutate(measurementType = gsub("ml_analyzed", "Sample volume", measurementType))
+
+# Pivot and standardize parent measurements
+data_parent_mof <- data_parent_mof %>%
+  pivot_longer(
+    cols = c(instrument, ifcb_number),
+    names_to = "measurementType",
+    values_to = "measurementValue"
+  ) %>%
+  mutate(measurementType = gsub("instrument", "Imaging instrument name", measurementType)) %>%
+  mutate(
+    measurementType = gsub(
+      "ifcb_number",
+      "Instrument identification number",
+      measurementType
+    )
+  )
+
+# Combine all standardized measurements into a single dataset and add unique measurementIDs for each measurment
+data_mof <- bind_rows(data_parent_mof, data_event_mof, data_occurrence_mof) %>%
+  rowwise() %>%
+  mutate(measurementID = uuid::UUIDgenerate(use.time = FALSE))
+```
+
+To ensure data interoperability, we match each measurement type with its
+corresponding controlled vocabulary terms from the [NERC Vocabulary
+Server](https://vocab.nerc.ac.uk/). This includes assigning
+**measurementTypeID**, **measurementUnit**, and **measurementUnitID**
+for each **measurementType**.
+
+``` r
+# Create a lookup table for NERC vocabularies
+nerc_vocab <- data.frame(
+  measurementValueID = c(
+    rep(NA, 6),
+    "http://vocab.nerc.ac.uk/collection/L22/current/TOOL1588/"
+  ),
+  measurementType = c(
+    "Count",
+    "Abundance",
+    "Biovolume concentration",
+    "Carbon content",
+    "Sample volume",
+    "Instrument identification number",
+    "Imaging instrument name"
+  ),
+  measurementTypeID = c(
+    "http://vocab.nerc.ac.uk/collection/P01/current/OCOUNT01/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/SDBIOL01",
+    "http://vocab.nerc.ac.uk/collection/P01/current/CVOLUKNB/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/MDMAP010/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/VOLXXXXX/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/SERNUMZZ/",
+    "http://vocab.nerc.ac.uk/collection/P01/current/NMSPINST/"
+  ),
+  measurementUnit = c(
+    "Dimensionless",
+    "Individual per litre",
+    "Cubic micrometres per litre",
+    "Micrograms per litre",
+    "Millilitres",
+    "Not applicable",
+    "Not applicable"
+  ),
+  measurementUnitID = c(
+    "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/CUPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/UGPL/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/VVML/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/",
+    "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"
+  )
+)
+
+# Merge the data with NERC vocabularies and relocate columns
+mof_df <- data_mof %>%
+  left_join(nerc_vocab, by = "measurementType") %>%
+  relocate(measurementTypeID, .after = measurementType) %>%
+  relocate(measurementID, .before = 1)
+
+# Print the final table as tibble
+tibble(mof_df)
+```
+
+    ## # A tibble: 415 × 10
+    ##    measurementID              eventID parentEventID occurrenceID measurementType
+    ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
+    ##  1 2cc268b5-a708-4af0-9fac-5… 7ddcab… NA            NA           Imaging instru…
+    ##  2 ce34f83d-f2f9-4ac7-b6d7-a… 7ddcab… NA            NA           Instrument ide…
+    ##  3 af750ecb-ff3a-4fd9-87fc-9… 7e612f… 7ddcab38-573… NA           Sample volume  
+    ##  4 5b0a5f0f-fcbb-48bd-a889-5… fd867f… 7ddcab38-573… NA           Sample volume  
+    ##  5 c0855038-00c5-4200-8795-7… affe35… 7ddcab38-573… NA           Sample volume  
+    ##  6 367d5718-6498-408f-9827-1… 1d5605… 7ddcab38-573… NA           Sample volume  
+    ##  7 42bde1b6-410f-470e-a22a-e… 02a2c9… 7ddcab38-573… NA           Sample volume  
+    ##  8 d3318b4e-a22e-4261-a518-3… 781b55… 7ddcab38-573… NA           Sample volume  
+    ##  9 c53b1436-c739-439a-bc91-6… e3d27e… 7ddcab38-573… NA           Sample volume  
+    ## 10 8ae9b5f1-09af-4c9f-9c0b-5… 26d545… 7ddcab38-573… NA           Sample volume  
+    ## # ℹ 405 more rows
+    ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
+    ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>
+
+Finally, the extended measurement or fact table is prepared for GBIF by
+initializing the dataset in a compatible format using the
+`initializeGBIFMeasurementOrFact` function. The measurement IDs are used
+as unique identifiers, and columns are mapped automatically.
+
+``` r
+GBIF_MoF <- initializeGBIFMeasurementOrFact(mof_df, 
+                                            idColumnInfo = "measurementID", 
+                                            nameAutoMap = TRUE)
+```
+
+## Metadata
+
+Metadata is an integral part of biodiversity datasets, as it ensures
+data discoverability, transparency, and reusability. The Ecological
+Metadata Language (EML) is a widely accepted XML-based standard used to
+describe datasets, including those formatted as DwC-A. For datasets
+intended for submission to platforms like GBIF, EML provides a robust
+structure to communicate essential information about the dataset’s
+scope, methods, and contributors.
+
+### Creating Metadata for IFCB Data
+
+To create metadata for the IFCB dataset in a standardized format, we use
+the `initializeDwCMetadata` function. This function generates a template
+that follows DwC guidelines, which can then be customized with specific
+details about the dataset.
+
+Here, we create the metadata starting with a Markdown file
+[`vignette("metadata-template")`](https://europeanifcbgroup.github.io/iRfcb/articles/metadata-template.md),
+which will be rendered into an EML-compliant XML file for GBIF
+submission:
+
+``` r
+# Initialize DwC metadata using a R Markdown template
+GBIF_Metadata <- initializeDwCMetadata("metadata-template.rmd", 
+                                       fileType = "rmarkdown")
+```
+
+## DwC-A Creation
+
+In this step, the finalized tables (`GBIF_Event`, `GBIF_Occurrence`, and
+`GBIF_MoF`) and the metadata (`GBIF_Metadata`) are bundled together into
+a DwC-A `.zip` file that is ready for submission to platforms like GBIF
+using an Integrated Publishing Toolkit (IPT), e.g. the [EurOBIS
+IPT](https://ipt.vliz.be/eurobis/).
+
+Here is the code for initializing and exporting the DwC-A:
+
+``` r
+# Initialize the DwC-A
+dwca_archive <- initializeDwCArchive(GBIF_Event, 
+                                     list(GBIF_Occurrence, GBIF_MoF), 
+                                     GBIF_Metadata)
+
+# Export the archive as a zip file
+dwca_archive$exportAsDwCArchive(file.path("files", "iRfcb-DwC-A.zip"))
+```
+
+The finalized DwC-A can be downloaded as a [zip
+archive](https://github.com/EuropeanIFCBGroup/iRfcb/raw/main/vignettes/files/iRfcb-DwC-A.zip).
+
+This concludes this tutorial for the `iRfcb` package. For more detailed
+information, refer to the package documentation or the other
+[tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/), and
+the [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/)
+documentation. See how more complex data pipelines can be constructed
+using `iRfcb` in the following [Example
+Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy
+analyzing!
+
+## Citation
+
+    ## To cite package 'iRfcb' in publications use:
+    ## 
+    ##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging
+    ##   FlowCytobot (IFCB) Data. R package version 0.5.2.
+    ##   https://CRAN.R-project.org/package=iRfcb
+    ## 
+    ## A BibTeX entry for LaTeX users is
+    ## 
+    ##   @Manual{,
+    ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
+    ##     author = {Anders Torstensson},
+    ##     year = {2025},
+    ##     note = {R package version 0.5.2},
+    ##     url = {https://CRAN.R-project.org/package=iRfcb},
+    ##   }
+
+## References
+
+- Martin-Cabrera, P., Perez Perez, R., Irisson, J.-O., Lombard, F.,
+  Möller, K.O., Rühl, S., Creach, V., Lindh, M., Stemmann, L.,
+  Schepers, L. (2022). Best practices and recommendations for plankton
+  imaging data management: ensuring effective data flow towards
+  international data infrastructures. Version 1. Flanders Marine
+  Institute: Ostend. 31 pp. <https://dx.doi.org/10.25607/OBP-1742>.
+- Sosik, H. M. and Olson, R. J. (2007) Automated taxonomic
+  classification of phytoplankton sampled with imaging-in-flow
+  cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+- Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and
+  Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library.
+  SciLifeLab. Dataset. <https://doi.org/10.17044/scilifelab.25883455.v3>
+- Urbanek, Simon, and Theodore Ts’o. 2021. Uuid: Tools for Generating
+  and Handling of UUIDs. <https://CRAN.R-project.org/package=uuid>.

@@ -207,7 +207,7 @@ Python environment is set up and activated:</p>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="geographical-qcqa">Geographical QC/QA<a class="anchor" aria-label="anchor" href="#geographical-qcqa"></a>
@@ -261,7 +261,7 @@ latitudes and longitudes):</p>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">near_land_plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="700"></p>
 <p>For more accurate determination, a detailed coastline
 <code>.shp</code> file may be required (e.g. the <a href="https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon" class="external-link">EEA
 Coastline Polygon</a>). Refer to the help pages of
@@ -287,7 +287,7 @@ position data:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basins</span></span>
 <span><span class="fu"><a href="../reference/ifcb_which_basin.html">ifcb_which_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, shape_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="700"></p>
 <p>This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the <code>iRfcb</code> package by
 default, or a user-supplied shapefile if provided. The shapefiles
@@ -312,7 +312,7 @@ specifically to phytoplankton from the Baltic Sea.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basin</span></span>
 <span><span class="fu"><a href="../reference/ifcb_is_in_basin.html">ifcb_is_in_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="700"></p>
 <p>This function reads a land-buffered shapefile of the Baltic Sea Basin
 from the <code>iRfcb</code> package by default, or a user-supplied
 shapefile if provided.</p>
@@ -432,7 +432,7 @@ SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" c
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

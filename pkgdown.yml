@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   a-general-tutorial: a-general-tutorial.html
@@ -10,7 +10,7 @@ articles:
   metadata-template: metadata-template.html
   qc-tutorial: qc-tutorial.html
   whoi-plankton-data-integration: whoi-plankton-data-integration.html
-last_built: 2025-11-07T14:22Z
+last_built: 2025-11-07T21:39Z
 urls:
   reference: https://europeanifcbgroup.github.io/iRfcb/reference
   article: https://europeanifcbgroup.github.io/iRfcb/articles
