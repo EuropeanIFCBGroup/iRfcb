@@ -46,5 +46,5 @@ ifcb_list_dashboard_bins <- function(base_url, quiet = FALSE) {
 
   if (!quiet) message("Successfully retrieved ", nrow(df), " bins.")
 
-  return(df)
+  df
 }

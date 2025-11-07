@@ -54,5 +54,5 @@ ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quie
             if (!is.null(dataset_name)) paste0(" for dataset '", dataset_name, "'"), ".")
   }
 
-  return(df)
+  df
 }
