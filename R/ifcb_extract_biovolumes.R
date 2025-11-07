@@ -169,7 +169,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
       temp_df <- data.frame(
         sample = ifelse(multiblob,
                         str_replace(file_name, "_multiblob_v\\d+.csv", ""),
-                        str_replace(file_name, "_fea_v\\d+.csv", "")),
+                        str_replace(file_name, "_fe[a-z]*_v\\d+\\.csv", "")),
         roi_number = file_data$roi_number,
         biovolume = file_data$Biovolume
       )

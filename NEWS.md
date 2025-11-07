@@ -1,5 +1,8 @@
 # iRfcb (development version)
 
+## Minor improvements and fixes
+* `ifcb_extract_biovolumes()` now now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats. (#61)
+
 # iRfcb 0.5.2
 
 ## Minor improvements and fixes
