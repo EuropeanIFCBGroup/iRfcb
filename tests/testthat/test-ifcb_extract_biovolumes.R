@@ -27,7 +27,7 @@ test_that("ifcb_extract_biovolumes works correctly", {
                                           threshold = "opt",
                                           multiblob = FALSE)
 
-  # Run the function with test data
+  # Run the function using python
   biovolume_py <- ifcb_extract_biovolumes(feature_folder,
                                           class_folder,
                                           micron_factor = 1 / 3.4,
@@ -36,10 +36,26 @@ test_that("ifcb_extract_biovolumes works correctly", {
                                           multiblob = FALSE,
                                           use_python = TRUE)
 
+  # Run the function with diatom_include
+  biovolume_diatom_include <- ifcb_extract_biovolumes(feature_folder,
+                                                      class_folder,
+                                                      micron_factor = 1 / 3.4,
+                                                      diatom_class = "Bacillariophyceae",
+                                                      diatom_include = "Mesodinium_rubrum",
+                                                      threshold = "opt",
+                                                      multiblob = FALSE)
+
   # Check that the .mat data from R and Python are identical
   expect_identical(biovolume_df$sample, biovolume_py$sample)
   expect_identical(biovolume_df$biovolume_um3, biovolume_py$biovolume_um3)
   expect_identical(biovolume_df$roi_number, biovolume_py$roi_number)
+
+  # Sum carbon content
+  sum_carbon <- sum(biovolume_df$carbon_pg)
+  sum_diatom_include <- sum(biovolume_diatom_include$carbon_pg)
+
+  # Check that carbon content is greater when M. rubrum is considered NOT diatom
+  expect_gt(sum_carbon, sum_diatom_include)
 
   # Check that the returned object is a data frame
   expect_s3_class(biovolume_df, "data.frame")
