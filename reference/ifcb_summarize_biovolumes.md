@@ -18,6 +18,7 @@ ifcb_summarize_biovolumes(
   custom_classes = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  diatom_include = NULL,
   marine_only = FALSE,
   threshold = "opt",
   feature_recursive = TRUE,
@@ -73,6 +74,12 @@ ifcb_summarize_biovolumes(
 
   A string vector of diatom class names in the World Register of Marine
   Species (WoRMS). Default is "Bacillariophyceae".
+
+- diatom_include:
+
+  Optional character vector of class names that should always be treated
+  as diatoms, overriding the boolean result of `ifcb_is_diatom`.
+  Default: NULL.
 
 - marine_only:
 

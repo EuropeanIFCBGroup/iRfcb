@@ -20,6 +20,7 @@ ifcb_extract_biovolumes(
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  diatom_include = NULL,
   marine_only = FALSE,
   threshold = "opt",
   multiblob = FALSE,
@@ -71,6 +72,12 @@ ifcb_extract_biovolumes(
 
   A character vector specifying diatom class names in WoRMS. Default:
   `"Bacillariophyceae"`.
+
+- diatom_include:
+
+  Optional character vector of class names that should always be treated
+  as diatoms, overriding the boolean result of `ifcb_is_diatom`.
+  Default: NULL.
 
 - marine_only:
 
