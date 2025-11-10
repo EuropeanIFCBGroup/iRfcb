@@ -35,6 +35,7 @@ Description: A comprehensive suite of tools for managing, processing, and
 License: MIT + file LICENSE
 URL: https://europeanifcbgroup.github.io/iRfcb/,
     https://github.com/EuropeanIFCBGroup/iRfcb
+Depends: R (>= 4.1)
 Imports:
     curl (>= 6.0.0),
     dplyr,

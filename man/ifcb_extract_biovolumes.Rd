@@ -12,6 +12,7 @@ ifcb_extract_biovolumes(
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
+  diatom_include = NULL,
   marine_only = FALSE,
   threshold = "opt",
   multiblob = FALSE,
@@ -40,6 +41,9 @@ used as a substitute for MATLAB files.}
 \item{micron_factor}{Conversion factor for biovolume to cubic micrometers. Default is \code{1 / 3.4}.}
 
 \item{diatom_class}{A character vector specifying diatom class names in WoRMS. Default: \code{"Bacillariophyceae"}.}
+
+\item{diatom_include}{Optional character vector of class names that should always be treated as diatoms,
+overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{marine_only}{Logical. If \code{TRUE}, restricts the WoRMS search to marine taxa only. Default: \code{FALSE}.}
 

@@ -17,6 +17,8 @@ utils::globalVariables(c("biovolume", "roi"))
 #' @param class2use_file A character string specifying the path to the file containing the `class2use` variable (default: NULL).
 #' @param micron_factor Conversion factor for biovolume to cubic micrometers. Default is `1 / 3.4`.
 #' @param diatom_class A character vector specifying diatom class names in WoRMS. Default: `"Bacillariophyceae"`.
+#' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
+#'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If `TRUE`, restricts the WoRMS search to marine taxa only. Default: `FALSE`.
 #' @param threshold Threshold for selecting classification information (`"opt"` for above-threshold classification, otherwise `"all"`). Default: `"opt"`.
 #' @param multiblob Logical. If `TRUE`, includes multiblob features. Default: `FALSE`.
@@ -77,7 +79,7 @@ utils::globalVariables(c("biovolume", "roi"))
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
 ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_images = NULL, custom_classes = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
-                                    diatom_class = "Bacillariophyceae", marine_only = FALSE,
+                                    diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
                                     mat_recursive = TRUE, drop_zero_volume = FALSE,
                                     feature_version = NULL, use_python = FALSE, verbose = TRUE) {
@@ -300,6 +302,17 @@ ifcb_extract_biovolumes <- function(feature_files, mat_folder = NULL, custom_ima
                                                                              diatom_class = diatom_class,
                                                                              marine_only = marine_only,
                                                                              verbose = verbose))
+
+  # Override diatom classification if diatom_include is provided
+  if (!is.null(diatom_include)) {
+    matched <- is_diatom$class %in% diatom_include
+    if (verbose && any(matched)) {
+      cat("INFO: The following classes were manually included as diatoms via diatom_include:\n")
+      cat(sort(is_diatom$class[matched]), sep = "\n")
+    }
+    is_diatom$is_diatom[matched] <- TRUE
+  }
+
   biovolume_df <- left_join(biovolume_df, is_diatom, by = "class")
 
   # Filter rows where is_diatom$is_diatom is NA

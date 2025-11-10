@@ -167,3 +167,4 @@ test_that("ifcb_get_ferrybox_data handles no matching GPS data", {
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
+
