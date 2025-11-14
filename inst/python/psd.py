@@ -255,10 +255,20 @@ class Sample:
 
 
 class Bin:
-    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor
+    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4, bins=None): # Modified from the original by kudelalabs to parameterize micron_factor
         fileConvention = r'D\d\d\d\d\d\d\d\dT\d\d\d\d\d\d'
         regex = re.compile(fileConvention)
         files = [(f.split('_')[0], f.split('_')[1]) for f in os.listdir(feature_dir) if regex.search(f)]
+        
+        if bins is not None:
+            # bins is a list like ["D20251021T133007_IFCB134", "D20251021T140753_IFCB134"]
+            bins = set(bins)
+
+            # sample name is f[0] + "_" + f[1] without suffix
+            files = [
+                f for f in files
+                if f"{f[0]}_{f[1]}" in bins
+            ]
         
         self.micron_factor = micron_factor # Modified from the original by kudelalabs to parameterize micron_factor
 

@@ -72,6 +72,7 @@ test_that("ifcb_psd works correctly", {
   result <- ifcb_psd(
     feature_folder = feature_folder,
     hdr_folder = file.path(hdr_folder, "2022"),
+    bins = "D20220522T003051_IFCB134",
     save_data = TRUE,
     output_file = output_file,
     plot_folder = plot_folder,
