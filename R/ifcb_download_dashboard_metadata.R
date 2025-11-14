@@ -12,7 +12,7 @@
 #'   metadata_all <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/")
 #'
 #'   # Download metadata for a specific dataset
-#'   metadata_svea <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/", "mvco")
+#'   metadata_mvco <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/", "mvco")
 #' }
 #'
 #' @seealso [ifcb_download_dashboard_data()] to download data from the IFCB Dashboard API.
