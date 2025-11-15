@@ -5,7 +5,8 @@ sample_data <- data.frame(
   X2 = c(NA, NA),
   X3 = c(NA, NA),
   X4 = c(1, 2),
-  X5 = c(3, 4)
+  X5 = c(3, 4),
+  check.names = FALSE
 )
 colnames(sample_data)[4:5] <- c("1", "2")  # Simulate particle sizes in micrometers
 
@@ -13,7 +14,8 @@ fit_params <- data.frame(
   sample = "D20230316T101514",
   a = 0.5,
   k = 2,
-  R.2 = 0.95
+  `R^2` = 0.95,
+  check.names = FALSE
 )
 
 flags <- data.frame(
