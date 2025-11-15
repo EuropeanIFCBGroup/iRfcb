@@ -53,7 +53,7 @@ class Target:
 
 class Sample:
 
-    def __init__(self, name, feature_dir, roi_dir, overall_bin, ifcb, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor
+    def __init__(self, name, feature_dir, roi_dir, overall_bin, ifcb, fea_v=2, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor and feature file version
         self.name = name
         self.ifcb = ifcb
         self.micron_factor = micron_factor # Modified from the original by kudelalabs to parameterize micron_factor
@@ -75,7 +75,7 @@ class Sample:
 
         print(f'Processing {name}')
 
-        self.features = pd.read_csv(f'{feature_dir}/{name}_{ifcb}_fea_v2.csv')
+        self.features = pd.read_csv(f'{feature_dir}/{name}_{ifcb}_fea_v{fea_v}.csv')
         self.metadata = self.read_metadata(roi_dir, name)
         self.targets = [Target(self, i, self.features, self.micron_factor) for i in range(len(self.features.Biovolume))]
         self.mL_analyzed = self.get_volume()
@@ -255,7 +255,7 @@ class Sample:
 
 
 class Bin:
-    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4, bins=None): # Modified from the original by kudelalabs to parameterize micron_factor
+    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4, fea_v=2, bins=None): # Modified from the original by kudelalabs to parameterize micron_factor and feature file version
         fileConvention = r'D\d\d\d\d\d\d\d\dT\d\d\d\d\d\d'
         regex = re.compile(fileConvention)
         files = [(f.split('_')[0], f.split('_')[1]) for f in os.listdir(feature_dir) if regex.search(f)]
@@ -276,10 +276,17 @@ class Bin:
         if self.samples_loaded:
             sample_file = open(samples_path, 'rb')
             samples = json.load(sample_file)["samples"]
-            self.samples = [json.loads(json.dumps(s), object_hook=lambda d: Sample(**d, micron_factor=self.micron_factor)) for s in samples]
+            self.samples = [
+              json.loads(json.dumps(s),
+              object_hook=lambda d: Sample(**d, micron_factor=self.micron_factor, fea_v=fea_v))
+              for s in samples
+              ]
         else:
-            self.samples = [Sample(f[0], feature_dir, hdr_dir, self, f[1], micron_factor=self.micron_factor) for f in files]
-
+            self.samples = [
+                Sample(f[0], feature_dir, hdr_dir, self, f[1],
+                       fea_v=fea_v, micron_factor=self.micron_factor)
+                for f in files
+            ]
         self.file_names = [s.name for s in self.samples]
         self.data = pd.DataFrame(columns=['mL_analyzed', 'max'] + [f'{i}μm' for i in range(0, 200)], index=self.file_names)
         self.fits = pd.DataFrame(columns=['a', 'k', 'R^2', 'max_ESD_diff', 'capture_percent', 'bead_run', 'humidity'],
