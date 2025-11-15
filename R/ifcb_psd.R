@@ -22,8 +22,9 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
 #' @param output_file A string with the base file name for the .csv output (including path).
 #'   Set to NULL to avoid saving data (default).
-#' @param plot_folder The folder where graph images for each file will be saved. Set to
-#'   NULL to not save plots (default).
+#' @param plot_folder The folder where graph images for each sample will be saved.
+#'   If `NULL` (default), plots are not saved. If `use_plot_subfolders = TRUE`,
+#'   plots are organized into subfolders based on their flag status.
 #' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
 #' @param r_sqr The lower limit of acceptable R^2 values (any curves below it will be flagged).
@@ -48,6 +49,10 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   high humidity. Optional.
 #' @param micron_factor The conversion factor to microns. Default is 1/3.4.
 #' @param fea_v The version number of the IFCB feature file (e.g., 2, 4). Default is 2.
+#' @param use_plot_subfolders A boolean indicating whether to save plots in subfolders
+#'   based on the sample's flag status. If TRUE (default), samples without flags are
+#'   saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
+#'   named after their flag(s). If FALSE, all plots are saved directly in `plot_folder`.
 #'
 #' @return A list containing data, fits, and flag DataFrames if `save_data = FALSE`;
 #'   otherwise returns `NULL`.
@@ -89,7 +94,8 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @export
 ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE, output_file = NULL, plot_folder = NULL,
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
-                     missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL, micron_factor = 1/3.4, fea_v = 2) {
+                     missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL, micron_factor = 1/3.4, fea_v = 2,
+                     use_plot_subfolders = TRUE) {
 
   if (!reticulate::py_available(initialize = TRUE)) {
     stop("Python is not installed on this machine. Please install Python to use this function.")
@@ -139,7 +145,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
 
 
   # Flatten nested lists and combine into a data frame
-  data_df <- as.data.frame(lapply(data, function(x) unlist(x)))
+  data_df <- as.data.frame(lapply(data, function(x) unlist(x)), check.names = FALSE)
 
   # Convert to tibble and add sample column
   data_df <- data_df %>%
@@ -149,7 +155,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
     dplyr::as_tibble()
 
   # Convert nested list to a data frame
-  fits_df <- as.data.frame(lapply(fits, function(x) unlist(x)))
+  fits_df <- as.data.frame(lapply(fits, function(x) unlist(x)), check.names = FALSE)
 
   # Convert to long format and then to wide format
   fits_df <- fits_df %>%
@@ -188,10 +194,14 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
       flag <- flags_df[grepl(sample, flags_df$sample),]
 
       # Specify plot subfolder
-      if (nrow(flag) == 0) {
-        flag_folder <- file.path(plot_folder, "PSD.OK")
+      if (use_plot_subfolders) {
+        if (nrow(flag) == 0) {
+          flag_folder <- file.path(plot_folder, "PSD.OK")
+        } else {
+          flag_folder <- file.path(plot_folder, make.names(flag$flag))
+        }
       } else {
-        flag_folder <- file.path(plot_folder, make.names(flag$flag))
+        flag_folder <- plot_folder
       }
 
       # Create plot subfolder
@@ -200,7 +210,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
       }
 
       # Plot the sample PSD
-      p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit)
+      p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit, flags = flags_df)
 
       # Save the plot
       ggsave(filename = file.path(flag_folder,

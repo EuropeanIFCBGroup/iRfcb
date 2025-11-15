@@ -16,6 +16,11 @@ fit_params <- data.frame(
   R.2 = 0.95
 )
 
+flags <- data.frame(
+  sample = "D20230316T101514",
+  flag = "Incomplete Run"
+)
+
 test_that("ifcb_psd_plot generates a plot for a given sample", {
   plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
                         data = sample_data,
@@ -77,4 +82,14 @@ test_that("ifcb_psd_plot handles start_fit argument correctly", {
                         start_fit = 2)
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
   expect_true(all(plot_data$x >= 2))  # Check that x values below start_fit are excluded
+})
+
+test_that("ifcb_psd_plot adds the quality flag if provided", {
+  plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
+                        data = sample_data,
+                        fits = fit_params,
+                        start_fit = 1,
+                        flags = flags)
+  expect_s3_class(plot, "gg")  # Check if the output is a ggplot object
+  expect_equal("Flag: Incomplete Run", ggplot2::ggplot_build(plot)$data[[4]]$label)
 })

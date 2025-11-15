@@ -22,7 +22,8 @@ ifcb_psd(
   bloom = NULL,
   humidity = NULL,
   micron_factor = 1/3.4,
-  fea_v = 2
+  fea_v = 2,
+  use_plot_subfolders = TRUE
 )
 }
 \arguments{
@@ -41,8 +42,9 @@ If \code{NULL} (default), all bins present in \code{feature_folder} are processe
 \item{output_file}{A string with the base file name for the .csv output (including path).
 Set to NULL to avoid saving data (default).}
 
-\item{plot_folder}{The folder where graph images for each file will be saved. Set to
-NULL to not save plots (default).}
+\item{plot_folder}{The folder where graph images for each sample will be saved.
+If \code{NULL} (default), plots are not saved. If \code{use_plot_subfolders = TRUE},
+plots are organized into subfolders based on their flag status.}
 
 \item{use_marker}{A boolean indicating whether to show markers on the plot. Default is FALSE.}
 
@@ -79,6 +81,11 @@ high humidity. Optional.}
 \item{micron_factor}{The conversion factor to microns. Default is 1/3.4.}
 
 \item{fea_v}{The version number of the IFCB feature file (e.g., 2, 4). Default is 2.}
+
+\item{use_plot_subfolders}{A boolean indicating whether to save plots in subfolders
+based on the sample's flag status. If TRUE (default), samples without flags are
+saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
+named after their flag(s). If FALSE, all plots are saved directly in \code{plot_folder}.}
 }
 \value{
 A list containing data, fits, and flag DataFrames if \code{save_data = FALSE};

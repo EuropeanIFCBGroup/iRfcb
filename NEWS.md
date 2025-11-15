@@ -5,10 +5,13 @@
 * Added `diatom_include` parameter to `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification) (#65).
 * Added `bins` parameter to `ifcb_psd()` for selecting which bins to process.
 * Added `fea_v` parameter to `ifcb_psd()` for selecting feature-file version.
+* Added `use_plot_subfolders` parameter to `ifcb_psd()` to optionally save plots in subdirectories of `plot_folder` based on flag status.
+* Added `flags` parameter to `ifcb_psd_plot()` to optionally add the quality flag annotation to the plot.
 
 ## Minor improvements and fixes
 * `ifcb_extract_biovolumes()` now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats (#61).
 * `ifcb_read_features()`, `ifcb_summarize_png_metadata()`, `ifcb_summarize_biovolumes()`, and `ifcb_extract_biovolumes()` now include an optional parameter to select specific feature file versions (e.g., `_v2`, `_v4`), allowing finer control over which feature data are read and processed.
+* The `$data` and `$fits` dataframes returned by `ifcb_psd()` now preserves the original column names, including names starting with numbers or containing special characters.
 
 # iRfcb 0.5.2
 
