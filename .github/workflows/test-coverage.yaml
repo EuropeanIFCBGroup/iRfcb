@@ -30,6 +30,11 @@ jobs:
           extra-packages: any::covr, any::xml2
           needs: coverage
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
       - name: Test coverage
         run: |
           cov <- covr::package_coverage(
