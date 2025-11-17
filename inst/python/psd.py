@@ -287,21 +287,46 @@ class Bin:
                        fea_v=fea_v, micron_factor=self.micron_factor)
                 for f in files
             ]
-        self.file_names = [s.name for s in self.samples]
-        self.data = pd.DataFrame(columns=['mL_analyzed', 'max'] + [f'{i}μm' for i in range(0, 200)], index=self.file_names)
+
+        # Modified from the original by kudelalabs to return full bin names
+        # Construct file_names as combined unique IDs used as DataFrame indices
+        # Guard against double-suffix if name already ends with _IFCBxxx
+        self.file_names = [
+            s.name if s.name.endswith(f"_{s.ifcb}") else f"{s.name}_{s.ifcb}"
+            for s in self.samples
+        ]
+
+        # build dataframes indexed by the combined unique IDs
+        self.data = pd.DataFrame(columns=['mL_analyzed', 'max'] + [f'{i}um' for i in range(0, 200)], index=self.file_names)
         self.fits = pd.DataFrame(columns=['a', 'k', 'R^2', 'max_ESD_diff', 'capture_percent', 'bead_run', 'humidity'],
                                  index=self.file_names)
 
+    # Modified from the original by kudelalabs to return full bin names
+    # helper to map short name (or already-full name) -> full combined id
+    def _full_file_name(self, file):
+        # if already contains an underscore part, assume it's full and return as-is
+        if '_' in file:
+            return file
+        # otherwise find matching sample and return combined id
+        for s in self.samples:
+            if s.name == file:
+                return s.name if s.name.endswith(f"_{s.ifcb}") else f"{s.name}_{s.ifcb}"
+        # fallback: return original (will raise KeyError if not present when used)
+        return file
+
     def add_data(self, file, datenum, data, mL_analyzed, maximum):
-        formatted_data = {f'{i}μm': data[i] for i in range(0, 200)}
+        formatted_data = {f'{i}um': data[i] for i in range(0, 200)}
         formatted_data['mL_analyzed'] = mL_analyzed
         formatted_data['max'] = maximum
         formatted_data['datenum'] = datenum
-        self.data.loc[file] = pd.Series(formatted_data)
+
+        full = self._full_file_name(file) # Modified from the original by kudelalabs to return full bin names
+        self.data.loc[full] = pd.Series(formatted_data) # Modified from the original by kudelalabs to return full bin names
 
     def add_fit(self, file, a, k, r_sqr, max_diff, capture_percent, bead_run, humidity):
-        self.fits.loc[file] = pd.Series({'a': a, 'k': k, 'R^2': r_sqr, 'max_ESD_diff': max_diff,
-                                         'capture_percent': capture_percent, 'bead_run': bead_run, 'humidity': humidity})
+        full = self._full_file_name(file) # Modified from the original by kudelalabs to return full bin names
+        self.fits.loc[full] = pd.Series({'a': a, 'k': k, 'R^2': r_sqr, 'max_ESD_diff': max_diff,
+                                         'capture_percent': capture_percent, 'bead_run': bead_run, 'humidity': humidity}) # Modified from the original by kudelalabs to return full bin names
 
     def pick_start(self):
         files = self.file_names[:]

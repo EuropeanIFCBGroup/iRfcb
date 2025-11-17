@@ -196,29 +196,33 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
       # Specify plot subfolder
       if (use_plot_subfolders) {
         if (nrow(flag) == 0) {
-          flag_folder <- file.path(plot_folder, "PSD.OK")
+          sample_plot_folder <- file.path(plot_folder, "PSD.OK")
         } else {
-          flag_folder <- file.path(plot_folder, make.names(flag$flag))
+          sample_plot_folder <- file.path(plot_folder, make.names(flag$flag))
         }
       } else {
-        flag_folder <- plot_folder
+        sample_plot_folder <- plot_folder
       }
 
       # Create plot subfolder
-      if (!dir.exists(flag_folder)) {
-        dir.create(flag_folder, recursive = TRUE)
+      if (!dir.exists(sample_plot_folder)) {
+        dir.create(sample_plot_folder, recursive = TRUE)
       }
 
       # Plot the sample PSD
       p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit, flags = flags_df)
 
       # Save the plot
-      ggsave(filename = file.path(flag_folder,
+      ggsave(filename = file.path(sample_plot_folder,
                                   paste0(sample, ".png")),
              plot = p,
              bg = "white",
-             width = 6,
-             height = 4)
+             width = 5,
+             height = 3.5,
+             dpi = 90)
+
+      # Inform user
+      cat("Saving plot ", sample, "\n", sep = "")
     }
   }
 

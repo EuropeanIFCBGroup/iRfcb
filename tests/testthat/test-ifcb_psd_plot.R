@@ -46,7 +46,8 @@ test_that("ifcb_psd_plot handles missing fit parameters", {
     sample = "D20230316T101514",
     a = NA,
     k = NA,
-    R.2 = NA
+    `R^2` = NA,
+    check.names = FALSE
   )
   plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
                         data = sample_data,
