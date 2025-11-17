@@ -108,16 +108,19 @@ skip_if_no_python <- function() {
     skip("Python not available for testing")
 }
 
-# Skip test if a remote resource is not responding
+# Skip test if a remote resource is not responding (HTTP errors included)
 skip_if_resource_unavailable <- function(url, msg = NULL) {
   ok <- tryCatch({
-    curl::curl_fetch_memory(url)
-    TRUE
+    res <- curl::curl_fetch_memory(url)
+    status <- res$status_code
+
+    # Treat ONLY 2xx as success
+    status >= 200 && status < 300
   }, error = function(e) FALSE)
 
   if (!ok) {
     if (is.null(msg)) {
-      msg <- paste("Resource not responding:", url)
+      msg <- paste("Resource not responding or returned non-2xx status:", url)
     }
     testthat::skip(msg)
   }
