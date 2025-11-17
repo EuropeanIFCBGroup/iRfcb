@@ -13,9 +13,11 @@
 
 * `ifcb_extract_biovolumes()` now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats (#61).
 * `ifcb_read_features()`, `ifcb_summarize_png_metadata()`, `ifcb_summarize_biovolumes()`, and `ifcb_extract_biovolumes()` now include an optional parameter to select specific feature file versions (e.g., `_v2`, `_v4`), allowing finer control over which feature data are read and processed.
-* The `$data`, `$fits` and `$flags` dataframes returned by `ifcb_psd()` now use full bin names (`<sample>_<ifcb>`) as sample names, improving uniqueness and consistency with downstream workflows.
-* The `$data` and `$fits` dataframes returned by `ifcb_psd()` now preserves the original column names, including names starting with numbers or containing special characters. Problematic character µ has been replaced by u in `$data` headers.
-* Reduced the size and resolution of saved plots in `ifcb_psd()` when `plot_folder` is specified, improving processing speed..
+* The `$data`, `$fits` and `$flags` data frames returned by `ifcb_psd()` now use full bin names (`<sample>_<ifcb>`) as sample names, improving uniqueness and consistency with downstream workflows.
+* The `$data` and `$fits` data frames returned by `ifcb_psd()` now preserves the original column names, including names starting with numbers or containing special characters.
+* Problematic character µ returned from `ifcb_psd()` has been replaced by u in `$data` headers.
+* Updated `$flags` headers in `ifcb_psd()` to use `sample` instead of `file`, ensuring consistent naming across all outputs.
+* Reduced the size and resolution of saved plots in `ifcb_psd()` when `plot_folder` is specified, improving processing speed.
 
 # iRfcb 0.5.2
 

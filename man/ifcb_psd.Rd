@@ -23,7 +23,8 @@ ifcb_psd(
   humidity = NULL,
   micron_factor = 1/3.4,
   fea_v = 2,
-  use_plot_subfolders = TRUE
+  use_plot_subfolders = TRUE,
+  ...
 )
 }
 \arguments{
@@ -86,10 +87,20 @@ high humidity. Optional.}
 based on the sample's flag status. If TRUE (default), samples without flags are
 saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
 named after their flag(s). If FALSE, all plots are saved directly in \code{plot_folder}.}
+
+\item{...}{Additional arguments passed to \code{ggsave()}.
+These override the default width, height, dpi, and background color
+when saving plots. For example, \verb{width = 7, dpi = 300} can be supplied.}
 }
 \value{
-A list containing data, fits, and flag DataFrames if \code{save_data = FALSE};
-otherwise returns \code{NULL}.
+A list containing three tibbles:
+\describe{
+\item{data}{A tibble with flattened PSD data for each sample.}
+\item{fits}{A tibble containing curve fit parameters for each sample.}
+\item{flags}{A tibble of flags for each sample, or NULL if no flags are found.}
+}
+The \code{save_data} parameter only controls whether CSV files are written to disk; the
+function always returns this list.
 }
 \description{
 This function generates and saves data about a dataset's Particle Size Distribution (PSD)
@@ -97,7 +108,7 @@ from Imaging FlowCytobot (IFCB) feature and hdr files, which can be used for dat
 quality assurance and quality control.
 }
 \details{
-The PSD function originates from the \code{PSD} Python repository (Hayashi et al. in prep),
+The PSD function originates from the \code{PSD} Python repository (Hayashi et al. 2025),
 which can be found at \url{https://github.com/kudelalab/PSD}.
 
 Python must be installed to use this function. The required Python packages can be
@@ -132,8 +143,9 @@ ifcb_psd(
 
 }
 \references{
-Hayashi, K., Walton, J., Lie, A., Smith, J., and Kudela, M. \emph{Using particle size distribution
-(PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA}. In prep.
+Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using particle size distribution (PSD)
+to automate imaging flow cytobot (IFCB) data quality in coastal California, USA.
+International Society for the Study of Harmful Algae. https://doi.org/10.15027/0002041270
 }
 \seealso{
 \code{\link{ifcb_py_install}},

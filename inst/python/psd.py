@@ -363,12 +363,12 @@ class Bin:
                     files = files[op[i](files[parameter[i]], threshold[i])]
 
             if flag_name == 'Beads':
-                calculated_df = pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+                calculated_df = pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
                 bead_runs = self.fits[self.fits['bead_run']]
-                set_df = pd.DataFrame({'file': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
-                return pd.concat([calculated_df, set_df]).drop_duplicates('file')
+                set_df = pd.DataFrame({'sample': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
+                return pd.concat([calculated_df, set_df]).drop_duplicates('sample')
 
-            return pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+            return pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
 
         flag_params = {
             'beads': (self.fits, operator.gt, 'a', 'Beads', 1),
@@ -380,11 +380,11 @@ class Bin:
             'humidity': (self.fits, operator.gt, 'humidity', 'High Humidity', 7)
         }
 
-        full_flags = pd.DataFrame({'file': [], 'flag': [], 'priority': 10000})
+        full_flags = pd.DataFrame({'sample': [], 'flag': [], 'priority': 10000})
         r_limited_flags = ['biomass', 'bloom']
         esd_diff_flags = ['bubbles', 'bloom']
         r_flag = flag(self.fits, operator.lt, 'R^2', r_sqr, 'Low R^2', 7, False)
-        if len(r_flag['file']) > 0:
+        if len(r_flag['sample']) > 0:
             full_flags = pd.concat([full_flags, r_flag], ignore_index=True)
 
         for key, value in kwargs.items():
@@ -392,10 +392,10 @@ class Bin:
                 value = -value
             [dataset, op, parameter, flag_name, priority] = flag_params[key]
             key_flag = flag(dataset, op, parameter, value, flag_name, priority, key in r_limited_flags)
-            if len(key_flag['file']) > 0:
+            if len(key_flag['sample']) > 0:
                 full_flags = pd.concat([full_flags, key_flag], ignore_index=True)
 
-        flags = full_flags.sort_values('priority').drop_duplicates(subset=['file']).sort_values(by=['file'])
+        flags = full_flags.sort_values('priority').drop_duplicates(subset=['sample']).sort_values(by=['sample'])
         flags = flags.drop('priority', axis=1)
 
         self.data.to_csv(f'{name}_data.csv')
@@ -422,12 +422,12 @@ class Bin:
                     files = files[op[i](files[parameter[i]], threshold[i])]
 
             if flag_name == 'Beads':
-                calculated_df = pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+                calculated_df = pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
                 bead_runs = self.fits[self.fits['bead_run']]
-                set_df = pd.DataFrame({'file': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
-                return pd.concat([calculated_df, set_df]).drop_duplicates('file')
+                set_df = pd.DataFrame({'sample': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
+                return pd.concat([calculated_df, set_df]).drop_duplicates('sample')
 
-            return pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+            return pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
 
         flag_params = {
             'beads': (self.fits, operator.gt, 'a', 'Beads', 1),
@@ -439,11 +439,11 @@ class Bin:
             'humidity': (self.fits, operator.gt, 'humidity', 'High Humidity', 7)
         }
 
-        full_flags = pd.DataFrame({'file': [], 'flag': [], 'priority': 10000})
+        full_flags = pd.DataFrame({'sample': [], 'flag': [], 'priority': 10000})
         r_limited_flags = ['biomass', 'bloom']
         esd_diff_flags = ['bubbles', 'bloom']
         r_flag = flag(self.fits, operator.lt, 'R^2', r_sqr, 'Low R^2', 7, False)
-        if len(r_flag['file']) > 0:
+        if len(r_flag['sample']) > 0:
             full_flags = pd.concat([full_flags, r_flag], ignore_index=True)
 
         for key, value in kwargs.items():
@@ -451,10 +451,10 @@ class Bin:
                 value = -value
             [dataset, op, parameter, flag_name, priority] = flag_params[key]
             key_flag = flag(dataset, op, parameter, value, flag_name, priority, key in r_limited_flags)
-            if len(key_flag['file']) > 0:
+            if len(key_flag['sample']) > 0:
                 full_flags = pd.concat([full_flags, key_flag], ignore_index=True)
 
-        flags = full_flags.sort_values('priority').drop_duplicates(subset=['file']).sort_values(by=['file'])
+        flags = full_flags.sort_values('priority').drop_duplicates(subset=['sample']).sort_values(by=['sample'])
         flags = flags.drop('priority', axis=1)
 
         return flags.to_dict()

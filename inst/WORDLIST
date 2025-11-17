@@ -26,7 +26,6 @@ DTO
 DYYYYMMDD
 DYYYYMMDDTHHMMSS
 Dactyliosolen
-DataFrames
 Deprecations
 Deuer
 Dinobryon
@@ -293,6 +292,7 @@ summedMinorAxisLength
 summedPerimeter
 taxonomical
 tibble
+tibbles
 triestinum
 trophic
 ug
@@ -305,4 +305,5 @@ whoi
 xwidth
 xxxx
 ywidth
+µ
 Öresund

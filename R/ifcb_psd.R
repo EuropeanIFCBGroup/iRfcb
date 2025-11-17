@@ -6,7 +6,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' quality assurance and quality control.
 #'
 #' @details
-#' The PSD function originates from the `PSD` Python repository (Hayashi et al. in prep),
+#' The PSD function originates from the `PSD` Python repository (Hayashi et al. 2025),
 #' which can be found at \url{https://github.com/kudelalab/PSD}.
 #'
 #' Python must be installed to use this function. The required Python packages can be
@@ -53,16 +53,26 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   based on the sample's flag status. If TRUE (default), samples without flags are
 #'   saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
 #'   named after their flag(s). If FALSE, all plots are saved directly in `plot_folder`.
+#' @param ... Additional arguments passed to `ggsave()`.
+#'   These override the default width, height, dpi, and background color
+#'   when saving plots. For example, `width = 7, dpi = 300` can be supplied.
 #'
-#' @return A list containing data, fits, and flag DataFrames if `save_data = FALSE`;
-#'   otherwise returns `NULL`.
+#' @return A list containing three tibbles:
+#'   \describe{
+#'     \item{data}{A tibble with flattened PSD data for each sample.}
+#'     \item{fits}{A tibble containing curve fit parameters for each sample.}
+#'     \item{flags}{A tibble of flags for each sample, or NULL if no flags are found.}
+#'   }
+#' The `save_data` parameter only controls whether CSV files are written to disk; the
+#' function always returns this list.
 #'
 #' @seealso \code{\link{ifcb_py_install}},
 #'   \url{https://github.com/kudelalab/PSD},
 #'
 #' @references
-#' Hayashi, K., Walton, J., Lie, A., Smith, J., and Kudela, M. *Using particle size distribution
-#' (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA*. In prep.
+#' Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using particle size distribution (PSD)
+#' to automate imaging flow cytobot (IFCB) data quality in coastal California, USA.
+#' International Society for the Study of Harmful Algae. https://doi.org/10.15027/0002041270
 #'
 #' @examples
 #' \dontrun{
@@ -95,7 +105,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE, output_file = NULL, plot_folder = NULL,
                      use_marker = FALSE, start_fit = 10, r_sqr = 0.5, beads = NULL, bubbles = NULL, incomplete = NULL,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL, micron_factor = 1/3.4, fea_v = 2,
-                     use_plot_subfolders = TRUE) {
+                     use_plot_subfolders = TRUE, ...) {
 
   if (!reticulate::py_available(initialize = TRUE)) {
     stop("Python is not installed on this machine. Please install Python to use this function.")
@@ -166,7 +176,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
 
   if (nrow(as.data.frame(flags)) > 0) {
     # Convert to a data frame
-    files <- unlist(flags$file)
+    files <- as.character(unlist(flags$sample))
     flags <- unlist(flags$flag)
 
     # Combine into a data frame
@@ -190,11 +200,12 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
 
     for (sample in sample_names) {
 
-      # Find the potential flag
-      flag <- flags_df[grepl(sample, flags_df$sample),]
-
       # Specify plot subfolder
       if (use_plot_subfolders) {
+        # Find the potential flag
+        flag <- flags_df[grepl(sample, flags_df$sample),]
+
+
         if (nrow(flag) == 0) {
           sample_plot_folder <- file.path(plot_folder, "PSD.OK")
         } else {
@@ -212,14 +223,19 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
       # Plot the sample PSD
       p <- ifcb_psd_plot(sample, data_df, fits_df, start_fit, flags = flags_df)
 
+      # Default ggsave arguments
+      default_ggsave_args <- list(width = 5, height = 3.5, dpi = 90, bg = "white")
+
+      # Merge with user-supplied ... arguments (overrides defaults if provided)
+      ggsave_args <- modifyList(default_ggsave_args, list(...))
+
+
       # Save the plot
-      ggsave(filename = file.path(sample_plot_folder,
-                                  paste0(sample, ".png")),
-             plot = p,
-             bg = "white",
-             width = 5,
-             height = 3.5,
-             dpi = 90)
+      do.call(ggsave, c(
+        list(filename = file.path(sample_plot_folder, paste0(sample, ".png")),
+             plot = p),
+        ggsave_args
+      ))
 
       # Inform user
       cat("Saving plot ", sample, "\n", sep = "")
