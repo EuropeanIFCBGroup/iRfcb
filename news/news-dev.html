@@ -52,14 +52,23 @@
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>New functions for interacting with the IFCB Dashboard API: <code><a href="../reference/ifcb_download_dashboard_metadata.html">ifcb_download_dashboard_metadata()</a></code> and <code><a href="../reference/ifcb_list_dashboard_bins.html">ifcb_list_dashboard_bins()</a></code>.</li>
-<li>Added <code>diatom_include</code> parameter to <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).</li>
+<li>Added <code>diatom_include</code> parameter to <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification) (<a href="https://github.com/EuropeanIFCBGroup/iRfcb/issues/65" class="external-link">#65</a>).</li>
+<li>Added <code>bins</code> parameter to <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> for selecting which bins to process.</li>
+<li>Added <code>fea_v</code> parameter to <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> for selecting feature-file version.</li>
+<li>Added <code>use_plot_subfolders</code> parameter to <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> to optionally save plots in subdirectories of <code>plot_folder</code> based on flag status.</li>
+<li>Added <code>flags</code> parameter to <code><a href="../reference/ifcb_psd_plot.html">ifcb_psd_plot()</a></code> to optionally add the quality flag annotation to the plot.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h3>
 <ul><li>
-<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> now support both filename formats <code>_fea_v*.csv</code> and <code>_features_v*.csv</code>, increasing compatibility with legacy and new output formats. (<a href="https://github.com/EuropeanIFCBGroup/iRfcb/issues/61" class="external-link">#61</a>)</li>
+<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> now support both filename formats <code>_fea_v*.csv</code> and <code>_features_v*.csv</code>, increasing compatibility with legacy and new output formats (<a href="https://github.com/EuropeanIFCBGroup/iRfcb/issues/61" class="external-link">#61</a>).</li>
 <li>
 <code><a href="../reference/ifcb_read_features.html">ifcb_read_features()</a></code>, <code><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata()</a></code>, <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>, and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> now include an optional parameter to select specific feature file versions (e.g., <code>_v2</code>, <code>_v4</code>), allowing finer control over which feature data are read and processed.</li>
+<li>The <code>$data</code>, <code>$fits</code> and <code>$flags</code> data frames returned by <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> now use full bin names (<code>&lt;sample&gt;_&lt;ifcb&gt;</code>) as sample names, improving uniqueness and consistency with downstream workflows.</li>
+<li>The <code>$data</code> and <code>$fits</code> data frames returned by <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> now preserves the original column names, including names starting with numbers or containing special characters.</li>
+<li>Problematic character µ returned from <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> has been replaced by u in <code>$data</code> headers.</li>
+<li>Updated <code>$flags</code> headers in <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> to use <code>sample</code> instead of <code>file</code>, ensuring consistent naming across all outputs.</li>
+<li>Reduced the size and resolution of saved plots in <code><a href="../reference/ifcb_psd.html">ifcb_psd()</a></code> when <code>plot_folder</code> is specified, improving processing speed.</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

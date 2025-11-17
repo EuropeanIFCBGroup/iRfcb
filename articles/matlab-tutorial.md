@@ -315,6 +315,13 @@ function.
 
 ### Correct .mat Files After Checking Images in the App
 
+    ## Warning in system2(python, args, stdout = TRUE): running command
+    ## ''/home/runner/.cache/R/reticulate/uv/cache/archive-v0/tF1Plhd_keG0gHKilSEsu/bin/python'
+    ## -m pip freeze' had status 1
+
+    ## Warning: Required python modules are not available. Skipping the rest of the
+    ## vignette evaluation.
+
 After reviewing images in the gallery, correct the `.mat` files using
 the `correction` file with selected images:
 
@@ -381,16 +388,6 @@ mat_count <- ifcb_count_mat_annotations(
 head(mat_count)
 ```
 
-    ## # A tibble: 6 × 2
-    ##   class                                  n
-    ##   <chr>                              <int>
-    ## 1 Amphidnium-like                        1
-    ## 2 Chaetoceros_spp_chain                  6
-    ## 3 Chaetoceros_spp_single_cell            3
-    ## 4 Ciliophora                            23
-    ## 5 Cryptomonadales                      245
-    ## 6 Cylindrotheca_Nitzschia_longissima    47
-
 ### Annotate Images in Batch
 
 Images can be batch annotated using the
@@ -408,11 +405,7 @@ correction <- read.table(
 
 # Print image names to be annotated
 print(correction$image_filename)
-```
 
-    ## [1] "D20220712T210855_IFCB134_00164.png" "D20220712T222710_IFCB134_00044.png"
-
-``` r
 # Re-annotate the images that were moved to unclassified earlier in the tutorial
 ifcb_annotate_batch(
   png_images = correction$image_filename,
@@ -434,16 +427,6 @@ mat_count <- ifcb_count_mat_annotations(
 head(mat_count)
 ```
 
-    ## # A tibble: 6 × 2
-    ##   class                           n
-    ##   <chr>                       <int>
-    ## 1 Alexandrium_pseudogonyaulax     2
-    ## 2 Amphidnium-like                 1
-    ## 3 Chaetoceros_spp_chain           6
-    ## 4 Chaetoceros_spp_single_cell     3
-    ## 5 Ciliophora                     23
-    ## 6 Cryptomonadales               245
-
 This concludes this tutorial for the `iRfcb` package. For more detailed
 information, refer to the package documentation or the other
 [tutorials](https://europeanifcbgroup.github.io/iRfcb/articles/). See
@@ -452,22 +435,6 @@ how data pipelines can be constructed using `iRfcb` in the following
 Happy analyzing!
 
 ## Citation
-
-    ## To cite package 'iRfcb' in publications use:
-    ## 
-    ##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.5.2.
-    ##   https://CRAN.R-project.org/package=iRfcb
-    ## 
-    ## A BibTeX entry for LaTeX users is
-    ## 
-    ##   @Manual{,
-    ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
-    ##     author = {Anders Torstensson},
-    ##     year = {2025},
-    ##     note = {R package version 0.5.2},
-    ##     url = {https://CRAN.R-project.org/package=iRfcb},
-    ##   }
 
 ## References
 

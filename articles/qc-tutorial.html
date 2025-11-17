@@ -89,10 +89,10 @@
 <p>This vignette provides an overview of quality control (QC) methods
 for Imaging FlowCytobot (IFCB) data using the <code>iRfcb</code>
 package. The package offers tools to analyze Particle Size Distribution
-(PSD) following Hayashi et al. <em>in prep</em>, verify geographical
-positions, and integrate contextual data from sources like ferrybox
-systems. These QC workflows ensure high-quality datasets for
-phytoplankton and microzooplankton monitoring in marine ecosystems.</p>
+(PSD) following Hayashi et al. (2025), verify geographical positions,
+and integrate contextual data from sources like ferrybox systems. These
+QC workflows ensure high-quality datasets for phytoplankton and
+microzooplankton monitoring in marine ecosystems.</p>
 <p>You’ll learn how to:</p>
 <ul>
 <li>Set up the <code>iRfcb</code> package and <code>Python</code>
@@ -147,7 +147,7 @@ following function:</p>
 <h2 id="particle-size-distribution">Particle Size Distribution<a class="anchor" aria-label="anchor" href="#particle-size-distribution"></a>
 </h2>
 <p>IFCB data can be quality controlled by analyzing the particle size
-distribution (PSD) (Hayashi et al. in prep). <code>iRfcb</code> uses the
+distribution (PSD) (Hayashi et al. 2025). <code>iRfcb</code> uses the
 code available at <a href="https://github.com/kudelalab/PSD" class="external-link">https://github.com/kudelalab/PSD</a>,
 which is efficient in detecting samples with bubbles, beads, incomplete
 runs etc. Before running the PSD quality check, ensure the necessary
@@ -182,7 +182,7 @@ Python environment is set up and activated:</p>
 <code class="sourceCode R"><span><span class="co"># Print output from PSD</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">fits</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 8</span></span></span>
-<span><span class="co">##   sample            a     k   R.2 max_ESD_diff capture_percent bead_run humidity</span></span>
+<span><span class="co">##   sample            a     k `R^2` max_ESD_diff capture_percent bead_run humidity</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230314T… 5.90<span style="color: #949494;">e</span> 5 -<span style="color: #BB0000;">1.88</span> 0.713            3           0.955 FALSE        16.0</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230314T… 2.51<span style="color: #949494;">e</span> 5 -<span style="color: #BB0000;">1.60</span> 0.702            3           0.944 FALSE        16.0</span></span>
@@ -192,10 +192,10 @@ Python environment is set up and activated:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">flags</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
-<span><span class="co">##   sample           flag         </span></span>
-<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230915T091133 High Humidity</span></span>
-<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230915T093804 High Humidity</span></span></code></pre>
+<span><span class="co">##   sample                   flag         </span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230915T091133_IFCB134 High Humidity</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230915T093804_IFCB134 High Humidity</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot PSD of the first sample</span></span>
 <span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_psd_plot.html">ifcb_psd_plot</a></span><span class="op">(</span></span>
@@ -412,9 +412,11 @@ Project</a>. Happy analyzing!</p>
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ul>
-<li>Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using
-particle size distribution (PSD) to automate imaging flow cytobot (IFCB)
-data quality in coastal California, USA. In prep.</li>
+<li>Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025.
+Using particle size distribution (PSD) to automate imaging flow cytobot
+(IFCB) data quality in coastal California, USA. International Society
+for the Study of Harmful Algae. <a href="https://doi.org/10.15027/0002041270" class="external-link uri">https://doi.org/10.15027/0002041270</a>
+</li>
 <li>Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and
 Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library.
 SciLifeLab. Dataset. <a href="https://doi.org/10.17044/scilifelab.25883455.v3" class="external-link uri">https://doi.org/10.17044/scilifelab.25883455.v3</a>

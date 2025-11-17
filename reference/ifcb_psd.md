@@ -10,6 +10,7 @@ files, which can be used for data quality assurance and quality control.
 ifcb_psd(
   feature_folder,
   hdr_folder,
+  bins = NULL,
   save_data = FALSE,
   output_file = NULL,
   plot_folder = NULL,
@@ -23,7 +24,10 @@ ifcb_psd(
   biomass = NULL,
   bloom = NULL,
   humidity = NULL,
-  micron_factor = 1/3.4
+  micron_factor = 1/3.4,
+  fea_v = 2,
+  use_plot_subfolders = TRUE,
+  ...
 )
 ```
 
@@ -31,13 +35,20 @@ ifcb_psd(
 
 - feature_folder:
 
-  The absolute path to a directory containing all of the v2 feature
-  files for the dataset.
+  The absolute path to a directory containing all of the feature files
+  for the dataset (version can be defined in `fea_v`).
 
 - hdr_folder:
 
   The absolute path to a directory containing all of the hdr files for
   the dataset.
+
+- bins:
+
+  An optional character vector of bin names (e.g.,
+  `"D20251021T133007_IFCB134"`) to restrict processing to a specified
+  subset of bins. If `NULL` (default), all bins present in
+  `feature_folder` are processed.
 
 - save_data:
 
@@ -46,13 +57,14 @@ ifcb_psd(
 
 - output_file:
 
-  A string with the base file name for the .csv to use (including path).
-  Set to NULL to not save data (default).
+  A string with the base file name for the .csv output (including path).
+  Set to NULL to avoid saving data (default).
 
 - plot_folder:
 
-  The folder where graph images for each file will be saved. Set to NULL
-  to not save graphs (default).
+  The folder where graph images for each sample will be saved. If `NULL`
+  (default), plots are not saved. If `use_plot_subfolders = TRUE`, plots
+  are organized into subfolders based on their flag status.
 
 - use_marker:
 
@@ -72,90 +84,118 @@ ifcb_psd(
 
   The maximum multiplier for the curve fit. Any files with higher curve
   fit multipliers will be flagged as bead runs. If this argument is
-  included, files with "runBeads" marked as TRUE in the header file will
-  also be flagged as a bead run. Optional.
+  included, files with `"runBeads"` marked as TRUE in the header file
+  will also be flagged. Optional.
 
 - bubbles:
 
   The minimum difference between the starting ESD and the ESD with the
-  most targets. Any files with a difference higher than this threshold
-  will be flagged as mostly bubbles. Optional.
+  most targets. Files with a difference higher than this threshold will
+  be flagged as mostly bubbles. Optional.
 
 - incomplete:
 
-  A tuple with the minimum volume of cells (in c/L) and the minimum mL
-  analyzed for a complete run. Any files with values below these
-  thresholds will be flagged as incomplete. Optional.
+  A numeric vector of length 2 giving the minimum volume of cells (in
+  c/L) and the minimum mL analyzed for a complete run. Files with values
+  below these thresholds will be flagged as incomplete. Optional.
 
 - missing_cells:
 
-  The minimum image count to trigger count ratio. Any files with lower
-  ratios will be flagged as missing cells. Optional.
+  The minimum image count ratio threshold. Files with ratios below this
+  value will be flagged as missing cells. Optional.
 
 - biomass:
 
   The minimum number of targets in the most populated ESD bin for any
-  given run. Any files with fewer targets will be flagged as having low
-  biomass. Optional.
+  given run. Files with fewer targets will be flagged as low biomass.
+  Optional.
 
 - bloom:
 
   The minimum difference between the starting ESD and the ESD with the
-  most targets. Any files with a difference less than this threshold
-  will be flagged as a bloom. Will likely be lower than the bubbles
-  threshold. Optional.
+  most targets. Files with a difference less than this threshold will be
+  flagged as bloom events. This threshold is usually lower than the
+  bubbles threshold. Optional.
 
 - humidity:
 
-  The maximum percent humidity. Any files with higher values will be
-  flagged as high humidity. Optional.
+  The maximum percent humidity. Files with higher values will be flagged
+  as high humidity. Optional.
 
 - micron_factor:
 
   The conversion factor to microns. Default is 1/3.4.
 
+- fea_v:
+
+  The version number of the IFCB feature file (e.g., 2, 4). Default is
+  2, as described in Hayashi et al. 2025. **\[experimental\]**
+
+- use_plot_subfolders:
+
+  A boolean indicating whether to save plots in subfolders based on the
+  sample's flag status. If TRUE (default), samples without flags are
+  saved in a "PSD.OK" subfolder, and samples with flags are saved in
+  subfolders named after their flag(s). If FALSE, all plots are saved
+  directly in `plot_folder`.
+
+- ...:
+
+  Additional arguments passed to `ggsave()`. These override the default
+  width, height, dpi, and background color when saving plots. For
+  example, `width = 7, dpi = 300` can be supplied.
+
 ## Value
 
-A list with data, fits, and flags DataFrames if `save_data` is FALSE;
-otherwise, NULL.
+A list containing three tibbles:
+
+- data:
+
+  A tibble with flattened PSD data for each sample.
+
+- fits:
+
+  A tibble containing curve fit parameters for each sample.
+
+- flags:
+
+  A tibble of flags for each sample, or NULL if no flags are found.
+
+The `save_data` parameter only controls whether CSV files are written to
+disk; the function always returns this list.
 
 ## Details
 
-The PSD function originates from the `PSD` python repository (Hayashi et
-al. in prep), which can be found at <https://github.com/kudelalab/PSD>.
+The PSD function originates from the `PSD` Python repository (Hayashi et
+al. 2025), which can be found at <https://github.com/kudelalab/PSD>.
 
-Python must be installed to use this function. The required python
+Python must be installed to use this function. The required Python
 packages can be installed in a virtual environment using
 [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
 
-The function requires v2 features generated by the `ifcb-analysis`
-MATLAB package (Sosik and Olson 2007) found at
-<https://github.com/hsosik/ifcb-analysis>.
-
 ## References
 
-Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle
-size distribution (PSD) to automate imaging flow cytobot (IFCB) data
-quality in coastal California, USA. In prep. Sosik, H. M. and Olson, R.
-J. (2007), Automated taxonomic classification of phytoplankton sampled
-with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using
+particle size distribution (PSD) to automate imaging flow cytobot (IFCB)
+data quality in coastal California, USA. International Society for the
+Study of Harmful Algae. https://doi.org/10.15027/0002041270
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
-<https://github.com/kudelalab/PSD>
-<https://github.com/hsosik/ifcb-analysis>
+[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md),
+<https://github.com/kudelalab/PSD>,
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize the python session if not already set up
+# Initialize the Python session if not already set up
 ifcb_py_install()
 
 ifcb_psd(
   feature_folder = 'path/to/features',
   hdr_folder = 'path/to/hdr_data',
+  bins = c("D20211021T133007_IFCB134", "D20211021T140753_IFCB134"),
   save_data = TRUE,
   output_file = 'psd/svea_2021',
   plot_folder = 'psd/plots',
@@ -169,7 +209,8 @@ ifcb_psd(
   biomass = 1000,
   bloom = 5,
   humidity = NULL,
-  micron_factor = 1/3.0
+  micron_factor = 1/2.77,
+  fea_v = 2
 )
 } # }
 ```
