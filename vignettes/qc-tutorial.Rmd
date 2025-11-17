@@ -10,7 +10,7 @@ vignette: >
 
 ## Introduction
 
-This vignette provides an overview of quality control (QC) methods for Imaging FlowCytobot (IFCB) data using the `iRfcb` package. The package offers tools to analyze Particle Size Distribution (PSD) following Hayashi et al. *in prep*, verify geographical positions, and integrate contextual data from sources like ferrybox systems. These QC workflows ensure high-quality datasets for phytoplankton and microzooplankton monitoring in marine ecosystems.
+This vignette provides an overview of quality control (QC) methods for Imaging FlowCytobot (IFCB) data using the `iRfcb` package. The package offers tools to analyze Particle Size Distribution (PSD) following Hayashi et al. (2025), verify geographical positions, and integrate contextual data from sources like ferrybox systems. These QC workflows ensure high-quality datasets for phytoplankton and microzooplankton monitoring in marine ecosystems.
 
 You'll learn how to:
 
@@ -107,7 +107,7 @@ if (!dir.exists(data_dir)) {
 
 ## Particle Size Distribution
 
-IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. in prep). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD), which is efficient in detecting samples with bubbles, beads, incomplete runs etc. Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
+IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. 2025). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD), which is efficient in detecting samples with bubbles, beads, incomplete runs etc. Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
 
 ```{r, eval=FALSE}
 # Define path to virtual environment
@@ -153,7 +153,8 @@ psd <- ifcb_psd(
   missing_cells = 0.7,
   biomass = 1000,
   bloom = 5,
-  humidity = 70
+  humidity = 70,
+  fea_v = 2, # Use v2 features
 )
 ```
 
@@ -303,5 +304,5 @@ citation("iRfcb")
 ```
 
 ## References
-- Hayashi, K., Walton, J., Lie, A., Smith, J. and Kudela M. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. In prep.
+- Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using particle size distribution (PSD) to automate imaging flow cytobot (IFCB) data quality in coastal California, USA. International Society for the Study of Harmful Algae. https://doi.org/10.15027/0002041270
 - Torstensson, A., Skjevik, A-T., Mohlin, M., Karlberg, M. and Karlson, B. (2024). SMHI IFCB Plankton Image Reference Library. SciLifeLab. Dataset. https://doi.org/10.17044/scilifelab.25883455.v3

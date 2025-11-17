@@ -9,7 +9,7 @@
 #'   ungroup %>% as_tibble tibble all_of contains row_number
 #' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text
 #'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
-#'   annotate coord_sf
+#'   annotate coord_sf margin coord_cartesian
 #' @importFrom png writePNG
 #' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
@@ -25,11 +25,11 @@
 #'   st_union st_within st_wrap_dateline st_buffer
 #' @importFrom stats aggregate median na.omit setNames
 #' @importFrom stringr str_extract str_remove str_remove_all str_replace
-#'   str_replace_all word str_match
+#'   str_replace_all word str_match str_wrap
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
 #' @importFrom utils flush.console read.csv read.table setTxtProgressBar txtProgressBar
-#'   write.table
+#'   write.table modifyList
 #' @importFrom worrms wm_records_names
 #' @importFrom zip unzip zip zipr
 ## usethis namespace: end

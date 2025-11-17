@@ -53,7 +53,7 @@ class Target:
 
 class Sample:
 
-    def __init__(self, name, feature_dir, roi_dir, overall_bin, ifcb, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor
+    def __init__(self, name, feature_dir, roi_dir, overall_bin, ifcb, fea_v=2, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor and feature file version
         self.name = name
         self.ifcb = ifcb
         self.micron_factor = micron_factor # Modified from the original by kudelalabs to parameterize micron_factor
@@ -75,7 +75,7 @@ class Sample:
 
         print(f'Processing {name}')
 
-        self.features = pd.read_csv(f'{feature_dir}/{name}_{ifcb}_fea_v2.csv')
+        self.features = pd.read_csv(f'{feature_dir}/{name}_{ifcb}_fea_v{fea_v}.csv')
         self.metadata = self.read_metadata(roi_dir, name)
         self.targets = [Target(self, i, self.features, self.micron_factor) for i in range(len(self.features.Biovolume))]
         self.mL_analyzed = self.get_volume()
@@ -255,10 +255,20 @@ class Sample:
 
 
 class Bin:
-    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4): # Modified from the original by kudelalabs to parameterize micron_factor
+    def __init__(self, feature_dir, hdr_dir, samples_path=None, micron_factor=1/3.4, fea_v=2, bins=None): # Modified from the original by kudelalabs to parameterize micron_factor and feature file version
         fileConvention = r'D\d\d\d\d\d\d\d\dT\d\d\d\d\d\d'
         regex = re.compile(fileConvention)
         files = [(f.split('_')[0], f.split('_')[1]) for f in os.listdir(feature_dir) if regex.search(f)]
+        
+        if bins is not None:
+            # bins is a list like ["D20251021T133007_IFCB134", "D20251021T140753_IFCB134"]
+            bins = set(bins)
+
+            # sample name is f[0] + "_" + f[1] without suffix
+            files = [
+                f for f in files
+                if f"{f[0]}_{f[1]}" in bins
+            ]
         
         self.micron_factor = micron_factor # Modified from the original by kudelalabs to parameterize micron_factor
 
@@ -266,25 +276,57 @@ class Bin:
         if self.samples_loaded:
             sample_file = open(samples_path, 'rb')
             samples = json.load(sample_file)["samples"]
-            self.samples = [json.loads(json.dumps(s), object_hook=lambda d: Sample(**d, micron_factor=self.micron_factor)) for s in samples]
+            self.samples = [
+              json.loads(json.dumps(s),
+              object_hook=lambda d: Sample(**d, micron_factor=self.micron_factor, fea_v=fea_v))
+              for s in samples
+              ]
         else:
-            self.samples = [Sample(f[0], feature_dir, hdr_dir, self, f[1], micron_factor=self.micron_factor) for f in files]
+            self.samples = [
+                Sample(f[0], feature_dir, hdr_dir, self, f[1],
+                       fea_v=fea_v, micron_factor=self.micron_factor)
+                for f in files
+            ]
 
-        self.file_names = [s.name for s in self.samples]
-        self.data = pd.DataFrame(columns=['mL_analyzed', 'max'] + [f'{i}μm' for i in range(0, 200)], index=self.file_names)
+        # Modified from the original by kudelalabs to return full bin names
+        # Construct file_names as combined unique IDs used as DataFrame indices
+        # Guard against double-suffix if name already ends with _IFCBxxx
+        self.file_names = [
+            s.name if s.name.endswith(f"_{s.ifcb}") else f"{s.name}_{s.ifcb}"
+            for s in self.samples
+        ]
+
+        # build dataframes indexed by the combined unique IDs
+        self.data = pd.DataFrame(columns=['mL_analyzed', 'max'] + [f'{i}um' for i in range(0, 200)], index=self.file_names)
         self.fits = pd.DataFrame(columns=['a', 'k', 'R^2', 'max_ESD_diff', 'capture_percent', 'bead_run', 'humidity'],
                                  index=self.file_names)
 
+    # Modified from the original by kudelalabs to return full bin names
+    # helper to map short name (or already-full name) -> full combined id
+    def _full_file_name(self, file):
+        # if already contains an underscore part, assume it's full and return as-is
+        if '_' in file:
+            return file
+        # otherwise find matching sample and return combined id
+        for s in self.samples:
+            if s.name == file:
+                return s.name if s.name.endswith(f"_{s.ifcb}") else f"{s.name}_{s.ifcb}"
+        # fallback: return original (will raise KeyError if not present when used)
+        return file
+
     def add_data(self, file, datenum, data, mL_analyzed, maximum):
-        formatted_data = {f'{i}μm': data[i] for i in range(0, 200)}
+        formatted_data = {f'{i}um': data[i] for i in range(0, 200)}
         formatted_data['mL_analyzed'] = mL_analyzed
         formatted_data['max'] = maximum
         formatted_data['datenum'] = datenum
-        self.data.loc[file] = pd.Series(formatted_data)
+
+        full = self._full_file_name(file) # Modified from the original by kudelalabs to return full bin names
+        self.data.loc[full] = pd.Series(formatted_data) # Modified from the original by kudelalabs to return full bin names
 
     def add_fit(self, file, a, k, r_sqr, max_diff, capture_percent, bead_run, humidity):
-        self.fits.loc[file] = pd.Series({'a': a, 'k': k, 'R^2': r_sqr, 'max_ESD_diff': max_diff,
-                                         'capture_percent': capture_percent, 'bead_run': bead_run, 'humidity': humidity})
+        full = self._full_file_name(file) # Modified from the original by kudelalabs to return full bin names
+        self.fits.loc[full] = pd.Series({'a': a, 'k': k, 'R^2': r_sqr, 'max_ESD_diff': max_diff,
+                                         'capture_percent': capture_percent, 'bead_run': bead_run, 'humidity': humidity}) # Modified from the original by kudelalabs to return full bin names
 
     def pick_start(self):
         files = self.file_names[:]
@@ -321,12 +363,12 @@ class Bin:
                     files = files[op[i](files[parameter[i]], threshold[i])]
 
             if flag_name == 'Beads':
-                calculated_df = pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+                calculated_df = pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
                 bead_runs = self.fits[self.fits['bead_run']]
-                set_df = pd.DataFrame({'file': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
-                return pd.concat([calculated_df, set_df]).drop_duplicates('file')
+                set_df = pd.DataFrame({'sample': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
+                return pd.concat([calculated_df, set_df]).drop_duplicates('sample')
 
-            return pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+            return pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
 
         flag_params = {
             'beads': (self.fits, operator.gt, 'a', 'Beads', 1),
@@ -338,11 +380,11 @@ class Bin:
             'humidity': (self.fits, operator.gt, 'humidity', 'High Humidity', 7)
         }
 
-        full_flags = pd.DataFrame({'file': [], 'flag': [], 'priority': 10000})
+        full_flags = pd.DataFrame({'sample': [], 'flag': [], 'priority': 10000})
         r_limited_flags = ['biomass', 'bloom']
         esd_diff_flags = ['bubbles', 'bloom']
         r_flag = flag(self.fits, operator.lt, 'R^2', r_sqr, 'Low R^2', 7, False)
-        if len(r_flag['file']) > 0:
+        if len(r_flag['sample']) > 0:
             full_flags = pd.concat([full_flags, r_flag], ignore_index=True)
 
         for key, value in kwargs.items():
@@ -350,10 +392,10 @@ class Bin:
                 value = -value
             [dataset, op, parameter, flag_name, priority] = flag_params[key]
             key_flag = flag(dataset, op, parameter, value, flag_name, priority, key in r_limited_flags)
-            if len(key_flag['file']) > 0:
+            if len(key_flag['sample']) > 0:
                 full_flags = pd.concat([full_flags, key_flag], ignore_index=True)
 
-        flags = full_flags.sort_values('priority').drop_duplicates(subset=['file']).sort_values(by=['file'])
+        flags = full_flags.sort_values('priority').drop_duplicates(subset=['sample']).sort_values(by=['sample'])
         flags = flags.drop('priority', axis=1)
 
         self.data.to_csv(f'{name}_data.csv')
@@ -380,12 +422,12 @@ class Bin:
                     files = files[op[i](files[parameter[i]], threshold[i])]
 
             if flag_name == 'Beads':
-                calculated_df = pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+                calculated_df = pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
                 bead_runs = self.fits[self.fits['bead_run']]
-                set_df = pd.DataFrame({'file': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
-                return pd.concat([calculated_df, set_df]).drop_duplicates('file')
+                set_df = pd.DataFrame({'sample': list(bead_runs.index), 'flag': [flag_name] * len(bead_runs), 'priority': priority})
+                return pd.concat([calculated_df, set_df]).drop_duplicates('sample')
 
-            return pd.DataFrame({'file': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
+            return pd.DataFrame({'sample': list(files.index), 'flag': [flag_name] * len(files), 'priority': priority})
 
         flag_params = {
             'beads': (self.fits, operator.gt, 'a', 'Beads', 1),
@@ -397,11 +439,11 @@ class Bin:
             'humidity': (self.fits, operator.gt, 'humidity', 'High Humidity', 7)
         }
 
-        full_flags = pd.DataFrame({'file': [], 'flag': [], 'priority': 10000})
+        full_flags = pd.DataFrame({'sample': [], 'flag': [], 'priority': 10000})
         r_limited_flags = ['biomass', 'bloom']
         esd_diff_flags = ['bubbles', 'bloom']
         r_flag = flag(self.fits, operator.lt, 'R^2', r_sqr, 'Low R^2', 7, False)
-        if len(r_flag['file']) > 0:
+        if len(r_flag['sample']) > 0:
             full_flags = pd.concat([full_flags, r_flag], ignore_index=True)
 
         for key, value in kwargs.items():
@@ -409,10 +451,10 @@ class Bin:
                 value = -value
             [dataset, op, parameter, flag_name, priority] = flag_params[key]
             key_flag = flag(dataset, op, parameter, value, flag_name, priority, key in r_limited_flags)
-            if len(key_flag['file']) > 0:
+            if len(key_flag['sample']) > 0:
                 full_flags = pd.concat([full_flags, key_flag], ignore_index=True)
 
-        flags = full_flags.sort_values('priority').drop_duplicates(subset=['file']).sort_values(by=['file'])
+        flags = full_flags.sort_values('priority').drop_duplicates(subset=['sample']).sort_values(by=['sample'])
         flags = flags.drop('priority', axis=1)
 
         return flags.to_dict()

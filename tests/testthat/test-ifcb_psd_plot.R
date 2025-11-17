@@ -5,7 +5,8 @@ sample_data <- data.frame(
   X2 = c(NA, NA),
   X3 = c(NA, NA),
   X4 = c(1, 2),
-  X5 = c(3, 4)
+  X5 = c(3, 4),
+  check.names = FALSE
 )
 colnames(sample_data)[4:5] <- c("1", "2")  # Simulate particle sizes in micrometers
 
@@ -13,7 +14,13 @@ fit_params <- data.frame(
   sample = "D20230316T101514",
   a = 0.5,
   k = 2,
-  R.2 = 0.95
+  `R^2` = 0.95,
+  check.names = FALSE
+)
+
+flags <- data.frame(
+  sample = "D20230316T101514",
+  flag = "Incomplete Run"
 )
 
 test_that("ifcb_psd_plot generates a plot for a given sample", {
@@ -39,7 +46,8 @@ test_that("ifcb_psd_plot handles missing fit parameters", {
     sample = "D20230316T101514",
     a = NA,
     k = NA,
-    R.2 = NA
+    `R^2` = NA,
+    check.names = FALSE
   )
   plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
                         data = sample_data,
@@ -77,4 +85,14 @@ test_that("ifcb_psd_plot handles start_fit argument correctly", {
                         start_fit = 2)
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
   expect_true(all(plot_data$x >= 2))  # Check that x values below start_fit are excluded
+})
+
+test_that("ifcb_psd_plot adds the quality flag if provided", {
+  plot <- ifcb_psd_plot(sample_name = "D20230316T101514",
+                        data = sample_data,
+                        fits = fit_params,
+                        start_fit = 1,
+                        flags = flags)
+  expect_s3_class(plot, "gg")  # Check if the output is a ggplot object
+  expect_equal("Flag: Incomplete Run", ggplot2::ggplot_build(plot)$data[[4]]$label)
 })

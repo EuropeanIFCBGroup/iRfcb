@@ -1,16 +1,28 @@
 # iRfcb (development version)
 
 ## New features
+
 * New functions for interacting with the IFCB Dashboard API: `ifcb_download_dashboard_metadata()` and `ifcb_list_dashboard_bins()`.
-* Added `diatom_include` parameter to `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).
+* Added `diatom_include` parameter to `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification) (#65).
+* Added `bins` parameter to `ifcb_psd()` for selecting which bins to process.
+* Added `fea_v` parameter to `ifcb_psd()` for selecting feature-file version.
+* Added `use_plot_subfolders` parameter to `ifcb_psd()` to optionally save plots in subdirectories of `plot_folder` based on flag status.
+* Added `flags` parameter to `ifcb_psd_plot()` to optionally add the quality flag annotation to the plot.
 
 ## Minor improvements and fixes
-* `ifcb_extract_biovolumes()` now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats. (#61)
+
+* `ifcb_extract_biovolumes()` now support both filename formats `_fea_v*.csv` and `_features_v*.csv`, increasing compatibility with legacy and new output formats (#61).
 * `ifcb_read_features()`, `ifcb_summarize_png_metadata()`, `ifcb_summarize_biovolumes()`, and `ifcb_extract_biovolumes()` now include an optional parameter to select specific feature file versions (e.g., `_v2`, `_v4`), allowing finer control over which feature data are read and processed.
+* The `$data`, `$fits` and `$flags` data frames returned by `ifcb_psd()` now use full bin names (`<sample>_<ifcb>`) as sample names, improving uniqueness and consistency with downstream workflows.
+* The `$data` and `$fits` data frames returned by `ifcb_psd()` now preserves the original column names, including names starting with numbers or containing special characters.
+* Problematic character µ returned from `ifcb_psd()` has been replaced by u in `$data` headers.
+* Updated `$flags` headers in `ifcb_psd()` to use `sample` instead of `file`, ensuring consistent naming across all outputs.
+* Reduced the size and resolution of saved plots in `ifcb_psd()` when `plot_folder` is specified, improving processing speed.
 
 # iRfcb 0.5.2
 
 ## Minor improvements and fixes
+
 * `ifcb_download_test_data()` gains checksum validation, `keep_zip` option, and improved retry logic.
 * `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` gain a `drop_zero_volume` option to exclude artifacts with zero biovolume
 * `ifcb_read_features()` and `ifcb_extract_biovolumes()` now handles single `feature_files` correctly.
