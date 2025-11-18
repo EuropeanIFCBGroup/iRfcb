@@ -376,14 +376,9 @@ to correct <code>.mat</code> annotations below using the
 <div class="section level3">
 <h3 id="correct--mat-files-after-checking-images-in-the-app">Correct .mat Files After Checking Images in the App<a class="anchor" aria-label="anchor" href="#correct--mat-files-after-checking-images-in-the-app"></a>
 </h3>
-<pre><code><span><span class="co">## Warning in system2(python, args, stdout = TRUE): running command</span></span>
-<span><span class="co">## ''/home/runner/.cache/R/reticulate/uv/cache/archive-v0/C2yQNpBhCJlJ-0KFCXoLJ/bin/python'</span></span>
-<span><span class="co">## -m pip freeze' had status 1</span></span></code></pre>
-<pre><code><span><span class="co">## Warning: Required python modules are not available. Skipping the rest of the</span></span>
-<span><span class="co">## vignette evaluation.</span></span></code></pre>
 <p>After reviewing images in the gallery, correct the <code>.mat</code>
 files using the <code>correction</code> file with selected images:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get class2use</span></span>
 <span><span class="va">class_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_names.html">ifcb_get_mat_names</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span>, variable_name <span class="op">=</span> <span class="va">class_name</span><span class="op">)</span></span>
@@ -408,7 +403,7 @@ files using the <code>correction</code> file with selected images:</p>
 </h3>
 <p>Replace all instances of a specific class with
 <strong>unclassified</strong> (class id 1):</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get class2use</span></span>
 <span><span class="va">class_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_names.html">ifcb_get_mat_names</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span>, variable_name <span class="op">=</span> <span class="va">class_name</span><span class="op">)</span></span>
@@ -431,7 +426,7 @@ files using the <code>correction</code> file with selected images:</p>
 <h3 id="verify-correction">Verify Correction<a class="anchor" aria-label="anchor" href="#verify-correction"></a>
 </h3>
 <p>Verify that the corrections have been applied:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize new counts after correction</span></span>
 <span><span class="va">mat_count</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_count_mat_annotations.html">ifcb_count_mat_annotations</a></span><span class="op">(</span></span>
 <span>  manual_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -442,6 +437,15 @@ files using the <code>correction</code> file with selected images:</p>
 <span></span>
 <span><span class="co"># Print output</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<span><span class="co">##   class                                  n</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Amphidnium-like                        1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Chaetoceros_spp_chain                  6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_single_cell            3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Ciliophora                            23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Cryptomonadales                      245</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cylindrotheca_Nitzschia_longissima    47</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="annotate-images-in-batch">Annotate Images in Batch<a class="anchor" aria-label="anchor" href="#annotate-images-in-batch"></a>
@@ -451,7 +455,7 @@ files using the <code>correction</code> file with selected images:</p>
 exists for the sample, the ROI class list will be updated accordingly.
 If no file is found, a new <code>.mat</code> file will be created, with
 all unannotated ROIs marked as unclassified.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a file with selected images, generated by the image gallery app</span></span>
 <span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
@@ -459,9 +463,10 @@ all unannotated ROIs marked as unclassified.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Print image names to be annotated</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Re-annotate the images that were moved to unclassified earlier in the tutorial</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "D20220712T210855_IFCB134_00164.png" "D20220712T222710_IFCB134_00044.png"</span></span></code></pre>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Re-annotate the images that were moved to unclassified earlier in the tutorial</span></span>
 <span><span class="fu"><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch</a></span><span class="op">(</span></span>
 <span>  png_images <span class="op">=</span> <span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span>,</span>
 <span>  class <span class="op">=</span> <span class="st">"Alexandrium_pseudogonyaulax"</span>,</span>
@@ -480,6 +485,15 @@ all unannotated ROIs marked as unclassified.</p>
 <span></span>
 <span><span class="co"># Print output and check if Alexandrium pseudogonyaulax is back</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mat_count</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 2</span></span></span>
+<span><span class="co">##   class                           n</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Alexandrium_pseudogonyaulax     2</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Amphidnium-like                 1</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> Chaetoceros_spp_chain           6</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> Chaetoceros_spp_single_cell     3</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> Ciliophora                     23</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span> Cryptomonadales               245</span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
 other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
@@ -491,6 +505,21 @@ Project</a>. Happy analyzing!</p>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
+<pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.5.2.</span></span>
+<span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##   @Manual{,</span></span>
+<span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
+<span><span class="co">##     author = {Anders Torstensson},</span></span>
+<span><span class="co">##     year = {2025},</span></span>
+<span><span class="co">##     note = {R package version 0.5.2},</span></span>
+<span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
+<span><span class="co">##   }</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
