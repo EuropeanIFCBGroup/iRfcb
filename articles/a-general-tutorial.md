@@ -437,7 +437,7 @@ Happy analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.5.2.
+    ##   FlowCytobot (IFCB) Data. R package version 0.6.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -446,7 +446,7 @@ Happy analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2025},
-    ##     note = {R package version 0.5.2},
+    ##     note = {R package version 0.6.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

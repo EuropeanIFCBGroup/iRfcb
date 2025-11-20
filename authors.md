@@ -31,13 +31,13 @@ Source:
 [`inst/CITATION`](https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/inst/CITATION)
 
 Anders Torstensson (2025). iRfcb: Tools for Managing Imaging FlowCytobot
-(IFCB) Data. R package version 0.5.2.
+(IFCB) Data. R package version 0.6.0.
 https://CRAN.R-project.org/package=iRfcb
 
     @Manual{,
       title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
       author = {Anders Torstensson},
       year = {2025},
-      note = {R package version 0.5.2},
+      note = {R package version 0.6.0},
       url = {https://CRAN.R-project.org/package=iRfcb},
     }
