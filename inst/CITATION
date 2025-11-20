@@ -5,7 +5,7 @@ bibentry(
                   email = "anders.torstensson@smhi.se", role = "aut",
                   comment = c(ORCID = "0000-0002-8283-656X")),
   year = "2025",
-  note = "R package version 0.5.2",
+  note = "R package version 0.6.0",
   url = "https://CRAN.R-project.org/package=iRfcb",
-  textVersion = paste("Anders Torstensson (2025). iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data. R package version 0.5.2. https://CRAN.R-project.org/package=iRfcb")
+  textVersion = paste("Anders Torstensson (2025). iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data. R package version 0.6.0. https://CRAN.R-project.org/package=iRfcb")
 )
