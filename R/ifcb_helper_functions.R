@@ -315,54 +315,6 @@ vol2C_nondiatom <- function(volume) {
   carbon
 }
 
-#' Handle Missing Ferrybox Data
-#'
-#' This function processes a dataset by filling in missing values for specific parameters using data from a Ferrybox dataset. It rounds the timestamp to a specified unit, joins the Ferrybox data based on the rounded timestamp, and fills in missing values using the corresponding Ferrybox data.
-#'
-#' @param data A data frame containing the main dataset with a `timestamp` column and several parameter columns that might have missing data.
-#' @param ferrybox_data A data frame containing the Ferrybox dataset. This dataset should have a `timestamp` column and columns corresponding to the parameters specified.
-#' @param parameters A character vector of column names (parameters) in `data` that should be checked for missing values and potentially filled using the Ferrybox data.
-#' @param rounding_function A function that rounds the `timestamp` to a specified unit (e.g., minute). This function should take a `timestamp` column and a `unit` argument.
-#'
-#' @return A data frame similar to `data`, but with missing values in the specified parameters filled in using the Ferrybox data. The output includes only the `timestamp` and the specified parameter columns.
-#'
-#' @details
-#' The function performs the following steps:
-#' \itemize{
-#'   \item Renames the columns in the `ferrybox_data` by appending `_ferrybox` to the names of the specified parameters.
-#'   \item Filters the `data` for rows with missing values in any of the specified parameters.
-#'   \item Rounds the `timestamp` to the nearest specified unit using the `rounding_function`.
-#'   \item Joins the `ferrybox_data` to the main `data` based on the rounded `timestamp`.
-#'   \item Uses the `coalesce` function to fill in missing values in the specified parameters with the corresponding values from the Ferrybox data.
-#'   \item Returns a cleaned dataset containing only the `timestamp` and the specified parameter columns.
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' # Assuming you have a data frame `data` with missing values, a Ferrybox data frame `ferrybox_data`,
-#' # and a rounding function `round_timestamp`.
-#' filled_data <- handle_missing_ferrybox_data(data,
-#'                                             ferrybox_data,
-#'                                             c("8002", "8003", "8172"),
-#'                                             round_timestamp)
-#' }
-#' @noRd
-handle_missing_ferrybox_data <- function(data, ferrybox_data, parameters, rounding_function) {
-  # Ensure that the columns from ferrybox_data are present and rename them
-  ferrybox_data <- ferrybox_data %>%
-    dplyr::rename_with(~ paste0(.x, "_ferrybox"), all_of(parameters))
-
-  # Filter rows with missing data for any of the parameters
-  missing_data <- data %>%
-    filter(if_any(all_of(parameters), is.na)) %>%
-    mutate(timestamp_minute = rounding_function(timestamp, unit = "minute")) %>%
-    left_join(ferrybox_data, by = "timestamp_minute") %>%
-    # Use coalesce to fill missing parameter values
-    mutate(across(all_of(parameters), ~ coalesce(.x, get(paste0(cur_column(), "_ferrybox"))))) %>%
-    select(timestamp, all_of(parameters))
-
-  missing_data
-}
 #' Retrieve WoRMS Records with Retry Mechanism
 #'
 #' @description
