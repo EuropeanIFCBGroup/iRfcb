@@ -19,7 +19,7 @@
 #' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example .mat file included in the package
 #' mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 #'

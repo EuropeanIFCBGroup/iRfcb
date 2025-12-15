@@ -21,8 +21,10 @@ A downloaded list of images from the app can also be uploaded to filter and
 view only the selected images.
 }
 \examples{
-\dontrun{
+\donttest{
 # Run the IFCB image gallery Shiny app
-ifcb_run_image_gallery()
+if(interactive()){
+  ifcb_run_image_gallery()
+}
 }
 }

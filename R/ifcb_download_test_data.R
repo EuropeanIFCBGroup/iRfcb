@@ -30,65 +30,28 @@
 #'
 #' @export
 ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", expected_checksum = NULL, max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
-  # Resolve expected checksum from internal lookup if not provided
-  if (is.null(expected_checksum)) {
-    if (figshare_article %in% names(.ifcb_checksums)) {
-      expected_checksum <- .ifcb_checksums[[figshare_article]]
-    } else {
-      if (verbose) {
-        message("No checksum available for article ", figshare_article,
-                ". Proceeding without checksum verification.")
-      }
-      expected_checksum <- NA
-    }
-  }
-
   url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
   if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
-  # Retry download loop
-  attempts <- 0
-  file_valid <- FALSE
-  while (attempts < max_retries && !file_valid) {
-    attempts <- attempts + 1
-
-    # Only check checksum if we have one
-    if (!is.na(expected_checksum) && file.exists(dest_file)) {
-      actual_checksum <- tools::md5sum(dest_file)[[1]]
-      if (identical(actual_checksum, expected_checksum)) {
-        file_valid <- TRUE
-        break
-      } else {
-        if (verbose) {
-          message("Checksum mismatch (attempt ", attempts, "): ", actual_checksum,
-                  ". Downloading again...")
-        }
-        file.remove(dest_file)
-      }
-    }
-
-    # Download
-    tryCatch({
-      curl::curl_download(url, dest_file, quiet = TRUE)
-    }, error = function(e) {
-      Sys.sleep(sleep_time)
-    })
-  }
-
+  # Use existing zip if present, otherwise download
   if (!file.exists(dest_file)) {
-    stop("Download failed after ", max_retries, " attempts.")
-  }
-
-  # If checksum is available, warn if mismatch but continue
-  if (!is.na(expected_checksum)) {
-    actual_checksum <- tools::md5sum(dest_file)[[1]]
-    if (!identical(actual_checksum, expected_checksum)) {
-      if (verbose) {
-        message("Final file checksum does not match expected: expected ", expected_checksum,
-                " but got ", actual_checksum, ". Proceeding anyway.")
-      }
+    attempts <- 0
+    downloaded <- FALSE
+    while (attempts < max_retries && !downloaded) {
+      attempts <- attempts + 1
+      tryCatch({
+        curl::curl_download(url, dest_file, quiet = TRUE, mode = "wb")
+        downloaded <- TRUE
+      }, error = function(e) {
+        Sys.sleep(sleep_time)
+      })
     }
+    if (!file.exists(dest_file)) {
+      stop("Download failed after ", max_retries, " attempts.")
+    }
+  } else if (verbose) {
+    message("Using existing zip file: ", dest_file)
   }
 
   # Unzip the file into the appropriate subdirectory

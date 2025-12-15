@@ -15,9 +15,11 @@
 #' @return No return value. This function launches a Shiny application for interactive image browsing and management.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Run the IFCB image gallery Shiny app
-#' ifcb_run_image_gallery()
+#' if(interactive()){
+#'   ifcb_run_image_gallery()
+#' }
 #' }
 ifcb_run_image_gallery <- function() {
   appDir <- system.file("shiny", "ifcb_image_gallery", package = "iRfcb")

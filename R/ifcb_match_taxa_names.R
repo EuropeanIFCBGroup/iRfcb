@@ -17,7 +17,7 @@
 #' @return A data frame (or list if return_list is TRUE) of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Example: Retrieve WoRMS records for a list of taxa names
 #' taxa <- c("Calanus finmarchicus", "Thalassiosira pseudonana", "Phaeodactylum tricornutum")
 #'
@@ -28,7 +28,8 @@
 #'                                  marine_only = TRUE,
 #'                                  verbose = TRUE)
 #'
-#' print(records)
+#' # Print records as tibble
+#' dplyr::tibble(records)
 #' }
 #'
 #' @export

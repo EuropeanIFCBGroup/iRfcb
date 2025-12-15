@@ -1,4 +1,4 @@
-utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", '38059', 'timestamp_minute_temp', 'time_difference', 'n'))
+utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute", ".data", 'timestamp_minute_temp', 'time_difference', 'n'))
 
 #' Retrieve Ferrybox Data for Specified Timestamps
 #'
@@ -12,6 +12,9 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' @param ship A string representing the name of the ship to filter Ferrybox files. The default is "SveaFB".
 #' @param latitude_param A string specifying the header name for the latitude column in the Ferrybox data. Default is "8002".
 #' @param longitude_param A string specifying the header name for the longitude column in the Ferrybox data. Default is "8003".
+#' @param timestamp_param A string specifying the header name for the timestamp column in the Ferrybox data. Default is "38059".
+#' @param max_time_diff_min Numeric. Maximum allowed difference (in minutes) between the requested timestamp and the closest available Ferrybox data.
+#' Defaults to 1 minutes. Timestamps further away than this threshold will not be used for filling missing data.
 #'
 #' @details
 #' The function extracts data from files whose names match the specified ship and fall within the date ranges defined in the file names. The columns corresponding to `latitude_param` and `longitude_param` will be renamed to `gpsLatitude` and `gpsLongitude`, respectively, if they are present in the `parameters` argument.
@@ -33,7 +36,8 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #' }
 #'
 #' @export
-ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("8002", "8003"), ship = "SveaFB", latitude_param = "8002", longitude_param = "8003") {
+ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("8002", "8003"), ship = "SveaFB", latitude_param = "8002", longitude_param = "8003",
+                                   timestamp_param = "38059", max_time_diff_min = 1) {
   # Validate inputs
   if (!inherits(timestamps, "POSIXct")) {
     stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
@@ -115,11 +119,15 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     stop(paste("The following parameters are missing from the ferrybox data:", paste(missing_params, collapse = ", ")))
   }
 
+  if (!timestamp_param %in% colnames(ferrybox_data)) {
+    stop(paste("Timestamp column", timestamp_param, "is missing from the ferrybox data."))
+  }
+
   # Extract and clean ferrybox position data
   ferrybox_position <- ferrybox_data %>%
     dplyr::mutate(
       timestamp_minute_temp = tryCatch({
-        ymd_hms(as.numeric(ferrybox_data$`38059`), tz = "UTC")
+        ymd_hms(as.numeric(.data[[timestamp_param]]), tz = "UTC")
       }, error = function(e) {
         stop("Error parsing ferrybox timestamp data.")
       })
@@ -142,24 +150,32 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
     left_join(ferrybox_position, by = "timestamp_minute") %>%
     group_by(timestamp_minute) %>%
-    slice_min(time_difference, with_ties = FALSE) %>% # Select the row with the smallest time difference
+    slice_min(time_difference, with_ties = FALSE) %>%
     ungroup() %>%
+    arrange(match(timestamp, timestamps)) %>%  # Restore original input order
     select(timestamp, all_of(parameters))
 
-  # Handle missing data using floor and ceiling rounding
-  missing_data_floor <- handle_missing_ferrybox_data(output, ferrybox_position, parameters, floor_date)
-  missing_data_ceiling <- handle_missing_ferrybox_data(output, ferrybox_position, parameters, ceiling_date)
+  # Convert ferrybox timestamps to POSIXct if not already
+  ferrybox_times <- ymd_hms(as.numeric(ferrybox_position[[timestamp_param]]), tz = "UTC")
 
-  # Merge and coalesce missing data
-  missing_data <-missing_data_floor %>%
-    full_join(missing_data_ceiling, by = "timestamp") %>%
-    # Dynamically coalesce columns with .x and .y suffixes
-    mutate(across(
-      .cols = contains(".x"),
-      .fns = ~ coalesce(.x, get(gsub(".x", ".y", cur_column()))),
-      .names = "{str_remove(.col, '.x')}"
-    )) %>%
-    select(-contains(".y"), -contains(".x"))
+  # Define maximum allowed difference
+  max_diff <- max_time_diff_min * 60
+
+  # For each timestamp in output, find the closest ferrybox timestamp
+  closest_indices <- sapply(output$timestamp, function(ts) {
+    diffs <- abs(as.numeric(difftime(ferrybox_times, ts, units = "secs")))
+    min_diff <- min(diffs)
+    if (min_diff <= max_diff) which.min(diffs) else NA_integer_
+  })
+
+  # Extract the closest ferrybox rows
+  closest_ferrybox <- ferrybox_position[closest_indices, ]
+  closest_ferrybox$time_difference <- abs(as.numeric(difftime(ferrybox_times[closest_indices], output$timestamp, units = "secs")))
+
+  # Combine with output
+  missing_data <- output %>%
+    select(timestamp) %>%
+    dplyr::bind_cols(closest_ferrybox %>% select(all_of(parameters)))
 
   # Update the output with missing data
   output <- output %>%
@@ -191,5 +207,5 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   names(output)[names(output) == latitude_param] <- ifelse(latitude_param %in% parameters, "gpsLatitude", names(output)[names(output) == latitude_param])
   names(output)[names(output) == longitude_param] <- ifelse(longitude_param %in% parameters, "gpsLongitude", names(output)[names(output) == longitude_param])
 
-  return(output)
+  output
 }

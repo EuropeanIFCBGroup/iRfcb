@@ -41,7 +41,7 @@ This function attempts to retrieve WoRMS records using the provided taxa names.
 It retries the operation if an error occurs, up to a specified number of attempts.
 }
 \examples{
-\dontrun{
+\donttest{
 # Example: Retrieve WoRMS records for a list of taxa names
 taxa <- c("Calanus finmarchicus", "Thalassiosira pseudonana", "Phaeodactylum tricornutum")
 
@@ -52,7 +52,8 @@ records <- ifcb_match_taxa_names(taxa_names = taxa,
                                  marine_only = TRUE,
                                  verbose = TRUE)
 
-print(records)
+# Print records as tibble
+dplyr::tibble(records)
 }
 
 }
