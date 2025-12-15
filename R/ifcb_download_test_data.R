@@ -23,9 +23,9 @@
 #' \doi{10.17044/scilifelab.25883455.v3}
 #'
 #' @examples
-#' \donttest{
-#' # Download and unzip IFCB test data into a temporary directory
-#' ifcb_download_test_data(tempdir())
+#' \dontrun{
+#' # Download and unzip IFCB test data into the "data" directory
+#' ifcb_download_test_data("data")
 #' }
 #'
 #' @export

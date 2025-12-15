@@ -43,9 +43,9 @@ for testing \code{iRfcb} and for creating the tutorial vignette
 using \code{vignette("a-general-tutorial", package = "iRfcb")}
 }
 \examples{
-\donttest{
-# Download and unzip IFCB test data into a temporary directory
-ifcb_download_test_data(tempdir())
+\dontrun{
+# Download and unzip IFCB test data into the "data" directory
+ifcb_download_test_data("data")
 }
 
 }
