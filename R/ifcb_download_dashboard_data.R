@@ -45,14 +45,15 @@ utils::globalVariables("status_code")
 #' - Displays messages indicating the download status.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ifcb_download_dashboard_data(
 #'   dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
 #'   samples = "IFCB1_2014_188_222013",
 #'   file_types = c("blobs", "autoclass"),
-#'   dest_dir = "data",
+#'   dest_dir = tempdir(),
 #'   convert_filenames = FALSE,
-#'   convert_adc = FALSE
+#'   convert_adc = FALSE,
+#'   quiet = TRUE
 #' )
 #' }
 #'

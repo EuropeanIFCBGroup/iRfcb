@@ -10,7 +10,9 @@ ifcb_get_ferrybox_data(
   parameters = c("8002", "8003"),
   ship = "SveaFB",
   latitude_param = "8002",
-  longitude_param = "8003"
+  longitude_param = "8003",
+  timestamp_param = "38059",
+  max_time_diff_min = 1
 )
 }
 \arguments{
@@ -25,6 +27,11 @@ ifcb_get_ferrybox_data(
 \item{latitude_param}{A string specifying the header name for the latitude column in the Ferrybox data. Default is "8002".}
 
 \item{longitude_param}{A string specifying the header name for the longitude column in the Ferrybox data. Default is "8003".}
+
+\item{timestamp_param}{A string specifying the header name for the timestamp column in the Ferrybox data. Default is "38059".}
+
+\item{max_time_diff_min}{Numeric. Maximum allowed difference (in minutes) between the requested timestamp and the closest available Ferrybox data.
+Defaults to 1 minutes. Timestamps further away than this threshold will not be used for filling missing data.}
 }
 \value{
 A data frame containing the input timestamps and corresponding data for the specified parameters.

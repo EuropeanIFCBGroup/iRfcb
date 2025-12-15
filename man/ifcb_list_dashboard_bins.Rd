@@ -19,7 +19,7 @@ A data frame containing the bin list returned by the API.
 Download bin list from the IFCB Dashboard API
 }
 \examples{
-\dontrun{
+\donttest{
   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
   head(bins)
 }

@@ -43,9 +43,12 @@ and checks if they belong to the specified diatom class. The function only uses 
 first name (genus name) of each taxa for classification.
 }
 \examples{
-\dontrun{
+\donttest{
+# Example taxa
 taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
-ifcb_is_diatom(taxa_list)
+
+res <- ifcb_is_diatom(taxa_list)
+print(res)
 }
 
 }
