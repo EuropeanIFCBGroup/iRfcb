@@ -67,7 +67,7 @@ if the retrieval fails after the maximum number of attempts.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Example: Retrieve WoRMS records for a list of taxa names
 taxa <- c("Calanus finmarchicus", "Thalassiosira pseudonana", "Phaeodactylum tricornutum")
 
@@ -78,6 +78,19 @@ records <- ifcb_match_taxa_names(taxa_names = taxa,
                                  marine_only = TRUE,
                                  verbose = TRUE)
 
-print(records)
-} # }
+# Print records as tibble
+dplyr::tibble(records)
+#> # A tibble: 3 × 29
+#>   name  AphiaID url   scientificname authority status unacceptreason taxonRankID
+#>   <chr>   <int> <chr> <chr>          <chr>     <chr>  <lgl>                <int>
+#> 1 Cala…  104464 http… Calanus finma… (Gunneru… accep… NA                     220
+#> 2 Thal…  148934 http… Thalassiosira… Hasle & … unass… NA                     220
+#> 3 Phae…  175584 http… Phaeodactylum… Bohlin, … unass… NA                     220
+#> # ℹ 21 more variables: rank <chr>, valid_AphiaID <int>, valid_name <chr>,
+#> #   valid_authority <chr>, parentNameUsageID <int>, originalNameUsageID <int>,
+#> #   kingdom <chr>, phylum <chr>, class <chr>, order <chr>, family <chr>,
+#> #   genus <chr>, citation <chr>, lsid <chr>, isMarine <int>, isBrackish <int>,
+#> #   isFreshwater <int>, isTerrestrial <int>, isExtinct <int>, match_type <chr>,
+#> #   modified <chr>
+# }
 ```

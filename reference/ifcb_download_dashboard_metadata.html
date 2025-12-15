@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,13 +86,32 @@ If NULL, all available metadata are downloaded.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Download all metadata</span></span></span>
-<span class="r-in"><span>  <span class="va">metadata_all</span> <span class="op">&lt;-</span> <span class="fu">ifcb_download_dashboard_metadata</span><span class="op">(</span><span class="st">"https://ifcb-data.whoi.edu/"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span>  <span class="co"># Download metadata for a specific dataset</span></span></span>
-<span class="r-in"><span>  <span class="va">metadata_mvco</span> <span class="op">&lt;-</span> <span class="fu">ifcb_download_dashboard_metadata</span><span class="op">(</span><span class="st">"https://ifcb-data.whoi.edu/"</span>, <span class="st">"mvco"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span>  <span class="va">metadata_mvco</span> <span class="op">&lt;-</span> <span class="fu">ifcb_download_dashboard_metadata</span><span class="op">(</span><span class="st">"https://ifcb-data.whoi.edu/"</span>,</span></span>
+<span class="r-in"><span>                                                    dataset_name <span class="op">=</span> <span class="st">"mvco"</span>,</span></span>
+<span class="r-in"><span>                                                    quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Print result as tibble</span></span></span>
+<span class="r-in"><span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">metadata_mvco</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 348,537 × 20</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    dataset pid     sample_time  ifcb ml_analyzed latitude longitude depth cruise</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> mvco    D20170… 2017-04-14…    10        2.57     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> mvco    D20170… 2017-04-14…    10        2.46     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> mvco    D20170… 2017-04-14…    10        2.70     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> mvco    D20170… 2017-04-14…    10        2.69     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> mvco    D20170… 2017-04-14…    10        2.75     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> mvco    D20170… 2017-04-14…    10        2.82     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> mvco    D20170… 2017-04-14…    10        2.63     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> mvco    D20170… 2017-04-14…    10        2.74     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> mvco    D20170… 2017-04-14…    10        2.85     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> mvco    D20170… 2017-04-14…    10        2.67     41.3     -<span style="color: #BB0000;">70.6</span>     0 <span style="color: #949494;">""</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 348,527 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 11 more variables: cast &lt;lgl&gt;, niskin &lt;lgl&gt;, sample_type &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   n_images &lt;int&gt;, tag1 &lt;chr&gt;, tag2 &lt;chr&gt;, tag3 &lt;chr&gt;, tag4 &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   comment_summary &lt;chr&gt;, trigger_selection &lt;int&gt;, skip &lt;int&gt;</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -291,15 +291,15 @@ worms_records <- ifcb_match_taxa_names(taxa_names,
 tibble(worms_records)
 ```
 
-    ## # A tibble: 2 × 28
+    ## # A tibble: 2 × 29
     ##   name  AphiaID url   scientificname authority status unacceptreason taxonRankID
     ##   <chr>   <int> <chr> <chr>          <chr>     <chr>  <lgl>                <int>
     ## 1 Alex…  109713 http… Alexandrium p… (Biechel… accep… NA                     220
     ## 2 Guin…  149112 http… Guinardia del… (Cleve) … unass… NA                     220
-    ## # ℹ 20 more variables: rank <chr>, valid_AphiaID <int>, valid_name <chr>,
-    ## #   valid_authority <chr>, parentNameUsageID <int>, kingdom <chr>,
-    ## #   phylum <chr>, class <chr>, order <chr>, family <chr>, genus <chr>,
-    ## #   citation <chr>, lsid <chr>, isMarine <int>, isBrackish <lgl>,
+    ## # ℹ 21 more variables: rank <chr>, valid_AphiaID <int>, valid_name <chr>,
+    ## #   valid_authority <chr>, parentNameUsageID <int>, originalNameUsageID <int>,
+    ## #   kingdom <chr>, phylum <chr>, class <chr>, order <chr>, family <chr>,
+    ## #   genus <chr>, citation <chr>, lsid <chr>, isMarine <int>, isBrackish <lgl>,
     ## #   isFreshwater <int>, isTerrestrial <int>, isExtinct <int>, match_type <chr>,
     ## #   modified <chr>
 

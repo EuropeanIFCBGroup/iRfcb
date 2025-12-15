@@ -69,16 +69,37 @@ Oceanogr: Methods 5, 204–216.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Example .mat file included in the package
 mat_file <- system.file("exdata/example.mat", package = "iRfcb")
 
 # Get class names from a class2use file
 classifier_name <- ifcb_get_mat_variable(mat_file, "classifierName")
 print(classifier_name)
+#>      [,1]                                                                       
+#> [1,] "Z:\\data\\manual\\Skagerrak-Kattegat\\summary\\results_21May202421May2024"
 
 # Get class names from a classifier file
 class2useTB <- ifcb_get_mat_variable(mat_file, "class2useTB")
 print(class2useTB)
-} # }
+#>  [1] "Cerataulina_pelagica"               "Chaetoceros_cf_convolutus"         
+#>  [3] "Chaetoceros_chain"                  "Chaetoceros_danicus"               
+#>  [5] "Chaetoceros_single_cell"            "Ciliates"                          
+#>  [7] "Cryptomonadales"                    "Cylindrotheca_Nitzschia_longissima"
+#>  [9] "Dactyliosolen_fragilissimus"        "Dino_larger_than_30unidentified"   
+#> [11] "Dino_smaller_than_30unidentified"   "Ditylum_brightwellii"              
+#> [13] "Enisiculifera_carinata"             "Guinardia_delicatula"              
+#> [15] "Gymnodiniales_smaller_than_30"      "Heterocapsa_rotundata"             
+#> [17] "Katodinium-like"                    "Leptocylindrus_danicus"            
+#> [19] "Leptocylindrus_danicus_minimus"     "Mesodinium_rubrum"                 
+#> [21] "Octactis_speculum"                  "Prorocentrum_micans"               
+#> [23] "Prorocentrum_triestinum"            "Pseudo-nitzschia_spp"              
+#> [25] "Pseudosolenia_calcar-avis"          "Rhizosolenia_setigera"             
+#> [27] "Scrippsiella_group"                 "Skeletonema_marinoi"               
+#> [29] "Strombidium_like"                   "Thalassionema_nitzschioides"       
+#> [31] "Thalassiosira_gravida"              "Thalassiosira_nordenskioeldii"     
+#> [33] "Thalassiosira_punctigera"           "Thalassiosira_spp"                 
+#> [35] "Torodinium_robustum"                "Tripos_lineatus"                   
+#> [37] "unclassified"                      
+# }
 ```

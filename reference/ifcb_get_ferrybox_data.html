@@ -11,7 +11,7 @@ data (including GPS coordinates) for timestamps (rounded to the nearest minute) 
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,9 @@ data (including GPS coordinates) for timestamps (rounded to the nearest minute) 
 <span>  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"8002"</span>, <span class="st">"8003"</span><span class="op">)</span>,</span>
 <span>  ship <span class="op">=</span> <span class="st">"SveaFB"</span>,</span>
 <span>  latitude_param <span class="op">=</span> <span class="st">"8002"</span>,</span>
-<span>  longitude_param <span class="op">=</span> <span class="st">"8003"</span></span>
+<span>  longitude_param <span class="op">=</span> <span class="st">"8003"</span>,</span>
+<span>  timestamp_param <span class="op">=</span> <span class="st">"38059"</span>,</span>
+<span>  max_time_diff_min <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +98,15 @@ data (including GPS coordinates) for timestamps (rounded to the nearest minute) 
 
 <dt id="arg-longitude-param">longitude_param<a class="anchor" aria-label="anchor" href="#arg-longitude-param"></a></dt>
 <dd><p>A string specifying the header name for the longitude column in the Ferrybox data. Default is "8003".</p></dd>
+
+
+<dt id="arg-timestamp-param">timestamp_param<a class="anchor" aria-label="anchor" href="#arg-timestamp-param"></a></dt>
+<dd><p>A string specifying the header name for the timestamp column in the Ferrybox data. Default is "38059".</p></dd>
+
+
+<dt id="arg-max-time-diff-min">max_time_diff_min<a class="anchor" aria-label="anchor" href="#arg-max-time-diff-min"></a></dt>
+<dd><p>Numeric. Maximum allowed difference (in minutes) between the requested timestamp and the closest available Ferrybox data.
+Defaults to 1 minutes. Timestamps further away than this threshold will not be used for filling missing data.</p></dd>
 
 </dl></div>
     <div class="section level2">

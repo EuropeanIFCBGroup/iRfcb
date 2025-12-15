@@ -68,8 +68,12 @@ the specified diatom class.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+# Example taxa
 taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
-ifcb_is_diatom(taxa_list)
-} # }
+
+res <- ifcb_is_diatom(taxa_list)
+print(res)
+#> [1]  TRUE  TRUE FALSE  TRUE
+# }
 ```
