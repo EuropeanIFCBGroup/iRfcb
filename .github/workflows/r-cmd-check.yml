@@ -81,7 +81,7 @@ jobs:
         if: runner.os == 'macOS'
         with:
           upload-snapshots: true
-          build_args: 'c("--no-build-vignettes","--no-manual")'
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
           args: 'c("--no-vignettes","--no-manual")'
 
       - uses: r-lib/actions/check-r-package@v2

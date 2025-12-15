@@ -59,14 +59,3 @@
     packageStartupMessage("Using existing Python virtual environment: ", .iRfcbEnv$venv)
   }
 }
-
-.ifcb_checksums <- list(
-  "48158716" = "3f393747663f9586212e9cb6bfa090e3", # smhi_ifcb_iRfcb_matlab_files.zip v3
-  "50176191" = "943920edc9f7a2b4e1146daec8a6fb35", # smhi_ifcb_baltic_annotated_images.zip
-  "50176674" = "16e94675c5f080c5c4e50290a18c248f", # smhi_ifcb_baltic_matlab_files.zip
-  "50174991" = "4240347b217fee7710294f8609715dbc", # smhi_ifcb_skagerrak-kattegat_annotated_images.zip
-  "50176071" = "45a798bc8b4aba3a4ea5a8ae9b24d82f", # smhi_ifcb_skagerrak-kattegat_matlab_files.zip
-  "50176155" = "d625d2a31b3d926fe4cafc62651e3293", # smhi_ifcb_tangesund_annotated_images.zip
-  "50177859" = "ebab38243c0cd03d64b33094e6b0406f", # smhi_ifcb_tangesund_matlab_files.zip
-  "50174988" = "632af1d33f957717b0209aa096316e92"  # smhi_ifcb_iRfcb_matlab_files.zip v4
-)
