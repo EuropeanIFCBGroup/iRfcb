@@ -108,13 +108,13 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 
 ### Summarize Counts, Biovolumes and Carbon Content from Manually Annotated IFCB Data
 
-You can also apply this process to automatically classified data by setting the `mat_folder` parameter to point to your `class` folder, and setting `class2use_file` to `NULL`.
+You can also apply this process to automatically classified data by setting the `mat_files` parameter to point to your `class` folder, and setting `class2use_file` to `NULL`.
 
 ```{r}
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
-  mat_folder = "data/manual",
+  mat_files = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
   verbose = FALSE

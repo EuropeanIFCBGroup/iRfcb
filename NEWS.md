@@ -6,6 +6,12 @@
 * Added a new `timestamp_param` argument to `ifcb_get_ferrybox_data()` allowing the Ferrybox timestamp column to be specified dynamically instead of being hard coded.
 * Added a new `max_time_diff_min` argument to `ifcb_get_ferrybox_data()` controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.
 * Timestamp matching in `ifcb_get_ferrybox_data()` is now more flexible and can fall back to the closest available Ferrybox observation within the specified time window when no exact or rounded match is found.
+* `ifcb_summarize_biovolumes()` and `ifcb_extract_biovolumes()` are now more flexible and accept individual `.mat` files in addition to folders.
+
+## Deprecations
+
+* Deprecated arguments:
+  * `mat_folder` in `ifcb_summarize_biovolumes()` and `ifcb_extract_biovolumes()` (replaced by `mat_files`).
 
 # iRfcb 0.6.0
 
