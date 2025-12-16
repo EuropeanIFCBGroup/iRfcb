@@ -181,7 +181,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   # Loop through each feature file
   for (file_name in names(features)) {
 
-    file_data <- features[[file_name]]
+    file_data <- dplyr::select(features[[file_name]], roi_number, Biovolume)
 
     if (drop_zero_volume) {
       file_data <- file_data[file_data$Biovolume != 0, ]
