@@ -150,16 +150,37 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
     # Filter HDR files to include only those matching common sample names
     hdr_files_filtered <- hdr_files[hdr_sample_names %in% common_sample_names]
 
-    # Initialize an empty data frame to store volume data
-    volumes <- data.frame()
+    n_hdr <- length(hdr_files_filtered)
+
+    # Preallocate list for speed
+    volume_list <- vector("list", n_hdr)
+
+    # Set up the progress bar
+    if (verbose && n_hdr > 0) {
+      cat("Calculating sample volumes...\n")
+      pb <- txtProgressBar(min = 0, max = n_hdr, style = 3)
+    }
 
     # Loop through filtered HDR files to extract volume analyzed per sample
-    for (file in seq_along(hdr_files_filtered)) {
-      volume <- data.frame(sample = sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files_filtered[file]),
-                           ml_analyzed = ifcb_volume_analyzed(hdr_files_filtered[file]))  # Calculate volume analyzed
+    for (i in seq_along(hdr_files_filtered)) {
 
-      volumes <- rbind(volumes, volume)  # Append volume data to 'volumes' data frame
+      if (verbose && n_hdr > 0) {
+        setTxtProgressBar(pb, i)
+      }
+
+      volume_list[[i]] <- data.frame(
+        sample = sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files_filtered[i]),
+        ml_analyzed = ifcb_volume_analyzed(hdr_files_filtered[i])
+      )
     }
+
+    # Close the progress bar
+    if (verbose && n_hdr > 0) {
+      close(pb)
+    }
+
+    # Combine into a single data frame
+    volumes <- do.call(rbind, volume_list)
 
     # Join volume data with aggregated biovolumes based on 'sample' column
     biovolume_aggregated <- left_join(biovolume_aggregated, volumes, by = "sample")

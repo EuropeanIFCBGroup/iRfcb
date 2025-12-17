@@ -235,20 +235,12 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     # Find unique samples in biovolume_df
     unique_samples <- unique(biovolume_df$sample)
 
-    # Function to check if any sample name is in the class path
-    contains_sample <- function(class_path, samples) {
-      # Check if any of the samples are present in the class_path
-      any(sapply(samples, function(sample) grepl(sample, class_path)))
-    }
-
-    # Filter classes where the sample name exists in biovolume_df$sample
-    matching_mat <- mat_files[sapply(mat_files, contains_sample, samples = unique_samples)]
+    # Identify matching mat files
+    mat_samples <- sub(".*(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", mat_files)
+    matching_mat <- mat_files[mat_samples %in% unique_samples]
 
     # Initialize an empty list to store data frames
     tb_list <- list()
-
-    # Initialize a list to store all warnings
-    warning_list <- list()
 
     if (is_manual) {
 
@@ -264,46 +256,39 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     } else {
       n_files <- length(matching_mat)
       tb_list <- vector("list", n_files)
-      warning_list <- list()
-      idx <- 1
 
-      for (class in seq_along(matching_mat)) {
+      # Set up the progress bar
+      if (verbose && n_files > 0) {
+        cat("Reading .mat files...\n")
+        pb <- txtProgressBar(min = 0, max = n_files, style = 3)
+      }
+
+      for (i in seq_along(matching_mat)) {
+
+        if (verbose && n_files > 0) {
+          setTxtProgressBar(pb, i)
+        }
+
         temp <- suppressWarnings({
           if (use_python && scipy_available()) {
-            ifcb_read_mat(matching_mat[class])
+            ifcb_read_mat(matching_mat[i])
           } else {
-            read_mat(matching_mat[class], fixNames = FALSE)
+            read_mat(matching_mat[i], fixNames = FALSE)
           }
         })
 
-        # Capture warnings only if needed
-        warning_list[[idx]] <- warnings()
+        sample_name <- str_replace(basename(matching_mat[i]), "_class_v\\d+.mat", "")
 
-        sample_name <- str_replace(basename(matching_mat[class]), "_class_v\\d+.mat", "")
-
-        tb_list[[idx]] <- data.frame(
+        tb_list[[i]] <- data.frame(
           sample = sample_name,
           classifier = temp$classifierName,
           roi_number = temp$roinum,
-          class = if (threshold == "opt") {
-            unlist(temp$TBclass_above_threshold)
-          } else {
-            unlist(temp$TBclass)
-          }
+          class = if (threshold == "opt") unlist(temp$TBclass_above_threshold) else unlist(temp$TBclass)
         )
-
-        idx <- idx + 1
       }
 
-      tb_df <- do.call(rbind, tb_list)
-      all_warnings <- unlist(warning_list)
-    }
-
-    # Display the number of warnings
-    num_warnings <- length(warning_list)
-
-    if (num_warnings > 0) {
-      message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
+      # Close the progress bar
+      if (verbose && n_files > 0) close(pb)
     }
 
     if (!is_manual) {
