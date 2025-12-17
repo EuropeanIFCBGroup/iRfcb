@@ -176,36 +176,42 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     stop("No feature data files found")
   }
 
-  # Initialize an empty list to store data frames
-  data_list <- list()
+  data_list <- vector("list", length(features))
+  idx <- 1
 
-  # Loop through each feature file
   for (file_name in names(features)) {
 
-    file_data <- dplyr::select(features[[file_name]], roi_number, Biovolume)
+    file_data <- features[[file_name]]
 
     if (drop_zero_volume) {
-      file_data <- file_data[file_data$Biovolume != 0, ]
+      file_data <- file_data[file_data$Biovolume != 0, , drop = FALSE]
     }
 
     if (nrow(file_data) > 0) {
-      temp_df <- data.frame(
-        sample = ifelse(multiblob,
-                        str_replace(file_name, "_multiblob_v\\d+.csv", ""),
-                        str_replace(file_name, "_fe[a-z]*_v\\d+\\.csv", "")),
+
+      sample_name <- if (multiblob) {
+        str_replace(file_name, "_multiblob_v\\d+.csv", "")
+      } else {
+        str_replace(file_name, "_fe[a-z]*_v\\d+\\.csv", "")
+      }
+
+      data_list[[idx]] <- data.frame(
+        sample = sample_name,
         roi_number = file_data$roi_number,
         biovolume = file_data$Biovolume
       )
 
-      # Append to the list
-      data_list <- append(data_list, list(temp_df))
+      idx <- idx + 1
+
     } else if (drop_zero_volume) {
-      warning(sprintf("All rows were dropped for file '%s' because Biovolume == 0.", file_name))
+      warning(sprintf(
+        "All rows were dropped for file '%s' because Biovolume == 0.",
+        file_name
+      ))
     }
   }
 
-  # Combine all data frames into one
-  biovolume_df <- do.call(rbind, data_list)
+  biovolume_df <- do.call(rbind, data_list[seq_len(idx - 1)])
 
   # Stop if the combined data frame is empty
   if (is.null(biovolume_df)) {
@@ -256,24 +262,27 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
       class_df$classifier <- NA
 
     } else {
-      # Loop through matching classes
-      for (class in seq_along(matching_mat)) {
-        # Capture warnings for each readMat call
-        temp <- suppressWarnings({
+      n_files <- length(matching_mat)
+      tb_list <- vector("list", n_files)
+      warning_list <- list()
+      idx <- 1
 
+      for (class in seq_along(matching_mat)) {
+        temp <- suppressWarnings({
           if (use_python && scipy_available()) {
-            temp_result <- ifcb_read_mat(matching_mat[class])
+            ifcb_read_mat(matching_mat[class])
           } else {
-            # Read the contents of the MAT file
-            temp_result <- read_mat(matching_mat[class], fixNames = FALSE)
+            read_mat(matching_mat[class], fixNames = FALSE)
           }
-          warning_list <- c(warning_list, warnings())
-          temp_result
         })
 
-        # Create a data frame with sample, roi_number, and class information
-        temp_df <- data.frame(
-          sample = str_replace(basename(matching_mat[class]), "_class_v\\d+.mat", ""),
+        # Capture warnings only if needed
+        warning_list[[idx]] <- warnings()
+
+        sample_name <- str_replace(basename(matching_mat[class]), "_class_v\\d+.mat", "")
+
+        tb_list[[idx]] <- data.frame(
+          sample = sample_name,
           classifier = temp$classifierName,
           roi_number = temp$roinum,
           class = if (threshold == "opt") {
@@ -283,9 +292,11 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
           }
         )
 
-        # Append to the list
-        tb_list <- append(tb_list, list(temp_df))
+        idx <- idx + 1
       }
+
+      tb_df <- do.call(rbind, tb_list)
+      all_warnings <- unlist(warning_list)
     }
 
     # Display the number of warnings
