@@ -8,6 +8,7 @@ ifcb_read_features(
   feature_files = NULL,
   multiblob = FALSE,
   feature_version = NULL,
+  biovolume_only = FALSE,
   verbose = TRUE
 )
 }
@@ -17,6 +18,12 @@ ifcb_read_features(
 \item{multiblob}{Logical indicating whether to filter for multiblob files (default: FALSE).}
 
 \item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
+
+\item{biovolume_only}{Logical; if TRUE, only a minimal set of feature columns
+required for biovolume calculations are read from each feature file
+(typically \code{roi_number} and \code{biovolume}). This substantially reduces
+memory usage and improves performance when other features are not needed.
+If FALSE, all available feature columns are read.}
 
 \item{verbose}{Logical. Whether to display progress information. Default is TRUE.}
 }

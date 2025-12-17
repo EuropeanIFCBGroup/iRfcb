@@ -6,6 +6,11 @@
 #' @param feature_files A path to a folder containing feature files or a character vector of file paths.
 #' @param multiblob Logical indicating whether to filter for multiblob files (default: FALSE).
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
+#' @param biovolume_only Logical; if TRUE, only a minimal set of feature columns
+#'   required for biovolume calculations are read from each feature file
+#'   (typically `roi_number` and `biovolume`). This substantially reduces
+#'   memory usage and improves performance when other features are not needed.
+#'   If FALSE, all available feature columns are read.
 #' @param verbose Logical. Whether to display progress information. Default is TRUE.
 #'
 #' @return A named list of data frames, where each element corresponds to a feature file read from \code{feature_files}.
@@ -30,6 +35,7 @@
 ifcb_read_features <- function(feature_files = NULL,
                                multiblob = FALSE,
                                feature_version = NULL,
+                               biovolume_only = FALSE,
                                verbose = TRUE) {
 
   # Check if feature_files is a single folder path or a vector of file paths
@@ -60,7 +66,21 @@ ifcb_read_features <- function(feature_files = NULL,
   # Loop through each file and store its contents in the feature list
   for (i in seq_along(feature_files)) {
     if (verbose && n_features > 0) setTxtProgressBar(pb, i)
-    feature[[basename(feature_files[i])]] <- read.csv(feature_files[i])
+    feature[[basename(feature_files[i])]] <-
+      if (biovolume_only) {
+        read_csv(
+          feature_files[i],
+          col_select = c(roi_number, Biovolume),
+          progress = FALSE,
+          col_types = cols()
+        )
+      } else {
+        read_csv(
+          feature_files[i],
+          progress = FALSE,
+          col_types = cols()
+        )
+      }
   }
 
   # Close the progress bar

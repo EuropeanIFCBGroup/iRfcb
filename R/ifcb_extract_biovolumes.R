@@ -166,9 +166,10 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   }
 
   # Read feature files
-  features <- ifcb_read_features(feature_files,
+  features <- ifcb_read_features(feature_files = feature_files,
                                  multiblob = multiblob,
                                  feature_version = feature_version,
+                                 biovolume_only = TRUE,
                                  verbose = verbose)
 
   if (length(features) == 0) {
