@@ -65,7 +65,7 @@ their corresponding class labels (e.g. from a CNN model).</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_summarize_biovolumes</span><span class="op">(</span></span>
 <span>  <span class="va">feature_folder</span>,</span>
-<span>  mat_folder <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mat_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  hdr_folder <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_images <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -81,7 +81,8 @@ their corresponding class labels (e.g. from a CNN model).</p>
 <span>  drop_zero_volume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  mat_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,8 +94,8 @@ their corresponding class labels (e.g. from a CNN model).</p>
 <dd><p>Path to the folder containing feature files (e.g., CSV format).</p></dd>
 
 
-<dt id="arg-mat-folder">mat_folder<a class="anchor" aria-label="anchor" href="#arg-mat-folder"></a></dt>
-<dd><p>(Optional) Path to the folder containing MATLAB classification or manual annotation files.</p></dd>
+<dt id="arg-mat-files">mat_files<a class="anchor" aria-label="anchor" href="#arg-mat-files"></a></dt>
+<dd><p>(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.</p></dd>
 
 
 <dt id="arg-class-use-file">class2use_file<a class="anchor" aria-label="anchor" href="#arg-class-use-file"></a></dt>
@@ -142,7 +143,7 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 
 
 <dt id="arg-mat-recursive">mat_recursive<a class="anchor" aria-label="anchor" href="#arg-mat-recursive"></a></dt>
-<dd><p>Logical. If TRUE, the function will search for MATLAB files recursively within the <code>mat_folder</code>. Default is TRUE.</p></dd>
+<dd><p>Logical. If TRUE, the function will search for MATLAB files recursively when the <code>mat_files</code> is a folder. Default is TRUE.</p></dd>
 
 
 <dt id="arg-hdr-recursive">hdr_recursive<a class="anchor" aria-label="anchor" href="#arg-hdr-recursive"></a></dt>
@@ -163,6 +164,11 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A logical indicating whether to print progress messages. Default is TRUE.</p></dd>
+
+
+<dt id="arg-mat-folder">mat_folder<a class="anchor" aria-label="anchor" href="#arg-mat-folder"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
+Use <code>mat_files</code> instead.</p></dd>
 
 </dl></div>
     <div class="section level2">

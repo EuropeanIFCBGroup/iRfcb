@@ -11,7 +11,7 @@ images and their corresponding class labels (e.g. from a CNN model).
 ``` r
 ifcb_summarize_biovolumes(
   feature_folder,
-  mat_folder = NULL,
+  mat_files = NULL,
   class2use_file = NULL,
   hdr_folder = NULL,
   custom_images = NULL,
@@ -27,7 +27,8 @@ ifcb_summarize_biovolumes(
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  mat_folder = deprecated()
 )
 ```
 
@@ -37,10 +38,10 @@ ifcb_summarize_biovolumes(
 
   Path to the folder containing feature files (e.g., CSV format).
 
-- mat_folder:
+- mat_files:
 
-  (Optional) Path to the folder containing MATLAB classification or
-  manual annotation files.
+  (Optional) A character vector of full paths to class or manual
+  annotation files, or a single path to a folder containing such files.
 
 - class2use_file:
 
@@ -98,7 +99,7 @@ ifcb_summarize_biovolumes(
 - mat_recursive:
 
   Logical. If TRUE, the function will search for MATLAB files
-  recursively within the `mat_folder`. Default is TRUE.
+  recursively when the `mat_files` is a folder. Default is TRUE.
 
 - hdr_recursive:
 
@@ -125,6 +126,10 @@ ifcb_summarize_biovolumes(
 
   A logical indicating whether to print progress messages. Default is
   TRUE.
+
+- mat_folder:
+
+  **\[deprecated\]** Use `mat_files` instead.
 
 ## Value
 

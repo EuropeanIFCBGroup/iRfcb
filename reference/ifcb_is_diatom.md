@@ -12,6 +12,7 @@ for classification.
 ifcb_is_diatom(
   taxa_list,
   diatom_class = "Bacillariophyceae",
+  diatom_include = NULL,
   max_retries = 3,
   sleep_time = 10,
   marine_only = FALSE,
@@ -31,6 +32,12 @@ ifcb_is_diatom(
   A character string or vector specifying the class name(s) to be
   identified as diatoms, according to WoRMS. Default is
   "Bacillariophyceae".
+
+- diatom_include:
+
+  Optional character vector of taxa (or genera) that should always be
+  treated as diatoms, overriding the WoRMS-based classification. Default
+  is NULL.
 
 - max_retries:
 

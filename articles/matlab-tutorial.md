@@ -150,7 +150,7 @@ and
 # Summarize biovolume data using IFCB data from classified data folder
 biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features/2023",
-  mat_folder = "data/classified",
+  mat_files = "data/classified",
   hdr_folder = "data/data/2023",
   micron_factor = 1 / 3.4,
   diatom_class = "Bacillariophyceae",
@@ -190,7 +190,7 @@ and
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
-  mat_folder = "data/manual",
+  mat_files = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
   micron_factor = 1 / 3.4,

@@ -103,14 +103,14 @@ gps_data <- ifcb_read_hdr_data("data/data/",
 ### Summarize Counts, Biovolumes and Carbon Content from Manually Annotated IFCB Data
 
 You can also apply this process to automatically classified data by
-setting the `mat_folder` parameter to point to your `class` folder, and
+setting the `mat_files` parameter to point to your `class` folder, and
 setting `class2use_file` to `NULL`.
 
 ``` r
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
-  mat_folder = "data/manual",
+  mat_files = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
   verbose = FALSE
@@ -300,16 +300,16 @@ tibble(event_df)
     ## # A tibble: 10 × 26
     ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
     ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
-    ##  1 NA               1905d9… Project   iRfcb-DwC-A 2022-05-… NA                  
-    ##  2 1905d921-7d2c-4… 38a00d… Sample    NA          2022-05-… SMHI                
-    ##  3 1905d921-7d2c-4… dd9f06… Sample    NA          2022-05-… SMHI                
-    ##  4 1905d921-7d2c-4… 7ccabc… Sample    NA          2022-07-… SMHI                
-    ##  5 1905d921-7d2c-4… 1af7e6… Sample    NA          2022-07-… SMHI                
-    ##  6 1905d921-7d2c-4… 7f5f2c… Sample    NA          2023-03-… SMHI                
-    ##  7 1905d921-7d2c-4… 2a8331… Sample    NA          2023-03-… SMHI                
-    ##  8 1905d921-7d2c-4… 3d5d32… Sample    NA          2023-08-… SMHI                
-    ##  9 1905d921-7d2c-4… 6f5092… Sample    NA          2023-09-… SMHI                
-    ## 10 1905d921-7d2c-4… 9d2c5d… Sample    NA          2023-09-… SMHI                
+    ##  1 NA               74e2b4… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 74e2b485-3ee1-4… 58b063… Sample    NA          2022-05-… SMHI                
+    ##  3 74e2b485-3ee1-4… 19ed59… Sample    NA          2022-05-… SMHI                
+    ##  4 74e2b485-3ee1-4… 878827… Sample    NA          2022-07-… SMHI                
+    ##  5 74e2b485-3ee1-4… d5272d… Sample    NA          2022-07-… SMHI                
+    ##  6 74e2b485-3ee1-4… e363ce… Sample    NA          2023-03-… SMHI                
+    ##  7 74e2b485-3ee1-4… 057be7… Sample    NA          2023-03-… SMHI                
+    ##  8 74e2b485-3ee1-4… d9a0cc… Sample    NA          2023-08-… SMHI                
+    ##  9 74e2b485-3ee1-4… 600826… Sample    NA          2023-09-… SMHI                
+    ## 10 74e2b485-3ee1-4… e455de… Sample    NA          2023-09-… SMHI                
     ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
     ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
     ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
@@ -500,16 +500,16 @@ tibble(occurrence_df)
     ## # A tibble: 101 × 22
     ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
     ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
-    ##  1 d9ca9a78-cdf1-4f26-… 38a00d… 2022-05-22 present          iRfcb          Stil…
-    ##  2 1e2bca10-cdb4-4cf9-… 38a00d… 2022-05-22 present          iRfcb          Stil…
-    ##  3 8b511326-52d2-4ce0-… 38a00d… 2022-05-22 present          iRfcb          Stil…
-    ##  4 b152a18e-e306-422b-… 38a00d… 2022-05-22 present          iRfcb          Stil…
-    ##  5 fff294f6-7f3b-40e2-… dd9f06… 2022-05-22 present          iRfcb          Stil…
-    ##  6 9f312c2e-113c-4187-… 7ccabc… 2022-07-12 present          iRfcb          Stil…
-    ##  7 33e495d1-9782-4aa8-… 7ccabc… 2022-07-12 present          iRfcb          Stil…
-    ##  8 9ae1ac30-d5a8-4b14-… 7ccabc… 2022-07-12 present          iRfcb          Stil…
-    ##  9 0347e880-1348-454c-… 1af7e6… 2022-07-12 present          iRfcb          Stil…
-    ## 10 1841cdbd-5e88-44e1-… 1af7e6… 2022-07-12 present          iRfcb          Stil…
+    ##  1 1515f3fb-02dd-4a84-… 58b063… 2022-05-22 present          iRfcb          Stil…
+    ##  2 df53aa6f-5af8-4f4f-… 58b063… 2022-05-22 present          iRfcb          Stil…
+    ##  3 c2d2fd2c-ba96-467d-… 58b063… 2022-05-22 present          iRfcb          Stil…
+    ##  4 adb58830-5a8b-45a8-… 58b063… 2022-05-22 present          iRfcb          Stil…
+    ##  5 cf5d0255-b6f2-4d1a-… 19ed59… 2022-05-22 present          iRfcb          Stil…
+    ##  6 a4331567-ccb4-437d-… 878827… 2022-07-12 present          iRfcb          Stil…
+    ##  7 cb6eec3f-7524-4862-… 878827… 2022-07-12 present          iRfcb          Stil…
+    ##  8 e594275e-0cf4-4308-… 878827… 2022-07-12 present          iRfcb          Stil…
+    ##  9 38340004-8af8-4b3d-… d5272d… 2022-07-12 present          iRfcb          Stil…
+    ## 10 07e6af46-34d8-419a-… d5272d… 2022-07-12 present          iRfcb          Stil…
     ## # ℹ 91 more rows
     ## # ℹ 16 more variables: basisOfRecord <chr>,
     ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
@@ -711,16 +711,16 @@ tibble(mof_df)
     ## # A tibble: 415 × 10
     ##    measurementID              eventID parentEventID occurrenceID measurementType
     ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
-    ##  1 1d5a9e5d-15ba-445f-9f89-7… 1905d9… NA            NA           Imaging instru…
-    ##  2 1d83c524-d2af-4a94-9800-3… 1905d9… NA            NA           Instrument ide…
-    ##  3 297d1018-a1bc-4ac6-86ca-c… 38a00d… 1905d921-7d2… NA           Sample volume  
-    ##  4 7efc1978-864a-4c51-a003-e… dd9f06… 1905d921-7d2… NA           Sample volume  
-    ##  5 c8958c39-2d63-4745-9b45-e… 7ccabc… 1905d921-7d2… NA           Sample volume  
-    ##  6 59cd433b-2427-49ba-8a05-e… 1af7e6… 1905d921-7d2… NA           Sample volume  
-    ##  7 5eb84d06-f04d-49f6-bec9-b… 7f5f2c… 1905d921-7d2… NA           Sample volume  
-    ##  8 25e4f31a-72c1-4e0a-b564-9… 2a8331… 1905d921-7d2… NA           Sample volume  
-    ##  9 31516452-ec44-4bd1-bf91-b… 3d5d32… 1905d921-7d2… NA           Sample volume  
-    ## 10 9ea31cf8-0a5b-414f-aaee-9… 6f5092… 1905d921-7d2… NA           Sample volume  
+    ##  1 ca0d7f9b-bb13-4d7e-b2fb-3… 74e2b4… NA            NA           Imaging instru…
+    ##  2 ccc6a345-dab9-4eee-be27-d… 74e2b4… NA            NA           Instrument ide…
+    ##  3 5b1c1859-dadc-437f-858c-6… 58b063… 74e2b485-3ee… NA           Sample volume  
+    ##  4 71f6d56d-26ec-4aa2-b18d-3… 19ed59… 74e2b485-3ee… NA           Sample volume  
+    ##  5 43a8101b-7e3c-4e31-ad5a-5… 878827… 74e2b485-3ee… NA           Sample volume  
+    ##  6 11c8a763-c2d3-4d93-a131-7… d5272d… 74e2b485-3ee… NA           Sample volume  
+    ##  7 a8db4664-3530-4f8f-bdcb-0… e363ce… 74e2b485-3ee… NA           Sample volume  
+    ##  8 b8fa9aa8-afce-4846-a73c-4… 057be7… 74e2b485-3ee… NA           Sample volume  
+    ##  9 af019720-fe8b-47c1-9646-b… d9a0cc… 74e2b485-3ee… NA           Sample volume  
+    ## 10 71d68f8e-1100-4a1f-903e-e… 600826… 74e2b485-3ee… NA           Sample volume  
     ## # ℹ 405 more rows
     ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
     ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>

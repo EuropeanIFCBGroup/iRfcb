@@ -50,11 +50,26 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="irfcb-development-version">iRfcb (development version)<a class="anchor" aria-label="anchor" href="#irfcb-development-version"></a></h2>
 <div class="section level3">
-<h3 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h3>
-<ul><li>Runnable examples are now wrapped in <code>\donttest{}</code> instead of <code>\dontrun{}</code>.</li>
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>Added a new <code>diatom_include</code> argument to <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_is_diatom.html">ifcb_is_diatom()</a></code> for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).</li>
 <li>Added a new <code>timestamp_param</code> argument to <code><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code> allowing the Ferrybox timestamp column to be specified dynamically instead of being hard coded.</li>
 <li>Added a new <code>max_time_diff_min</code> argument to <code><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code> controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.</li>
+<li>Added a new <code>biovolume_only</code> argument to <code><a href="../reference/ifcb_read_features.html">ifcb_read_features()</a></code> to allow reading only biovolume related columns, improving performance for large feature tables.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h3>
+<ul><li>Runnable examples are now wrapped in <code>\donttest{}</code> instead of <code>\dontrun{}</code>.</li>
 <li>Timestamp matching in <code><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code> is now more flexible and can fall back to the closest available Ferrybox observation within the specified time window when no exact or rounded match is found.</li>
+<li>
+<code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> are now more flexible and accept individual <code>.mat</code> files in addition to folders.</li>
+<li>Improved performance of <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="deprecations-development-version">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-development-version"></a></h3>
+<ul><li>Deprecated arguments:
+<ul><li>
+<code>mat_folder</code> in <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> (replaced by <code>mat_files</code>).</li>
+</ul></li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

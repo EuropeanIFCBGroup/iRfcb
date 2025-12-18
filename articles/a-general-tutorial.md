@@ -176,20 +176,17 @@ features <- ifcb_read_features("data/features/2023/",
 head(features[[1]])[,1:10]
 ```
 
-    ##   roi_number Area  Biovolume BoundingBox_xwidth BoundingBox_ywidth ConvexArea
-    ## 1          2  446   6082.909                 31                 21        542
-    ## 2          3 4326 142783.030                111                 63       5186
-    ## 3          4 9739 336908.323                202                129      10581
-    ## 4          5  580   9186.802                 27                 28        602
-    ## 5          6 3927 120366.981                 99                 50       4191
-    ## 6          7  290   3111.748                 22                 20        335
-    ##   ConvexPerimeter Eccentricity EquivDiameter    Extent
-    ## 1        87.24196    0.6006111      23.82991 0.6850998
-    ## 2       291.42030    0.8980639      74.21613 0.6186186
-    ## 3       505.83898    0.9753657     111.35565 0.3737432
-    ## 4        88.58696    0.3299815      27.17497 0.7671958
-    ## 5       265.49548    0.9016151      70.71076 0.7933333
-    ## 6        67.86613    0.3332706      19.21560 0.6590909
+    ## # A tibble: 6 × 10
+    ##   roi_number  Area Biovolume BoundingBox_xwidth BoundingBox_ywidth ConvexArea
+    ##        <dbl> <dbl>     <dbl>              <dbl>              <dbl>      <dbl>
+    ## 1          2   446     6083.                 31                 21        542
+    ## 2          3  4326   142783.                111                 63       5186
+    ## 3          4  9739   336908.                202                129      10581
+    ## 4          5   580     9187.                 27                 28        602
+    ## 5          6  3927   120367.                 99                 50       4191
+    ## 6          7   290     3112.                 22                 20        335
+    ## # ℹ 4 more variables: ConvexPerimeter <dbl>, Eccentricity <dbl>,
+    ## #   EquivDiameter <dbl>, Extent <dbl>
 
 ``` r
 # Read only multiblob feature files
@@ -201,20 +198,17 @@ multiblob_features <- ifcb_read_features("data/features/2023",
 head(multiblob_features[[1]])[,1:10]
 ```
 
-    ##   roi_number blob_number Area MajorAxisLength MinorAxisLength Eccentricity
-    ## 1        154           1 3647       109.93092        45.00010    0.9123779
-    ## 2        154           2 1626        77.53922        30.74631    0.9180235
-    ## 3        214           1 7456       232.11148       122.61037    0.8490956
-    ## 4        214           2 4840       101.68493        68.30606    0.7407850
-    ## 5        214           3  910        54.18655        28.51088    0.8503847
-    ## 6        214           4  153        18.95031        10.93057    0.8168844
-    ##   Orientation ConvexArea EquivDiameter  Solidity
-    ## 1    11.28171       4205      68.14327 0.8673008
-    ## 2    26.71876       2495      45.50041 0.6517034
-    ## 3    30.89332      23666      97.43343 0.3150511
-    ## 4   -35.88789       6955      78.50146 0.6959022
-    ## 5    27.00911       1551      34.03892 0.5867182
-    ## 6    48.78767        188      13.95728 0.8138298
+    ## # A tibble: 6 × 10
+    ##   roi_number blob_number  Area MajorAxisLength MinorAxisLength Eccentricity
+    ##        <dbl>       <dbl> <dbl>           <dbl>           <dbl>        <dbl>
+    ## 1        154           1  3647           110.             45.0        0.912
+    ## 2        154           2  1626            77.5            30.7        0.918
+    ## 3        214           1  7456           232.            123.         0.849
+    ## 4        214           2  4840           102.             68.3        0.741
+    ## 5        214           3   910            54.2            28.5        0.850
+    ## 6        214           4   153            19.0            10.9        0.817
+    ## # ℹ 4 more variables: Orientation <dbl>, ConvexArea <dbl>, EquivDiameter <dbl>,
+    ## #   Solidity <dbl>
 
 ## Extract Images from ROI files
 

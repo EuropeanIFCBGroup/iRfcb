@@ -61,6 +61,7 @@ optionally filtering them based on whether they are multiblob or single blob fil
 <span>  feature_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  multiblob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  biovolume_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -79,6 +80,14 @@ optionally filtering them based on whether they are multiblob or single blob fil
 
 <dt id="arg-feature-version">feature_version<a class="anchor" aria-label="anchor" href="#arg-feature-version"></a></dt>
 <dd><p>Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).</p></dd>
+
+
+<dt id="arg-biovolume-only">biovolume_only<a class="anchor" aria-label="anchor" href="#arg-biovolume-only"></a></dt>
+<dd><p>Logical; if TRUE, only a minimal set of feature columns
+required for biovolume calculations are read from each feature file
+(typically <code>roi_number</code> and <code>biovolume</code>). This substantially reduces
+memory usage and improves performance when other features are not needed.
+If FALSE, all available feature columns are read.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

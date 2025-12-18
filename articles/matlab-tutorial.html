@@ -222,7 +222,7 @@ help pages for <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from classified data folder</span></span>
 <span><span class="va">biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
 <span>  feature_folder <span class="op">=</span> <span class="st">"data/features/2023"</span>,</span>
-<span>  mat_folder <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
+<span>  mat_files <span class="op">=</span> <span class="st">"data/classified"</span>,</span>
 <span>  hdr_folder <span class="op">=</span> <span class="st">"data/data/2023"</span>,</span>
 <span>  micron_factor <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3.4</span>,</span>
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
@@ -258,7 +258,7 @@ annotated IFCB image data. See details in the help pages for
 <code class="sourceCode R"><span><span class="co"># Summarize biovolume data using IFCB data from manual data folder</span></span>
 <span><span class="va">manual_biovolume_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes</a></span><span class="op">(</span></span>
 <span>  feature_folder <span class="op">=</span> <span class="st">"data/features"</span>,</span>
-<span>  mat_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
+<span>  mat_files <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
 <span>  hdr_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
 <span>  micron_factor <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3.4</span>,</span>

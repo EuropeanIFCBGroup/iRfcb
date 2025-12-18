@@ -238,20 +238,17 @@ added to the output.</p>
 <span></span>
 <span><span class="co"># Print output of first 10 columns from the first sample in the list</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">features</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##   roi_number Area  Biovolume BoundingBox_xwidth BoundingBox_ywidth ConvexArea</span></span>
-<span><span class="co">## 1          2  446   6082.909                 31                 21        542</span></span>
-<span><span class="co">## 2          3 4326 142783.030                111                 63       5186</span></span>
-<span><span class="co">## 3          4 9739 336908.323                202                129      10581</span></span>
-<span><span class="co">## 4          5  580   9186.802                 27                 28        602</span></span>
-<span><span class="co">## 5          6 3927 120366.981                 99                 50       4191</span></span>
-<span><span class="co">## 6          7  290   3111.748                 22                 20        335</span></span>
-<span><span class="co">##   ConvexPerimeter Eccentricity EquivDiameter    Extent</span></span>
-<span><span class="co">## 1        87.24196    0.6006111      23.82991 0.6850998</span></span>
-<span><span class="co">## 2       291.42030    0.8980639      74.21613 0.6186186</span></span>
-<span><span class="co">## 3       505.83898    0.9753657     111.35565 0.3737432</span></span>
-<span><span class="co">## 4        88.58696    0.3299815      27.17497 0.7671958</span></span>
-<span><span class="co">## 5       265.49548    0.9016151      70.71076 0.7933333</span></span>
-<span><span class="co">## 6        67.86613    0.3332706      19.21560 0.6590909</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
+<span><span class="co">##   roi_number  Area Biovolume BoundingBox_xwidth BoundingBox_ywidth ConvexArea</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>          2   446     <span style="text-decoration: underline;">6</span>083.                 31                 21        542</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>          3  <span style="text-decoration: underline;">4</span>326   <span style="text-decoration: underline;">142</span>783.                111                 63       <span style="text-decoration: underline;">5</span>186</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>          4  <span style="text-decoration: underline;">9</span>739   <span style="text-decoration: underline;">336</span>908.                202                129      <span style="text-decoration: underline;">10</span>581</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>          5   580     <span style="text-decoration: underline;">9</span>187.                 27                 28        602</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>          6  <span style="text-decoration: underline;">3</span>927   <span style="text-decoration: underline;">120</span>367.                 99                 50       <span style="text-decoration: underline;">4</span>191</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>          7   290     <span style="text-decoration: underline;">3</span>112.                 22                 20        335</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ConvexPerimeter &lt;dbl&gt;, Eccentricity &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   EquivDiameter &lt;dbl&gt;, Extent &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
 <span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
@@ -260,20 +257,17 @@ added to the output.</p>
 <span></span>
 <span><span class="co"># Print output of first 10 columns from the first sample in the list</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">multiblob_features</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span></span></code></pre></div>
-<pre><code><span><span class="co">##   roi_number blob_number Area MajorAxisLength MinorAxisLength Eccentricity</span></span>
-<span><span class="co">## 1        154           1 3647       109.93092        45.00010    0.9123779</span></span>
-<span><span class="co">## 2        154           2 1626        77.53922        30.74631    0.9180235</span></span>
-<span><span class="co">## 3        214           1 7456       232.11148       122.61037    0.8490956</span></span>
-<span><span class="co">## 4        214           2 4840       101.68493        68.30606    0.7407850</span></span>
-<span><span class="co">## 5        214           3  910        54.18655        28.51088    0.8503847</span></span>
-<span><span class="co">## 6        214           4  153        18.95031        10.93057    0.8168844</span></span>
-<span><span class="co">##   Orientation ConvexArea EquivDiameter  Solidity</span></span>
-<span><span class="co">## 1    11.28171       4205      68.14327 0.8673008</span></span>
-<span><span class="co">## 2    26.71876       2495      45.50041 0.6517034</span></span>
-<span><span class="co">## 3    30.89332      23666      97.43343 0.3150511</span></span>
-<span><span class="co">## 4   -35.88789       6955      78.50146 0.6959022</span></span>
-<span><span class="co">## 5    27.00911       1551      34.03892 0.5867182</span></span>
-<span><span class="co">## 6    48.78767        188      13.95728 0.8138298</span></span></code></pre>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 × 10</span></span></span>
+<span><span class="co">##   roi_number blob_number  Area MajorAxisLength MinorAxisLength Eccentricity</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>        154           1  <span style="text-decoration: underline;">3</span>647           110.             45.0        0.912</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>        154           2  <span style="text-decoration: underline;">1</span>626            77.5            30.7        0.918</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>        214           1  <span style="text-decoration: underline;">7</span>456           232.            123.         0.849</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>        214           2  <span style="text-decoration: underline;">4</span>840           102.             68.3        0.741</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>        214           3   910            54.2            28.5        0.850</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>        214           4   153            19.0            10.9        0.817</span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: Orientation &lt;dbl&gt;, ConvexArea &lt;dbl&gt;, EquivDiameter &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   Solidity &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 </div>
 <div class="section level2">

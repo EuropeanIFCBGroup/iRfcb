@@ -68,7 +68,7 @@ depending on whether the class is identified as a diatom.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_extract_biovolumes</span><span class="op">(</span></span>
 <span>  <span class="va">feature_files</span>,</span>
-<span>  mat_folder <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  mat_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_images <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -83,7 +83,8 @@ depending on whether the class is identified as a diatom.</p>
 <span>  drop_zero_volume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  mat_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,8 +96,8 @@ depending on whether the class is identified as a diatom.</p>
 <dd><p>A path to a folder containing feature files or a character vector of file paths.</p></dd>
 
 
-<dt id="arg-mat-folder">mat_folder<a class="anchor" aria-label="anchor" href="#arg-mat-folder"></a></dt>
-<dd><p>(Optional) Path to the folder containing class or manual annotation files.</p></dd>
+<dt id="arg-mat-files">mat_files<a class="anchor" aria-label="anchor" href="#arg-mat-files"></a></dt>
+<dd><p>(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.</p></dd>
 
 
 <dt id="arg-custom-images">custom_images<a class="anchor" aria-label="anchor" href="#arg-custom-images"></a></dt>
@@ -111,7 +112,7 @@ used as a substitute for MATLAB files.</p></dd>
 
 
 <dt id="arg-class-use-file">class2use_file<a class="anchor" aria-label="anchor" href="#arg-class-use-file"></a></dt>
-<dd><p>A character string specifying the path to the file containing the <code>class2use</code> variable (default: NULL).</p></dd>
+<dd><p>(Optional) A character string specifying the path to the file containing the <code>class2use</code> variable. Only required for manual results (default: NULL).</p></dd>
 
 
 <dt id="arg-micron-factor">micron_factor<a class="anchor" aria-label="anchor" href="#arg-micron-factor"></a></dt>
@@ -144,7 +145,7 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 
 
 <dt id="arg-mat-recursive">mat_recursive<a class="anchor" aria-label="anchor" href="#arg-mat-recursive"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, searches recursively for MATLAB files in <code>mat_folder</code>. Default: <code>TRUE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code> and <code>mat_files</code> is a folder, searches recursively for MATLAB files in <code>mat_files</code>. Default: <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-drop-zero-volume">drop_zero_volume<a class="anchor" aria-label="anchor" href="#arg-drop-zero-volume"></a></dt>
@@ -162,6 +163,11 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, prints progress messages. Default: <code>TRUE</code>.</p></dd>
 
+
+<dt id="arg-mat-folder">mat_folder<a class="anchor" aria-label="anchor" href="#arg-mat-folder"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
+Use <code>mat_files</code> instead.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -175,9 +181,9 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
-<ul><li><p><strong>Classification Data Handling:</strong></p><ul><li><p>If <code>mat_folder</code> is provided, the function reads class annotations from MATLAB <code>.mat</code> files.</p></li>
+<ul><li><p><strong>Classification Data Handling:</strong></p><ul><li><p>If <code>mat_files</code> is provided, the function reads class annotations from MATLAB <code>.mat</code> files.</p></li>
 <li><p>If <code>custom_images</code> and <code>custom_classes</code> are supplied, they override MATLAB classification data (e.g. data from a CNN model).</p></li>
-<li><p>If both <code>mat_folder</code> and <code>custom_images/custom_classes</code> are given, <code>mat_folder</code> takes precedence.</p></li>
+<li><p>If both <code>mat_files</code> and <code>custom_images/custom_classes</code> are given, <code>mat_files</code> takes precedence.</p></li>
 </ul></li>
 <li><p><strong>MAT File Processing:</strong></p><ul><li><p>If <code>use_python = TRUE</code>, the function reads <code>.mat</code> files using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code> (requires Python + <code>SciPy</code>).</p></li>
 <li><p>Otherwise, it falls back to <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p></li>
@@ -198,10 +204,10 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Using MATLAB results:</span></span></span>
 <span class="r-in"><span><span class="va">feature_files</span> <span class="op">&lt;-</span> <span class="st">"data/features"</span></span></span>
-<span class="r-in"><span><span class="va">mat_folder</span> <span class="op">&lt;-</span> <span class="st">"data/classified"</span></span></span>
+<span class="r-in"><span><span class="va">mat_files</span> <span class="op">&lt;-</span> <span class="st">"data/classified"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">biovolume_df</span> <span class="op">&lt;-</span> <span class="fu">ifcb_extract_biovolumes</span><span class="op">(</span><span class="va">feature_files</span>,</span></span>
-<span class="r-in"><span>                                        <span class="va">mat_folder</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                        <span class="va">mat_files</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">biovolume_df</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

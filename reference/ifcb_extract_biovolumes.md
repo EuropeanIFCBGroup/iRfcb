@@ -14,7 +14,7 @@ whether the class is identified as a diatom.
 ``` r
 ifcb_extract_biovolumes(
   feature_files,
-  mat_folder = NULL,
+  mat_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
   class2use_file = NULL,
@@ -29,7 +29,8 @@ ifcb_extract_biovolumes(
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  mat_folder = deprecated()
 )
 ```
 
@@ -40,10 +41,10 @@ ifcb_extract_biovolumes(
   A path to a folder containing feature files or a character vector of
   file paths.
 
-- mat_folder:
+- mat_files:
 
-  (Optional) Path to the folder containing class or manual annotation
-  files.
+  (Optional) A character vector of full paths to class or manual
+  annotation files, or a single path to a folder containing such files.
 
 - custom_images:
 
@@ -60,8 +61,9 @@ ifcb_extract_biovolumes(
 
 - class2use_file:
 
-  A character string specifying the path to the file containing the
-  `class2use` variable (default: NULL).
+  (Optional) A character string specifying the path to the file
+  containing the `class2use` variable. Only required for manual results
+  (default: NULL).
 
 - micron_factor:
 
@@ -100,8 +102,8 @@ ifcb_extract_biovolumes(
 
 - mat_recursive:
 
-  Logical. If `TRUE`, searches recursively for MATLAB files in
-  `mat_folder`. Default: `TRUE`.
+  Logical. If `TRUE` and `mat_files` is a folder, searches recursively
+  for MATLAB files in `mat_files`. Default: `TRUE`.
 
 - drop_zero_volume:
 
@@ -123,6 +125,10 @@ ifcb_extract_biovolumes(
 
   Logical. If `TRUE`, prints progress messages. Default: `TRUE`.
 
+- mat_folder:
+
+  **\[deprecated\]** Use `mat_files` instead.
+
 ## Value
 
 A data frame containing:
@@ -143,14 +149,14 @@ A data frame containing:
 
 - **Classification Data Handling:**
 
-  - If `mat_folder` is provided, the function reads class annotations
+  - If `mat_files` is provided, the function reads class annotations
     from MATLAB `.mat` files.
 
   - If `custom_images` and `custom_classes` are supplied, they override
     MATLAB classification data (e.g. data from a CNN model).
 
-  - If both `mat_folder` and `custom_images/custom_classes` are given,
-    `mat_folder` takes precedence.
+  - If both `mat_files` and `custom_images/custom_classes` are given,
+    `mat_files` takes precedence.
 
 - **MAT File Processing:**
 
@@ -183,10 +189,10 @@ Oceanogr: Methods 5, 204–216.
 if (FALSE) { # \dontrun{
 # Using MATLAB results:
 feature_files <- "data/features"
-mat_folder <- "data/classified"
+mat_files <- "data/classified"
 
 biovolume_df <- ifcb_extract_biovolumes(feature_files,
-                                        mat_folder)
+                                        mat_files)
 
 print(biovolume_df)
 
