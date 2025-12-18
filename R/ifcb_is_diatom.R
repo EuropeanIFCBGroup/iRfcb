@@ -8,6 +8,9 @@
 #' @param taxa_list A character vector containing the list of taxa names.
 #' @param diatom_class A character string or vector specifying the class name(s) to be identified as diatoms, according to WoRMS.
 #'        Default is "Bacillariophyceae".
+#' @param diatom_include Optional character vector of taxa (or genera) that should
+#'        always be treated as diatoms, overriding the WoRMS-based classification.
+#'        Default is NULL.
 #' @param max_retries An integer specifying the maximum number of attempts to retrieve WoRMS records in case of an error.
 #'        Default is 3.
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
@@ -31,7 +34,9 @@
 #'
 #' @export
 #' @seealso \url{https://www.marinespecies.org/}
-ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_retries = 3, sleep_time = 10, marine_only = FALSE, fuzzy = deprecated(), verbose = TRUE) {
+ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom_include = NULL,
+                           max_retries = 3, sleep_time = 10, marine_only = FALSE,
+                           fuzzy = deprecated(), verbose = TRUE) {
 
   # Warn the user if fuzzy is used
   if (lifecycle::is_present(fuzzy)) {
@@ -59,6 +64,15 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", max_re
 
   # Check if the class is the specified diatom class
   is_diatom <- result_df$class %in% diatom_class
+
+  # Override diatom classification if diatom_include is provided
+  if (!is.null(diatom_include)) {
+
+    taxa_genus <- word(taxa_list_clean, 1)
+    matched <- taxa_genus %in% diatom_include
+
+    is_diatom[matched] <- TRUE
+  }
 
   return(is_diatom)
 }

@@ -6,7 +6,7 @@
 \usage{
 ifcb_extract_biovolumes(
   feature_files,
-  mat_folder = NULL,
+  mat_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
   class2use_file = NULL,
@@ -21,13 +21,14 @@ ifcb_extract_biovolumes(
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  mat_folder = deprecated()
 )
 }
 \arguments{
 \item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
-\item{mat_folder}{(Optional) Path to the folder containing class or manual annotation files.}
+\item{mat_files}{(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.}
 
 \item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png,
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
@@ -36,7 +37,7 @@ used as a substitute for MATLAB files.}
 
 \item{custom_classes}{(Optional) A character vector of corresponding class labels for \code{custom_images}.}
 
-\item{class2use_file}{A character string specifying the path to the file containing the \code{class2use} variable (default: NULL).}
+\item{class2use_file}{(Optional) A character string specifying the path to the file containing the \code{class2use} variable. Only required for manual results (default: NULL).}
 
 \item{micron_factor}{Conversion factor for biovolume to cubic micrometers. Default is \code{1 / 3.4}.}
 
@@ -53,7 +54,7 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{feature_recursive}{Logical. If \code{TRUE}, searches recursively for feature files when \code{feature_files} is a folder. Default: \code{TRUE}.}
 
-\item{mat_recursive}{Logical. If \code{TRUE}, searches recursively for MATLAB files in \code{mat_folder}. Default: \code{TRUE}.}
+\item{mat_recursive}{Logical. If \code{TRUE} and \code{mat_files} is a folder, searches recursively for MATLAB files in \code{mat_files}. Default: \code{TRUE}.}
 
 \item{drop_zero_volume}{Logical. If \code{TRUE}, rows where \code{Biovolume} equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: \code{FALSE}.}
 
@@ -62,6 +63,9 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a Python-based method (\code{SciPy}). Default: \code{FALSE}.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints progress messages. Default: \code{TRUE}.}
+
+\item{mat_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{mat_files} instead.}
 }
 \value{
 A data frame containing:
@@ -85,9 +89,9 @@ depending on whether the class is identified as a diatom.
 \itemize{
 \item \strong{Classification Data Handling:}
 \itemize{
-\item If \code{mat_folder} is provided, the function reads class annotations from MATLAB \code{.mat} files.
+\item If \code{mat_files} is provided, the function reads class annotations from MATLAB \code{.mat} files.
 \item If \code{custom_images} and \code{custom_classes} are supplied, they override MATLAB classification data (e.g. data from a CNN model).
-\item If both \code{mat_folder} and \code{custom_images/custom_classes} are given, \code{mat_folder} takes precedence.
+\item If both \code{mat_files} and \code{custom_images/custom_classes} are given, \code{mat_files} takes precedence.
 }
 \item \strong{MAT File Processing:}
 \itemize{
@@ -100,10 +104,10 @@ depending on whether the class is identified as a diatom.
 \dontrun{
 # Using MATLAB results:
 feature_files <- "data/features"
-mat_folder <- "data/classified"
+mat_files <- "data/classified"
 
 biovolume_df <- ifcb_extract_biovolumes(feature_files,
-                                        mat_folder)
+                                        mat_files)
 
 print(biovolume_df)
 

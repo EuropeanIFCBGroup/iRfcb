@@ -6,7 +6,7 @@
 \usage{
 ifcb_summarize_biovolumes(
   feature_folder,
-  mat_folder = NULL,
+  mat_files = NULL,
   class2use_file = NULL,
   hdr_folder = NULL,
   custom_images = NULL,
@@ -22,13 +22,14 @@ ifcb_summarize_biovolumes(
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  mat_folder = deprecated()
 )
 }
 \arguments{
 \item{feature_folder}{Path to the folder containing feature files (e.g., CSV format).}
 
-\item{mat_folder}{(Optional) Path to the folder containing MATLAB classification or manual annotation files.}
+\item{mat_files}{(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.}
 
 \item{class2use_file}{(Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.}
 
@@ -54,7 +55,7 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
 
-\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{mat_folder}. Default is TRUE.}
+\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively when the \code{mat_files} is a folder. Default is TRUE.}
 
 \item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
 
@@ -65,6 +66,9 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
+
+\item{mat_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{mat_files} instead.}
 }
 \value{
 A data frame summarizing aggregated biovolume and carbon content per class per sample.

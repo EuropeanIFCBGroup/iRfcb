@@ -208,7 +208,7 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
   image <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
 
   expect_warning(ifcb_extract_biovolumes(feature_folder, class_folder, custom_images = image, verbose = FALSE),
-                 "Both `mat_folder` and `custom_images/custom_classes` were provided")
+                 "Both `mat_files` and `custom_images/custom_classes` were provided")
 
   expect_error(ifcb_extract_biovolumes(feature_folder, verbose = FALSE),
                "No classification information supplied")

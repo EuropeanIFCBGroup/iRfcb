@@ -44,3 +44,32 @@ test_that("ifcb_match_taxa_names retries and fails after max_retries", {
   # Check that it retried the correct number of times
   expect_equal(retries, 3)
 })
+
+test_that("ifcb_is_diatom overrides ", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # Sample taxa list
+  taxa_list <- c("Navicula", "Actinocyclus", "Dinophysis_norvegica")
+
+  # Call the function
+  result <- ifcb_is_diatom(taxa_list)
+
+  # Expected logical vector (true for diatoms, false for others)
+  expected_result <- c(FALSE, FALSE, FALSE)
+
+  # Assert the results
+  expect_equal(result, expected_result)
+
+  # Call the function with the diatom_include argument
+  result_diatom_include <- ifcb_is_diatom(taxa_list,
+                                          diatom_include = c("Navicula", "Actinocyclus"))
+
+  # Expected logical vector (true for diatoms, false for others)
+  expected_result <- c(TRUE, TRUE, FALSE)
+
+  # Assert the results
+  expect_equal(result_diatom_include, expected_result)
+})

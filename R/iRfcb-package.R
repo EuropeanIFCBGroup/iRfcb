@@ -14,7 +14,7 @@
 #' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
 #'   year ymd_hms as_datetime ymd days hours minutes seconds with_tz
-#' @importFrom readr cols col_character read_delim type_convert
+#' @importFrom readr cols col_character read_delim type_convert read_csv
 #' @importFrom reticulate import py_available py_module_available py_run_string
 #'   source_python use_virtualenv virtualenv_create virtualenv_list virtualenv_root
 #'   use_python py_discover_config py_require py_list_packages py_install py_config
