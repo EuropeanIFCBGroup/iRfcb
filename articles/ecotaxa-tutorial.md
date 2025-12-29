@@ -52,8 +52,6 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(
   dest_dir = data_dir,
-  max_retries = 10,
-  sleep_time = 30,
   verbose = FALSE
 )
 ```
@@ -135,7 +133,7 @@ ifcb_zip_pngs(
 ```
 
     ## Creating zip archive...
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/D20230314T003836_IFCB134_ecotaxa.zip
+    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip
 
 ## Annotated Images
 
@@ -644,7 +642,7 @@ ifcb_zip_pngs(
     ## Creating README file...
     ## Creating MANIFEST.txt...
     ## Creating zip archive...
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/iRfcb_ecotaxa.zip
+    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip
 
 This concludes this tutorial for the `iRfcb` package. For more detailed
 information, refer to the package documentation or the other

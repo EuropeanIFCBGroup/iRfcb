@@ -4,6 +4,11 @@
 
 ### New features
 
+- New function
+  [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md)
+  to create manual classification `.mat` files compatible with the
+  `ifcb-analysis` MATLAB repository, using PNG images organized in class
+  named subfolders and a `class2use.mat` file.
 - Added a new `diatom_include` argument to
   [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
   and
@@ -22,6 +27,10 @@
   [`ifcb_read_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_features.md)
   to allow reading only biovolume related columns, improving performance
   for large feature tables.
+- Added a new `add_trailing_numbers` argument to
+  [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md)
+  to control whether a zero-padded numeric suffix based on the manual
+  class index is appended to class names in the output filenames.
 
 ### Minor improvements and fixes
 
@@ -41,12 +50,29 @@
   [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
   and
   [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md).
+- All data frame outputs are now consistently returned as tibbles.
+- Updated IFCB example in
+  [`ifcb_get_ecotaxa_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ecotaxa_example.md).
+- Moved vignettes that required internet access to package articles to
+  improve CRAN check reliability.
+- Improved error handling across functions, with clearer and more
+  consistent messages.
+- EEA coastline data are now obtained from EEA map services, replacing
+  direct file server downloads that were unstable.
+- Test data are sourced from GitHub when not available on Figshare.
 
 ### Deprecations
 
+- [`ifcb_create_empty_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
+  has been renamed to
+  [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md).
+- [`ifcb_match_taxa_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.md)
+  is now superseded by `SHARK4R::match_worms_taxa()`.
 - Deprecated arguments:
   - `mat_folder` in
     [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
     and
     [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
     (replaced by `mat_files`).
+  - `expected_checksum` in
+    [`ifcb_download_test_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_test_data.md).

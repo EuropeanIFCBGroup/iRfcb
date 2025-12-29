@@ -2,15 +2,15 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  a-general-tutorial: a-general-tutorial.html
-  dwca-tutorial: dwca-tutorial.html
-  ecotaxa-tutorial: ecotaxa-tutorial.html
-  image-export-tutorial: image-export-tutorial.html
-  matlab-tutorial: matlab-tutorial.html
-  metadata-template: metadata-template.html
-  qc-tutorial: qc-tutorial.html
-  whoi-plankton-data-integration: whoi-plankton-data-integration.html
-last_built: 2025-12-18T12:23Z
+  articles/dwca-tutorial: dwca-tutorial.html
+  articles/ecotaxa-tutorial: ecotaxa-tutorial.html
+  articles/image-export-tutorial: image-export-tutorial.html
+  introduction: introduction.html
+  articles/matlab-tutorial: matlab-tutorial.html
+  articles/metadata-template: metadata-template.html
+  articles/qc-tutorial: qc-tutorial.html
+  articles/whoi-plankton-data-integration: whoi-plankton-data-integration.html
+last_built: 2025-12-29T19:02Z
 urls:
   reference: https://europeanifcbgroup.github.io/iRfcb/reference
   article: https://europeanifcbgroup.github.io/iRfcb/articles

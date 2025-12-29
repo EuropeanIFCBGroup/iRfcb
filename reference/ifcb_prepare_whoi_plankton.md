@@ -135,7 +135,7 @@ This is a wrapper function for the
 [`ifcb_download_whoi_plankton`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.md),
 [`ifcb_download_dashboard_data`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_data.md)
 and
-[`ifcb_create_empty_manual_file`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
+[`ifcb_create_manual_file`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
 functions and used for downloading, processing, and converting IFCB
 data. Please note that this function downloads and extracts large
 amounts of data, which can take considerable time.

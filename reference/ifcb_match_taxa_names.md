@@ -1,5 +1,12 @@
 # Retrieve WoRMS Records with Retry Mechanism
 
+**\[superseded\]**
+
+This function has been superseded by `SHARK4R::match_worms_taxa()` or
+[`worrms::wm_records_names()`](https://docs.ropensci.org/worrms/reference/wm_records_names.html).
+It will not receive new features, but will continue to receive critical
+bug fixes as needed.
+
 This function attempts to retrieve WoRMS records using the provided taxa
 names. It retries the operation if an error occurs, up to a specified
 number of attempts.
@@ -79,7 +86,7 @@ records <- ifcb_match_taxa_names(taxa_names = taxa,
                                  verbose = TRUE)
 
 # Print records as tibble
-dplyr::tibble(records)
+print(records)
 #> # A tibble: 3 × 29
 #>   name  AphiaID url   scientificname authority status unacceptreason taxonRankID
 #>   <chr>   <int> <chr> <chr>          <chr>     <chr>  <lgl>                <int>

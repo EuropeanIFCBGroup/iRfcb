@@ -5,8 +5,8 @@ based on a class2use file. It loads a specified class2use file and
 applies the adjustments to all relevant files in the specified manual
 folder. Optionally, it can also perform compression on the output files.
 This is the R equivalent function of
-`start_mc_adjust_classes_user_training` from the
-`ifcb-analysis repository` (Sosik and Olson 2007).
+`start_mc_adjust_classes_user_training` from the `ifcb-analysis`
+repository (Sosik and Olson 2007).
 
 ## Usage
 

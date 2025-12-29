@@ -26,6 +26,7 @@ ifcb_extract_annotated_images(
   old_adc = FALSE,
   use_python = FALSE,
   gamma = 1,
+  add_trailing_numbers = TRUE,
   roi_folder = deprecated()
 )
 ```
@@ -114,6 +115,13 @@ ifcb_extract_annotated_images(
   A numeric value for gamma correction applied to the image. Default is
   1 (no correction). Values \<1 increase contrast in dark regions, while
   values \>1 decrease contrast.
+
+- add_trailing_numbers:
+
+  Logical. If `TRUE`, appends a zero-padded numeric suffix derived from
+  the manual class index to the class name when naming output files. If
+  `FALSE`, uses only the class name without a numeric suffix. Default is
+  `TRUE`.
 
 - roi_folder:
 

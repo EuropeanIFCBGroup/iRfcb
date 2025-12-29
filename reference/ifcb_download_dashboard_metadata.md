@@ -47,23 +47,23 @@ to retrieve list of available bins from the IFCB Dashboard API.
                                                     quiet = TRUE)
 
   # Print result as tibble
-  dplyr::tibble(metadata_mvco)
+  print(metadata_mvco)
 #> # A tibble: 348,537 × 20
-#>    dataset pid     sample_time  ifcb ml_analyzed latitude longitude depth cruise
-#>    <chr>   <chr>   <chr>       <int>       <dbl>    <dbl>     <dbl> <dbl> <chr> 
-#>  1 mvco    D20170… 2017-04-14…    10        2.57     41.3     -70.6     0 ""    
-#>  2 mvco    D20170… 2017-04-14…    10        2.46     41.3     -70.6     0 ""    
-#>  3 mvco    D20170… 2017-04-14…    10        2.70     41.3     -70.6     0 ""    
-#>  4 mvco    D20170… 2017-04-14…    10        2.69     41.3     -70.6     0 ""    
-#>  5 mvco    D20170… 2017-04-14…    10        2.75     41.3     -70.6     0 ""    
-#>  6 mvco    D20170… 2017-04-14…    10        2.82     41.3     -70.6     0 ""    
-#>  7 mvco    D20170… 2017-04-14…    10        2.63     41.3     -70.6     0 ""    
-#>  8 mvco    D20170… 2017-04-14…    10        2.74     41.3     -70.6     0 ""    
-#>  9 mvco    D20170… 2017-04-14…    10        2.85     41.3     -70.6     0 ""    
-#> 10 mvco    D20170… 2017-04-14…    10        2.67     41.3     -70.6     0 ""    
+#>    dataset pid    sample_time          ifcb ml_analyzed latitude longitude depth
+#>    <chr>   <chr>  <dttm>              <dbl>       <dbl>    <dbl>     <dbl> <dbl>
+#>  1 mvco    D2017… 2017-04-14 16:31:47    10        2.57     41.3     -70.6     0
+#>  2 mvco    D2017… 2017-04-14 16:54:21    10        2.46     41.3     -70.6     0
+#>  3 mvco    D2017… 2017-04-14 17:16:48    10        2.70     41.3     -70.6     0
+#>  4 mvco    D2017… 2017-04-14 17:39:14    10        2.69     41.3     -70.6     0
+#>  5 mvco    D2017… 2017-04-14 18:01:39    10        2.75     41.3     -70.6     0
+#>  6 mvco    D2017… 2017-04-14 18:24:03    10        2.82     41.3     -70.6     0
+#>  7 mvco    D2017… 2017-04-14 18:46:28    10        2.63     41.3     -70.6     0
+#>  8 mvco    D2017… 2017-04-14 19:08:54    10        2.74     41.3     -70.6     0
+#>  9 mvco    D2017… 2017-04-14 19:31:20    10        2.85     41.3     -70.6     0
+#> 10 mvco    D2017… 2017-04-14 19:53:42    10        2.67     41.3     -70.6     0
 #> # ℹ 348,527 more rows
-#> # ℹ 11 more variables: cast <lgl>, niskin <lgl>, sample_type <chr>,
-#> #   n_images <int>, tag1 <chr>, tag2 <chr>, tag3 <chr>, tag4 <chr>,
-#> #   comment_summary <chr>, trigger_selection <int>, skip <int>
+#> # ℹ 12 more variables: cruise <chr>, cast <lgl>, niskin <lgl>,
+#> #   sample_type <chr>, n_images <dbl>, tag1 <chr>, tag2 <chr>, tag3 <chr>,
+#> #   tag4 <chr>, comment_summary <chr>, trigger_selection <dbl>, skip <dbl>
 # }
 ```

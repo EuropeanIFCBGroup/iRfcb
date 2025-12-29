@@ -17,6 +17,7 @@ ifcb_is_near_land(
   remove_small_islands = TRUE,
   small_island_threshold = 2e+06,
   plot = FALSE,
+  verbose = TRUE,
   utm_zone = deprecated()
 )
 ```
@@ -39,18 +40,19 @@ ifcb_is_near_land(
 
 - shape:
 
-  Optional path to a shapefile (`.shp`) containing coastline data. If
-  provided, this file will be used instead of the default Natural Earth
-  1:10m land vectors. A high-resolution shapefile can improve the
-  accuracy of buffer distance calculations. Alternatively, you can
-  retrieve a more detailed European coastline automatically by setting
-  the `source` argument to `"eea"`.
+  Optional path to a shapefile (`.shp` or `.gpkg`) containing coastline
+  data. If provided, this file will be used instead of the default
+  Natural Earth 1:10m land vectors. A high-resolution shapefile can
+  improve the accuracy of buffer distance calculations. Alternatively,
+  you can retrieve a more detailed European coastline automatically by
+  setting the `source` argument to `"eea"`.
 
 - source:
 
   Character string indicating which default coastline source to use when
   `shape = NULL`. Options are `"ne"` (Natural Earth, default) and
-  `"eea"` (European Environment Agency). Ignored if `shape` is provided.
+  `"eea"` (European Environment Agency, 2017). Ignored if `shape` is
+  provided.
 
 - crs:
 
@@ -73,6 +75,11 @@ ifcb_is_near_land(
   A boolean indicating whether to plot the points, land polygon and
   buffer. Default is `FALSE`.
 
+- verbose:
+
+  A logical indicating whether to print progress messages. Default is
+  TRUE.
+
 - utm_zone:
 
   **\[deprecated\]** This argument is deprecated. UTM zones are now
@@ -94,9 +101,15 @@ polygon shapefile and determines if each input position intersects with
 this buffer or the landmass itself. By default, it uses the Natural
 Earth 1:10m land vector dataset.
 
-The EEA shapefile is downloaded from
-<https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon>
-when `source = "eea"`.
+The EEA shapefile is downloaded when `source = "eea"` (European
+Environment Agency, 2017). The downloaded file is cached within an R
+session.
+
+## References
+
+European Environment Agency (2017). EEA coastline for analysis
+(polygon) - version 3.0, March 2017.
+<https://sdi.eea.europa.eu/catalogue/geoss/api/records/9faa6ea1-372a-4826-a3c7-fb5b05e31c52>
 
 ## Examples
 

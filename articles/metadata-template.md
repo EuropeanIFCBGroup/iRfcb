@@ -3,7 +3,7 @@
 This R Markdown document is based on a template provided by the
 [`LivingNorwayR`](https://livingnorway.github.io/LivingNorwayR/)
 package, and is used for creating a `.eml` file in
-[`vignette("dwca-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/dwca-tutorial.md).
+`vignette("dwca-tutorial")`.
 
 When documenting project metadata in Markdown, the `LivingNorwayR`
 package provides various functions to flag specific text sections for

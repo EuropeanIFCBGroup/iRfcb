@@ -19,7 +19,7 @@ These columns are used for submitting IFCB data to https://shark.smhi.se/."><met
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -85,47 +85,25 @@ These columns are used for submitting IFCB data to <a href="https://shark.smhi.s
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu">ifcb_get_shark_colnames</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shark_colnames</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] MYEAR                  STATN                  SAMPLING_PLATFORM     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] PROJ                   ORDERER                SHIPC                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] CRUISE_NO              DATE_TIME              SDATE                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] STIME                  TIMEZONE               LATIT                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] LONGI                  POSYS                  WADEP                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] MPROG                  MNDEP                  MXDEP                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] SLABO                  ACKR_SMP               SMTYP                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] PDMET                  SMVOL                  METFP                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] IFCBNO                 SMPNO                  LATNM                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28] SFLAG                  LATNM_SFLAG            TRPHY                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31] APHIA_ID               IMAGE_VERIFICATION     VERIFIED_BY           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34] COUNT                  ABUND                  BIOVOL                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] C_CONC                 QFLAG                  COEFF                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [40] CLASS_NAME             CLASS_F1               UNCLASSIFIED_COUNTS   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [43] UNCLASSIFIED_ABUNDANCE UNCLASSIFIED_VOLUME    METOA                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [46] ASSOCIATED_MEDIA       CLASSPROG              ALABO                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [49] ACKR_ANA               ANADATE                METDC                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [52] TRAINING_SET           CLASSIFIER_USED        MANUAL_QC_DATE        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [55] PRE_FILTER_SIZE        PH_FB                  CHL_FB                </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [58] CDOM_FB                PHYC_FB                PHER_FB               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [61] WATERFLOW_FB           TURB_FB                PCO2_FB               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [64] TEMP_FB                PSAL_FB                OSAT_FB               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [67] DOXY_FB               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 67</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 67 variables: MYEAR &lt;dbl&gt;, STATN &lt;chr&gt;, SAMPLING_PLATFORM &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   PROJ &lt;chr&gt;, ORDERER &lt;chr&gt;, SHIPC &lt;chr&gt;, CRUISE_NO &lt;dbl&gt;, DATE_TIME &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SDATE &lt;date&gt;, STIME &lt;time&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;, LONGI &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   POSYS &lt;chr&gt;, WADEP &lt;lgl&gt;, MPROG &lt;chr&gt;, MNDEP &lt;dbl&gt;, MXDEP &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;, SMTYP &lt;chr&gt;, PDMET &lt;chr&gt;, SMVOL &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   METFP &lt;chr&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;, SFLAG &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   LATNM_SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, APHIA_ID &lt;dbl&gt;, IMAGE_VERIFICATION &lt;chr&gt;, …</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">shark_colnames_minimal</span> <span class="op">&lt;-</span> <span class="fu">ifcb_get_shark_colnames</span><span class="op">(</span>minimal <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shark_colnames_minimal</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] MYEAR               STATN               PROJ               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] ORDERER             SHIPC               SDATE              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] STIME               LATIT               LONGI              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] POSYS               MNDEP               MXDEP              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] SLABO               ACKR_SMP            SMTYP              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] SMVOL               IFCBNO              SMPNO              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] LATNM               SFLAG               TRPHY              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [22] IMAGE_VERIFICATION  VERIFIED_BY         COUNT              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [25] QFLAG               COEFF               CLASS_F1           </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [28] UNCLASSIFIED_COUNTS METOA               ASSOCIATED_MEDIA   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [31] CLASSPROG           TRAINING_SET        ALABO              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [34] ACKR_ANA            ANADATE             METDC              </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [37] CLASSIFIER_USED    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 37</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 37 variables: MYEAR &lt;dbl&gt;, STATN &lt;chr&gt;, PROJ &lt;chr&gt;, ORDERER &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SHIPC &lt;chr&gt;, SDATE &lt;date&gt;, STIME &lt;time&gt;, LATIT &lt;dbl&gt;, LONGI &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   POSYS &lt;chr&gt;, MNDEP &lt;dbl&gt;, MXDEP &lt;dbl&gt;, SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SMTYP &lt;chr&gt;, SMVOL &lt;dbl&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, IMAGE_VERIFICATION &lt;chr&gt;, VERIFIED_BY &lt;lgl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   COUNT &lt;dbl&gt;, QFLAG &lt;lgl&gt;, COEFF &lt;dbl&gt;, CLASS_F1 &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   UNCLASSIFIED_COUNTS &lt;dbl&gt;, METOA &lt;chr&gt;, ASSOCIATED_MEDIA &lt;chr&gt;, …</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

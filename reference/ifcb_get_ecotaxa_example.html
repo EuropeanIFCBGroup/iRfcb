@@ -17,7 +17,7 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -98,15 +98,13 @@ instruments to EcoTaxa at <a href="https://ecotaxa.obs-vlfr.fr/" class="external
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ecotaxa_example</span> <span class="op">&lt;-</span> <span class="fu">ifcb_get_ecotaxa_example</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print the first five columns</span></span></span>
-<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">ecotaxa_example</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 282</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">ecotaxa_example</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 282</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   img_file_name          object_id object_lat object_lon object_date object_time</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> [t]                    [t]       [f]        [f]        [t]         [t]        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> D20230915T093804_IFCB… D2023091… 57.7281986 11.468154… 20230915    93804      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> D20230915T113552_IFCB… D2023091… 57.866921… 11.2940889 20230915    113552     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 276 more variables: object_link &lt;chr&gt;, object_depth_min &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   object_depth_max &lt;chr&gt;, object_annotation_status &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   object_annotation_person_name &lt;chr&gt;, object_annotation_person_email &lt;chr&gt;,</span></span>

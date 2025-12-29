@@ -5,7 +5,7 @@ This function downloads a zip archive containing MATLAB files from the
 Library (Torstensson et al. 2024), unzips them into the specified folder
 and extracts png images. These data can be used, for instance, for
 testing `iRfcb` and for creating the tutorial vignette using
-[`vignette("a-general-tutorial", package = "iRfcb")`](https://europeanifcbgroup.github.io/iRfcb/articles/a-general-tutorial.md)
+[`vignette("introduction", package = "iRfcb")`](https://europeanifcbgroup.github.io/iRfcb/articles/introduction.md)
 
 ## Usage
 
@@ -13,11 +13,11 @@ testing `iRfcb` and for creating the tutorial vignette using
 ifcb_download_test_data(
   dest_dir,
   figshare_article = "48158716",
-  expected_checksum = NULL,
-  max_retries = 5,
+  max_retries = 3,
   sleep_time = 10,
   keep_zip = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  expected_checksum = deprecated()
 )
 ```
 
@@ -33,16 +33,10 @@ ifcb_download_test_data(
   default, the `iRfcb` test dataset (48158716) from Torstensson et
   al. (2024) is used.
 
-- expected_checksum:
-
-  Optional. The expected MD5 checksum of the downloaded zip file. If not
-  provided, it is automatically looked up from an internal table based
-  on `figshare_article`.
-
 - max_retries:
 
   The maximum number of retry attempts in case of download failure.
-  Default is 5.
+  Default is 3.
 
 - sleep_time:
 
@@ -57,6 +51,12 @@ ifcb_download_test_data(
 
   A logical indicating whether to print progress messages. Default is
   TRUE.
+
+- expected_checksum:
+
+  **\[deprecated\]** Optional. The expected MD5 checksum of the
+  downloaded zip file. If not provided, it is automatically looked up
+  from an internal table based on `figshare_article`.
 
 ## Value
 

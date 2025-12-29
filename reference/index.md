@@ -53,7 +53,7 @@ Core functions for processing and analyzing IFCB data.
 - [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
   : Download bin list from the IFCB Dashboard API
 - [`ifcb_match_taxa_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.md)
-  : Retrieve WoRMS Records with Retry Mechanism
+  **\[superseded\]** : Retrieve WoRMS Records with Retry Mechanism
 - [`ifcb_psd_plot()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.md)
   : Generate PSD Plot for a Given Sample
 - [`ifcb_read_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_features.md)
@@ -95,6 +95,9 @@ information, see the
 - [`ifcb_annotate_batch()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.md)
   : Annotate IFCB Images with Specified Class
 
+- [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md)
+  : Create Manual Classification MAT Files from PNG Subfolders
+
 - [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
   : Correct Annotations in MATLAB Classlist Files
 
@@ -103,8 +106,8 @@ information, see the
 
   Create a class2use `.mat` File
 
-- [`ifcb_create_empty_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
-  : Create an Empty Manual Classification MAT File
+- [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
+  : Create a Manual Classification MAT File
 
 - [`ifcb_merge_manual()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.md)
   : Merge IFCB Manual Classification Data
@@ -143,5 +146,7 @@ information, see the
 
 ## Deprecated functions
 
+- [`ifcb_create_empty_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
+  **\[deprecated\]** : Create an Empty Manual Classification MAT File
 - [`retrieve_worms_records()`](https://europeanifcbgroup.github.io/iRfcb/reference/retrieve_worms_records.md)
   **\[deprecated\]** : Retrieve WoRMS Records with Retry Mechanism

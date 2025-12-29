@@ -14,8 +14,7 @@ CRAN release: 2025-04-15
     for downloading WHOI-Plankton PNG datasets.
   - [`ifcb_prepare_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_prepare_whoi_plankton.md)
     to process WHOI data for integration.
-- New vignette:
-  [`vignette("whoi-plankton-data-integration")`](https://europeanifcbgroup.github.io/iRfcb/articles/whoi-plankton-data-integration.md).
+- New vignette: `vignette("whoi-plankton-data-integration")`.
 - Python virtual environments can now be automatically activated by
   setting the `USE_IRFCB_PYTHON` environment variable when loading the
   package.

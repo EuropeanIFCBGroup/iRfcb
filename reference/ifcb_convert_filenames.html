@@ -21,7 +21,7 @@ ROI numbers are included if available."><meta property="og:image" content="https
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -96,12 +96,11 @@ Defaults to "UTC". Set this to a different time zone if needed.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"D20230314T001205_IFCB134"</span>, <span class="st">"D20230615T123045_IFCB135"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">timestamps</span> <span class="op">&lt;-</span> <span class="fu">ifcb_convert_filenames</span><span class="op">(</span><span class="va">filenames</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">timestamps</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     sample           timestamp       date year month day</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 D20230314T001205_IFCB134 2023-03-14 00:12:05 2023-03-14 2023     3  14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 D20230615T123045_IFCB135 2023-06-15 12:30:45 2023-06-15 2023     6  15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       time ifcb_number</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 00:12:05     IFCB134</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 12:30:45     IFCB135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 8</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sample   timestamp           date        year month   day time     ifcb_number</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;time&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> D202303… 2023-03-14 <span style="color: #949494;">00:12:05</span> 2023-03-14  <span style="text-decoration: underline;">2</span>023     3    14 00<span style="color: #949494;">:</span>12<span style="color: #949494;">:</span>05 IFCB134    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> D202306… 2023-06-15 <span style="color: #949494;">12:30:45</span> 2023-06-15  <span style="text-decoration: underline;">2</span>023     6    15 12<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>45 IFCB135    </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

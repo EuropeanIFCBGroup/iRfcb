@@ -19,7 +19,7 @@ classification files in .mat format that can be used to train an image classifie
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -168,7 +168,7 @@ four empty columns after column 7 to match the newer format.
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
-<p>This is a wrapper function for the <code><a href="ifcb_download_whoi_plankton.html">ifcb_download_whoi_plankton</a></code>, <code><a href="ifcb_download_dashboard_data.html">ifcb_download_dashboard_data</a></code> and <code><a href="ifcb_create_empty_manual_file.html">ifcb_create_empty_manual_file</a></code> functions and used for downloading, processing, and converting IFCB data.
+<p>This is a wrapper function for the <code><a href="ifcb_download_whoi_plankton.html">ifcb_download_whoi_plankton</a></code>, <code><a href="ifcb_download_dashboard_data.html">ifcb_download_dashboard_data</a></code> and <code><a href="ifcb_create_manual_file.html">ifcb_create_manual_file</a></code> functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.</p>
 <p>The training data prepared from this function can be merged with an existing training dataset using the <code><a href="ifcb_merge_manual.html">ifcb_merge_manual</a></code> function.</p>
 <p>To exclude images from the training dataset, either exclude the class completely with the <code>skip_classes</code> argument,

@@ -19,7 +19,7 @@ The Natural Earth 1:10m land vectors are included as a default shapefile in iRfc
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -67,6 +67,7 @@ The Natural Earth 1:10m land vectors are included as a default shapefile in <cod
 <span>  remove_small_islands <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  small_island_threshold <span class="op">=</span> <span class="fl">2e+06</span>,</span>
 <span>  plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  utm_zone <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -88,7 +89,7 @@ The Natural Earth 1:10m land vectors are included as a default shapefile in <cod
 
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
-<dd><p>Optional path to a shapefile (<code>.shp</code>) containing coastline data. If provided,
+<dd><p>Optional path to a shapefile (<code>.shp</code> or <code>.gpkg</code>) containing coastline data. If provided,
 this file will be used instead of the default Natural Earth 1:10m land vectors.
 A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 Alternatively, you can retrieve a more detailed European coastline automatically by
@@ -97,7 +98,7 @@ setting the <code>source</code> argument to <code>"eea"</code>.</p></dd>
 
 <dt id="arg-source">source<a class="anchor" aria-label="anchor" href="#arg-source"></a></dt>
 <dd><p>Character string indicating which default coastline source to use when <code>shape = NULL</code>.
-Options are <code>"ne"</code> (Natural Earth, default) and <code>"eea"</code> (European Environment Agency).
+Options are <code>"ne"</code> (Natural Earth, default) and <code>"eea"</code> (European Environment Agency, 2017).
 Ignored if <code>shape</code> is provided.</p></dd>
 
 
@@ -120,6 +121,10 @@ will be considered small and removed, if remove_small_islands is set to <code>TR
 <dd><p>A boolean indicating whether to plot the points, land polygon and buffer. Default is <code>FALSE</code>.</p></dd>
 
 
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>A logical indicating whether to print progress messages. Default is TRUE.</p></dd>
+
+
 <dt id="arg-utm-zone">utm_zone<a class="anchor" aria-label="anchor" href="#arg-utm-zone"></a></dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
 This argument is deprecated. UTM zones are now determined automatically based on the longitude of the input positions.</p></dd>
@@ -137,8 +142,12 @@ and position points colored by their proximity to land.</p>
     <p>This function calculates a buffered area around the coastline using a polygon shapefile and
 determines if each input position intersects with this buffer or the landmass itself.
 By default, it uses the Natural Earth 1:10m land vector dataset.</p>
-<p>The EEA shapefile is downloaded from <a href="https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon" class="external-link">https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon</a>
-when <code>source = "eea"</code>.</p>
+<p>The EEA shapefile is downloaded when <code>source = "eea"</code> (European Environment Agency, 2017).
+The downloaded file is cached within an R session.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>European Environment Agency (2017). EEA coastline for analysis (polygon) - version 3.0, March 2017. <a href="https://sdi.eea.europa.eu/catalogue/geoss/api/records/9faa6ea1-372a-4826-a3c7-fb5b05e31c52" class="external-link">https://sdi.eea.europa.eu/catalogue/geoss/api/records/9faa6ea1-372a-4826-a3c7-fb5b05e31c52</a></p>
     </div>
 
     <div class="section level2">

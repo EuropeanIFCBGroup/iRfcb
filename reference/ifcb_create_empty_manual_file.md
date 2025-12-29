@@ -1,5 +1,10 @@
 # Create an Empty Manual Classification MAT File
 
+**\[deprecated\]**
+
+This function was deprecated as it has been replaced by the function:
+[`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md).
+
 Generates a MAT file for IFCB data with an empty manual classification
 structure using a specified number of ROIs, class names, and saves it to
 a specified output file. This function utilizes a Python script for

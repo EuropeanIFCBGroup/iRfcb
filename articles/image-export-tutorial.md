@@ -19,7 +19,7 @@ be shared through various sources, such as
 Northern Europe are gathered at the [Nordic
 Microalgae](https://nordicmicroalgae.org/annotated-images/) webpage.
 Images may also be shared through EcoTaxa, which is demonstrated in
-[`vignette("ecotaxa-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.md).
+`vignette("ecotaxa-tutorial")`.
 
 Additionally, this vignette shows how users of the
 [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) package can
@@ -65,8 +65,6 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(
   dest_dir = data_dir,
-  max_retries = 10,
-  sleep_time = 30,
   verbose = FALSE
 )
 ```
@@ -113,7 +111,7 @@ ifcb_zip_pngs(
     ## Creating README file...
     ## Creating MANIFEST.txt...
     ## Creating zip archive...
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/ifcb_annotated_images_corrected.zip
+    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip
 
 ## Package MATLAB Directory
 
@@ -146,7 +144,7 @@ ifcb_zip_matlab(
     ## Creating README file...
     ## Creating MANIFEST.txt...
     ## Creating zip archive...
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/data/zip/ifcb_matlab_files_corrected.zip
+    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip
 
 ## Create MANIFEST.txt
 

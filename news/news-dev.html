@@ -17,7 +17,7 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -51,10 +51,12 @@
 <h2 class="pkg-version" data-toc-text="development version" id="irfcb-development-version">iRfcb (development version)<a class="anchor" aria-label="anchor" href="#irfcb-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>Added a new <code>diatom_include</code> argument to <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_is_diatom.html">ifcb_is_diatom()</a></code> for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).</li>
+<ul><li>New function <code><a href="../reference/ifcb_annotate_samples.html">ifcb_annotate_samples()</a></code> to create manual classification <code>.mat</code> files compatible with the <code>ifcb-analysis</code> MATLAB repository, using PNG images organized in class named subfolders and a <code>class2use.mat</code> file.</li>
+<li>Added a new <code>diatom_include</code> argument to <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_is_diatom.html">ifcb_is_diatom()</a></code> for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).</li>
 <li>Added a new <code>timestamp_param</code> argument to <code><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code> allowing the Ferrybox timestamp column to be specified dynamically instead of being hard coded.</li>
 <li>Added a new <code>max_time_diff_min</code> argument to <code><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code> controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.</li>
 <li>Added a new <code>biovolume_only</code> argument to <code><a href="../reference/ifcb_read_features.html">ifcb_read_features()</a></code> to allow reading only biovolume related columns, improving performance for large feature tables.</li>
+<li>Added a new <code>add_trailing_numbers</code> argument to <code><a href="../reference/ifcb_extract_annotated_images.html">ifcb_extract_annotated_images()</a></code> to control whether a zero-padded numeric suffix based on the manual class index is appended to class names in the output filenames.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h3>
@@ -63,12 +65,24 @@
 <li>
 <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> are now more flexible and accept individual <code>.mat</code> files in addition to folders.</li>
 <li>Improved performance of <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>.</li>
+<li>All data frame outputs are now consistently returned as tibbles.</li>
+<li>Updated IFCB example in <code><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code>.</li>
+<li>Moved vignettes that required internet access to package articles to improve CRAN check reliability.</li>
+<li>Improved error handling across functions, with clearer and more consistent messages.</li>
+<li>EEA coastline data are now obtained from EEA map services, replacing direct file server downloads that were unstable.</li>
+<li>Test data are sourced from GitHub when not available on Figshare.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="deprecations-development-version">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-development-version"></a></h3>
-<ul><li>Deprecated arguments:
+<ul><li>
+<code><a href="../reference/ifcb_create_empty_manual_file.html">ifcb_create_empty_manual_file()</a></code> has been renamed to <code><a href="../reference/ifcb_create_manual_file.html">ifcb_create_manual_file()</a></code>.</li>
+<li>
+<code><a href="../reference/ifcb_match_taxa_names.html">ifcb_match_taxa_names()</a></code> is now superseded by <code>SHARK4R::match_worms_taxa()</code>.</li>
+<li>Deprecated arguments:
 <ul><li>
 <code>mat_folder</code> in <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> and <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> (replaced by <code>mat_files</code>).</li>
+<li>
+<code>expected_checksum</code> in <code><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data()</a></code>.</li>
 </ul></li>
 </ul></div>
 </div>

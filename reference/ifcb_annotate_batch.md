@@ -116,7 +116,7 @@ Oceanogr: Methods 5, 204–216.
 ## See also
 
 [`ifcb_correct_annotation`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md),
-[`ifcb_create_empty_manual_file`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
+[`ifcb_create_manual_file`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
 
 ## Examples
 

@@ -53,15 +53,13 @@ example headers can used when submitting data from Imaging FlowCytobot
 ecotaxa_example <- ifcb_get_ecotaxa_example()
 
 # Print the first five columns
-dplyr::tibble(ecotaxa_example)
-#> # A tibble: 5 × 282
+print(ecotaxa_example)
+#> # A tibble: 3 × 282
 #>   img_file_name          object_id object_lat object_lon object_date object_time
 #>   <chr>                  <chr>     <chr>      <chr>      <chr>       <chr>      
 #> 1 [t]                    [t]       [f]        [f]        [t]         [t]        
-#> 2 D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     
-#> 3 D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     
-#> 4 D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     
-#> 5 D20190124T213523_IFCB… D2019012… 41.4922    -71.4193   20190124    213523     
+#> 2 D20230915T093804_IFCB… D2023091… 57.7281986 11.468154… 20230915    93804      
+#> 3 D20230915T113552_IFCB… D2023091… 57.866921… 11.2940889 20230915    113552     
 #> # ℹ 276 more variables: object_link <chr>, object_depth_min <chr>,
 #> #   object_depth_max <chr>, object_annotation_status <chr>,
 #> #   object_annotation_person_name <chr>, object_annotation_person_email <chr>,

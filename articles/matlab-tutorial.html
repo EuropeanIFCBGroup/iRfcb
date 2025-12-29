@@ -37,7 +37,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials">
-<li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+<li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -77,7 +77,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Handling MATLAB Results</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/vignettes/matlab-tutorial.Rmd" class="external-link"><code>vignettes/matlab-tutorial.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/vignettes/articles/matlab-tutorial.Rmd" class="external-link"><code>vignettes/articles/matlab-tutorial.Rmd</code></a></small>
       <div class="d-none name"><code>matlab-tutorial.Rmd</code></div>
     </div>
 
@@ -130,8 +130,6 @@ following function:</p>
 <span><span class="co"># Download and extract test data in the data folder</span></span>
 <span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span></span>
 <span>  dest_dir <span class="op">=</span> <span class="va">data_dir</span>,</span>
-<span>  max_retries <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  sleep_time <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -448,14 +446,37 @@ files using the <code>correction</code> file with selected images:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> Cylindrotheca_Nitzschia_longissima    47</span></span></code></pre>
 </div>
 <div class="section level3">
+<h3 id="annotate-images-from-png-directories">Annotate Images from PNG Directories<a class="anchor" aria-label="anchor" href="#annotate-images-from-png-directories"></a>
+</h3>
+<p>Annotation data for IFCB images can be stored and modified in MATLAB
+<code>.mat</code> files using functions such as
+<code><a href="../reference/ifcb_annotate_samples.html">ifcb_annotate_samples()</a></code>, <code><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch()</a></code>
+and <code><a href="../reference/ifcb_adjust_classes.html">ifcb_adjust_classes()</a></code> functions.</p>
+<p>If your annotations are organized as PNG images in class-named
+subdirectories, you can create manual <code>.mat</code> files directly
+from these images using <code><a href="../reference/ifcb_annotate_samples.html">ifcb_annotate_samples()</a></code>. This
+function automatically maps each PNG to its corresponding ROI in the ADC
+file, assigns class IDs based on a <code>class2use.mat</code> file, and
+writes a <code>.mat</code> file ready for use with the
+<code>ifcb-analysis</code> MATLAB repository.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Create manual MATLAB classification files from PNG images</span></span>
+<span><span class="fu"><a href="../reference/ifcb_annotate_samples.html">ifcb_annotate_samples</a></span><span class="op">(</span>png_folder <span class="op">=</span> <span class="st">"data/png"</span>,</span>
+<span>                      adc_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
+<span>                      output_folder <span class="op">=</span> <span class="st">"data/manual_from_pngs"</span>,</span>
+<span>                      class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span><span class="op">)</span></span></code></pre></div>
+<p>This workflow simplifies converting image-based annotations into
+MATLAB-compatible format, making them ready for analysis or further
+adjustment.</p>
+</div>
+<div class="section level3">
 <h3 id="annotate-images-in-batch">Annotate Images in Batch<a class="anchor" aria-label="anchor" href="#annotate-images-in-batch"></a>
 </h3>
-<p>Images can be batch annotated using the
-<code><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch()</a></code> function. If a manual file already
-exists for the sample, the ROI class list will be updated accordingly.
-If no file is found, a new <code>.mat</code> file will be created, with
-all unannotated ROIs marked as unclassified.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<p>If a manual file already exists for the sample, the ROI class list
+will be updated accordingly using <code><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch()</a></code>. If
+no file is found, a new <code>.mat</code> file will be created, with all
+unannotated ROIs marked as unclassified.</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read a file with selected images, generated by the image gallery app</span></span>
 <span><span class="va">correction</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data/manual/correction/Alexandrium_pseudogonyaulax_selected_images.txt"</span>,</span>
@@ -465,7 +486,7 @@ all unannotated ROIs marked as unclassified.</p>
 <span><span class="co"># Print image names to be annotated</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "D20220712T210855_IFCB134_00164.png" "D20220712T222710_IFCB134_00044.png"</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Re-annotate the images that were moved to unclassified earlier in the tutorial</span></span>
 <span><span class="fu"><a href="../reference/ifcb_annotate_batch.html">ifcb_annotate_batch</a></span><span class="op">(</span></span>
 <span>  png_images <span class="op">=</span> <span class="va">correction</span><span class="op">$</span><span class="va">image_filename</span>,</span>

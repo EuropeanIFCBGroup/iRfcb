@@ -53,10 +53,9 @@ output.
 filenames <- c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135")
 timestamps <- ifcb_convert_filenames(filenames)
 print(timestamps)
-#>                     sample           timestamp       date year month day
-#> 1 D20230314T001205_IFCB134 2023-03-14 00:12:05 2023-03-14 2023     3  14
-#> 2 D20230615T123045_IFCB135 2023-06-15 12:30:45 2023-06-15 2023     6  15
-#>       time ifcb_number
-#> 1 00:12:05     IFCB134
-#> 2 12:30:45     IFCB135
+#> # A tibble: 2 × 8
+#>   sample   timestamp           date        year month   day time     ifcb_number
+#>   <chr>    <dttm>              <date>     <dbl> <dbl> <int> <time>   <chr>      
+#> 1 D202303… 2023-03-14 00:12:05 2023-03-14  2023     3    14 00:12:05 IFCB134    
+#> 2 D202306… 2023-06-15 12:30:45 2023-06-15  2023     6    15 12:30:45 IFCB135    
 ```

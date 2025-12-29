@@ -19,7 +19,7 @@ This format is used for submitting IFCB data to https://shark.smhi.se/."><meta p
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/a-general-tutorial.html">iRfcb Introduction</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials"><li><a class="dropdown-item" href="../articles/introduction.html">iRfcb Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/qc-tutorial.html">Quality Control of IFCB Data</a></li>
     <li><a class="dropdown-item" href="../articles/matlab-tutorial.html">Handling MATLAB Results</a></li>
     <li><a class="dropdown-item" href="../articles/dwca-tutorial.html">Creating a DwC-A from IFCB Data</a></li>
@@ -74,22 +74,22 @@ This format is used for submitting IFCB data to <a href="https://shark.smhi.se/"
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu">ifcb_get_shark_example</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print example as tibble</span></span></span>
-<span class="r-in"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 5 × 67</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   MYEAR STATN    SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME SDATE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D… IFCB              IFCB… SMHI    77SE         12 2,02E+13  2022…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D… IFCB              IFCB… SMHI    77SE         12 2,02E+13  2022…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D… IFCB              IFCB… SMHI    77SE         12 2,02E+13  2022…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D… IFCB              IFCB… SMHI    77SE         12 2,02E+13  2022…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D… SveaFB            IFCB… SMHI    77SE         12 2,02E+13  2022…</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 58 more variables: STIME &lt;chr&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;, LONGI &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   POSYS &lt;chr&gt;, WADEP &lt;lgl&gt;, MPROG &lt;chr&gt;, MNDEP &lt;int&gt;, MXDEP &lt;int&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;, SMTYP &lt;chr&gt;, PDMET &lt;chr&gt;, SMVOL &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   METFP &lt;chr&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;, SFLAG &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   LATNM_SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, APHIA_ID &lt;int&gt;, IMAGE_VERIFICATION &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   VERIFIED_BY &lt;lgl&gt;, COUNT &lt;int&gt;, ABUND &lt;dbl&gt;, BIOVOL &lt;dbl&gt;, C_CONC &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   QFLAG &lt;lgl&gt;, COEFF &lt;dbl&gt;, CLASS_NAME &lt;chr&gt;, CLASS_F1 &lt;dbl&gt;, …</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   MYEAR STATN          SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… SveaFB            IFCB… SMHI    77SE         12 2.02e+15 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 59 more variables: SDATE &lt;date&gt;, STIME &lt;time&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   LONGI &lt;dbl&gt;, POSYS &lt;chr&gt;, WADEP &lt;lgl&gt;, MPROG &lt;chr&gt;, MNDEP &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   MXDEP &lt;dbl&gt;, SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;, SMTYP &lt;chr&gt;, PDMET &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SMVOL &lt;dbl&gt;, METFP &lt;chr&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   SFLAG &lt;chr&gt;, LATNM_SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, APHIA_ID &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   IMAGE_VERIFICATION &lt;chr&gt;, VERIFIED_BY &lt;lgl&gt;, COUNT &lt;dbl&gt;, ABUND &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   BIOVOL &lt;dbl&gt;, C_CONC &lt;dbl&gt;, QFLAG &lt;lgl&gt;, COEFF &lt;dbl&gt;, CLASS_NAME &lt;chr&gt;, …</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

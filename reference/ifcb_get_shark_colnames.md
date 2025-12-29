@@ -35,45 +35,23 @@ For a detailed example of a data submission, see
 ``` r
 shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
-#>  [1] MYEAR                  STATN                  SAMPLING_PLATFORM     
-#>  [4] PROJ                   ORDERER                SHIPC                 
-#>  [7] CRUISE_NO              DATE_TIME              SDATE                 
-#> [10] STIME                  TIMEZONE               LATIT                 
-#> [13] LONGI                  POSYS                  WADEP                 
-#> [16] MPROG                  MNDEP                  MXDEP                 
-#> [19] SLABO                  ACKR_SMP               SMTYP                 
-#> [22] PDMET                  SMVOL                  METFP                 
-#> [25] IFCBNO                 SMPNO                  LATNM                 
-#> [28] SFLAG                  LATNM_SFLAG            TRPHY                 
-#> [31] APHIA_ID               IMAGE_VERIFICATION     VERIFIED_BY           
-#> [34] COUNT                  ABUND                  BIOVOL                
-#> [37] C_CONC                 QFLAG                  COEFF                 
-#> [40] CLASS_NAME             CLASS_F1               UNCLASSIFIED_COUNTS   
-#> [43] UNCLASSIFIED_ABUNDANCE UNCLASSIFIED_VOLUME    METOA                 
-#> [46] ASSOCIATED_MEDIA       CLASSPROG              ALABO                 
-#> [49] ACKR_ANA               ANADATE                METDC                 
-#> [52] TRAINING_SET           CLASSIFIER_USED        MANUAL_QC_DATE        
-#> [55] PRE_FILTER_SIZE        PH_FB                  CHL_FB                
-#> [58] CDOM_FB                PHYC_FB                PHER_FB               
-#> [61] WATERFLOW_FB           TURB_FB                PCO2_FB               
-#> [64] TEMP_FB                PSAL_FB                OSAT_FB               
-#> [67] DOXY_FB               
-#> <0 rows> (or 0-length row.names)
+#> # A tibble: 0 × 67
+#> # ℹ 67 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
+#> #   PROJ <chr>, ORDERER <chr>, SHIPC <chr>, CRUISE_NO <dbl>, DATE_TIME <dbl>,
+#> #   SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>, LONGI <dbl>,
+#> #   POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>, MXDEP <dbl>,
+#> #   SLABO <chr>, ACKR_SMP <chr>, SMTYP <chr>, PDMET <chr>, SMVOL <dbl>,
+#> #   METFP <chr>, IFCBNO <chr>, SMPNO <chr>, LATNM <chr>, SFLAG <chr>,
+#> #   LATNM_SFLAG <chr>, TRPHY <chr>, APHIA_ID <dbl>, IMAGE_VERIFICATION <chr>, …
 
 shark_colnames_minimal <- ifcb_get_shark_colnames(minimal = TRUE)
 print(shark_colnames_minimal)
-#>  [1] MYEAR               STATN               PROJ               
-#>  [4] ORDERER             SHIPC               SDATE              
-#>  [7] STIME               LATIT               LONGI              
-#> [10] POSYS               MNDEP               MXDEP              
-#> [13] SLABO               ACKR_SMP            SMTYP              
-#> [16] SMVOL               IFCBNO              SMPNO              
-#> [19] LATNM               SFLAG               TRPHY              
-#> [22] IMAGE_VERIFICATION  VERIFIED_BY         COUNT              
-#> [25] QFLAG               COEFF               CLASS_F1           
-#> [28] UNCLASSIFIED_COUNTS METOA               ASSOCIATED_MEDIA   
-#> [31] CLASSPROG           TRAINING_SET        ALABO              
-#> [34] ACKR_ANA            ANADATE             METDC              
-#> [37] CLASSIFIER_USED    
-#> <0 rows> (or 0-length row.names)
+#> # A tibble: 0 × 37
+#> # ℹ 37 variables: MYEAR <dbl>, STATN <chr>, PROJ <chr>, ORDERER <chr>,
+#> #   SHIPC <chr>, SDATE <date>, STIME <time>, LATIT <dbl>, LONGI <dbl>,
+#> #   POSYS <chr>, MNDEP <dbl>, MXDEP <dbl>, SLABO <chr>, ACKR_SMP <chr>,
+#> #   SMTYP <chr>, SMVOL <dbl>, IFCBNO <chr>, SMPNO <chr>, LATNM <chr>,
+#> #   SFLAG <chr>, TRPHY <chr>, IMAGE_VERIFICATION <chr>, VERIFIED_BY <lgl>,
+#> #   COUNT <dbl>, QFLAG <lgl>, COEFF <dbl>, CLASS_F1 <dbl>,
+#> #   UNCLASSIFIED_COUNTS <dbl>, METOA <chr>, ASSOCIATED_MEDIA <chr>, …
 ```

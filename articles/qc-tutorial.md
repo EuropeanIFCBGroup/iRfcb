@@ -58,8 +58,6 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(
   dest_dir = data_dir,
-  max_retries = 10,
-  sleep_time = 30,
   verbose = FALSE
 )
 ```
@@ -139,7 +137,7 @@ plot <- ifcb_psd_plot(
 print(plot)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-10-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-9-1.png)
 
 ## Geographical QC/QA
 
@@ -169,20 +167,17 @@ gps_data$near_land <- ifcb_is_near_land(
 head(gps_data)
 ```
 
-    ##                     sample gpsLatitude gpsLongitude           timestamp
-    ## 1 D20220522T000439_IFCB134          NA           NA 2022-05-22 00:04:39
-    ## 2 D20220522T003051_IFCB134          NA           NA 2022-05-22 00:30:51
-    ## 3 D20220712T210855_IFCB134          NA           NA 2022-07-12 21:08:55
-    ## 4 D20220712T222710_IFCB134          NA           NA 2022-07-12 22:27:10
-    ## 5 D20230314T001205_IFCB134    56.66883     12.11303 2023-03-14 00:12:05
-    ## 6 D20230314T003836_IFCB134    56.66884     12.11302 2023-03-14 00:38:36
-    ##         date year month day     time ifcb_number near_land
-    ## 1 2022-05-22 2022     5  22 00:04:39     IFCB134        NA
-    ## 2 2022-05-22 2022     5  22 00:30:51     IFCB134        NA
-    ## 3 2022-07-12 2022     7  12 21:08:55     IFCB134        NA
-    ## 4 2022-07-12 2022     7  12 22:27:10     IFCB134        NA
-    ## 5 2023-03-14 2023     3  14 00:12:05     IFCB134     FALSE
-    ## 6 2023-03-14 2023     3  14 00:38:36     IFCB134     FALSE
+    ## # A tibble: 6 × 11
+    ##   sample     gpsLatitude gpsLongitude timestamp           date        year month
+    ##   <chr>            <dbl>        <dbl> <dttm>              <date>     <dbl> <dbl>
+    ## 1 D20220522…        NA           NA   2022-05-22 00:04:39 2022-05-22  2022     5
+    ## 2 D20220522…        NA           NA   2022-05-22 00:30:51 2022-05-22  2022     5
+    ## 3 D20220712…        NA           NA   2022-07-12 21:08:55 2022-07-12  2022     7
+    ## 4 D20220712…        NA           NA   2022-07-12 22:27:10 2022-07-12  2022     7
+    ## 5 D20230314…        56.7         12.1 2023-03-14 00:12:05 2023-03-14  2023     3
+    ## 6 D20230314…        56.7         12.1 2023-03-14 00:38:36 2023-03-14  2023     3
+    ## # ℹ 4 more variables: day <int>, time <time>, ifcb_number <chr>,
+    ## #   near_land <lgl>
 
 ``` r
 # Alternatively, you can choose to plot the points on a map
@@ -197,7 +192,7 @@ near_land_plot <- ifcb_is_near_land(
 print(near_land_plot)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-11-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-10-1.png)
 
 For more accurate determination, a detailed coastline `.shp` file may be
 required (e.g. the [EEA Coastline
@@ -231,7 +226,7 @@ print(points_in_the_baltic)
 ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-12-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-11-1.png)
 
 This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a
@@ -262,7 +257,7 @@ print(points_in_the_baltic)
 ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-13-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-12-1.png)
 
 This function reads a land-buffered shapefile of the Baltic Sea Basin
 from the `iRfcb` package by default, or a user-supplied shapefile if
@@ -280,16 +275,15 @@ ferrybox data file is provided in `iRfcb` with data matching sample
 head(gps_data, 4)
 ```
 
-    ##                     sample gpsLatitude gpsLongitude           timestamp
-    ## 1 D20220522T000439_IFCB134          NA           NA 2022-05-22 00:04:39
-    ## 2 D20220522T003051_IFCB134          NA           NA 2022-05-22 00:30:51
-    ## 3 D20220712T210855_IFCB134          NA           NA 2022-07-12 21:08:55
-    ## 4 D20220712T222710_IFCB134          NA           NA 2022-07-12 22:27:10
-    ##         date year month day     time ifcb_number near_land
-    ## 1 2022-05-22 2022     5  22 00:04:39     IFCB134        NA
-    ## 2 2022-05-22 2022     5  22 00:30:51     IFCB134        NA
-    ## 3 2022-07-12 2022     7  12 21:08:55     IFCB134        NA
-    ## 4 2022-07-12 2022     7  12 22:27:10     IFCB134        NA
+    ## # A tibble: 4 × 11
+    ##   sample     gpsLatitude gpsLongitude timestamp           date        year month
+    ##   <chr>            <dbl>        <dbl> <dttm>              <date>     <dbl> <dbl>
+    ## 1 D20220522…          NA           NA 2022-05-22 00:04:39 2022-05-22  2022     5
+    ## 2 D20220522…          NA           NA 2022-05-22 00:30:51 2022-05-22  2022     5
+    ## 3 D20220712…          NA           NA 2022-07-12 21:08:55 2022-07-12  2022     7
+    ## 4 D20220712…          NA           NA 2022-07-12 22:27:10 2022-07-12  2022     7
+    ## # ℹ 4 more variables: day <int>, time <time>, ifcb_number <chr>,
+    ## #   near_land <lgl>
 
 ``` r
 # Define path where ferrybox data are located

@@ -79,8 +79,6 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(
   dest_dir = data_dir,
-  max_retries = 10,
-  sleep_time = 30,
   verbose = FALSE
 )
 ```
@@ -300,16 +298,16 @@ tibble(event_df)
     ## # A tibble: 10 × 26
     ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
     ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
-    ##  1 NA               74e2b4… Project   iRfcb-DwC-A 2022-05-… NA                  
-    ##  2 74e2b485-3ee1-4… 58b063… Sample    NA          2022-05-… SMHI                
-    ##  3 74e2b485-3ee1-4… 19ed59… Sample    NA          2022-05-… SMHI                
-    ##  4 74e2b485-3ee1-4… 878827… Sample    NA          2022-07-… SMHI                
-    ##  5 74e2b485-3ee1-4… d5272d… Sample    NA          2022-07-… SMHI                
-    ##  6 74e2b485-3ee1-4… e363ce… Sample    NA          2023-03-… SMHI                
-    ##  7 74e2b485-3ee1-4… 057be7… Sample    NA          2023-03-… SMHI                
-    ##  8 74e2b485-3ee1-4… d9a0cc… Sample    NA          2023-08-… SMHI                
-    ##  9 74e2b485-3ee1-4… 600826… Sample    NA          2023-09-… SMHI                
-    ## 10 74e2b485-3ee1-4… e455de… Sample    NA          2023-09-… SMHI                
+    ##  1 NA               87cb4d… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 87cb4d64-0415-4… 832587… Sample    NA          2022-05-… SMHI                
+    ##  3 87cb4d64-0415-4… c7de34… Sample    NA          2022-05-… SMHI                
+    ##  4 87cb4d64-0415-4… 3a5685… Sample    NA          2022-07-… SMHI                
+    ##  5 87cb4d64-0415-4… a62a04… Sample    NA          2022-07-… SMHI                
+    ##  6 87cb4d64-0415-4… 2ba318… Sample    NA          2023-03-… SMHI                
+    ##  7 87cb4d64-0415-4… f9b046… Sample    NA          2023-03-… SMHI                
+    ##  8 87cb4d64-0415-4… 8103bd… Sample    NA          2023-08-… SMHI                
+    ##  9 87cb4d64-0415-4… 1cc0bc… Sample    NA          2023-09-… SMHI                
+    ## 10 87cb4d64-0415-4… 484986… Sample    NA          2023-09-… SMHI                
     ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
     ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
     ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
@@ -352,10 +350,8 @@ occurrence.
 Links to raw images can be included in **associatedMedia**. These links
 may point to resources such as the IFCB Dashboard, EcoTaxa, or other
 image archives. Learn how to prepare images for EcoTaxa using `iRfcb` in
-this
-[`vignette("ecotaxa-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/ecotaxa-tutorial.md),
-or how to export images to an image library in
-[`vignette("image-export-tutorial")`](https://europeanifcbgroup.github.io/iRfcb/articles/image-export-tutorial.md).
+this `vignette("ecotaxa-tutorial")`, or how to export images to an image
+library in `vignette("image-export-tutorial")`.
 
 ``` r
 # Create an occurrence table by transforming event data and adding fields
@@ -500,16 +496,16 @@ tibble(occurrence_df)
     ## # A tibble: 101 × 22
     ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
     ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
-    ##  1 1515f3fb-02dd-4a84-… 58b063… 2022-05-22 present          iRfcb          Stil…
-    ##  2 df53aa6f-5af8-4f4f-… 58b063… 2022-05-22 present          iRfcb          Stil…
-    ##  3 c2d2fd2c-ba96-467d-… 58b063… 2022-05-22 present          iRfcb          Stil…
-    ##  4 adb58830-5a8b-45a8-… 58b063… 2022-05-22 present          iRfcb          Stil…
-    ##  5 cf5d0255-b6f2-4d1a-… 19ed59… 2022-05-22 present          iRfcb          Stil…
-    ##  6 a4331567-ccb4-437d-… 878827… 2022-07-12 present          iRfcb          Stil…
-    ##  7 cb6eec3f-7524-4862-… 878827… 2022-07-12 present          iRfcb          Stil…
-    ##  8 e594275e-0cf4-4308-… 878827… 2022-07-12 present          iRfcb          Stil…
-    ##  9 38340004-8af8-4b3d-… d5272d… 2022-07-12 present          iRfcb          Stil…
-    ## 10 07e6af46-34d8-419a-… d5272d… 2022-07-12 present          iRfcb          Stil…
+    ##  1 739488ff-2d9c-4305-… 832587… 2022-05-22 present          iRfcb          Stil…
+    ##  2 faca6cbd-51dd-492e-… 832587… 2022-05-22 present          iRfcb          Stil…
+    ##  3 a9972103-319a-4dd8-… 832587… 2022-05-22 present          iRfcb          Stil…
+    ##  4 a9219fcf-8e3b-4793-… 832587… 2022-05-22 present          iRfcb          Stil…
+    ##  5 39576697-88bb-4084-… c7de34… 2022-05-22 present          iRfcb          Stil…
+    ##  6 8d30e814-3b7e-4cb1-… 3a5685… 2022-07-12 present          iRfcb          Stil…
+    ##  7 ef6a9d71-4183-44dd-… 3a5685… 2022-07-12 present          iRfcb          Stil…
+    ##  8 bd30bd8f-f562-4a72-… 3a5685… 2022-07-12 present          iRfcb          Stil…
+    ##  9 12e061cf-c281-4765-… a62a04… 2022-07-12 present          iRfcb          Stil…
+    ## 10 dfa636bc-b1fb-4a94-… a62a04… 2022-07-12 present          iRfcb          Stil…
     ## # ℹ 91 more rows
     ## # ℹ 16 more variables: basisOfRecord <chr>,
     ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
@@ -711,16 +707,16 @@ tibble(mof_df)
     ## # A tibble: 415 × 10
     ##    measurementID              eventID parentEventID occurrenceID measurementType
     ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
-    ##  1 ca0d7f9b-bb13-4d7e-b2fb-3… 74e2b4… NA            NA           Imaging instru…
-    ##  2 ccc6a345-dab9-4eee-be27-d… 74e2b4… NA            NA           Instrument ide…
-    ##  3 5b1c1859-dadc-437f-858c-6… 58b063… 74e2b485-3ee… NA           Sample volume  
-    ##  4 71f6d56d-26ec-4aa2-b18d-3… 19ed59… 74e2b485-3ee… NA           Sample volume  
-    ##  5 43a8101b-7e3c-4e31-ad5a-5… 878827… 74e2b485-3ee… NA           Sample volume  
-    ##  6 11c8a763-c2d3-4d93-a131-7… d5272d… 74e2b485-3ee… NA           Sample volume  
-    ##  7 a8db4664-3530-4f8f-bdcb-0… e363ce… 74e2b485-3ee… NA           Sample volume  
-    ##  8 b8fa9aa8-afce-4846-a73c-4… 057be7… 74e2b485-3ee… NA           Sample volume  
-    ##  9 af019720-fe8b-47c1-9646-b… d9a0cc… 74e2b485-3ee… NA           Sample volume  
-    ## 10 71d68f8e-1100-4a1f-903e-e… 600826… 74e2b485-3ee… NA           Sample volume  
+    ##  1 cbb548d8-72fc-4e12-a2fc-2… 87cb4d… NA            NA           Imaging instru…
+    ##  2 a6c9cafc-1aa3-49a7-b68d-d… 87cb4d… NA            NA           Instrument ide…
+    ##  3 cd5dd50f-b80a-45a3-a3b2-0… 832587… 87cb4d64-041… NA           Sample volume  
+    ##  4 1f891144-016d-4c66-86cb-3… c7de34… 87cb4d64-041… NA           Sample volume  
+    ##  5 88797641-e5bb-4e8e-ba39-4… 3a5685… 87cb4d64-041… NA           Sample volume  
+    ##  6 c5a2bc55-784d-41fd-a4a0-1… a62a04… 87cb4d64-041… NA           Sample volume  
+    ##  7 a4bacc5d-53fc-4b4d-b895-1… 2ba318… 87cb4d64-041… NA           Sample volume  
+    ##  8 4692071a-6e92-4930-b596-1… f9b046… 87cb4d64-041… NA           Sample volume  
+    ##  9 8aaafe9c-0f3c-4008-ae78-4… 8103bd… 87cb4d64-041… NA           Sample volume  
+    ## 10 b5e4937f-3163-49ac-92fe-d… 1cc0bc… 87cb4d64-041… NA           Sample volume  
     ## # ℹ 405 more rows
     ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
     ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>
@@ -754,9 +750,8 @@ that follows DwC guidelines, which can then be customized with specific
 details about the dataset.
 
 Here, we create the metadata starting with a Markdown file
-[`vignette("metadata-template")`](https://europeanifcbgroup.github.io/iRfcb/articles/metadata-template.md),
-which will be rendered into an EML-compliant XML file for GBIF
-submission:
+`vignette("metadata-template")`, which will be rendered into an
+EML-compliant XML file for GBIF submission:
 
 ``` r
 # Initialize DwC metadata using a R Markdown template
@@ -785,7 +780,7 @@ dwca_archive$exportAsDwCArchive(file.path("files", "iRfcb-DwC-A.zip"))
 ```
 
 The finalized DwC-A can be downloaded as a [zip
-archive](https://github.com/EuropeanIFCBGroup/iRfcb/raw/main/vignettes/files/iRfcb-DwC-A.zip).
+archive](https://github.com/EuropeanIFCBGroup/iRfcb/raw/main/vignettes/articles/files/iRfcb-DwC-A.zip).
 
 This concludes this tutorial for the `iRfcb` package. For more detailed
 information, refer to the package documentation or the other

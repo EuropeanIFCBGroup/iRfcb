@@ -37,14 +37,16 @@ to retrieve metadata from the IFCB Dashboard API.
 # \donttest{
   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
 #> Fetching bin list from: https://ifcb-data.whoi.edu/api/list_bins
-#> Successfully retrieved 791794 bins.
+#> Successfully retrieved 791938 bins.
   head(bins)
-#>                data.pid     data.sample_time data.skip
-#> 1 IFCB1_2006_157_181359 2006-06-06T18:13:59Z      TRUE
-#> 2 IFCB1_2006_157_183432 2006-06-06T18:34:32Z      TRUE
-#> 3 IFCB1_2006_157_185616 2006-06-06T18:56:16Z      TRUE
-#> 4 IFCB1_2006_157_191801 2006-06-06T19:18:01Z      TRUE
-#> 5 IFCB1_2006_157_200140 2006-06-06T20:01:40Z      TRUE
-#> 6 IFCB1_2006_157_202314 2006-06-06T20:23:14Z      TRUE
+#> # A tibble: 6 × 3
+#>   pid                   sample_time          skip 
+#>   <chr>                 <chr>                <lgl>
+#> 1 IFCB1_2006_157_181359 2006-06-06T18:13:59Z TRUE 
+#> 2 IFCB1_2006_157_183432 2006-06-06T18:34:32Z TRUE 
+#> 3 IFCB1_2006_157_185616 2006-06-06T18:56:16Z TRUE 
+#> 4 IFCB1_2006_157_191801 2006-06-06T19:18:01Z TRUE 
+#> 5 IFCB1_2006_157_200140 2006-06-06T20:01:40Z TRUE 
+#> 6 IFCB1_2006_157_202314 2006-06-06T20:23:14Z TRUE 
 # }
 ```
