@@ -8,6 +8,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include = FALSE}
+is_cran <- identical(Sys.getenv("NOT_CRAN"), "false")
+knitr::opts_chunk$set(
+  eval = !is_cran
+)
+```
+
 ## Introduction
 
 The `iRfcb` package is an open-source R package designed to streamline the analysis of Imaging FlowCytobot (IFCB) data, with a focus on supporting marine ecological research and monitoring. By integrating R and Python functionalities, the package facilitates efficient handling and sharing of IFCB image data, extraction of key metadata, and preparation of outputs for further taxonomic, ecological, or spatial analyses.
@@ -26,12 +33,10 @@ install.packages("iRfcb")
 Load the `iRfcb` and `dplyr` libraries:
 ```{r, eval=FALSE}
 library(iRfcb)
-library(dplyr) # For data wrangling
 ```
 
 ```{r, include=FALSE}
 library(iRfcb)
-library(dplyr) # For data wrangling
 ```
 
 ### Download Sample Data
@@ -118,16 +123,16 @@ Read all feature files (`.csv`) from a folder:
 features <- ifcb_read_features("data/features/2023/",
                                verbose = FALSE) # Do not print progress bar
 
-# Print output of first 10 columns from the first sample in the list
-head(features[[1]])[,1:10]
+# Print output from the first sample in the list
+print(features[[1]])
 
 # Read only multiblob feature files
 multiblob_features <- ifcb_read_features("data/features/2023", 
                                          multiblob = TRUE,
                                          verbose = FALSE)
 
-# Print output of first 10 columns from the first sample in the list
-head(multiblob_features[[1]])[,1:10]
+# Print output from the first sample in the list
+print(multiblob_features[[1]])
 ```
 
 ## Extract Images from ROI files
@@ -172,7 +177,7 @@ worms_records <- ifcb_match_taxa_names(taxa_names,
                                        verbose = FALSE) # Do not print progress bar
 
 # Print result
-tibble(worms_records)
+print(worms_records)
 ```
 
 ### Check whether a class name is a diatom
@@ -188,7 +193,7 @@ class_list <- data.frame(class2use,
                          is_diatom = ifcb_is_diatom(class2use, verbose = FALSE))
 
 # Print rows 10-15 of result
-class_list
+print(class_list)
 ```
 The default class for diatoms is defined as Bacillariophyceae, but may be adjusted using the `diatom_class` argument.
 
@@ -227,8 +232,8 @@ print(shark_colnames)
 # Load example stored from `iRfcb`
 shark_example <- ifcb_get_shark_example()
 
-# Print first ten columns of the SHARK data submission example
-head(shark_example)[1:10]
+# Print the SHARK data submission example
+print(shark_example)
 ```
 
 This concludes this tutorial for the `iRfcb` package. For additional guides—such as quality control of IFCB data, data sharing, and integration with MATLAB—please refer to the other tutorials available on the project's [webpage](https://europeanifcbgroup.github.io/iRfcb/). See how data pipelines can be constructed using `iRfcb` in the following [Example Project](https://github.com/nodc-sweden/ifcb-data-pipeline). Happy analyzing!
@@ -242,8 +247,7 @@ citation("iRfcb")
 
 ```{r, include=FALSE}
 # Clean up
-unlink(file.path(data_dir, "data/2023/D20230314/D20230314T001205_IFCB134"), recursive = TRUE)
-unlink(file.path(data_dir, "data/2023/D20230314/D20230314T003836_IFCB134"), recursive = TRUE)
+unlink(data_dir, recursive = TRUE)
 ```
 
 ## References
