@@ -9,7 +9,7 @@
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the `iRfcb` test dataset (48158716) from Torstensson et al. (2024) is used.
-#' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
+#' @param max_retries The maximum number of retry attempts in case of download failure. Default is 3.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
 #' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
@@ -31,35 +31,51 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE, expected_checksum = deprecated()) {
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 3, sleep_time = 10, keep_zip = FALSE, verbose = TRUE, expected_checksum = deprecated()) {
   # Warn the user if adc_folder is used
   if (lifecycle::is_present(expected_checksum)) {
     # Signal the deprecation to the user
     deprecate_warn("0.6.0.9000", "iRfcb::ifcb_download_test_data(expected_checksum = )")
   }
 
-  url <- paste0("https://figshare.com/ndownloader/files/", figshare_article)
+  urls <- c(paste0("https://figshare.com/ndownloader/files/", figshare_article))
+
+  if (figshare_article == "48158716") {
+    urls <- c(urls,
+              paste0("https://raw.githubusercontent.com/EuropeanIFCBGroup/iRfcb/6bcd51cbf77dcb20dfacb19446a3692d93e13aba/data-raw/", figshare_article, ".zip"))
+  }
+
   if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
-  dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
+  dest_file <- file.path(dest_dir, paste0(figshare_article, ".zip"))
 
   # Use existing zip if present, otherwise download
-  if (!file.exists(dest_file)) {
-    attempts <- 0
+  if (file.exists(dest_file)) {
+    if (verbose) {
+      message("Using existing zip file: ", dest_file)
+    }
+  } else {
     downloaded <- FALSE
-    while (attempts < max_retries && !downloaded) {
-      attempts <- attempts + 1
-      tryCatch({
-        curl::curl_download(url, dest_file, quiet = TRUE, mode = "wb")
-        downloaded <- TRUE
-      }, error = function(e) {
-        Sys.sleep(sleep_time)
-      })
+    for (url in urls) {
+      if (verbose) message("Attempting download from: ", url)
+      attempts <- 0
+      while (attempts < max_retries && !downloaded) {
+        attempts <- attempts + 1
+        tryCatch({
+          curl::curl_download(url, dest_file, quiet = TRUE, mode = "wb")
+          downloaded <- TRUE
+        }, error = function(e) {
+          if (verbose) {
+            message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " s")
+          }
+          Sys.sleep(sleep_time)
+        })
+      }
+      if (downloaded) break
     }
-    if (!file.exists(dest_file)) {
-      stop("Download failed after ", max_retries, " attempts.")
+
+    if (!downloaded) {
+      stop("Download failed from all sources after ", max_retries, " attempts each.")
     }
-  } else if (verbose) {
-    message("Using existing zip file: ", dest_file)
   }
 
   # Unzip the file into the appropriate subdirectory
