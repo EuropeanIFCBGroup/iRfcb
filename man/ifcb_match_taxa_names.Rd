@@ -37,6 +37,12 @@ The fuzzy argument is no longer available}
 A data frame (or list if return_list is TRUE) of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}
+
+This function has been superseded by
+\code{SHARK4R::match_worms_taxa()} or \code{worrms::wm_records_names()}. It will not receive new features,
+but will continue to receive critical bug fixes as needed. For new code, use \code{SHARK4R::match_worms_taxa()} or \code{worrms::wm_records_names()} instead.
+
 This function attempts to retrieve WoRMS records using the provided taxa names.
 It retries the operation if an error occurs, up to a specified number of attempts.
 }
@@ -53,7 +59,11 @@ records <- ifcb_match_taxa_names(taxa_names = taxa,
                                  verbose = TRUE)
 
 # Print records as tibble
-dplyr::tibble(records)
+print(records)
 }
 
+}
+\seealso{
+\code{\link[SHARK4R]{match_worms_taxa}}
+\code{\link[worrms]{wm_records_names}}
 }
