@@ -4,8 +4,8 @@
 #' `r lifecycle::badge("superseded")`
 #'
 #' This function has been superseded by
-#' \code{SHARK4R::match_worms_taxa()} or \code{worrms::wm_records_names()}. It will not receive new features,
-#' but will continue to receive critical bug fixes as needed. For new code, use \code{SHARK4R::match_worms_taxa()} or \code{worrms::wm_records_names()} instead.
+#' SHARK4R::match_worms_taxa() or worrms::wm_records_names(). It will not receive new features,
+#' but will continue to receive critical bug fixes as needed.
 #'
 #' This function attempts to retrieve WoRMS records using the provided taxa names.
 #' It retries the operation if an error occurs, up to a specified number of attempts.
@@ -22,10 +22,6 @@
 #'    The fuzzy argument is no longer available
 #'
 #' @return A data frame (or list if return_list is TRUE) of WoRMS records or NULL if the retrieval fails after the maximum number of attempts.
-#'
-#' @seealso
-#' \code{\link[SHARK4R]{match_worms_taxa}}
-#' \code{\link[worrms]{wm_records_names}}
 #'
 #' @examples
 #' \donttest{
