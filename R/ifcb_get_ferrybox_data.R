@@ -87,7 +87,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   }
 
   # Initialize an empty data frame to store ferrybox data
-  ferrybox_data <- data.frame()
+  ferrybox_data <- tibble()
 
   # Read and concatenate data from filtered ferrybox files
   for (file in filtered_ferrybox_files_df$ferrybox_files) {
@@ -146,7 +146,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   }
 
   # Merge the ferrybox position data with the input timestamps
-  output <- data.frame(timestamp = timestamps) %>%
+  output <- tibble(timestamp = timestamps) %>%
     mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
     left_join(ferrybox_position, by = "timestamp_minute") %>%
     group_by(timestamp_minute) %>%

@@ -45,8 +45,8 @@ ifcb_list_dashboard_bins <- function(base_url, quiet = FALSE) {
     error = function(e) stop("Failed to parse JSON content: ", e$message)
   )
 
-  # Convert to data frame if necessary
-  df <- if (is.data.frame(parsed_data)) parsed_data else as.data.frame(parsed_data)
+  # Convert to tibble
+  df <- as_tibble(parsed_data[[1]])
 
   if (!quiet) message("Successfully retrieved ", nrow(df), " bins.")
 

@@ -20,7 +20,9 @@
 #' shark_colnames_minimal <- ifcb_get_shark_colnames(minimal = TRUE)
 #' print(shark_colnames_minimal)
 ifcb_get_shark_colnames <- function(minimal = FALSE) {
-  shark_example <- read.table(system.file("exdata/shark_col.txt", package = "iRfcb"), sep = "\t", header = TRUE)
+  shark_example <- read_tsv(system.file("exdata/shark_col.txt", package = "iRfcb"),
+                            show_col_types = FALSE,
+                            progress = FALSE)
 
   if (minimal) {
     columns <- c("MYEAR", "STATN", "PROJ", "ORDERER", "SHIPC", "SDATE", "STIME",

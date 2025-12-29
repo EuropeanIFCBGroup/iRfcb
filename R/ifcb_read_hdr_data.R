@@ -37,8 +37,22 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   }
 
   # Check if hdr_files is a single folder path or a vector of file paths
-  if (length(hdr_files) == 1 && file.info(hdr_files)$isdir) {
-    hdr_files <- list.files(hdr_files, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
+  if (length(hdr_files) == 1 && dir.exists(hdr_files)) {
+    hdr_files <- list.files(
+      hdr_files,
+      pattern = "\\.hdr$",
+      recursive = TRUE,
+      full.names = TRUE
+    )
+  }
+
+  if (!all(file.exists(hdr_files))) {
+    missing <- hdr_files[!file.exists(hdr_files)]
+    stop(
+      "The following hdr_files do not exist:\n",
+      paste(missing, collapse = "\n"),
+      call. = FALSE
+    )
   }
 
   if (verbose) cat("Found", length(hdr_files), ".hdr files.\n")
@@ -57,10 +71,10 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   if (verbose) close(pb)
 
   # Combine all data frames into one
-  hdr_data <- do.call(rbind, all_hdr_data_list)
+  hdr_data <- bind_rows(all_hdr_data_list)
 
   # Check if there is any data to process
-  if (is.null(hdr_data)) {
+  if (nrow(hdr_data) == 0) {
     stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
   }
 
@@ -88,7 +102,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   timestamps <- ifcb_convert_filenames(filenames)
 
   # Merge positions with timestamps
-  hdr_data_pivot <- merge(hdr_data_pivot, timestamps, by = "sample", all.x = TRUE)
+  hdr_data_pivot <- left_join(hdr_data_pivot, timestamps, by = "sample")
 
   # Convert column types
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,

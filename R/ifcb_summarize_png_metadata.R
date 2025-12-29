@@ -31,7 +31,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
 
   image <- basename(image_paths)
   subfolder <- basename(dirname(image_paths))
-  image_df <- data.frame(image, subfolder, ifcb_convert_filenames(image))
+  image_df <- tibble(image, subfolder, ifcb_convert_filenames(image))
   samples <- unique(image_df$sample)
 
   if (!is.null(hdr_folder)) {
@@ -41,8 +41,8 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     if (length(hdr_files) == 0) {
       warning("No HDR files found in ", hdr_folder)
 
-      hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
-                             month = NA, day = NA, time = NA, ifcb_number = NA)
+      hdr_data <- tibble(sample = NA, timestamp = NA, date = NA, year = NA,
+                         month = NA, day = NA, time = NA, ifcb_number = NA)
     } else {
       hdr_file_names <- tools::file_path_sans_ext(basename(hdr_files))
       hdr_files_selected <- hdr_files[sapply(hdr_file_names, function(file_name) any(grepl(file_name, samples)))]
@@ -50,8 +50,8 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     }
 
   } else {
-    hdr_data <- data.frame(sample = NA, timestamp = NA, date = NA, year = NA,
-                           month = NA, day = NA, time = NA, ifcb_number = NA)
+    hdr_data <- tibble(sample = NA, timestamp = NA, date = NA, year = NA,
+                       month = NA, day = NA, time = NA, ifcb_number = NA)
   }
 
   if (!is.null(feature_folder)) {
@@ -61,7 +61,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     if (length(feature_files) == 0) {
       warning("No feature files found in ", feature_folder)
 
-      features_df <- data.frame(sample = NA, roi_number = NA)
+      features_df <- tibble(sample = NA, roi_number = NA)
 
     } else {
       feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
@@ -76,7 +76,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     }
 
   } else {
-    features_df <- data.frame(sample = NA, roi_number = NA)
+    features_df <- tibble(sample = NA, roi_number = NA)
   }
 
   # Join image_df, hdr_data, and features_df based on 'sample' and 'roi_number'

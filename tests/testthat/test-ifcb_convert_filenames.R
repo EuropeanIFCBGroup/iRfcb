@@ -3,7 +3,7 @@ test_that("ifcb_convert_filenames correctly extracts timestamp components", {
   filenames <- c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135")
 
   # Expected results
-  expected_data <- data.frame(
+  expected_data <- dplyr::tibble(
     sample = c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135"),
     timestamp = as.POSIXct(c("2023-03-14 00:12:05", "2023-06-15 12:30:45"), format = "%Y-%m-%d %H:%M:%S", tz = "UTC"),
     date = as.Date(c("2023-03-14", "2023-06-15")),
@@ -11,8 +11,7 @@ test_that("ifcb_convert_filenames correctly extracts timestamp components", {
     month = c(3, 6),
     day = c(14, 15),
     time = c("00:12:05", "12:30:45"),
-    ifcb_number = c("IFCB134", "IFCB135"),
-    stringsAsFactors = FALSE
+    ifcb_number = c("IFCB134", "IFCB135")
   )
 
   expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
@@ -33,7 +32,7 @@ test_that("ifcb_convert_filenames correctly handles filenames with ROI", {
   filenames_with_roi <- c("D20230314T001205_IFCB134_001", "D20230615T123045_IFCB135_002")
 
   # Expected results
-  expected_data <- data.frame(
+  expected_data <- tibble(
     sample = c("D20230314T001205_IFCB134", "D20230615T123045_IFCB135"),
     timestamp = as.POSIXct(c("2023-03-14 00:12:05", "2023-06-15 12:30:45"), format = "%Y-%m-%d %H:%M:%S", tz = "UTC"),
     date = as.Date(c("2023-03-14", "2023-06-15")),
@@ -41,9 +40,8 @@ test_that("ifcb_convert_filenames correctly handles filenames with ROI", {
     month = c(3, 6),
     day = c(14, 15),
     time = c("00:12:05", "12:30:45"),
-    ifcb_number = c("IFCB134", "IFCB135"),
-    stringsAsFactors = FALSE
-  )
+    ifcb_number = c("IFCB134", "IFCB135")
+    )
 
   expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
 
@@ -67,7 +65,7 @@ test_that("ifcb_convert_filenames correctly handles old IFCB format", {
   filenames_with_roi <- c("IFCB1_2014_188_222013", "IFCB13_2014_188_222013_04321.png")
 
   # Expected results
-  expected_data <- data.frame(
+  expected_data <- tibble(
     sample = c("IFCB1_2014_188_222013", "IFCB1_2014_188_222013"),
     timestamp = as.POSIXct(c("2014-07-07 22:20:13", "2014-07-07 22:20:13"), format = "%Y-%m-%d %H:%M:%S", tz = "UTC"),
     date = as.Date(c("2014-07-07", "2014-07-07")),
@@ -76,8 +74,7 @@ test_that("ifcb_convert_filenames correctly handles old IFCB format", {
     day = c(7, 7),
     time = c("22:20:13", "22:20:13"),
     ifcb_number = c("IFCB1", "IFCB13"),
-    roi = c(NA, 4321),
-    stringsAsFactors = FALSE
+    roi = c(NA, 4321)
   )
 
   expected_data <- readr::type_convert(expected_data, col_types = readr::cols())
