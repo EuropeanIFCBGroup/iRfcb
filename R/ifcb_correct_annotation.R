@@ -53,6 +53,11 @@ utils::globalVariables("edit_manual_file")
 #' @export
 ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL, correct_classid, do_compression = TRUE, correction_file = deprecated()) {
 
+  # Check if manual folder exists
+  if (!dir.exists(manual_folder)) {
+    stop(paste("Manual folder does not exist:", manual_folder))
+  }
+
   # Warn the user if correction_file is used
   if (lifecycle::is_present(correction_file)) {
     # Signal the deprecation to the user

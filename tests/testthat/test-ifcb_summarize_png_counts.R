@@ -95,7 +95,11 @@ test_that("ifcb_summarize_png_counts handles invalid directories gracefully", {
   invalid_hdr_dir <- file.path(temp_dir, "invalid_hdr")
 
   # Run the function with invalid directories and expect an error
-  expect_error(ifcb_summarize_png_counts(invalid_png_dir, invalid_hdr_dir, sum_level = "sample", verbose = TRUE))
+  expect_error(ifcb_summarize_png_counts(invalid_png_dir, invalid_hdr_dir, sum_level = "sample", verbose = TRUE),
+               "No subdirectories found in the PNG folder")
+
+  expect_error(ifcb_summarize_png_counts(png_folder, invalid_hdr_dir, sum_level = "sample", verbose = TRUE),
+               "HDR folder does not exist")
 })
 
 test_that("ifcb_summarize_png_counts calculates n_images correctly for different classes", {

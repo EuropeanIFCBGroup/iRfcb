@@ -38,3 +38,9 @@ test_that("ifcb_get_mat_names correctly retrieves variable names from a MAT file
   # Check if the retrieved variable names match the expected names
   expect_equal(sort(variable_names), sort(expected_names), info = "Variable names should match expected names")
 })
+
+test_that("ifcb_get_mat_names handles non-existing MAT file paths gracefully", {
+  # Call the function and expect an error due to missing variable
+  expect_error(ifcb_get_mat_names("not_a_file"),
+               regexp = "MAT file does not exist")
+})

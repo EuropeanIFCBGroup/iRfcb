@@ -99,3 +99,8 @@ test_that("ifcb_create_manifest includes existing MANIFEST.txt when specified", 
   # Check that all elements are in the file
   expect_length(manifest_content, 15)
 })
+
+test_that("ifcb_create_manifest fails gracefully", {
+  expect_error(ifcb_create_manifest("not_a_dir"),
+               "Folder does not exist")
+})

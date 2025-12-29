@@ -27,6 +27,10 @@
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \code{\link{ifcb_get_mat_variable}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_names <- function(mat_file, use_python = FALSE) {
+  if (!file.exists(mat_file)) {
+    stop("MAT file does not exist: ", mat_file)
+  }
+
   if (use_python && scipy_available()) {
     mat_contents <- ifcb_read_mat(mat_file)
   } else {

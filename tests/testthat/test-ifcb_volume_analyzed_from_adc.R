@@ -35,5 +35,6 @@ test_that("ifcb_volume_analyzed_from_adc handles non-existent file gracefully", 
   non_existent_file <- "non_existent_file.adc"
 
   # Call the function and expect an error
-  expect_error(suppressWarnings(ifcb_volume_analyzed_from_adc(non_existent_file)))
+  expect_error(ifcb_volume_analyzed_from_adc(non_existent_file),
+               "ADC file does not exist")
 })

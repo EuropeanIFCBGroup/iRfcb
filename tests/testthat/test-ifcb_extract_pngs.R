@@ -69,6 +69,8 @@ test_that("ifcb_extract_pngs works correctly", {
                "Invalid scale_bar_position")
   expect_error(ifcb_extract_pngs(roi_file, scale_bar_color = "green"),
                "Invalid scale_bar_color")
+  expect_error(ifcb_extract_pngs("not_a_file"),
+               "ROI file does not exist")
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)

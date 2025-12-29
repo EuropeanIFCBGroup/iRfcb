@@ -44,6 +44,10 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
     roi_file <- paste0(roi_file, ".roi")
   }
 
+  if (!file.exists(roi_file)) {
+    stop("ROI file does not exist: ", roi_file)
+  }
+
   # Valid positions for scale bar
   valid_positions <- c("topright", "topleft", "bottomright", "bottomleft")
   if (!(scale_bar_position %in% valid_positions)) {

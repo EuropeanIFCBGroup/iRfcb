@@ -44,7 +44,7 @@ test_that("ifcb_read_hdr_data handles no HDR files correctly", {
                "No HDR data found")
 })
 
-test_that("ifcb_read_hdr_data handles empty HDR data correctly", {
+test_that("ifcb_read_hdr_data handles empty HDR or non-existing data folders correctly", {
   hdr_folder <- file.path(exdir, "temp2")
   if (!dir.exists(hdr_folder)) {
     dir.create(hdr_folder)
@@ -54,6 +54,9 @@ test_that("ifcb_read_hdr_data handles empty HDR data correctly", {
 
   expect_error(ifcb_read_hdr_data(hdr_folder, verbose = FALSE),
                "No HDR data found")
+
+  expect_error(ifcb_read_hdr_data("not_a_folder", verbose = FALSE),
+               "The following hdr_files do not exist")
 
   unlink(hdr_file)
 })

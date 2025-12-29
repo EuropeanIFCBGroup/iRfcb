@@ -68,7 +68,7 @@ test_that("ifcb_read_summary handles non-existent file gracefully", {
   non_existent_file <- "non_existent_file.mat"
 
   # Call the function and expect an error
-  expect_error(suppressWarnings(ifcb_read_summary(non_existent_file)))
+  expect_error(ifcb_read_summary(non_existent_file))
 })
 
 test_that("ifcb_read_summary throws an error if biovolume is requested but missing", {

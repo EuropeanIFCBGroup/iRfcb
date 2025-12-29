@@ -24,6 +24,11 @@
 #' }
 #' @export
 ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_path, "MANIFEST.txt"), exclude_manifest = TRUE) {
+  # Check if manual folder exists
+  if (!dir.exists(folder_path)) {
+    stop(paste("Folder does not exist:", folder_path))
+  }
+
   # List all files in the folder and subfolders
   files <- list.files(folder_path, recursive = TRUE, full.names = TRUE)
 

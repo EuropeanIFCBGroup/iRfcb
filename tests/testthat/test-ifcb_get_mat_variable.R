@@ -54,3 +54,9 @@ test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
   # Clean up the temporary file
   unlink(empty_mat_file)
 })
+
+test_that("ifcb_get_mat_variable handles non-existing MAT file paths gracefully", {
+  # Call the function and expect an error due to missing variable
+  expect_error(ifcb_get_mat_variable("not_a_file"),
+               regexp = "MAT file does not exist")
+})

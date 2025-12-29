@@ -68,6 +68,17 @@ test_that("ifcb_zip_pngs works correctly", {
                 split_zip = TRUE,
                 max_size = 500)
 
+  # Expect errors
+  expect_error(ifcb_zip_pngs("not_a_dir",
+                             zip_filename,
+                             readme_file = readme_file),
+               "PNG folder does not exist")
+
+  expect_error(ifcb_zip_pngs(png_folder,
+                             zip_filename,
+                             readme_file = "not_a_file"),
+               "README file does not exist")
+
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
