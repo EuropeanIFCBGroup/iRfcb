@@ -20,6 +20,7 @@
 * Moved vignettes that required internet access to package articles to improve CRAN check reliability.
 * Improved error handling across functions, with clearer and more consistent messages.
 * EEA coastline data are now obtained from EEA map services, replacing direct file server downloads that were unstable.
+* Test data are sourced from GitHub when not available on Figshare.
 
 ## Deprecations
 
