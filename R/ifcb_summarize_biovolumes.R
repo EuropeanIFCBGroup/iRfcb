@@ -168,7 +168,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
         setTxtProgressBar(pb, i)
       }
 
-      volume_list[[i]] <- data.frame(
+      volume_list[[i]] <- tibble(
         sample = sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files_filtered[i]),
         ml_analyzed = ifcb_volume_analyzed(hdr_files_filtered[i])
       )
@@ -180,7 +180,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
     }
 
     # Combine into a single data frame
-    volumes <- do.call(rbind, volume_list)
+    volumes <- bind_rows(volume_list)
 
     # Join volume data with aggregated biovolumes based on 'sample' column
     biovolume_aggregated <- left_join(biovolume_aggregated, volumes, by = "sample")

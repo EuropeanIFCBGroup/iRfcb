@@ -34,7 +34,7 @@
 #' @return The function does not return a value. It creates or updates `.mat` files in the `manual_folder` to
 #' reflect the specified annotations.
 #'
-#' @seealso \code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_empty_manual_file}}
+#' @seealso \code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_manual_file}}
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
@@ -158,11 +158,11 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
       rois <- nrow(adcdata)
 
       # Create an unclassifed manual file
-      ifcb_create_empty_manual_file(roi_length = as.integer(rois),
-                                    class2use = as.character(class2use),
-                                    output_file = file.path(manual_output, paste0(sample_name, ".mat")),
-                                    classlist = as.integer(unclassified_id),
-                                    do_compression = do_compression)
+      ifcb_create_manual_file(roi_length = as.integer(rois),
+                              class2use = as.character(class2use),
+                              output_file = file.path(manual_output, paste0(sample_name, ".mat")),
+                              classlist = as.integer(unclassified_id),
+                              do_compression = do_compression)
 
       # Apply corrections to the new manual file
       ifcb_correct_annotation(manual_folder,

@@ -28,7 +28,7 @@ Download metadata from the IFCB Dashboard API
                                                     quiet = TRUE)
 
   # Print result as tibble
-  dplyr::tibble(metadata_mvco)
+  print(metadata_mvco)
 }
 
 }

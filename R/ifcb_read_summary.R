@@ -38,6 +38,11 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
     # Replace all underscores in the names of the list elements with dots to match output from MATLAB
     # names(mat) <- gsub("_", ".",names(mat))
   } else {
+
+    if (!file.exists(summary)) {
+      stop("Summary file does not exist: ", summary)
+    }
+
     if (use_python && scipy_available()) {
       mat <- ifcb_read_mat(summary)
     } else {

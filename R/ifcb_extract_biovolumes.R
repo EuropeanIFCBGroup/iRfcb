@@ -195,7 +195,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
         str_replace(file_name, "_fe[a-z]*_v\\d+\\.csv", "")
       }
 
-      data_list[[idx]] <- data.frame(
+      data_list[[idx]] <- tibble(
         sample = sample_name,
         roi_number = file_data$roi_number,
         biovolume = file_data$Biovolume
@@ -279,11 +279,14 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
 
         sample_name <- str_replace(basename(matching_mat[i]), "_class_v\\d+.mat", "")
 
-        tb_list[[i]] <- data.frame(
+        tb_list[[i]] <- tibble(
           sample = sample_name,
           classifier = temp$classifierName,
           roi_number = temp$roinum,
-          class = if (threshold == "opt") unlist(temp$TBclass_above_threshold) else unlist(temp$TBclass)
+          class = if (threshold == "opt")
+            unlist(temp$TBclass_above_threshold)
+          else
+            unlist(temp$TBclass)
         )
       }
 
@@ -310,10 +313,10 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     cat("Retrieving WoRMS records...\n")
   }
 
-  is_diatom <- data.frame(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
-                                                                             diatom_class = diatom_class,
-                                                                             marine_only = marine_only,
-                                                                             verbose = verbose))
+  is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
+                                                                         diatom_class = diatom_class,
+                                                                         marine_only = marine_only,
+                                                                         verbose = verbose))
 
   # Override diatom classification if diatom_include is provided
   if (!is.null(diatom_include)) {
@@ -334,15 +337,15 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   non_diatoms <- is_diatom[!is_diatom$is_diatom, "class"]
 
   # Print the classes with NA values
-  if (length(na_classes) > 0 & verbose) {
+  if (length(na_classes$class) > 0 & verbose) {
     cat("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:\n")
-    cat(sort(na_classes), sep = "\n")
+    cat(sort(na_classes$class), sep = "\n")
   }
 
   # Print the classes that are non-Diatoms
-  if (length(non_diatoms) > 0 & verbose) {
+  if (length(non_diatoms$class) > 0 & verbose) {
     cat("INFO: The following classes are considered NOT diatoms for carbon calculations:\n")
-    cat(sort(non_diatoms), sep = "\n")
+    cat(sort(non_diatoms$class), sep = "\n")
   }
 
   # Calculate carbon content based on diatom classification

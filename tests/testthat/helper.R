@@ -48,9 +48,9 @@ setup_test_files <- function(base_path) {
   }
 
   # Create mock CSV files
-  write.csv(data.frame(A = 1:5, B = 6:10), file = file.path(base_path, "D20230316T101514.csv"), row.names = FALSE)
-  write.csv(data.frame(C = 1:5, D = 6:10), file = file.path(base_path, "D20230316T101515_multiblob.csv"), row.names = FALSE)
-  write.csv(data.frame(E = 1:5, F = 6:10), file = file.path(base_path, "D20230316T101516.csv"), row.names = FALSE)
+  write.csv(data.frame(roi_number = 1:5, Biovolume = 6:10, A = 11:15, B = 16:20), file = file.path(base_path, "D20230316T101514_fea_v2.csv"), row.names = FALSE)
+  write.csv(data.frame(roi_number = 1:5, Biovolume = 6:10, C = 11:15, D = 16:20), file = file.path(base_path, "D20230316T101515_multiblob_fea_v2.csv"), row.names = FALSE)
+  write.csv(data.frame(roi_number = 1:5, Biovolume = 6:10, E = 11:15, F = 16:20), file = file.path(base_path, "D20230316T101516_fea_v2.csv"), row.names = FALSE)
 }
 
 # Remove mock feature files after tests

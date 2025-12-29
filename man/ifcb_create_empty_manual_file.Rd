@@ -37,6 +37,10 @@ No return value. This function is called for its side effects.
 The created MAT file is saved at the specified \code{output_file} location.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated as it has been replaced by the function: \code{ifcb_create_manual_file()}.
+
 Generates a MAT file for IFCB data with an empty manual classification structure using a specified number of ROIs,
 class names, and saves it to a specified output file. This function utilizes a Python script for creating the structure.
 }
@@ -61,3 +65,4 @@ ifcb_create_empty_manual_file(roi_length = 100,
 }
 
 }
+\keyword{internal}

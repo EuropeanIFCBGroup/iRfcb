@@ -46,3 +46,16 @@ test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
   # Clean up the temporary directory
   unlink(temp_dir, recursive = TRUE) # Delete the temporary directory and its contents
 })
+
+test_that("ifcb_adjust_classes fail gracefully if files or folders do not exist", {
+  # Expect error when file does not exist
+  expect_error(ifcb_adjust_classes("not_a_file", tempdir()),
+               "File does not exist")
+
+  tmp_file <- tempfile(fileext = ".mat")  # create a temp file path
+  file.create(tmp_file)
+
+  # Expect error when folder does not exist
+  expect_error(ifcb_adjust_classes(tmp_file, "not_a_dir"),
+               "Manual folder does not exist")
+})

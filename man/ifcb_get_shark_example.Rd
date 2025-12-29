@@ -17,7 +17,7 @@ This format is used for submitting IFCB data to \url{https://shark.smhi.se/}.
 shark_example <- ifcb_get_shark_example()
 
 # Print example as tibble
-dplyr::tibble(shark_example)
+print(shark_example)
 }
 \seealso{
 \code{\link{ifcb_get_shark_colnames}}

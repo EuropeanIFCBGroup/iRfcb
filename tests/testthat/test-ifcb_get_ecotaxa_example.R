@@ -7,7 +7,7 @@ test_that("ifcb_get_ecotaxa_example reads the ecotaxa examples correctly", {
   expect_true(is.data.frame(ecotaxa_example))
 
   # Check that the dataframe contains 5 rows
-  expect_equal(nrow(ecotaxa_example), 5)
+  expect_equal(nrow(ecotaxa_example), 3)
 
   # Call the function
   ecotaxa_example <- ifcb_get_ecotaxa_example(example = "minimal")

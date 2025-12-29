@@ -24,3 +24,6 @@ vignettes/data/
 ^vignettes/files/
 .virtualenvs/
 ^man/figures/image_gallery.png
+^vignettes/articles$
+^\.httr-oauth$
+^data-raw$

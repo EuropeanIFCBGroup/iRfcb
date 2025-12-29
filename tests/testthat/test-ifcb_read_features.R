@@ -7,7 +7,19 @@ test_that("ifcb_read_features reads all feature files correctly", {
   features <- ifcb_read_features(test_feature_folder)
 
   expect_equal(length(features), 2)
-  expect_equal(names(features), c("D20230316T101514.csv", "D20230316T101516.csv"))
+  expect_equal(names(features), c("D20230316T101514_fea_v2.csv", "D20230316T101516_fea_v2.csv"))
+
+  cleanup_test_files(test_feature_folder)
+})
+
+test_that("ifcb_read_features reads all feature files correctly", {
+  setup_test_files(test_feature_folder)
+
+  features <- ifcb_read_features(test_feature_folder, biovolume_only = TRUE, feature_version = 2)
+
+  expect_equal(length(features), 2)
+  expect_equal(ncol(features[[1]]), 2)
+  expect_equal(names(features), c("D20230316T101514_fea_v2.csv", "D20230316T101516_fea_v2.csv"))
 
   cleanup_test_files(test_feature_folder)
 })
@@ -18,12 +30,12 @@ test_that("ifcb_read_features filters multiblob files correctly", {
   multiblob_features <- ifcb_read_features(test_feature_folder, multiblob = TRUE)
 
   expect_equal(length(multiblob_features), 1)
-  expect_equal(names(multiblob_features), "D20230316T101515_multiblob.csv")
+  expect_equal(names(multiblob_features), "D20230316T101515_multiblob_fea_v2.csv")
 
   single_blob_features <- ifcb_read_features(test_feature_folder, multiblob = FALSE)
 
   expect_equal(length(single_blob_features), 2)
-  expect_equal(names(single_blob_features), c("D20230316T101514.csv", "D20230316T101516.csv"))
+  expect_equal(names(single_blob_features), c("D20230316T101514_fea_v2.csv", "D20230316T101516_fea_v2.csv"))
 
   cleanup_test_files(test_feature_folder)
 })

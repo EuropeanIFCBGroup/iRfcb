@@ -11,7 +11,7 @@ navbar:
       href: articles/index.html
       menu:
         - text: "iRfcb Introduction"
-          href: articles/a-general-tutorial.html
+          href: articles/introduction.html
         - text: "Quality Control of IFCB Data"
           href: articles/qc-tutorial.html
         - text: "Handling MATLAB Results"
@@ -78,9 +78,10 @@ reference:
   contents:
   - '`ifcb_adjust_classes`'
   - '`ifcb_annotate_batch`'
+  - '`ifcb_annotate_samples`'
   - '`ifcb_correct_annotation`'
   - '`ifcb_create_class2use`'
-  - '`ifcb_create_empty_manual_file`'
+  - '`ifcb_create_manual_file`'
   - '`ifcb_merge_manual`'
   - '`ifcb_prepare_whoi_plankton`'
   - '`ifcb_psd`'
@@ -98,4 +99,5 @@ reference:
   - '`vol2C_nondiatom`'
 - title: Deprecated functions
   contents:
+  - '`ifcb_create_empty_manual_file`'
   - '`retrieve_worms_records`'

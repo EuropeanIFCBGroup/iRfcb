@@ -107,6 +107,14 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
                      missing_cells = NULL, biomass = NULL, bloom = NULL, humidity = NULL, micron_factor = 1/3.4, fea_v = 2,
                      use_plot_subfolders = TRUE, ...) {
 
+  if (!dir.exists(feature_folder)) {
+    stop(paste("Feature folder does not exist:", feature_folder))
+  }
+
+  if (!dir.exists(hdr_folder)) {
+    stop(paste("HDR folder does not exist:", hdr_folder))
+  }
+
   if (!reticulate::py_available(initialize = TRUE)) {
     stop("Python is not installed on this machine. Please install Python to use this function.")
   }

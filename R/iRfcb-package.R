@@ -14,7 +14,7 @@
 #' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
 #' @importFrom lubridate ceiling_date date day floor_date month round_date
 #'   year ymd_hms as_datetime ymd days hours minutes seconds with_tz
-#' @importFrom readr cols col_character read_delim type_convert read_csv
+#' @importFrom readr cols col_character read_delim type_convert read_csv read_tsv
 #' @importFrom reticulate import py_available py_module_available py_run_string
 #'   source_python use_virtualenv virtualenv_create virtualenv_list virtualenv_root
 #'   use_python py_discover_config py_require py_list_packages py_install py_config
@@ -22,7 +22,7 @@
 #' @importFrom R.matlab readMat
 #' @importFrom sf st_area st_as_sf st_as_sfc st_bbox st_crs st_geometry_type
 #'   st_intersection st_intersects st_make_valid st_read st_transform
-#'   st_union st_within st_wrap_dateline st_buffer
+#'   st_union st_within st_wrap_dateline st_buffer st_write
 #' @importFrom stats aggregate median na.omit setNames
 #' @importFrom stringr str_extract str_remove str_remove_all str_replace
 #'   str_replace_all word str_match str_wrap

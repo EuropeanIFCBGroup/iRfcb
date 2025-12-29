@@ -6,13 +6,13 @@
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions. Must be the same length as `latitudes`.
 #' @param distance Buffer distance (in meters) from the coastline to consider "near land." Default is 500 meters.
-#' @param shape Optional path to a shapefile (`.shp`) containing coastline data. If provided,
+#' @param shape Optional path to a shapefile (`.shp` or `.gpkg`) containing coastline data. If provided,
 #'   this file will be used instead of the default Natural Earth 1:10m land vectors.
 #'   A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 #'   Alternatively, you can retrieve a more detailed European coastline automatically by
 #'   setting the `source` argument to `"eea"`.
 #' @param source Character string indicating which default coastline source to use when `shape = NULL`.
-#'   Options are `"ne"` (Natural Earth, default) and `"eea"` (European Environment Agency).
+#'   Options are `"ne"` (Natural Earth, default) and `"eea"` (European Environment Agency, 2017).
 #'   Ignored if `shape` is provided.
 #' @param crs Coordinate reference system (CRS) to use for input and output.
 #'   Default is EPSG code 4326 (WGS84).
@@ -21,6 +21,7 @@
 #' @param small_island_threshold Area threshold in square meters below which islands
 #'   will be considered small and removed, if remove_small_islands is set to `TRUE`. Default is 2 square km.
 #' @param plot A boolean indicating whether to plot the points, land polygon and buffer. Default is `FALSE`.
+#' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param utm_zone `r lifecycle::badge("deprecated")`
 #'   This argument is deprecated. UTM zones are now determined automatically based on the longitude of the input positions.
 #'
@@ -35,8 +36,8 @@
 #' determines if each input position intersects with this buffer or the landmass itself.
 #' By default, it uses the Natural Earth 1:10m land vector dataset.
 #'
-#' The EEA shapefile is downloaded from \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
-#' when `source = "eea"`.
+#' The EEA shapefile is downloaded when `source = "eea"` (European Environment Agency, 2017).
+#' The downloaded file is cached within an R session.
 #'
 #' @examples
 #' \donttest{
@@ -51,6 +52,8 @@
 #' print(near_land)
 #' }
 #'
+#' @references European Environment Agency (2017). EEA coastline for analysis (polygon) - version 3.0, March 2017. <https://sdi.eea.europa.eu/catalogue/geoss/api/records/9faa6ea1-372a-4826-a3c7-fb5b05e31c52>
+#'
 #' @export
 ifcb_is_near_land <- function(latitudes,
                               longitudes,
@@ -61,6 +64,7 @@ ifcb_is_near_land <- function(latitudes,
                               remove_small_islands = TRUE,
                               small_island_threshold = 2000000,
                               plot = FALSE,
+                              verbose = TRUE,
                               utm_zone = deprecated()) {
 
   stopifnot(length(latitudes) == length(longitudes))
@@ -108,19 +112,61 @@ ifcb_is_near_land <- function(latitudes,
       land <- st_read(shp_path, quiet = TRUE)
 
     } else if (source == "eea") {
-      url <- "https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon/at_download/file"
-      temp_zip <- file.path(exdir, "eea_coastline_polygon.zip")
 
-      if (!file.exists(temp_zip)) {
-        tryCatch({
-          curl::curl_download(url, temp_zip)
-        }, error = function(e) {
-          stop("Could not download EEA coastline data. Please manually download it from:\n",
-               "https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2", "\nThen provide the path to the `.gpkg` or `.shp` file using the `shape` argument.")
-        })
+      eea_file <-file.path(exdir, "EEA_Coastline_2017.gpkg")
+
+      if (!file.exists(eea_file)) {
+        base <- "https://marine.discomap.eea.europa.eu/arcgis/rest/services/Marine/EEA_coastline_2017/MapServer/0"
+
+        # get object IDs
+        oid_url <- paste0(
+          base,
+          "/query?where=1=1&returnIdsOnly=true&f=json"
+        )
+
+        oids <- jsonlite::fromJSON(oid_url)$objectIds
+
+        chunk_size <- 500
+        chunks <- split(oids, ceiling(seq_along(oids) / chunk_size))
+        n_chunks <- length(chunks)
+
+        # set up progress bar
+        if (verbose && n_chunks > 0) {
+          cat("Downloading EEA coastline data...\n")
+          pb <- txtProgressBar(min = 0, max = n_chunks, style = 3)
+        }
+
+        coast_list <- vector("list", n_chunks)
+
+        for (i in seq_along(chunks)) {
+
+          if (verbose && n_chunks > 0) {
+            setTxtProgressBar(pb, i)
+          }
+
+          query <- paste0(
+            base,
+            "/query?",
+            "objectIds=", paste(chunks[[i]], collapse = ","),
+            "&outFields=*",
+            "&f=geojson"
+          )
+
+          coast_list[[i]] <- st_read(query, quiet = TRUE)
+        }
+
+        # close progress bar
+        if (verbose && n_chunks > 0) {
+          close(pb)
+        }
+
+        coast <- do.call(rbind, coast_list)
+
+        st_write(coast, eea_file, quiet = TRUE, append = FALSE)
       }
-      unzip(temp_zip, exdir = exdir)
-      shp_path <- list.files(exdir, pattern = "\\.shp$", full.names = TRUE)[1]
+
+      # unzip(temp_zip, exdir = exdir)
+      shp_path <- list.files(exdir, pattern = "\\.gpkg$", full.names = TRUE)[1]
 
       # Read the shapefile
       land <- st_read(shp_path, quiet = TRUE)

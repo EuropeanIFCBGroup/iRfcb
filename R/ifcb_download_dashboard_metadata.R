@@ -14,7 +14,7 @@
 #'                                                     quiet = TRUE)
 #'
 #'   # Print result as tibble
-#'   dplyr::tibble(metadata_mvco)
+#'   print(metadata_mvco)
 #' }
 #'
 #' @seealso [ifcb_download_dashboard_data()] to download data from the IFCB Dashboard API.
@@ -51,9 +51,15 @@ ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quie
 
   # Parse CSV
   df <- tryCatch(
-    read.csv(text = csv_content, stringsAsFactors = FALSE),
+    readr::read_csv(csv_content,
+                    show_col_types = FALSE,
+                    progress = FALSE,
+                    col_types = cols(.default = col_character())),
     error = function(e) stop("Failed to parse CSV content: ", e$message)
   )
+
+  df <- type_convert(df,
+                     col_types = cols())
 
   if (!quiet) {
     message("Successfully retrieved ", nrow(df), " records",

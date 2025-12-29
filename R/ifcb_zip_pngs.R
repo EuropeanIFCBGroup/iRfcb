@@ -39,6 +39,17 @@
 ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_address = "",
                           version = "", print_progress = TRUE, include_txt = FALSE,
                           split_zip = FALSE, max_size = 500, quiet = FALSE) {
+
+  if (!dir.exists(png_folder)) {
+    stop("PNG folder does not exist: ", png_folder)
+  }
+
+  if (!is.null(readme_file)) {
+    if (!file.exists(readme_file)) {
+      stop("README file does not exist: ", readme_file)
+    }
+  }
+
   # List all subdirectories in the main directory
   subdirs <- list.dirs(png_folder, recursive = FALSE)
 

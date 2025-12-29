@@ -112,3 +112,15 @@ test_that("ifcb_psd works correctly", {
   # unlink(venv_dir, recursive = TRUE)
   unlink(temp_dir, recursive = TRUE)
 })
+
+test_that("ifcb_psd fails gracefully if folders do not exist", {
+  expect_error(ifcb_psd("not_a_dir", tempdir()),
+               "Feature folder does not exist")
+
+  if (!dir.exists(tempdir())) {
+    dir.create(tempdir(), recursive = TRUE)
+  }
+
+  expect_error(ifcb_psd(tempdir(), "not_a_dir"),
+               "HDR folder does not exist")
+})

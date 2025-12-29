@@ -1,8 +1,4 @@
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
-  # Skip on macOS GitHub runner
-  skip_on_os("mac")
-  skip_if(Sys.getenv("IS_R_CMD_CHECK") == "true")
-
   # Check for internet connection and skip the test if offline
   skip_if_offline()
   skip_on_cran()
@@ -16,7 +12,11 @@ test_that("ifcb_download_test_data downloads and unzips files correctly", {
   temp_dir <- file.path(temp_dir, "temp")
 
   # Call the function to test error handling
-  expect_error(ifcb_download_test_data(temp_dir, figshare_article = "Non-valid-article", max_retries = 2, sleep_time = 1), "Download failed after 2 attempts.")
+  expect_error(ifcb_download_test_data(temp_dir,
+                                       figshare_article = "Non-valid-article",
+                                       max_retries = 1,
+                                       sleep_time = 2),
+               "Download failed from all sources after 1 attempts each")
 
   # Call the function to download and unzip test data
   ifcb_download_test_data(temp_dir)

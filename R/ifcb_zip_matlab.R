@@ -59,6 +59,37 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
                             email_address = "", version = "", print_progress = TRUE,
                             feature_recursive = TRUE, manual_recursive = FALSE, data_recursive = TRUE,
                             quiet = FALSE) {
+  # Check that folders exists
+  if (!dir.exists(manual_folder)) {
+    stop("Manual folder does not exist: ", manual_folder)
+  }
+
+  if (!dir.exists(features_folder)) {
+    stop("Feature folder does not exist: ", features_folder)
+  }
+
+  if (!file.exists(class2use_file)) {
+    stop("class2use file does not exist: ", class2use_file)
+  }
+
+  if (!is.null(data_folder)) {
+    if (!dir.exists(data_folder)) {
+      stop("Data folder does not exist: ", data_folder)
+    }
+  }
+
+  if (!is.null(readme_file)) {
+    if (!file.exists(readme_file)) {
+      stop("README file does not exist: ", readme_file)
+    }
+  }
+
+  if (!is.null(matlab_readme_file)) {
+    if (!file.exists(matlab_readme_file)) {
+      stop("MATLAB README file does not exist: ", matlab_readme_file)
+    }
+  }
+
   # Print message to indicate starting listing files
   if (!quiet) {
     cat("Listing all files...\n")
@@ -67,11 +98,23 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   # List all .mat files in the specified folder (excluding subfolders)
   mat_files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = manual_recursive)
 
+  # Check that files were found
+  if (length(mat_files) == 0) {
+    stop("No .mat files found in manual folder: ", manual_folder)
+  }
+
+  if (length(mat_files) == 0) {
+    stop("N")
+  }
+
   # List all feature files in the specified folder (including subfolders)
   feature_files <- list.files(features_folder, pattern = "\\.csv$", full.names = TRUE, recursive = feature_recursive)
 
   # If data_folder is provided, list all data files in the specified folder (including subfolders)
   if (!is.null(data_folder)) {
+    if (!dir.exists(data_folder)) {
+      stop("Data folder does not exist: ", data_folder)
+    }
     data_files <- list.files(data_folder, pattern = "\\.(roi|adc|hdr)$", full.names = TRUE, recursive = data_recursive)
   } else {
     data_files <- NULL

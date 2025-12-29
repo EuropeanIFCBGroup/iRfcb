@@ -84,5 +84,5 @@ ifcb_annotate_batch(
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_empty_manual_file}}
+\code{\link{ifcb_correct_annotation}}, \code{\link{ifcb_create_manual_file}}
 }

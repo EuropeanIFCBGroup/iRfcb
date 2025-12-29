@@ -49,11 +49,15 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
 
   # Stop function if there are no subdirectories in the png folder
   if (length(subdirs) == 0) {
-    stop("No subdirectories found in the PNG folder")
+    stop("No subdirectories found in the PNG folder: ", png_folder)
   }
 
   # Initialize an empty list to store results
   results <- list()
+
+  if (sum_level == "sample" && !is.null(hdr_folder) && !dir.exists(hdr_folder)) {
+    stop("HDR folder does not exist: ", hdr_folder)
+  }
 
   # Check if sum_level is "class", then skip HDR extraction
   if (sum_level == "sample" && !is.null(hdr_folder) && dir.exists(hdr_folder)) {
@@ -119,7 +123,7 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
       }
 
       # Append results for the current PNG file to class_results
-      class_results[[length(class_results) + 1]] <- data.frame(
+      class_results[[length(class_results) + 1]] <- tibble(
         sample = sample_name,
         ifcb_number = ifcb_number,
         class_name = class_name,
@@ -137,7 +141,7 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
     }
 
     # Combine results for the current class and store in results
-    class_results_df <- do.call(rbind, class_results)
+    class_results_df <- bind_rows(class_results)
     if (sum_level == "sample") {
       class_summary <- class_results_df %>%
         group_by(sample, ifcb_number, class_name) %>%

@@ -1,6 +1,11 @@
 utils::globalVariables("create_and_save_mat_structure")
 #' Create an Empty Manual Classification MAT File
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated as it has been replaced by the function: `ifcb_create_manual_file()`.
+#'
 #' Generates a MAT file for IFCB data with an empty manual classification structure using a specified number of ROIs,
 #' class names, and saves it to a specified output file. This function utilizes a Python script for creating the structure.
 #'
@@ -38,11 +43,12 @@ utils::globalVariables("create_and_save_mat_structure")
 #'                               classlist = c(rep(1, 50), rep(2, 50)))
 #' }
 #'
+#' @keywords internal
 #' @export
 ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, classlist = 1, do_compression = TRUE, unclassified_id = deprecated()) {
 
-  # Initialize python check
-  check_python_and_module()
+  # Print deprecation warning
+  lifecycle::deprecate_warn("0.6.0.9000", "iRfcb::ifcb_create_empty_manual_file()", "ifcb_create_manual_file()")
 
   # Warn the user if adc_folder is used
   if (lifecycle::is_present(unclassified_id)) {
@@ -54,18 +60,9 @@ ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, cl
     classlist <- unclassified_id
   }
 
-  # Import the Python function
-  source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
-
-  # Check if the output directory exists, if not create it
-  if(!dir.exists(dirname(output_file))) {
-    dir.create(dirname(output_file), recursive = TRUE)
-  }
-
-  # Create the MAT file
-  create_and_save_mat_structure(as.integer(roi_length),
-                                as.character(class2use),
-                                output_file,
-                                as.integer(classlist),
-                                do_compression)
+  ifcb_create_manual_file(roi_length = roi_length,
+                          class2use = class2use,
+                          output_file = output_file,
+                          classlist = classlist,
+                          do_compression = do_compression)
 }

@@ -32,7 +32,7 @@ ifcb_convert_filenames <- function(filenames, tz = "UTC") {
 
   # If input is empty, return an empty data frame with the correct structure
   if (length(filenames) == 0) {
-    return(data.frame(
+    return(tibble(
       sample = character(0),
       timestamp = as.POSIXct(character(0), tz = tz),
       date = as.Date(character(0)),
@@ -40,8 +40,7 @@ ifcb_convert_filenames <- function(filenames, tz = "UTC") {
       month = integer(0),
       day = integer(0),
       time = character(0),
-      ifcb_number = character(0),
-      stringsAsFactors = FALSE
+      ifcb_number = character(0)
     ))
   }
 

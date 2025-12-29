@@ -26,7 +26,7 @@
 #' ecotaxa_example <- ifcb_get_ecotaxa_example()
 #'
 #' # Print the first five columns
-#' dplyr::tibble(ecotaxa_example)
+#' print(ecotaxa_example)
 ifcb_get_ecotaxa_example <- function(example = "ifcb") {
   file_path <- switch(example,
                       "minimal" = "exdata/ecotaxa_table_minimum.tsv",
@@ -36,5 +36,5 @@ ifcb_get_ecotaxa_example <- function(example = "ifcb") {
                       stop("Invalid example type. Choose either 'minimal', 'full_unknown', 'full_classified', or 'ifcb'.")
   )
 
-  read.table(system.file(file_path, package = "iRfcb"), sep = "\t", header = TRUE, encoding = "latin1")
+  read_tsv(system.file(file_path, package = "iRfcb"), show_col_types = FALSE, progress = FALSE)
 }

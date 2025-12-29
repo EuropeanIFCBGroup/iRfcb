@@ -67,7 +67,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   }
 
   # Initialize an empty data frame to accumulate the results
-  total_sum <- data.frame()
+  total_sum <- tibble()
 
   # Initialize a list to store all warnings
   warning_list <- list()

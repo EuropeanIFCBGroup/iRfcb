@@ -73,6 +73,76 @@ test_that("ifcb_zip_matlab works correctly", {
   unlink(temp_dir, recursive = TRUE)
 })
 
+test_that("ifcb_zip_matlab fails gracefully", {
+
+  # Create a temporary directory
+  temp_dir <- file.path(tempdir(), "ifcb_zip_matlab")
+
+  if (!dir.exists(temp_dir)) {
+    dir.create(temp_dir, recursive = TRUE)
+  }
+
+  temp_file <- file.path(temp_dir, "file.md")
+  file.create(temp_file)
+
+  # Run the function
+  expect_error(ifcb_zip_matlab(
+    manual_folder = "not_a_dir",
+    features_folder = temp_dir,
+    class2use_file = temp_dir,
+    zip_filename = "test.zip",
+    data_folder = temp_dir,
+    readme_file = temp_file,
+    matlab_readme_file = temp_file
+  ),
+  "Manual folder does not exist")
+
+  expect_error(ifcb_zip_matlab(
+    manual_folder = temp_dir,
+    features_folder = "not_a_dir",
+    class2use_file = temp_dir,
+    zip_filename = "test.zip",
+    data_folder = temp_dir,
+    readme_file = temp_file,
+    matlab_readme_file = temp_file
+  ),
+  "Feature folder does not exist")
+
+  expect_error(ifcb_zip_matlab(
+    manual_folder = temp_dir,
+    features_folder = temp_dir,
+    class2use_file = temp_dir,
+    zip_filename = "test.zip",
+    data_folder = "not_a_dir",
+    readme_file = temp_file,
+    matlab_readme_file = temp_file
+  ),
+  "Data folder does not exist")
+
+  expect_error(ifcb_zip_matlab(
+    manual_folder = temp_dir,
+    features_folder = temp_dir,
+    class2use_file = temp_dir,
+    zip_filename = "test.zip",
+    data_folder = temp_dir,
+    readme_file = "not_a_file",
+    matlab_readme_file = temp_file
+  ),
+  "README file does not exist")
+
+  expect_error(ifcb_zip_matlab(
+    manual_folder = temp_dir,
+    features_folder = temp_dir,
+    class2use_file = temp_dir,
+    zip_filename = "test.zip",
+    data_folder = temp_dir,
+    readme_file = temp_file,
+    matlab_readme_file = "not_a_file"
+  ),
+  "MATLAB README file does not exist")
+})
+
+
 test_that("helpers works correctly", {
 
   # Create a temporary directory

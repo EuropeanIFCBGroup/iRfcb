@@ -148,7 +148,7 @@ extract_parts <- function(filenames, tz = "UTC") {
   is_d_format <- grepl("^[A-Z]\\d{8}T\\d{6}", filenames)
   is_ifcb_format <- grepl("^IFCB\\d+_\\d{4}_\\d{3}_\\d{6}", filenames)
 
-  result <- data.frame(
+  result <- tibble(
     sample = filenames,
     timestamp = as.POSIXct(NA, tz = tz),
     date = as.Date(NA),
@@ -158,7 +158,6 @@ extract_parts <- function(filenames, tz = "UTC") {
     time = NA_character_,
     ifcb_number = NA_character_,
     roi = NA_integer_,
-    stringsAsFactors = FALSE
   )
 
   # Process D-format filenames

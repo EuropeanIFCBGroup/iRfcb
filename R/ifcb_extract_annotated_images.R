@@ -22,6 +22,7 @@ utils::globalVariables(c("name", "manual"))
 #' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
 #' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
+#' @param add_trailing_numbers Logical. If `TRUE`, appends a zero-padded numeric suffix derived from the manual class index to the class name when naming output files. If `FALSE`, uses only the class name without a numeric suffix. Default is `TRUE`.
 #' @param roi_folder
 #'    `r lifecycle::badge("deprecated")`
 #'    Use `roi_folders` instead.
@@ -54,7 +55,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                                           roi_recursive = TRUE, overwrite = FALSE, scale_bar_um = NULL,
                                           scale_micron_factor = 1/3.4, scale_bar_position = "bottomright",
                                           scale_bar_color = "black", old_adc = FALSE, use_python = FALSE,
-                                          gamma = 1, roi_folder = deprecated()) {
+                                          gamma = 1, add_trailing_numbers = TRUE, roi_folder = deprecated()) {
 
   # Warn the user if roi_folder is used
   if (lifecycle::is_present(roi_folder)) {
@@ -71,7 +72,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
   manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
 
   if (length(manualfiles) == 0) {
-    stop("No manual files found in the specified directory.")
+    stop("No manual files found in the specified directory: ", manual_folder)
   }
 
   # Get the class names from the specified file
@@ -141,13 +142,17 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
       taxa.list_ix <- taxa.list[taxa.list$class == class_name, ]
 
       # Generate taxaname for each ROI number
-      taxaname_list <- paste(class_name, sprintf("%03d", taxa.list_ix$manual), sep = "_")
+      if (add_trailing_numbers) {
+        taxa_name <- paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_")
+      } else {
+        taxa_name <- unique(taxa.list_ix$class)
+      }
 
       # Extract PNGs for each ROI number with corresponding taxaname
       ifcb_extract_pngs(roifilename,
                         out_folder = out_folder,
                         ROInumbers = taxa.list_ix$`roi number`,
-                        taxaname = paste(unique(taxa.list_ix$class), sprintf("%03d", unique(taxa.list_ix$manual)), sep = "_"),
+                        taxaname = taxa_name,
                         verbose = verbose,
                         scale_bar_um =scale_bar_um,
                         scale_micron_factor = scale_micron_factor,
