@@ -14,6 +14,7 @@ ifcb_is_near_land(
   remove_small_islands = TRUE,
   small_island_threshold = 2e+06,
   plot = FALSE,
+  verbose = TRUE,
   utm_zone = deprecated()
 )
 }
@@ -24,14 +25,14 @@ ifcb_is_near_land(
 
 \item{distance}{Buffer distance (in meters) from the coastline to consider "near land." Default is 500 meters.}
 
-\item{shape}{Optional path to a shapefile (\code{.shp}) containing coastline data. If provided,
+\item{shape}{Optional path to a shapefile (\code{.shp} or \code{.gpkg}) containing coastline data. If provided,
 this file will be used instead of the default Natural Earth 1:10m land vectors.
 A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 Alternatively, you can retrieve a more detailed European coastline automatically by
 setting the \code{source} argument to \code{"eea"}.}
 
 \item{source}{Character string indicating which default coastline source to use when \code{shape = NULL}.
-Options are \code{"ne"} (Natural Earth, default) and \code{"eea"} (European Environment Agency).
+Options are \code{"ne"} (Natural Earth, default) and \code{"eea"} (European Environment Agency, 2017).
 Ignored if \code{shape} is provided.}
 
 \item{crs}{Coordinate reference system (CRS) to use for input and output.
@@ -44,6 +45,8 @@ the coastline. Useful in archipelagos. Default is \code{TRUE}.}
 will be considered small and removed, if remove_small_islands is set to \code{TRUE}. Default is 2 square km.}
 
 \item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is \code{FALSE}.}
+
+\item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
 \item{utm_zone}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 This argument is deprecated. UTM zones are now determined automatically based on the longitude of the input positions.}
@@ -63,8 +66,8 @@ This function calculates a buffered area around the coastline using a polygon sh
 determines if each input position intersects with this buffer or the landmass itself.
 By default, it uses the Natural Earth 1:10m land vector dataset.
 
-The EEA shapefile is downloaded from \url{https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon}
-when \code{source = "eea"}.
+The EEA shapefile is downloaded when \code{source = "eea"} (European Environment Agency, 2017).
+The downloaded file is cached within an R session.
 }
 \examples{
 \donttest{
@@ -79,4 +82,7 @@ near_land <- ifcb_is_near_land(latitudes, longitudes, distance = 300, crs = 4326
 print(near_land)
 }
 
+}
+\references{
+European Environment Agency (2017). EEA coastline for analysis (polygon) - version 3.0, March 2017. \url{https://sdi.eea.europa.eu/catalogue/geoss/api/records/9faa6ea1-372a-4826-a3c7-fb5b05e31c52}
 }
