@@ -48,7 +48,8 @@ To get started, download sample data from the [SMHI IFCB Plankton Image Referenc
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir)
+ifcb_download_test_data(dest_dir = data_dir,
+                        verbose = FALSE)
 ```
 
 ## Extract IFCB Data
