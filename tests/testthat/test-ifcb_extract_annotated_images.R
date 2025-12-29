@@ -48,12 +48,13 @@ test_that("ifcb_extract_annotated_images works correctly", {
     roi_folders = roi_folder,
     out_folder = out_folder,
     skip_class = NULL,
+    add_trailing_numbers = FALSE,
     verbose = FALSE
   )
 
   # Verify that the output directory contains the extracted images
   extracted_images <- list.files(out_folder, pattern = "\\.png$", full.names = TRUE, recursive = TRUE)
-  expect_true(length(extracted_images) > 0)
+  expect_true(length(extracted_images) == 4)
 })
 
 test_that("ifcb_extract_annotated_images handles errors gracefully", {
