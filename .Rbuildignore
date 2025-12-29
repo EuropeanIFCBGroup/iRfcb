@@ -26,3 +26,4 @@ vignettes/data/
 ^man/figures/image_gallery.png
 ^vignettes/articles$
 ^\.httr-oauth$
+^data-raw$
