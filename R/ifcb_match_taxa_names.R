@@ -4,7 +4,7 @@
 #' `r lifecycle::badge("superseded")`
 #'
 #' This function has been superseded by
-#' SHARK4R::match_worms_taxa() or worrms::wm_records_names(). It will not receive new features,
+#' `SHARK4R::match_worms_taxa()` or `worrms::wm_records_names()`. It will not receive new features,
 #' but will continue to receive critical bug fixes as needed.
 #'
 #' This function attempts to retrieve WoRMS records using the provided taxa names.

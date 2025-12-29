@@ -1,6 +1,4 @@
 test_that("ifcb_download_test_data downloads and unzips files correctly", {
-  skip_if(Sys.getenv("IS_R_CMD_CHECK") == "true")
-
   # Check for internet connection and skip the test if offline
   skip_if_offline()
   skip_on_cran()

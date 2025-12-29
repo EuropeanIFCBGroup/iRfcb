@@ -40,7 +40,7 @@ A data frame (or list if return_list is TRUE) of WoRMS records or NULL if the re
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}
 
 This function has been superseded by
-SHARK4R::match_worms_taxa() or worrms::wm_records_names(). It will not receive new features,
+\code{SHARK4R::match_worms_taxa()} or \code{worrms::wm_records_names()}. It will not receive new features,
 but will continue to receive critical bug fixes as needed.
 
 This function attempts to retrieve WoRMS records using the provided taxa names.
