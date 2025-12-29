@@ -1,4 +1,4 @@
-# iRfcb (development version)
+# iRfcb 0.7.0
 
 ## New features
 

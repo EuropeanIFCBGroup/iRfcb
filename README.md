@@ -45,7 +45,7 @@ For a detailed overview of all available `iRfcb` functions, please visit the ref
 
 Explore the key features and capabilities of `iRfcb` through the tutorials:
 
-- [iRfcb Introduction](https://europeanifcbgroup.github.io/iRfcb/articles/a-general-tutorial.html)
+- [iRfcb Introduction](https://europeanifcbgroup.github.io/iRfcb/articles/introduction.html)
 - [Quality Control of IFCB Data](https://europeanifcbgroup.github.io/iRfcb/articles/qc-tutorial.html)
 - [Handling MATLAB Results](https://europeanifcbgroup.github.io/iRfcb/articles/matlab-tutorial.html)
 - [Creating a DwC-A from IFCB Data](https://europeanifcbgroup.github.io/iRfcb/articles/dwca-tutorial.html)
