@@ -194,7 +194,7 @@ The default class for diatoms is defined as Bacillariophyceae, but may be adjust
 
 ### Find trophic type of plankton taxa
 
-This function takes a list of taxa names and matches them with the **SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/hamta-data/).
+This function takes a list of taxa names and matches them with the **SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/en/).
 
 ```{r}
 # Example taxa names

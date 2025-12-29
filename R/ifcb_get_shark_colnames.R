@@ -1,7 +1,7 @@
 #' Get Shark Column Names
 #'
 #' This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
-#' These columns are used for submitting IFCB data to \url{https://shark.smhi.se/}.
+#' These columns are used for submitting IFCB data to \url{https://shark.smhi.se/en/}.
 #'
 #' @param minimal A logical value indicating whether to load only the minimal set of column names required for data submission to SHARK. Default is FALSE.
 #'
