@@ -7,11 +7,11 @@
 ifcb_download_test_data(
   dest_dir,
   figshare_article = "48158716",
-  expected_checksum = NULL,
   max_retries = 5,
   sleep_time = 10,
   keep_zip = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  expected_checksum = deprecated()
 )
 }
 \arguments{
@@ -20,10 +20,6 @@ ifcb_download_test_data(
 \item{figshare_article}{The file article number at the SciLifeLab Figshare data repository.
 By default, the \code{iRfcb} test dataset (48158716) from Torstensson et al. (2024) is used.}
 
-\item{expected_checksum}{Optional. The expected MD5 checksum of the downloaded zip file.
-If not provided, it is automatically looked up from an internal table based on
-\code{figshare_article}.}
-
 \item{max_retries}{The maximum number of retry attempts in case of download failure. Default is 5.}
 
 \item{sleep_time}{The sleep time between download attempts, in seconds. Default is 10.}
@@ -31,6 +27,11 @@ If not provided, it is automatically looked up from an internal table based on
 \item{keep_zip}{A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
+
+\item{expected_checksum}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Optional. The expected MD5 checksum of the downloaded zip file.
+If not provided, it is automatically looked up from an internal table based on
+\code{figshare_article}.}
 }
 \value{
 No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.

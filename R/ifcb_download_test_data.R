@@ -9,13 +9,15 @@
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the `iRfcb` test dataset (48158716) from Torstensson et al. (2024) is used.
-#' @param expected_checksum Optional. The expected MD5 checksum of the downloaded zip file.
-#'   If not provided, it is automatically looked up from an internal table based on
-#'   \code{figshare_article}.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 5.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
 #' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
+#' @param expected_checksum `r lifecycle::badge("deprecated")`
+#'   Optional. The expected MD5 checksum of the downloaded zip file.
+#'   If not provided, it is automatically looked up from an internal table based on
+#'   \code{figshare_article}.
+#'
 #'
 #' @return No return value. This function is called for its side effect of downloading, extracting, and organizing IFCB test data.
 #'
@@ -29,8 +31,14 @@
 #' }
 #'
 #' @export
-ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", expected_checksum = NULL, max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE) {
-  url <- paste0("https://figshare.scilifelab.se/ndownloader/files/", figshare_article)
+ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max_retries = 5, sleep_time = 10, keep_zip = FALSE, verbose = TRUE, expected_checksum = deprecated()) {
+  # Warn the user if adc_folder is used
+  if (lifecycle::is_present(expected_checksum)) {
+    # Signal the deprecation to the user
+    deprecate_warn("0.6.0.9000", "iRfcb::ifcb_download_test_data(expected_checksum = )")
+  }
+
+  url <- paste0("https://figshare.com/ndownloader/files/", figshare_article)
   if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
   dest_file <- file.path(dest_dir, paste0(basename(url), ".zip"))
 
