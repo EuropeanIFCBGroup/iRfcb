@@ -19,7 +19,7 @@ test_that("ifcb_is_near_land works correctly", {
 
 test_that("ifcb_is_near_land works correctly with EEA data", {
 
-  download_url <- "https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon/at_download/file"
+  download_url <- "https://marine.discomap.eea.europa.eu"
 
   # Skip slow test on CRAN
   skip_on_cran()

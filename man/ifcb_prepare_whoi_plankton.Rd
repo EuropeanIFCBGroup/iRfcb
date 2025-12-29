@@ -78,7 +78,7 @@ classification files in \code{.mat} format that can be used to train an image cl
 \details{
 This function requires a python interpreter to be installed. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
 
-This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_empty_manual_file}} functions and used for downloading, processing, and converting IFCB data.
+This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.
 
 The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.

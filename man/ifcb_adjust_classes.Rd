@@ -24,7 +24,7 @@ This function adjusts the classifications in manual annotation files based on a 
 It loads a specified class2use file and applies the adjustments to all relevant files in the
 specified manual folder. Optionally, it can also perform compression on the output files.
 This is the R equivalent function of \code{start_mc_adjust_classes_user_training} from the
-\verb{ifcb-analysis repository} (Sosik and Olson 2007).
+\code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
 Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
