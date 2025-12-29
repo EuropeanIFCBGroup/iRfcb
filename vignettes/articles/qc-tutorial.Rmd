@@ -33,11 +33,7 @@ Some functions from the `iRfcb` package used in this tutorial require `Python` t
 The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](https://europeanifcbgroup.github.io/iRfcb/).
 
 Load the `iRfcb` library:
-```{r, eval=FALSE}
-library(iRfcb)
-```
-
-```{r, include=FALSE}
+```{r}
 library(iRfcb)
 ```
 

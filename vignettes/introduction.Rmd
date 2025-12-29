@@ -31,11 +31,7 @@ install.packages("iRfcb")
 ```
 
 Load the `iRfcb` and `dplyr` libraries:
-```{r, eval=FALSE}
-library(iRfcb)
-```
-
-```{r, include=FALSE}
+```{r}
 library(iRfcb)
 ```
 

@@ -4,7 +4,7 @@
 #' dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 #' unzips them into the specified folder and extracts png images. These data can be used, for instance,
 #' for testing `iRfcb` and for creating the tutorial vignette
-#' using \code{vignette("a-general-tutorial", package = "iRfcb")}
+#' using \code{vignette("introduction", package = "iRfcb")}
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
@@ -62,6 +62,9 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
         attempts <- attempts + 1
         tryCatch({
           curl::curl_download(url, dest_file, quiet = TRUE, mode = "wb")
+          if (!file.exists(dest_file) || file.info(dest_file)$size == 0) {
+            stop("Downloaded file is empty")
+          }
           downloaded <- TRUE
         }, error = function(e) {
           if (verbose) {
