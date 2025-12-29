@@ -83,8 +83,6 @@ data_dir <- "data"
 # Download and extract test data in the data folder
 ifcb_download_test_data(
   dest_dir = data_dir,
-  max_retries = 10,
-  sleep_time = 30,
   verbose = FALSE
 )
 ```
@@ -98,8 +96,6 @@ if (!dir.exists(data_dir)) {
   # Download and extract test data if the folder does not exist
   ifcb_download_test_data(
     dest_dir = data_dir,
-    max_retries = 10,
-    sleep_time = 30,
     verbose = FALSE
   )
 }
