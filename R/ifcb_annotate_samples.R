@@ -190,6 +190,11 @@ ifcb_annotate_samples <- function(png_folder,
       progress = FALSE
     )
 
+    # Identify trigger without an image from ROIheight and start_byte
+    empty_triggers <- which(
+      rowSums(adc_data[, 16:17], na.rm = TRUE) == 0
+    )
+
     annotation_sample <- annotation %>%
       dplyr::filter(sample == smp)
 
@@ -205,6 +210,9 @@ ifcb_annotate_samples <- function(png_folder,
       dplyr::mutate(
         class_id = dplyr::coalesce(class_id, unclassified_id)
       )
+
+    # Set empty triggers to NaN
+    classlist$class_id[empty_triggers] <- NaN
 
     output_file <- file.path(output_folder, paste0(smp, ".mat"))
 

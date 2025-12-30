@@ -56,6 +56,6 @@ ifcb_create_manual_file <- function(roi_length, class2use, output_file, classlis
   create_and_save_mat_structure(as.integer(roi_length),
                                 as.character(class2use),
                                 output_file,
-                                as.integer(classlist),
+                                classlist,
                                 do_compression)
 }

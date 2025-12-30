@@ -270,6 +270,11 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
       adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
       rois <- nrow(adcdata)
 
+      # Identify trigger without an image from ROIheight and start_byte
+      empty_triggers <- which(
+        rowSums(adcdata[, 16:17], na.rm = TRUE) == 0
+      )
+
       rename_sample <- rename_df %>%
         filter(sample == sample_name)
 
@@ -279,11 +284,14 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
       # Assign class_index values at the positions given by roi
       roi_vector[rename_sample$roi] <- rename_sample$class_index
 
+      # Set empty triggers to NaN
+      roi_vector[empty_triggers] <- NaN
+
       # Create an unclassifed manual file
       ifcb_create_manual_file(roi_length = as.integer(rois),
                               class2use = as.character(classes),
                               output_file = file.path(manual_folder, paste0(sample_name, ".mat")),
-                              classlist = as.integer(roi_vector),
+                              classlist = roi_vector,
                               do_compression = TRUE)
 
       # Update progress bar
