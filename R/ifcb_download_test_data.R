@@ -77,6 +77,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     }
 
     if (!downloaded) {
+      unlink(dest_file)
       stop("Download failed from all sources after ", max_retries, " attempts each.")
     }
   }
