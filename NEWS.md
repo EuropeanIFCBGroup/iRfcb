@@ -8,6 +8,7 @@
 * Added a new `max_time_diff_min` argument to `ifcb_get_ferrybox_data()` controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.
 * Added a new `biovolume_only` argument to `ifcb_read_features()` to allow reading only biovolume related columns, improving performance for large feature tables.
 * Added a new `add_trailing_numbers` argument to `ifcb_extract_annotated_images()` to control whether a zero-padded numeric suffix based on the manual class index is appended to class names in the output filenames.
+* Added a new `include_classes` argument to `ifcb_prepare_whoi_plankton()` to allow explicit selection of classes to include during processing.
 
 ## Minor improvements and fixes
 
@@ -21,6 +22,7 @@
 * Improved error handling across functions, with clearer and more consistent messages.
 * EEA coastline data are now obtained from EEA map services, replacing direct file server downloads that were unstable.
 * Test data are sourced from GitHub when not available on Figshare.
+* `ifcb_create_manual_file()` and `ifcb_create_empty_manual_file()` now correctly handles `NaN` values in the `classlist`.
 
 ## Deprecations
 
