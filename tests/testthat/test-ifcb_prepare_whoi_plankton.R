@@ -47,23 +47,28 @@ test_that("ifcb_prepare_whoi_plankton works", {
               row.names = FALSE)
 
   # Test the function
-  suppressWarnings(ifcb_prepare_whoi_plankton(2006,
-                                              whoi_png_folder,
-                                              raw_folder,
-                                              manual_folder,
-                                              class2use_file,
-                                              extract_images = TRUE,
-                                              download_blobs = TRUE,
-                                              blobs_folder = whoi_blobs_folder,
-                                              download_features = TRUE,
-                                              features_folder = whoi_features_folder,
-                                              sleep = 0))
+  expect_warning(ifcb_prepare_whoi_plankton(2006,
+                                            whoi_png_folder,
+                                            raw_folder,
+                                            manual_folder,
+                                            class2use_file,
+                                            extract_images = TRUE,
+                                            download_blobs = TRUE,
+                                            include_classes = c("Mesodinium_sp", "not_a_class"),
+                                            skip_classes = c("not_a_class"),
+                                            blobs_folder = whoi_blobs_folder,
+                                            download_features = TRUE,
+                                            features_folder = whoi_features_folder,
+                                            sleep = 0),
+                 "The following classes are in both include_classes and skip_classes")
 
   class2use <- ifcb_get_mat_variable(class2use_file)
   classlist <- ifcb_get_mat_variable(file.path(manual_folder, "D20061007T035827_IFCB1.mat"), "classlist")
 
   expect_equal(class2use, c("unclassified", "Mesodinium_sp"))
   expect_equal(classlist[17,2], 2)
+  expect_equal(classlist[148,2], NaN)
+  expect_equal(classlist[1,2], 1)
   expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.adc")))
   expect_true(file.exists(file.path(raw_folder, "2006", "D20061007", "D20061007T035827_IFCB1.hdr")))
   expect_true(file.exists(file.path(manual_folder, "D20061007T035827_IFCB1.mat")))

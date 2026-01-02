@@ -14,7 +14,7 @@ An empty data frame containing the SHARK column names.
 }
 \description{
 This function reads SHARK column names from a specified tab-separated values (TSV) file included in the package.
-These columns are used for submitting IFCB data to \url{https://shark.smhi.se/}.
+These columns are used for submitting IFCB data to \url{https://shark.smhi.se/en/}.
 }
 \details{
 For a detailed example of a data submission, see \code{\link{ifcb_get_shark_example}}.

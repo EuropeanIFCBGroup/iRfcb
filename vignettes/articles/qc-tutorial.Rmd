@@ -224,7 +224,7 @@ print(points_in_the_baltic)
 ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 ```
 
-This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a user-supplied shapefile if provided. The shapefiles provided in `iRfcb` originate from [SHARK](https://shark.smhi.se/hamta-data/). 
+This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a user-supplied shapefile if provided. The shapefiles provided in `iRfcb` originate from [SHARK](https://shark.smhi.se/en/). 
 
 ### Check If Positions Are Within the Baltic Sea or Elsewhere
 

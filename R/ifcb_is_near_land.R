@@ -126,7 +126,7 @@ ifcb_is_near_land <- function(latitudes,
 
         oids <- jsonlite::fromJSON(oid_url)$objectIds
 
-        chunk_size <- 500
+        chunk_size <- 1000
         chunks <- split(oids, ceiling(seq_along(oids) / chunk_size))
         n_chunks <- length(chunks)
 

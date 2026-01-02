@@ -48,7 +48,7 @@ utils::globalVariables("create_and_save_mat_structure")
 ifcb_create_empty_manual_file <- function(roi_length, class2use, output_file, classlist = 1, do_compression = TRUE, unclassified_id = deprecated()) {
 
   # Print deprecation warning
-  lifecycle::deprecate_warn("0.6.0.9000", "iRfcb::ifcb_create_empty_manual_file()", "ifcb_create_manual_file()")
+  lifecycle::deprecate_warn("0.7.0", "iRfcb::ifcb_create_empty_manual_file()", "ifcb_create_manual_file()")
 
   # Warn the user if adc_folder is used
   if (lifecycle::is_present(unclassified_id)) {

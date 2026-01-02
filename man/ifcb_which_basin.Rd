@@ -25,7 +25,7 @@ The default shapefile includes the Baltic Sea, Kattegat, and Skagerrak basins an
 }
 \details{
 This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the \code{iRfcb} package by default, or a user-supplied
-shapefile if provided. The shapefiles originate from SHARK (https://shark.smhi.se/). It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
+shapefile if provided. The shapefiles originate from SHARK (https://shark.smhi.se/en/). It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
 fall within the specified sea basin. Optionally, it plots the points and the sea basin polygons together.
 }
 \examples{

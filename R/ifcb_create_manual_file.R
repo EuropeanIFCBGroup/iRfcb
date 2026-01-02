@@ -42,7 +42,7 @@ utils::globalVariables("create_and_save_mat_structure")
 ifcb_create_manual_file <- function(roi_length, class2use, output_file, classlist = 1, do_compression = TRUE) {
 
   # Initialize python check
-  check_python_and_module()
+  check_python_and_module(c("scipy", "numpy"))
 
   # Import the Python function
   source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
@@ -56,6 +56,6 @@ ifcb_create_manual_file <- function(roi_length, class2use, output_file, classlis
   create_and_save_mat_structure(as.integer(roi_length),
                                 as.character(class2use),
                                 output_file,
-                                as.integer(classlist),
+                                classlist,
                                 do_compression)
 }

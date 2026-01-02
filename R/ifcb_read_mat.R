@@ -29,7 +29,7 @@ utils::globalVariables("r_read_mat_file")
 #' @seealso \code{\link{ifcb_py_install}}
 ifcb_read_mat <- function(file_path) {
   # Initialize python check
-  check_python_and_module()
+  check_python_and_module(c("scipy", "numpy"))
 
   # Check if the file exists
   if (!file.exists(file_path)) {

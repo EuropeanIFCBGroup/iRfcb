@@ -124,8 +124,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
   }
 
   # Initialize python check
-  check_python_and_module(module = "pandas")
-  check_python_and_module(module = "matplotlib")
+  check_python_and_module(c("pandas", "matplotlib", "numpy"))
 
   # Source the Python script
   source_python(system.file("python", "psd.py", package = "iRfcb"))

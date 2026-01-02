@@ -34,7 +34,7 @@ test_that("ifcb_annotate_samples correctly updates the .mat classlist files", {
   # Read the file
   classlist <- ifcb_get_mat_variable(new_file, "classlist")
 
-  expected_classlist <- c(1,1,5) # 1 for unclassified and 5 for Mesodinium_rubrum
+  expected_classlist <- c(NaN, 1, 5) # NaN for empty trigger, 1 for unclassified and 5 for Mesodinium_rubrum
 
   # Make sure data is correct
   expect_equal(nrow(classlist), 3)
@@ -92,7 +92,7 @@ test_that("ifcb_annotate_samples correctly updates the .mat classlist files if c
   # Read the file
   classlist <- ifcb_get_mat_variable(new_file, "classlist")
 
-  expected_classlist <- c(1,1,1) # 1 for unclassified and 5 for Mesodinium_rubrum
+  expected_classlist <- c(NaN,1,1) # NaN for empty trigger, 1 for unclassified and 5 for Mesodinium_rubrum
 
   # Make sure data is correct
   expect_equal(nrow(classlist), 3)
