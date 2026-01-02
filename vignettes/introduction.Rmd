@@ -39,13 +39,12 @@ library(iRfcb)
 
 To get started, download sample data from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024) with the following function:
 
-```{r}
+```{r, message=FALSE}
 # Define data directory
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        verbose = FALSE)
+ifcb_download_test_data(dest_dir = data_dir)
 ```
 
 ## Extract IFCB Data

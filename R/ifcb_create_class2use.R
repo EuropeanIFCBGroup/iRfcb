@@ -33,7 +33,7 @@ utils::globalVariables("save_class2use_to_mat")
 ifcb_create_class2use <- function(classes, filename, do_compression = TRUE) {
 
   # Initialize python check
-  check_python_and_module()
+  check_python_and_module(c("scipy", "numpy"))
 
   # Source the Python function
   source_python(system.file("python", "save_class2use_to_mat.py", package = "iRfcb"))
