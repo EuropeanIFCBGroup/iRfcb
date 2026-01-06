@@ -3,6 +3,7 @@
 ## New features
 
 * New function `ifcb_annotate_samples()` to create manual classification `.mat` files compatible with the `ifcb-analysis` MATLAB repository, using PNG images organized in class named subfolders and a `class2use.mat` file.
+* New function `ifcb_zip_images_by_class()` to zip each PNG subfolder with optional random sampling. Useful for preparing class-specific image archives for submission.
 * Added a new `diatom_include` argument to `ifcb_extract_biovolumes()` and `ifcb_is_diatom()` for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).
 * Added a new `timestamp_param` argument to `ifcb_get_ferrybox_data()` allowing the Ferrybox timestamp column to be specified dynamically instead of being hard coded.
 * Added a new `max_time_diff_min` argument to `ifcb_get_ferrybox_data()` controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.

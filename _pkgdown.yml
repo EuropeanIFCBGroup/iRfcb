@@ -72,6 +72,7 @@ reference:
   - '`ifcb_volume_analyzed_from_adc`'
   - '`ifcb_which_basin`'
   - '`ifcb_zip_matlab`'
+  - '`ifcb_zip_images_by_class`'
   - '`ifcb_zip_pngs`'
 - subtitle: Python dependency ![Python Powered](../python-powered-w-70x28.png)
   desc: These functions depend on a working Python installation. For more information, see the [README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
