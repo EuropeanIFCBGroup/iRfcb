@@ -2,7 +2,7 @@
 
 This function reads SHARK column names from a specified tab-separated
 values (TSV) file included in the package. These columns are used for
-submitting IFCB data to <https://shark.smhi.se/>.
+submitting IFCB data to <https://shark.smhi.se/en/>.
 
 ## Usage
 

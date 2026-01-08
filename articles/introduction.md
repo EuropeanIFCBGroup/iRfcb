@@ -44,9 +44,10 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        verbose = FALSE)
+ifcb_download_test_data(dest_dir = data_dir)
 ```
+
+    ## Download and extraction complete.
 
 ## Extract IFCB Data
 
@@ -341,8 +342,7 @@ be adjusted using the `diatom_class` argument.
 ### Find trophic type of plankton taxa
 
 This function takes a list of taxa names and matches them with the
-**SMHI Trophic Type** list used in
-[SHARK](https://shark.smhi.se/hamta-data/).
+**SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/en/).
 
 ``` r
 # Example taxa names
@@ -422,8 +422,8 @@ Happy analyzing!
 
     ## To cite package 'iRfcb' in publications use:
     ## 
-    ##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.6.0.
+    ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
+    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -431,8 +431,8 @@ Happy analyzing!
     ##   @Manual{,
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
-    ##     year = {2025},
-    ##     note = {R package version 0.6.0},
+    ##     year = {2026},
+    ##     note = {R package version 0.7.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

@@ -17,7 +17,7 @@ streamlines the processing and analysis of IFCB data, facilitating the
 preparation of IFCB data and images for publication (e.g. in
 [GBIF](https://www.gbif.org/), [OBIS](https://obis.org/),
 [EMODNet](https://emodnet.ec.europa.eu/en),
-[SHARK](https://shark.smhi.se/) or
+[SHARK](https://shark.smhi.se/en/) or
 [EcoTaxa](https://ecotaxa.obs-vlfr.fr)). It is especially useful for
 researchers using, or partly using, the MATLAB
 [ifcb-analysis](https://github.com/hsosik/ifcb-analysis) package.
@@ -69,7 +69,7 @@ Explore the key features and capabilities of `iRfcb` through the
 tutorials:
 
 - [iRfcb
-  Introduction](https://europeanifcbgroup.github.io/iRfcb/articles/a-general-tutorial.html)
+  Introduction](https://europeanifcbgroup.github.io/iRfcb/articles/introduction.html)
 - [Quality Control of IFCB
   Data](https://europeanifcbgroup.github.io/iRfcb/articles/qc-tutorial.html)
 - [Handling MATLAB

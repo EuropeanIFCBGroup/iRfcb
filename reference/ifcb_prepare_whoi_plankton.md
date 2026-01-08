@@ -15,6 +15,7 @@ ifcb_prepare_whoi_plankton(
   manual_folder,
   class2use_file,
   skip_classes = NULL,
+  include_classes = NULL,
   dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
   extract_images = FALSE,
   download_blobs = FALSE,
@@ -61,6 +62,12 @@ ifcb_prepare_whoi_plankton(
 
   Character vector. Classes to be excluded during processing. For
   example images, refer to <https://whoigit.github.io/whoi-plankton/>.
+
+- include_classes:
+
+  Character vector. If provided, only these classes will be included
+  during processing. Applied before `skip_classes`. For example images,
+  refer to <https://whoigit.github.io/whoi-plankton/>.
 
 - dashboard_url:
 
@@ -145,10 +152,17 @@ existing training dataset using the
 [`ifcb_merge_manual`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.md)
 function.
 
-To exclude images from the training dataset, either exclude the class
-completely with the `skip_classes` argument, or set
-`extract_images = TRUE` and manually delete specific `.png` files from
-the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+Classes included in the training dataset can be controlled using the
+`include_classes` and `skip_classes` arguments. If `include_classes` is
+provided, only the specified classes will be processed and included in
+the output. The `skip_classes` argument can be used to explicitly
+exclude one or more classes. If both arguments are supplied,
+`include_classes` is applied first and `skip_classes` is applied
+afterward.
+
+To exclude individual images rather than entire classes, set
+`extract_images = TRUE`, manually delete specific `.png` files from the
+`png_folder`, and rerun `ifcb_prepare_whoi_plankton`.
 
 If `convert_filenames = TRUE` **\[experimental\]**, filenames in the
 `"IFCBxxx_YYYY_DDD_HHMMSS"` format (used by IFCB1-6) will be converted

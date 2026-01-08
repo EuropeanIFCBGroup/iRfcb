@@ -80,6 +80,8 @@ Core functions for processing and analyzing IFCB data.
   : Determine if Points are in a Specified Sea Basin
 - [`ifcb_zip_matlab()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_matlab.md)
   : Create a Zip Archive of Manual MATLAB Files
+- [`ifcb_zip_images_by_class()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_images_by_class.md)
+  : Zip Image Subfolders by Class
 - [`ifcb_zip_pngs()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_pngs.md)
   : Zip PNG Folders
 

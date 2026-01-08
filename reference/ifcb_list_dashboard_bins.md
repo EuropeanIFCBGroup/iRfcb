@@ -37,7 +37,7 @@ to retrieve metadata from the IFCB Dashboard API.
 # \donttest{
   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
 #> Fetching bin list from: https://ifcb-data.whoi.edu/api/list_bins
-#> Successfully retrieved 791938 bins.
+#> Successfully retrieved 792026 bins.
   head(bins)
 #> # A tibble: 6 × 3
 #>   pid                   sample_time          skip 

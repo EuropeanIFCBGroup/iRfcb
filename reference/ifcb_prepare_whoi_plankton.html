@@ -9,7 +9,7 @@ classification files in .mat format that can be used to train an image classifie
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,6 +64,7 @@ classification files in <code>.mat</code> format that can be used to train an im
 <span>  <span class="va">manual_folder</span>,</span>
 <span>  <span class="va">class2use_file</span>,</span>
 <span>  skip_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  include_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dashboard_url <span class="op">=</span> <span class="st">"https://ifcb-data.whoi.edu/mvco/"</span>,</span>
 <span>  extract_images <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  download_blobs <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -105,6 +106,11 @@ classification files in <code>.mat</code> format that can be used to train an im
 
 <dt id="arg-skip-classes">skip_classes<a class="anchor" aria-label="anchor" href="#arg-skip-classes"></a></dt>
 <dd><p>Character vector. Classes to be excluded during processing. For example images, refer to <a href="https://whoigit.github.io/whoi-plankton/" class="external-link">https://whoigit.github.io/whoi-plankton/</a>.</p></dd>
+
+
+<dt id="arg-include-classes">include_classes<a class="anchor" aria-label="anchor" href="#arg-include-classes"></a></dt>
+<dd><p>Character vector. If provided, only these classes
+will be included during processing. Applied before <code>skip_classes</code>. For example images, refer to <a href="https://whoigit.github.io/whoi-plankton/" class="external-link">https://whoigit.github.io/whoi-plankton/</a>.</p></dd>
 
 
 <dt id="arg-dashboard-url">dashboard_url<a class="anchor" aria-label="anchor" href="#arg-dashboard-url"></a></dt>
@@ -171,8 +177,15 @@ four empty columns after column 7 to match the newer format.
 <p>This is a wrapper function for the <code><a href="ifcb_download_whoi_plankton.html">ifcb_download_whoi_plankton</a></code>, <code><a href="ifcb_download_dashboard_data.html">ifcb_download_dashboard_data</a></code> and <code><a href="ifcb_create_manual_file.html">ifcb_create_manual_file</a></code> functions and used for downloading, processing, and converting IFCB data.
 Please note that this function downloads and extracts large amounts of data, which can take considerable time.</p>
 <p>The training data prepared from this function can be merged with an existing training dataset using the <code><a href="ifcb_merge_manual.html">ifcb_merge_manual</a></code> function.</p>
-<p>To exclude images from the training dataset, either exclude the class completely with the <code>skip_classes</code> argument,
-or set <code>extract_images = TRUE</code> and manually delete specific <code>.png</code> files from the <code>png_folder</code> and rerun <code>ifcb_prepare_whoi_plankton</code>.</p>
+<p>Classes included in the training dataset can be controlled using the
+<code>include_classes</code> and <code>skip_classes</code> arguments. If <code>include_classes</code> is provided,
+only the specified classes will be processed and included in the output.
+The <code>skip_classes</code> argument can be used to explicitly exclude one or more classes.
+If both arguments are supplied, <code>include_classes</code> is applied first and
+<code>skip_classes</code> is applied afterward.</p>
+<p>To exclude individual images rather than entire classes, set
+<code>extract_images = TRUE</code>, manually delete specific <code>.png</code> files from the
+<code>png_folder</code>, and rerun <code>ifcb_prepare_whoi_plankton</code>.</p>
 <p>If <code>convert_filenames = TRUE</code> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a>, filenames in the <code>"IFCBxxx_YYYY_DDD_HHMMSS"</code> format (used by IFCB1-6)
 will be converted to <code>IYYYYMMDDTHHMMSS_IFCBXXX</code>, ensuring compatibility with blob extraction in <code>ifcb-analysis</code> (Sosik &amp; Olson, 2007), which identified the old <code>.adc</code> format by the first letter of the filename.</p>
 <p>If <code>convert_adc = TRUE</code> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a> and <code>convert_filenames = TRUE</code> <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a>, the <code>"IFCBxxx_YYYY_DDD_HHMMSS"</code> format will instead be converted to

@@ -2,7 +2,7 @@
 
 This function reads a SHARK submission example from a file included in
 the package. This format is used for submitting IFCB data to
-<https://shark.smhi.se/>.
+<https://shark.smhi.se/en/>.
 
 ## Usage
 

@@ -231,7 +231,7 @@ ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a
 user-supplied shapefile if provided. The shapefiles provided in `iRfcb`
-originate from [SHARK](https://shark.smhi.se/hamta-data/).
+originate from [SHARK](https://shark.smhi.se/en/).
 
 ### Check If Positions Are Within the Baltic Sea or Elsewhere
 
@@ -347,8 +347,8 @@ analyzing!
 
     ## To cite package 'iRfcb' in publications use:
     ## 
-    ##   Anders Torstensson (2025). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.6.0.
+    ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
+    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -356,8 +356,8 @@ analyzing!
     ##   @Manual{,
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
-    ##     year = {2025},
-    ##     note = {R package version 0.6.0},
+    ##     year = {2026},
+    ##     note = {R package version 0.7.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

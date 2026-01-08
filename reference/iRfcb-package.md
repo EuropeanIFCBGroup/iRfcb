@@ -4,7 +4,7 @@ A comprehensive suite of tools for managing, processing, and analyzing
 data from the IFCB. I R FlowCytobot ('iRfcb') supports quality control,
 geospatial analysis, and preparation of IFCB data for publication in
 databases like <https://www.gbif.org>, <https://www.obis.org>,
-<https://emodnet.ec.europa.eu/en>, <https://shark.smhi.se/>, and
+<https://emodnet.ec.europa.eu/en>, <https://shark.smhi.se/en/>, and
 <https://www.ecotaxa.org>. The package integrates with the MATLAB
 'ifcb-analysis' tool, which is described in Sosik and Olson (2007)
 [doi:10.4319/lom.2007.5.204](https://doi.org/10.4319/lom.2007.5.204) ,
