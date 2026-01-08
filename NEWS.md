@@ -1,13 +1,15 @@
-# iRfcb (development version)
+# iRfcb 0.7.0
 
 ## New features
 
 * New function `ifcb_annotate_samples()` to create manual classification `.mat` files compatible with the `ifcb-analysis` MATLAB repository, using PNG images organized in class named subfolders and a `class2use.mat` file.
+* New function `ifcb_zip_images_by_class()` to zip each PNG subfolder with optional random sampling. Useful for preparing class-specific image archives for submission.
 * Added a new `diatom_include` argument to `ifcb_extract_biovolumes()` and `ifcb_is_diatom()` for manually forcing specific taxa to be treated as diatoms (overrides WoRMS classification).
 * Added a new `timestamp_param` argument to `ifcb_get_ferrybox_data()` allowing the Ferrybox timestamp column to be specified dynamically instead of being hard coded.
 * Added a new `max_time_diff_min` argument to `ifcb_get_ferrybox_data()` controlling the maximum allowed time difference in minutes when matching Ferrybox data to requested timestamps.
 * Added a new `biovolume_only` argument to `ifcb_read_features()` to allow reading only biovolume related columns, improving performance for large feature tables.
 * Added a new `add_trailing_numbers` argument to `ifcb_extract_annotated_images()` to control whether a zero-padded numeric suffix based on the manual class index is appended to class names in the output filenames.
+* Added a new `include_classes` argument to `ifcb_prepare_whoi_plankton()` to allow explicit selection of classes to include during processing.
 
 ## Minor improvements and fixes
 
@@ -21,6 +23,7 @@
 * Improved error handling across functions, with clearer and more consistent messages.
 * EEA coastline data are now obtained from EEA map services, replacing direct file server downloads that were unstable.
 * Test data are sourced from GitHub when not available on Figshare.
+* `ifcb_create_manual_file()` and `ifcb_create_empty_manual_file()` now correctly handles `NaN` values in the `classlist`.
 
 ## Deprecations
 

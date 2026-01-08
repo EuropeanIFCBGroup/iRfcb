@@ -35,14 +35,14 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   # Warn the user if adc_folder is used
   if (lifecycle::is_present(expected_checksum)) {
     # Signal the deprecation to the user
-    deprecate_warn("0.6.0.9000", "iRfcb::ifcb_download_test_data(expected_checksum = )")
+    deprecate_warn("0.7.0", "iRfcb::ifcb_download_test_data(expected_checksum = )")
   }
 
   urls <- c(paste0("https://figshare.com/ndownloader/files/", figshare_article))
 
   if (figshare_article == "48158716") {
     urls <- c(urls,
-              paste0("https://raw.githubusercontent.com/EuropeanIFCBGroup/iRfcb/6bcd51cbf77dcb20dfacb19446a3692d93e13aba/data-raw/", figshare_article, ".zip"))
+              paste0("https://raw.githubusercontent.com/EuropeanIFCBGroup/iRfcb/63f2aabccade90f52b595e241a13708620629c42/data-raw/", figshare_article, ".zip"))
   }
 
   if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
@@ -77,6 +77,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
     }
 
     if (!downloaded) {
+      unlink(dest_file)
       stop("Download failed from all sources after ", max_retries, " attempts each.")
     }
   }

@@ -12,8 +12,16 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #'
 #' The training data prepared from this function can be merged with an existing training dataset using the \code{\link{ifcb_merge_manual}} function.
 #'
-#' To exclude images from the training dataset, either exclude the class completely with the `skip_classes` argument,
-#' or set `extract_images = TRUE` and manually delete specific `.png` files from the `png_folder` and rerun `ifcb_prepare_whoi_plankton`.
+#' Classes included in the training dataset can be controlled using the
+#' `include_classes` and `skip_classes` arguments. If `include_classes` is provided,
+#' only the specified classes will be processed and included in the output.
+#' The `skip_classes` argument can be used to explicitly exclude one or more classes.
+#' If both arguments are supplied, `include_classes` is applied first and
+#' `skip_classes` is applied afterward.
+#'
+#' To exclude individual images rather than entire classes, set
+#' `extract_images = TRUE`, manually delete specific `.png` files from the
+#' `png_folder`, and rerun `ifcb_prepare_whoi_plankton`.
 #'
 #' If `convert_filenames = TRUE` `r lifecycle::badge("experimental")`, filenames in the `"IFCBxxx_YYYY_DDD_HHMMSS"` format (used by IFCB1-6)
 #' will be converted to `IYYYYMMDDTHHMMSS_IFCBXXX`, ensuring compatibility with blob extraction in `ifcb-analysis` (Sosik & Olson, 2007), which identified the old `.adc` format by the first letter of the filename.
@@ -29,6 +37,8 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' @param manual_folder Character. Directory where manual classification files (`.mat`) will be stored.
 #' @param class2use_file Character. File path to `.mat` file to store the list of available classes.
 #' @param skip_classes Character vector. Classes to be excluded during processing. For example images, refer to \url{https://whoigit.github.io/whoi-plankton/}.
+#' @param include_classes Character vector. If provided, only these classes
+#'   will be included during processing. Applied before `skip_classes`. For example images, refer to \url{https://whoigit.github.io/whoi-plankton/}.
 #' @param extract_images Logical. If `TRUE`, extracts `.png` images from the downloaded archives and removes the `.zip` files.
 #'   If `FALSE`, only downloads the archives without extracting images. Default is `FALSE`.
 #' @param dashboard_url Character. URL for the IFCB dashboard data source (default: "https://ifcb-data.whoi.edu/mvco/").
@@ -69,14 +79,15 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #'
 #' @export
 ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_folder, class2use_file,
-                                       skip_classes = NULL, dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
+                                       skip_classes = NULL, include_classes = NULL,
+                                       dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
                                        extract_images = FALSE, download_blobs = FALSE, blobs_folder = NULL,
                                        download_features = FALSE, features_folder = NULL,
                                        parallel_downloads = 5, sleep_time = 2, multi_timeout = 120,
                                        convert_filenames = TRUE, convert_adc = TRUE, quiet = FALSE) {
 
   # Initialize python check
-  check_python_and_module()
+  check_python_and_module(c("scipy", "numpy"))
 
   if (download_blobs & is.null(blobs_folder)) {
     stop("`blobs_folder` must be specified when `download_blobs = TRUE`.
@@ -86,6 +97,17 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
   if (download_features & is.null(features_folder)) {
     stop("`features_folder` must be specified when `download_features = TRUE`.
        Please provide a valid directory path for `features_folder` to store the downloaded files.")
+  }
+
+  if (!is.null(include_classes) && !is.null(skip_classes)) {
+    overlap <- intersect(include_classes, skip_classes)
+    if (length(overlap) > 0) {
+      warning(
+        "The following classes are in both include_classes and skip_classes: ",
+        paste(overlap, collapse = ", "),
+        ". They will be excluded."
+      )
+    }
   }
 
   # List all available data
@@ -131,11 +153,22 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
       image_df <- read.table(file.path(png_path, "images.txt"), header = TRUE)
     }
 
+    selected_images <- image_df
+
+    # Keep only included classes if specified
+    if (!is.null(include_classes)) {
+      selected_images <- dplyr::filter(
+        selected_images,
+        folder %in% include_classes
+      )
+    }
+
     # Remove skipped classes
     if (!is.null(skip_classes)) {
-      selected_images <- dplyr::filter(image_df, !folder %in% skip_classes)
-    } else {
-      selected_images <- image_df
+      selected_images <- dplyr::filter(
+        selected_images,
+        !folder %in% skip_classes
+      )
     }
 
     # Extract unique classes
@@ -189,8 +222,15 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
   # Add unclassified as index 1
   classes <- c("unclassified", sort(unique(classes)))
 
-  # Remove skipped classes
-  classes <- classes[!classes %in% skip_classes]
+  # Apply include_classes
+  if (!is.null(include_classes)) {
+    classes <- classes[classes %in% c("unclassified", include_classes)]
+  }
+
+  # Apply skip_classes
+  if (!is.null(skip_classes)) {
+    classes <- classes[!classes %in% skip_classes]
+  }
 
   # Create a new class2use file
   ifcb_create_class2use(classes, class2use_file)
@@ -270,6 +310,11 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
       adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
       rois <- nrow(adcdata)
 
+      # Identify trigger without an image from ROIheight and start_byte
+      empty_triggers <- which(
+        rowSums(adcdata[, 16:17], na.rm = TRUE) == 0
+      )
+
       rename_sample <- rename_df %>%
         filter(sample == sample_name)
 
@@ -279,11 +324,14 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
       # Assign class_index values at the positions given by roi
       roi_vector[rename_sample$roi] <- rename_sample$class_index
 
+      # Set empty triggers to NaN
+      roi_vector[empty_triggers] <- NaN
+
       # Create an unclassifed manual file
       ifcb_create_manual_file(roi_length = as.integer(rois),
                               class2use = as.character(classes),
                               output_file = file.path(manual_folder, paste0(sample_name, ".mat")),
-                              classlist = as.integer(roi_vector),
+                              classlist = roi_vector,
                               do_compression = TRUE)
 
       # Update progress bar

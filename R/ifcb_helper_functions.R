@@ -506,32 +506,55 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 }
 #' Check Python and Required Modules Availability
 #'
-#' This helper function checks if Python is available and if the required Python module (e.g., `scipy`) is installed.
-#' It stops execution and raises an error if Python or the specified module is not available.
+#' This helper function checks if Python is available and if the required Python modules
+#' (for example "scipy", "pandas") are installed. It stops execution and raises an error
+#' if Python or any required module is not available.
 #'
-#' @param module Character. Name of the Python module to check (default is "scipy").
-#' @param initialize Logical. Whether to initialize Python if not already initialized (default is TRUE).
+#' @param modules Character vector. Names of the Python modules to check.
+#'   Default is "scipy".
+#' @param initialize Logical. Whether to initialize Python if not already initialized.
+#'   Default is FALSE.
 #'
-#' @return This function does not return a value. It stops execution if the required Python environment is not available.
+#' @return This function does not return a value. It stops execution if the required
+#'   Python environment is not available.
 #'
 #' @examples
 #' \dontrun{
-#' check_python_and_module("scipy") # Check for Python and 'scipy'
+#' check_python_and_module("scipy")
+#' check_python_and_module(c("scipy", "pandas", "matplotlib"))
 #' }
 #' @noRd
-check_python_and_module <- function(module = "scipy", initialize = FALSE) {
+check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
   # Check if Python is available
-  if (!py_available(initialize = initialize)) {
-    stop("Python is not available. Please ensure Python is installed and initalized, or see `ifcb_py_install`.")
+  if (!reticulate::py_available(initialize = initialize)) {
+    stop(
+      "Python is not available. Please ensure Python is installed and initialized, ",
+      "or see `ifcb_py_install`."
+    )
   }
+
+  # Discover Python configuration
+  py_cfg <- reticulate::py_discover_config()
 
   # List available packages
-  available_packages <- py_list_packages(python = reticulate::py_discover_config()$python)
+  available_packages <- reticulate::py_list_packages(
+    python = py_cfg$python
+  )
 
-  # Check if the required Python module is available
-  if (!module %in% available_packages$package) {
-    stop(paste("Python package '", module, "' is not available. Please install '", module, "' in your Python environment, or see `ifcb_py_install`.", sep = ""))
+  # Find missing modules
+  missing_modules <- setdiff(modules, available_packages$package)
+
+  # Error if any modules are missing
+  if (length(missing_modules) > 0) {
+    stop(
+      "The following Python package(s) are not available: ",
+      paste(sprintf("'%s'", missing_modules), collapse = ", "),
+      ". Please install them in your Python environment, ",
+      "or see `ifcb_py_install`."
+    )
   }
+
+  invisible(TRUE)
 }
 #' Check Python and SciPy Availability
 #'

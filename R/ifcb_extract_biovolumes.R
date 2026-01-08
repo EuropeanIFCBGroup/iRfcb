@@ -90,7 +90,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   if (lifecycle::is_present(mat_folder)) {
 
     # Signal the deprecation to the user
-    deprecate_warn("0.6.0.9000", "iRfcb::ifcb_extract_biovolumes(mat_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_files = )")
+    deprecate_warn("0.7.0", "iRfcb::ifcb_extract_biovolumes(mat_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_files = )")
 
     # Deal with the deprecated argument for compatibility
     mat_files <- mat_folder

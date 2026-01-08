@@ -1,7 +1,7 @@
 Type: Package
 Package: iRfcb
 Title: Tools for Managing Imaging FlowCytobot (IFCB) Data
-Version: 0.6.0.9000
+Version: 0.7.0
 Authors@R: c(
     person("Anders", "Torstensson", email = "anders.torstensson@smhi.se", role = c("aut", "cre"),
            comment = c("Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
@@ -24,7 +24,7 @@ Description: A comprehensive suite of tools for managing, processing, and
     quality control, geospatial analysis, and preparation of IFCB data for
     publication in databases like <https://www.gbif.org>,
     <https://www.obis.org>, <https://emodnet.ec.europa.eu/en>,
-    <https://shark.smhi.se/>, and <https://www.ecotaxa.org>. The package
+    <https://shark.smhi.se/en/>, and <https://www.ecotaxa.org>. The package
     integrates with the MATLAB 'ifcb-analysis' tool, which is described in
     Sosik and Olson (2007) <doi:10.4319/lom.2007.5.204>, and provides
     features for working with raw, manually classified, and machine

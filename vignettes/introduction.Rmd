@@ -39,13 +39,12 @@ library(iRfcb)
 
 To get started, download sample data from the [SMHI IFCB Plankton Image Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3) (Torstensson et al. 2024) with the following function:
 
-```{r}
+```{r, message=FALSE}
 # Define data directory
 data_dir <- "data"
 
 # Download and extract test data in the data folder
-ifcb_download_test_data(dest_dir = data_dir,
-                        verbose = FALSE)
+ifcb_download_test_data(dest_dir = data_dir)
 ```
 
 ## Extract IFCB Data
@@ -194,7 +193,7 @@ The default class for diatoms is defined as Bacillariophyceae, but may be adjust
 
 ### Find trophic type of plankton taxa
 
-This function takes a list of taxa names and matches them with the **SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/hamta-data/).
+This function takes a list of taxa names and matches them with the **SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/en/).
 
 ```{r}
 # Example taxa names
