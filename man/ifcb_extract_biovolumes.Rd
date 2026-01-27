@@ -39,7 +39,7 @@ used as a substitute for MATLAB files.}
 
 \item{class2use_file}{(Optional) A character string specifying the path to the file containing the \code{class2use} variable. Only required for manual results (default: NULL).}
 
-\item{micron_factor}{Conversion factor for biovolume to cubic micrometers. Default is \code{1 / 3.4}.}
+\item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
 \item{diatom_class}{A character vector specifying diatom class names in WoRMS. Default: \code{"Bacillariophyceae"}.}
 

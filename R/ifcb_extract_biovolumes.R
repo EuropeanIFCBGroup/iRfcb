@@ -15,7 +15,7 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #'        used as a substitute for MATLAB files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the `class2use` variable. Only required for manual results (default: NULL).
-#' @param micron_factor Conversion factor for biovolume to cubic micrometers. Default is `1 / 3.4`.
+#' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param diatom_class A character vector specifying diatom class names in WoRMS. Default: `"Bacillariophyceae"`.
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
