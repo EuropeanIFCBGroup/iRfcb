@@ -67,8 +67,7 @@ ifcb_extract_biovolumes(
 
 - micron_factor:
 
-  Conversion factor for biovolume to cubic micrometers. Default is
-  `1 / 3.4`.
+  Conversion factor from microns per pixel (default: 1/3.4).
 
 - diatom_class:
 

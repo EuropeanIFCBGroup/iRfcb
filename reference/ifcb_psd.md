@@ -124,7 +124,7 @@ ifcb_psd(
 
 - micron_factor:
 
-  The conversion factor to microns. Default is 1/3.4.
+  Conversion factor from microns per pixel (default: 1/3.4).
 
 - fea_v:
 
