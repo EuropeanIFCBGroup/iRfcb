@@ -79,7 +79,7 @@ This threshold is usually lower than the bubbles threshold. Optional.}
 \item{humidity}{The maximum percent humidity. Files with higher values will be flagged as
 high humidity. Optional.}
 
-\item{micron_factor}{The conversion factor to microns. Default is 1/3.4.}
+\item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
 \item{fea_v}{The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 

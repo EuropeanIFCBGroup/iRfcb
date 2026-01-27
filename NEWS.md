@@ -1,3 +1,9 @@
+# iRfcb (development version)
+
+## Minor improvements and fixes
+
+* Corrected the parameter description of `micron_factor` in `ifcb_psd()` and `ifcb_extract_biovolumes()`
+
 # iRfcb 0.7.0
 
 ## New features

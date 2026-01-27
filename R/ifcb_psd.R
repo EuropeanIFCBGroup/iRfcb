@@ -47,7 +47,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   This threshold is usually lower than the bubbles threshold. Optional.
 #' @param humidity The maximum percent humidity. Files with higher values will be flagged as
 #'   high humidity. Optional.
-#' @param micron_factor The conversion factor to microns. Default is 1/3.4.
+#' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param fea_v The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. `r lifecycle::badge("experimental")`
 #' @param use_plot_subfolders A boolean indicating whether to save plots in subfolders
 #'   based on the sample's flag status. If TRUE (default), samples without flags are
