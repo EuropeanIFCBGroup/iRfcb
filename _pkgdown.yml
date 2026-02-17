@@ -63,7 +63,6 @@ reference:
   - '`ifcb_read_features`'
   - '`ifcb_read_hdr_data`'
   - '`ifcb_read_summary`'
-  - '`ifcb_run_image_gallery`'
   - '`ifcb_summarize_biovolumes`'
   - '`ifcb_summarize_class_counts`'
   - '`ifcb_summarize_png_counts`'
@@ -102,3 +101,4 @@ reference:
   contents:
   - '`ifcb_create_empty_manual_file`'
   - '`retrieve_worms_records`'
+  - '`ifcb_run_image_gallery`'
