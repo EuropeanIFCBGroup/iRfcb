@@ -34,7 +34,7 @@ ifcb_extract_annotated_images(
 
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
-\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
+\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the \code{.png} extraction. Default is NULL (include all classes).}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 

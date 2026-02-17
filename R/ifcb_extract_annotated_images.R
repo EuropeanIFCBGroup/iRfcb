@@ -10,7 +10,7 @@ utils::globalVariables(c("name", "manual"))
 #' @param class2use_file A character string specifying the path to the file containing class names.
 #' @param roi_folders A character vector specifying one or more directories containing the ROI files.
 #' @param out_folder A character string specifying the output directory where the extracted images will be saved.
-#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
+#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the `.png` extraction. Default is NULL (include all classes).
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
 #' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
