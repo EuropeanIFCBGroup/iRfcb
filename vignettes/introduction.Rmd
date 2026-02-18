@@ -152,6 +152,46 @@ ifcb_extract_pngs("data/data/2023/D20230314/D20230314T003836_IFCB134.roi",
 
 To extract annotated images or classified results from MATLAB files, please see the `vignette("image-export-tutorial")` and `vignette("matlab-tutorial")` tutorials.
 
+## Classify IFCB Images
+
+IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application.
+
+### Classify All Images in a Sample
+
+`ifcb_classify_sample()` extracts images from a `.roi` file internally and returns predictions without requiring a separate extraction step:
+
+```{r, eval=FALSE}
+# Classify all images in a sample
+results <- ifcb_classify_sample(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  verbose = FALSE
+)
+
+# Print result
+print(results)
+```
+
+### Classify Pre-extracted PNG Images
+
+If images have already been extracted, pass a vector of PNG file paths to `ifcb_classify_image()`:
+
+```{r, eval=FALSE}
+# List extracted PNG files
+png_files <- list.files(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134",
+  pattern = "\\.png$",
+  full.names = TRUE
+)
+
+# Classify images
+results <- ifcb_classify_image(png_files, verbose = FALSE)
+
+# Print result
+print(results)
+```
+
+Both functions return a data frame with `file_name`, `class_name`, and `score` columns, and query the Gradio API at `https://ifcb.serve.scilifelab.se` by default. The `top_n` argument controls how many top predictions are returned per image.
+
 ## Taxonomical Data
 
 Maintaining up-to-date taxonomic data is essential for ensuring accurate species names and classifications, which directly impact calculations like carbon concentrations in `iRfcb`.
