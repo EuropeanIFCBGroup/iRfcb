@@ -14,6 +14,8 @@
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
+#' @param contrast_stretch A logical value indicating whether to apply contrast
+#'   stretching to the image before classification. Default is `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
 #' @param ... Additional arguments passed to [ifcb_extract_pngs()] (e.g.
@@ -55,6 +57,7 @@ ifcb_classify_sample <- function(
     roi_file,
     gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
+    contrast_stretch = FALSE,
     verbose = TRUE,
     ...) {
 
@@ -84,5 +87,5 @@ ifcb_classify_sample <- function(
   }
 
   ifcb_classify_image(png_files, gradio_url = gradio_url, top_n = top_n,
-                      verbose = verbose)
+                      contrast_stretch = contrast_stretch, verbose = verbose)
 }

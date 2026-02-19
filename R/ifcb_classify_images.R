@@ -13,6 +13,8 @@
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
+#' @param contrast_stretch A logical value indicating whether to apply contrast
+#'   stretching to the image before classification. Default is `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
 #'
@@ -45,6 +47,7 @@ ifcb_classify_image <- function(
     png_file,
     gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
+    contrast_stretch = FALSE,
     verbose = TRUE) {
 
   missing_files <- png_file[!file.exists(png_file)]
@@ -63,7 +66,7 @@ ifcb_classify_image <- function(
     if (verbose) print_progress(i, length(png_file))
 
     tryCatch({
-      predictions <- gradio_classify_png(png_path, gradio_url, top_n)
+      predictions <- gradio_classify_png(png_path, gradio_url, top_n, contrast_stretch)
       data.frame(
         file_name  = file_name,
         class_name = predictions$class_name,
@@ -98,7 +101,7 @@ ifcb_classify_image <- function(
 # @param top_n Number of top predictions to return.
 # @return A list with elements `class_name` (character) and `score` (numeric).
 # @noRd
-gradio_classify_png <- function(png_path, gradio_url, top_n) {
+gradio_classify_png <- function(png_path, gradio_url, top_n, contrast_stretch) {
   server_path <- gradio_upload_file(png_path, gradio_url)
 
   # Minimal FileData object matching the documented API format
@@ -107,7 +110,7 @@ gradio_classify_png <- function(png_path, gradio_url, top_n) {
     meta = list(`_type` = "gradio.FileData")
   )
 
-  html_content <- gradio_predict(gradio_url, image_data)
+  html_content <- gradio_predict(gradio_url, image_data, contrast_stretch)
   gradio_parse_predictions(html_content, top_n)
 }
 
@@ -157,9 +160,10 @@ gradio_upload_file <- function(png_path, gradio_url) {
 # @param image_data Named list matching the Gradio FileData schema.
 # @return A character string containing the prediction HTML.
 # @noRd
-gradio_predict <- function(gradio_url, image_data) {
+gradio_predict <- function(gradio_url, image_data, contrast_stretch) {
   json_body <- as.character(
-    jsonlite::toJSON(list(data = list(image_data)), auto_unbox = TRUE)
+    jsonlite::toJSON(list(data = list(image_data, contrast_stretch)),
+                     auto_unbox = TRUE)
   )
 
   call_url <- paste0(gradio_url, "/gradio_api/call/predict_html")

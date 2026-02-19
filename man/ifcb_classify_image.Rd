@@ -8,6 +8,7 @@ ifcb_classify_image(
   png_file,
   gradio_url = "https://ifcb.serve.scilifelab.se",
   top_n = 1,
+  contrast_stretch = FALSE,
   verbose = TRUE
 )
 }
@@ -20,6 +21,9 @@ application. Default is \code{"https://ifcb.serve.scilifelab.se"}.}
 \item{top_n}{An integer specifying the number of top predictions to return
 per image. Default is \code{1} (top prediction only). Use \code{Inf} to return all
 predictions.}
+
+\item{contrast_stretch}{A logical value indicating whether to apply contrast
+stretching to the image before classification. Default is \code{FALSE}.}
 
 \item{verbose}{A logical value indicating whether to print progress messages.
 Default is \code{TRUE}.}
