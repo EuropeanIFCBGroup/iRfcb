@@ -82,6 +82,11 @@ sample_path <- "data/data/2023/D20230314/D20230314T003836_IFCB134"
 ifcb_extract_pngs(sample_path)
 ```
 
+By default, images are extracted with raw pixel values preserved from the camera, matching the output of IFCB Dashboard and other standard IFCB software. To stretch pixel values to the full 0-255 contrast range, set `normalize = TRUE`:
+```{r, eval=FALSE}
+ifcb_extract_pngs(sample_path, normalize = TRUE)
+```
+
 ### Summarize Image Metadata
 
 Extract image metadata from the `.png` directory:

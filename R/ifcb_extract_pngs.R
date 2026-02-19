@@ -10,6 +10,7 @@
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
 #' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
+#' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, which preserves raw pixel values from the camera, producing images comparable to IFCB Dashboard and other standard IFCB software. Set to TRUE to stretch contrast to the full 0-255 range.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #' @param scale_bar_um An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
@@ -35,7 +36,7 @@
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
 ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL,
-                              gamma = 1, overwrite = FALSE, scale_bar_um = NULL, scale_micron_factor = 1/3.4,
+                              gamma = 1, normalize = FALSE, overwrite = FALSE, scale_bar_um = NULL, scale_micron_factor = 1/3.4,
                               scale_bar_position = "bottomright", scale_bar_color = "black", old_adc = FALSE,
                               verbose = TRUE) {
 
@@ -109,8 +110,13 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
         img_matrix <- matrix(as.integer(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array
 
         tryCatch({
-          # Normalize pixel values to [0,1] using min-max scaling
-          img_matrix <- (img_matrix - min(img_matrix)) / (max(img_matrix) - min(img_matrix))
+          if (normalize) {
+            # Normalize pixel values to [0,1] using min-max scaling (stretches to full contrast range)
+            img_matrix <- (img_matrix - min(img_matrix)) / (max(img_matrix) - min(img_matrix))
+          } else {
+            # Preserve raw pixel values by scaling to [0,1] without stretching
+            img_matrix <- img_matrix / 255
+          }
 
           # Apply gamma correction only if gamma != 1
           if (gamma != 1) {

@@ -21,6 +21,7 @@ ifcb_extract_annotated_images(
   old_adc = FALSE,
   use_python = FALSE,
   gamma = 1,
+  normalize = FALSE,
   add_trailing_numbers = TRUE,
   roi_folder = deprecated()
 )
@@ -57,6 +58,8 @@ ifcb_extract_annotated_images(
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
 \item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
+
+\item{normalize}{A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} for details.}
 
 \item{add_trailing_numbers}{Logical. If \code{TRUE}, appends a zero-padded numeric suffix derived from the manual class index to the class name when naming output files. If \code{FALSE}, uses only the class name without a numeric suffix. Default is \code{TRUE}.}
 

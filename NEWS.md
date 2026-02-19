@@ -5,6 +5,10 @@
 * New function `ifcb_classify_image()` to classify one or more pre-extracted IFCB PNG images through a ResNet model served by a Gradio application, returning a data frame of predicted class names and confidence scores.
 * New function `ifcb_classify_sample()` to classify all images in a raw IFCB sample (`.roi` file) without prior PNG extraction. Internally extracts images to a temporary directory and delegates to `ifcb_classify_image()`.
 
+## Breaking changes
+
+* Image extraction functions (`ifcb_extract_pngs()`, `ifcb_extract_annotated_images()`, and `ifcb_extract_classified_images()`) now preserve raw pixel values by default (`normalize = FALSE`), producing images comparable to IFCB Dashboard and other standard IFCB software. Previously, pixel values were stretched to the full 0-255 range using min-max normalization. This change can affect classifier training results. Set `normalize = TRUE` to restore the previous behavior.
+
 ## Minor improvements and fixes
 
 * Corrected the parameter description of `micron_factor` in `ifcb_psd()` and `ifcb_extract_biovolumes()`.
