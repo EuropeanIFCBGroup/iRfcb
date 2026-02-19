@@ -47,7 +47,7 @@ reflect the specified annotations.
 \description{
 This function creates or updates manual \code{.mat} classlist files with a user specified class in batch,
 based on input vector of IFCB image names.
-These \code{.mat} can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
+These \code{.mat} files can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
 Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
@@ -61,7 +61,7 @@ The class parameter can be provided as either a string (class name) or an intege
 If a string is provided, the function will attempt to match it to one of the available
 classes in \code{class2use_file}. If no match is found, an error is thrown.
 
-The function assumes that the ADC files are organized in subfolders by year (YYYY) and date (DYYYYMMDD) within \code{adc_folder}.
+The function assumes that the ADC files are organized in subfolders by year (YYYY) and date (DYYYYMMDD) within \code{adc_files}.
 }
 \examples{
 \dontrun{

@@ -172,7 +172,7 @@ data_event <- data_event %>%
     institutionCode = "SMHI",
     
     # Defining CC-BY data licence
-    license = "http://creativecommons.org/licenses/by/4.0/legalcodeY",
+    license = "http://creativecommons.org/licenses/by/4.0/legalcode",
     
     # Specifying the type of record, which is Sample in this case
     eventType = "Sample",

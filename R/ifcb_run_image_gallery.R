@@ -4,7 +4,7 @@
 #' `r lifecycle::badge("deprecated")`
 #'
 #' This function was deprecated as there is a better alternative: `ClassiPyR::run_app()`. For more information,
-#' please see: https://europeanifcbgroup.github.io/ClassiPyR/
+#' please see: <https://europeanifcbgroup.github.io/ClassiPyR/>
 #'
 #' Launches a Shiny application that provides an interactive interface for
 #' browsing and managing IFCB (Imaging FlowCytobot) image galleries.

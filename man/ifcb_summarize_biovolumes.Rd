@@ -35,7 +35,7 @@ ifcb_summarize_biovolumes(
 
 \item{hdr_folder}{(Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.}
 
-\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ,
+\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 These filenames should match the \code{roi_number} assignment in the \code{feature_files} and can be
 used as a substitute for MATLAB files.}
@@ -44,7 +44,7 @@ used as a substitute for MATLAB files.}
 
 \item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
-\item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
+\item{diatom_class}{A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
 
 \item{diatom_include}{Optional character vector of class names that should always be treated as diatoms,
 overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
@@ -113,8 +113,8 @@ ifcb_summarize_biovolumes("path/to/features", "path/to/mat", hdr_folder = "path/
 # Using custom classification result:
 images <- c("D20220522T003051_IFCB134_00002",
             "D20220522T003051_IFCB134_00003")
-classes = c("Mesodinium_rubrum",
-            "Mesodinium_rubrum")
+classes <- c("Mesodinium_rubrum",
+             "Mesodinium_rubrum")
 
 ifcb_summarize_biovolumes(feature_folder = "path/to/features",
                           hdr_folder = "path/to/hdr",
@@ -124,7 +124,7 @@ ifcb_summarize_biovolumes(feature_folder = "path/to/features",
 
 }
 \references{
-Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }

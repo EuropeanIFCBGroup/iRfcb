@@ -48,7 +48,7 @@ ifcb_download_test_data(
 
 ## Download WHOI-Plankton Data
 
-This section demonstrates how to download the WHOI-Plankton dataset `iRfcb`.
+This section demonstrates how to download the WHOI-Plankton dataset using `iRfcb`.
 
 ### Define Download Paths
 

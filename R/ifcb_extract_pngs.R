@@ -9,7 +9,7 @@
 #' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
-#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.
 #' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, which preserves raw pixel values from the camera, producing images comparable to IFCB Dashboard and other standard IFCB software. Set to TRUE to stretch contrast to the full 0-255 range.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #' @param scale_bar_um An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.

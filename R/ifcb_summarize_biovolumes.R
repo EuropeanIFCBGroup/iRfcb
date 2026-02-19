@@ -10,13 +10,13 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param mat_files (Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.
-#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ,
+#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 #'        where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
 #'        used as a substitute for MATLAB files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
-#' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
+#' @param diatom_class A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
@@ -66,8 +66,8 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' # Using custom classification result:
 #' images <- c("D20220522T003051_IFCB134_00002",
 #'             "D20220522T003051_IFCB134_00003")
-#' classes = c("Mesodinium_rubrum",
-#'             "Mesodinium_rubrum")
+#' classes <- c("Mesodinium_rubrum",
+#'              "Mesodinium_rubrum")
 #'
 #' ifcb_summarize_biovolumes(feature_folder = "path/to/features",
 #'                           hdr_folder = "path/to/hdr",
@@ -75,7 +75,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'                           custom_classes = classes)
 #' }
 #'
-#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @export

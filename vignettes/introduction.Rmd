@@ -51,7 +51,7 @@ ifcb_download_test_data(dest_dir = data_dir)
 
 This section demonstrates a selection of general data extraction tools available in `iRfcb`.
 
-### Extract Timestamps from IFCB sample Filenames
+### Extract Timestamps from IFCB Sample Filenames
 
 Extract timestamps from sample names or filenames:
 ```{r}

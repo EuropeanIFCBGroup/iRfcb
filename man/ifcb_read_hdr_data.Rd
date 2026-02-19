@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_read_hdr_data.R
 \name{ifcb_read_hdr_data}
 \alias{ifcb_read_hdr_data}
-\title{Reads HDR Data from IFCB HDR Files}
+\title{Read Data from IFCB HDR Files}
 \usage{
 ifcb_read_hdr_data(
   hdr_files,
@@ -12,7 +12,7 @@ ifcb_read_hdr_data(
 )
 }
 \arguments{
-\item{hdr_files}{A character string specifying the path to hdr files or a folder path.}
+\item{hdr_files}{A character string or character vector specifying the path(s) to \code{.hdr} files, or a single folder path.}
 
 \item{gps_only}{A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.}
 
@@ -23,7 +23,7 @@ ifcb_read_hdr_data(
 Use \code{hdr_files} instead.}
 }
 \value{
-A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
+A data frame with sample names, GPS latitude, GPS longitude, and timestamps. When \code{gps_only = TRUE}, only samples with GPS coordinates are included.
 }
 \description{
 This function reads all IFCB instrument settings information files (.hdr) from a specified directory.

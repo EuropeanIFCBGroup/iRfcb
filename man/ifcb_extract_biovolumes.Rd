@@ -30,7 +30,7 @@ ifcb_extract_biovolumes(
 
 \item{mat_files}{(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.}
 
-\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png,
+\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 These filenames should match the \code{roi_number} assignment in the \code{feature_files} and can be
 used as a substitute for MATLAB files.}
@@ -112,21 +112,21 @@ biovolume_df <- ifcb_extract_biovolumes(feature_files,
 print(biovolume_df)
 
 # Using custom classification result:
-class = c("Mesodinium_rubrum",
-          "Mesodinium_rubrum")
-image <- c("D20220522T003051_IFCB134_00002",
+classes <- c("Mesodinium_rubrum",
+             "Mesodinium_rubrum")
+images <- c("D20220522T003051_IFCB134_00002",
            "D20220522T003051_IFCB134_00003")
 
 biovolume_df_custom <- ifcb_extract_biovolumes(feature_files,
-                                               custom_images = image,
-                                               custom_classes = class)
+                                               custom_images = images,
+                                               custom_classes = classes)
 
 print(biovolume_df_custom)
 }
 
 }
 \references{
-Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }

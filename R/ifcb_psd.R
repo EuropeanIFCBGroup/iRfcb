@@ -19,13 +19,13 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @param bins An optional character vector of bin names (e.g.,
 #'   `"D20251021T133007_IFCB134"`) to restrict processing to a specified subset of bins.
 #'   If `NULL` (default), all bins present in `feature_folder` are processed.
-#' @param save_data A boolean indicating whether to save data to CSV files. Default is FALSE.
+#' @param save_data A logical indicating whether to save data to CSV files. Default is FALSE.
 #' @param output_file A string with the base file name for the .csv output (including path).
 #'   Set to NULL to avoid saving data (default).
 #' @param plot_folder The folder where graph images for each sample will be saved.
 #'   If `NULL` (default), plots are not saved. If `use_plot_subfolders = TRUE`,
 #'   plots are organized into subfolders based on their flag status.
-#' @param use_marker A boolean indicating whether to show markers on the plot. Default is FALSE.
+#' @param use_marker A logical indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
 #' @param r_sqr The lower limit of acceptable R^2 values (any curves below it will be flagged).
 #'   Default is 0.5.
@@ -49,7 +49,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   high humidity. Optional.
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param fea_v The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. `r lifecycle::badge("experimental")`
-#' @param use_plot_subfolders A boolean indicating whether to save plots in subfolders
+#' @param use_plot_subfolders A logical indicating whether to save plots in subfolders
 #'   based on the sample's flag status. If TRUE (default), samples without flags are
 #'   saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
 #'   named after their flag(s). If FALSE, all plots are saved directly in `plot_folder`.
@@ -67,7 +67,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' function always returns this list.
 #'
 #' @seealso \code{\link{ifcb_py_install}},
-#'   \url{https://github.com/kudelalab/PSD},
+#'   \url{https://github.com/kudelalab/PSD}
 #'
 #' @references
 #' Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using particle size distribution (PSD)

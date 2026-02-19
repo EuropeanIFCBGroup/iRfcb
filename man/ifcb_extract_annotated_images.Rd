@@ -35,13 +35,13 @@ ifcb_extract_annotated_images(
 
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
-\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the \code{.png} extraction. Default is NULL (include all classes).}
+\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the \code{.png} extraction. Default is NA (include all classes).}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 
 \item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
 
-\item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
+\item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folders} (if provided). Default is TRUE.}
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
 
@@ -57,7 +57,7 @@ ifcb_extract_annotated_images(
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
-\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
+\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.}
 
 \item{normalize}{A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} for details.}
 

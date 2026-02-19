@@ -20,13 +20,13 @@ ifcb_match_taxa_names(
 
 \item{best_match_only}{A logical value indicating whether to automatically select the first match and return a single match. Default is TRUE.}
 
-\item{max_retries}{An integer specifying the maximum number of attempts to retrieve records.}
+\item{max_retries}{An integer specifying the maximum number of attempts to retrieve records. Default is 3.}
 
-\item{sleep_time}{A numeric value indicating the number of seconds to wait between retry attempts.}
+\item{sleep_time}{A numeric value indicating the number of seconds to wait between retry attempts. Default is 10.}
 
 \item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
 
-\item{return_list}{A logical value indicating whether to to return the output as a list. Default is FALSE, where the result is returned as a dataframe.}
+\item{return_list}{A logical value indicating whether to return the output as a list. Default is FALSE, where the result is returned as a dataframe.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
