@@ -53,7 +53,8 @@ Imports:
     worrms,
     zip,
     jsonlite
-Suggests: 
+Suggests:
+    hdf5r,
     knitr,
     mockery,
     rmarkdown,

@@ -156,6 +156,14 @@ To extract annotated images or classified results from MATLAB files, please see 
 
 IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application.
 
+### Available Models
+
+Use `ifcb_classify_models()` to list the CNN models available on the Gradio server:
+
+```{r, eval=FALSE}
+ifcb_classify_models()
+```
+
 ### Classify All Images in a Sample
 
 `ifcb_classify_sample()` extracts images from a `.roi` file internally and returns predictions without requiring a separate extraction step:
@@ -190,7 +198,33 @@ results <- ifcb_classify_image(png_files, verbose = FALSE)
 print(results)
 ```
 
-Both functions return a data frame with `file_name`, `class_name`, and `score` columns, and query the Gradio API at `https://ifcb.serve.scilifelab.se` by default. The `top_n` argument controls how many top predictions are returned per image.
+Both functions return a data frame with `file_name`, `class_name`, `score`, and `model_name` columns, and query the Gradio API at `https://ifcb.serve.scilifelab.se` by default. The `top_n` argument controls how many top predictions are returned per image, and `model_name` specifies which CNN model to use (default: `"SMHI NIVA ResNet50 V5"`).
+
+### Apply Per-Class Thresholds
+
+Set `apply_threshold = TRUE` to add a `class_name_above_threshold` column. Predictions scoring below the per-class F2 optimal threshold are labelled `"unclassified"`:
+
+```{r, eval=FALSE}
+result <- ifcb_classify_sample(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  apply_threshold = TRUE,
+  verbose = FALSE
+)
+```
+
+### Save Classification as HDF5
+
+`ifcb_save_classification()` classifies all images in a `.roi` file and saves the full score matrix in the IFCB Dashboard v3 HDF5 format (requires the `hdf5r` package):
+
+```{r, eval=FALSE}
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output"
+)
+# Creates: output/D20230314T001205_IFCB134_class.h5
+```
+
+The output file contains `output_scores` (N x C matrix), `class_labels`, `roi_numbers`, per-class `thresholds`, and `class_labels_above_threshold`.
 
 ## Taxonomical Data
 

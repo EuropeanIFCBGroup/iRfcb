@@ -14,8 +14,14 @@
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
-#' @param contrast_stretch A logical value indicating whether to apply contrast
-#'   stretching to the image before classification. Default is `FALSE`.
+#' @param model_name A character string specifying the name of the CNN model
+#'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
+#'   [ifcb_classify_models()] to list all available models.
+#' @param apply_threshold A logical value indicating whether to add a
+#'   `class_name_above_threshold` column. When `TRUE`, per-class F2 optimal
+#'   thresholds are fetched from the Gradio server; predictions scoring below
+#'   the threshold for their class are labelled `"unclassified"`. Default is
+#'   `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
 #' @param ... Additional arguments passed to [ifcb_extract_pngs()] (e.g.
@@ -26,6 +32,10 @@
 #'     \item{`file_name`}{The PNG file name of the classified image.}
 #'     \item{`class_name`}{The predicted class name.}
 #'     \item{`score`}{The prediction confidence score (0–1).}
+#'     \item{`model_name`}{The name of the CNN model used for classification.}
+#'     \item{`class_name_above_threshold`}{(Only when `apply_threshold = TRUE`)
+#'       Same as `class_name` when the score meets or exceeds the per-class
+#'       threshold; `"unclassified"` otherwise.}
 #'   }
 #'   Images that could not be classified have `NA` in `class_name` and `score`.
 #'   When `top_n > 1`, multiple rows are returned per image (one per prediction).
@@ -47,17 +57,25 @@
 #'   "path/to/D20220522T003051_IFCB134.roi",
 #'   ROInumbers = c(1, 5, 10)
 #' )
+#'
+#' # Apply per-class thresholds
+#' result <- ifcb_classify_sample(
+#'   "path/to/D20220522T003051_IFCB134.roi",
+#'   apply_threshold = TRUE
+#' )
 #' }
 #'
 #' @seealso [ifcb_classify_image()] to classify pre-extracted PNG files
-#'   directly. [ifcb_extract_pngs()] to extract PNG images from IFCB ROI files.
+#'   directly. [ifcb_classify_models()] to list available CNN models.
+#'   [ifcb_extract_pngs()] to extract PNG images from IFCB ROI files.
 #'
 #' @export
 ifcb_classify_sample <- function(
     roi_file,
     gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
-    contrast_stretch = FALSE,
+    model_name = "SMHI NIVA ResNet50 V5",
+    apply_threshold = FALSE,
     verbose = TRUE,
     ...) {
 
@@ -83,9 +101,11 @@ ifcb_classify_sample <- function(
   if (length(png_files) == 0) {
     warning("No PNG images were extracted from: ", roi_file)
     return(data.frame(file_name = character(), class_name = character(),
-                      score = numeric(), stringsAsFactors = FALSE))
+                      score = numeric(), model_name = character(),
+                      stringsAsFactors = FALSE))
   }
 
   ifcb_classify_image(png_files, gradio_url = gradio_url, top_n = top_n,
-                      contrast_stretch = contrast_stretch, verbose = verbose)
+                      model_name = model_name, apply_threshold = apply_threshold,
+                      verbose = verbose)
 }

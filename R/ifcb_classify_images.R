@@ -13,8 +13,14 @@
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
-#' @param contrast_stretch A logical value indicating whether to apply contrast
-#'   stretching to the image before classification. Default is `FALSE`.
+#' @param model_name A character string specifying the name of the CNN model
+#'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
+#'   [ifcb_classify_models()] to list all available models.
+#' @param apply_threshold A logical value indicating whether to add a
+#'   `class_name_above_threshold` column. When `TRUE`, per-class F2 optimal
+#'   thresholds are fetched from the Gradio server; predictions scoring below
+#'   the threshold for their class are labelled `"unclassified"`. Default is
+#'   `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
 #'
@@ -23,6 +29,10 @@
 #'     \item{`file_name`}{The PNG file name of the classified image.}
 #'     \item{`class_name`}{The predicted class name.}
 #'     \item{`score`}{The prediction confidence score (0–1).}
+#'     \item{`model_name`}{The name of the CNN model used for classification.}
+#'     \item{`class_name_above_threshold`}{(Only when `apply_threshold = TRUE`)
+#'       Same as `class_name` when the score meets or exceeds the per-class
+#'       threshold; `"unclassified"` otherwise.}
 #'   }
 #'   Images that could not be classified have `NA` in `class_name` and `score`.
 #'   When `top_n > 1`, multiple rows are returned per image (one per prediction).
@@ -36,18 +46,23 @@
 #' pngs <- list.files("path/to/png_folder", pattern = "\\.png$",
 #'                    full.names = TRUE)
 #' result <- ifcb_classify_image(pngs, top_n = 3)
+#'
+#' # Apply per-class thresholds
+#' result <- ifcb_classify_image(pngs, apply_threshold = TRUE)
 #' }
 #'
 #' @seealso [ifcb_classify_sample()] to classify all images in a raw IFCB
-#'   sample without prior extraction. [ifcb_extract_pngs()] to extract PNG
-#'   images from IFCB ROI files.
+#'   sample without prior extraction. [ifcb_classify_models()] to list
+#'   available CNN models. [ifcb_extract_pngs()] to extract PNG images from
+#'   IFCB ROI files.
 #'
 #' @export
 ifcb_classify_image <- function(
     png_file,
     gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
-    contrast_stretch = FALSE,
+    model_name = "SMHI NIVA ResNet50 V5",
+    apply_threshold = FALSE,
     verbose = TRUE) {
 
   missing_files <- png_file[!file.exists(png_file)]
@@ -56,6 +71,13 @@ ifcb_classify_image <- function(
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
+
+  # Fetch thresholds once if needed
+  thresholds <- NULL
+  if (apply_threshold) {
+    if (verbose) message("Fetching per-class thresholds...")
+    thresholds <- gradio_get_thresholds(gradio_url, model_name)
+  }
 
   if (verbose) message("Classifying ", length(png_file), " image(s)...")
 
@@ -66,11 +88,12 @@ ifcb_classify_image <- function(
     if (verbose) print_progress(i, length(png_file))
 
     tryCatch({
-      predictions <- gradio_classify_png(png_path, gradio_url, top_n, contrast_stretch)
+      predictions <- gradio_classify_png(png_path, gradio_url, top_n, model_name)
       data.frame(
         file_name  = file_name,
         class_name = predictions$class_name,
         score      = predictions$score,
+        model_name = model_name,
         stringsAsFactors = FALSE
       )
     }, error = function(e) {
@@ -79,6 +102,7 @@ ifcb_classify_image <- function(
         file_name  = file_name,
         class_name = NA_character_,
         score      = NA_real_,
+        model_name = model_name,
         stringsAsFactors = FALSE
       )
     })
@@ -86,10 +110,158 @@ ifcb_classify_image <- function(
 
   if (verbose) cat("\n")
 
-  do.call(rbind, results_list)
+  result <- do.call(rbind, results_list)
+
+  if (apply_threshold && !is.null(thresholds)) {
+    result$class_name_above_threshold <- vapply(
+      seq_len(nrow(result)), function(i) {
+        cls <- result$class_name[i]
+        scr <- result$score[i]
+        if (is.na(cls) || is.na(scr)) return(NA_character_)
+        thr <- thresholds$thresholds[cls]
+        if (is.null(thr) || is.na(thr)) return(cls)
+        if (scr >= thr) cls else "unclassified"
+      },
+      character(1)
+    )
+  }
+
+  result
 }
 
 # ── Private Gradio API helpers ────────────────────────────────────────────────
+
+# Submit an image to /gradio_api/call/predict_scores and return all class scores.
+#
+# Uploads the PNG, then POSTs to the predict_scores endpoint and parses the
+# SSE JSON response.
+#
+# @param gradio_url Base URL of the Gradio application (no trailing slash).
+# @param image_data Named list matching the Gradio FileData schema.
+# @param model_name Model display name.
+# @return A list with `class_labels` (character vector) and `scores` (numeric vector).
+# @noRd
+gradio_predict_scores <- function(gradio_url, image_data, model_name) {
+  json_body <- as.character(
+    jsonlite::toJSON(list(data = list(image_data, model_name)),
+                     auto_unbox = TRUE)
+  )
+
+  call_url <- paste0(gradio_url, "/gradio_api/call/predict_scores")
+  h_post <- curl::new_handle()
+  curl::handle_setopt(h_post,
+    customrequest = "POST",
+    postfields = json_body,
+    httpheader = c("Content-Type: application/json", "Accept: application/json")
+  )
+
+  post_resp <- tryCatch(
+    curl::curl_fetch_memory(call_url, handle = h_post),
+    error = function(e) stop("Connection to Gradio failed at '", call_url,
+                             "': ", e$message)
+  )
+
+  if (post_resp$status_code != 200) {
+    stop("Gradio POST failed [", post_resp$status_code, "]: ", call_url)
+  }
+
+  call_result <- tryCatch(
+    jsonlite::fromJSON(rawToChar(post_resp$content), simplifyVector = FALSE),
+    error = function(e) stop("Failed to parse Gradio POST response: ", e$message)
+  )
+  event_id <- call_result$event_id
+  if (is.null(event_id)) stop("No event_id in Gradio POST response")
+
+  result_url <- paste0(gradio_url, "/gradio_api/call/predict_scores/", event_id)
+  h_get <- curl::new_handle()
+  curl::handle_setopt(h_get,
+    httpheader = c("Accept: text/event-stream")
+  )
+
+  get_resp <- tryCatch(
+    curl::curl_fetch_memory(result_url, handle = h_get),
+    error = function(e) stop("Failed to fetch Gradio SSE from '", result_url,
+                             "': ", e$message)
+  )
+
+  if (get_resp$status_code != 200) {
+    stop("Gradio SSE failed [", get_resp$status_code, "]: ", result_url)
+  }
+
+  # Parse the SSE response as a JSON object (not simplified to data frame)
+  sse_result <- gradio_parse_sse_json(rawToChar(get_resp$content))
+
+  list(
+    class_labels = as.character(unlist(sse_result$class_labels)),
+    scores = as.numeric(unlist(sse_result$scores))
+  )
+}
+
+# Fetch per-class thresholds from /gradio_api/call/get_thresholds.
+#
+# @param gradio_url Base URL of the Gradio application (no trailing slash).
+# @param model_name Model display name.
+# @return A list with `class_labels` (character), `thresholds` (named numeric),
+#   and `model_name` (character).
+# @noRd
+gradio_get_thresholds <- function(gradio_url, model_name) {
+  json_body <- as.character(
+    jsonlite::toJSON(list(data = list(model_name)),
+                     auto_unbox = TRUE)
+  )
+
+  call_url <- paste0(gradio_url, "/gradio_api/call/get_thresholds")
+  h_post <- curl::new_handle()
+  curl::handle_setopt(h_post,
+    customrequest = "POST",
+    postfields = json_body,
+    httpheader = c("Content-Type: application/json", "Accept: application/json")
+  )
+
+  post_resp <- tryCatch(
+    curl::curl_fetch_memory(call_url, handle = h_post),
+    error = function(e) stop("Connection to Gradio failed at '", call_url,
+                             "': ", e$message)
+  )
+
+  if (post_resp$status_code != 200) {
+    stop("Gradio POST failed [", post_resp$status_code, "]: ", call_url)
+  }
+
+  call_result <- tryCatch(
+    jsonlite::fromJSON(rawToChar(post_resp$content), simplifyVector = FALSE),
+    error = function(e) stop("Failed to parse Gradio POST response: ", e$message)
+  )
+  event_id <- call_result$event_id
+  if (is.null(event_id)) stop("No event_id in Gradio POST response")
+
+  result_url <- paste0(gradio_url, "/gradio_api/call/get_thresholds/", event_id)
+  h_get <- curl::new_handle()
+  curl::handle_setopt(h_get,
+    httpheader = c("Accept: text/event-stream")
+  )
+
+  get_resp <- tryCatch(
+    curl::curl_fetch_memory(result_url, handle = h_get),
+    error = function(e) stop("Failed to fetch Gradio SSE from '", result_url,
+                             "': ", e$message)
+  )
+
+  if (get_resp$status_code != 200) {
+    stop("Gradio SSE failed [", get_resp$status_code, "]: ", result_url)
+  }
+
+  sse_result <- gradio_parse_sse_json(rawToChar(get_resp$content))
+
+  thresholds_list <- sse_result$thresholds
+  thresholds <- vapply(thresholds_list, as.numeric, numeric(1))
+
+  list(
+    class_labels = as.character(sse_result$class_labels),
+    thresholds = thresholds,
+    model_name = as.character(sse_result$model_name)
+  )
+}
 
 # Classify a single PNG image via the Gradio /gradio_api/call/predict_html endpoint.
 #
@@ -101,7 +273,7 @@ ifcb_classify_image <- function(
 # @param top_n Number of top predictions to return.
 # @return A list with elements `class_name` (character) and `score` (numeric).
 # @noRd
-gradio_classify_png <- function(png_path, gradio_url, top_n, contrast_stretch) {
+gradio_classify_png <- function(png_path, gradio_url, top_n, model_name) {
   server_path <- gradio_upload_file(png_path, gradio_url)
 
   # Minimal FileData object matching the documented API format
@@ -110,7 +282,7 @@ gradio_classify_png <- function(png_path, gradio_url, top_n, contrast_stretch) {
     meta = list(`_type` = "gradio.FileData")
   )
 
-  html_content <- gradio_predict(gradio_url, image_data, contrast_stretch)
+  html_content <- gradio_predict(gradio_url, image_data, model_name)
   gradio_parse_predictions(html_content, top_n)
 }
 
@@ -160,9 +332,9 @@ gradio_upload_file <- function(png_path, gradio_url) {
 # @param image_data Named list matching the Gradio FileData schema.
 # @return A character string containing the prediction HTML.
 # @noRd
-gradio_predict <- function(gradio_url, image_data, contrast_stretch) {
+gradio_predict <- function(gradio_url, image_data, model_name) {
   json_body <- as.character(
-    jsonlite::toJSON(list(data = list(image_data, contrast_stretch)),
+    jsonlite::toJSON(list(data = list(image_data, model_name)),
                      auto_unbox = TRUE)
   )
 
@@ -241,6 +413,37 @@ gradio_parse_sse <- function(sse_text) {
   }
 
   stop("No completed prediction found in Gradio SSE response. ",
+       "First 300 chars of response: ", substr(sse_text, 1, 300))
+}
+
+# Extract a JSON object from a Gradio SSE response.
+#
+# Like gradio_parse_sse but uses simplifyVector = FALSE so that JSON objects
+# (dicts) are returned as named lists rather than data frames.
+#
+# @param sse_text Raw SSE response text.
+# @return The first element of the JSON data array (typically a named list).
+# @noRd
+gradio_parse_sse_json <- function(sse_text) {
+  lines <- strsplit(sse_text, "\n")[[1]]
+
+  event_idx <- which(trimws(lines) == "event: complete")
+  for (i in rev(event_idx)) {
+    j <- i + 1L
+    while (j <= length(lines) && trimws(lines[j]) == "") j <- j + 1L
+    if (j <= length(lines) && startsWith(trimws(lines[j]), "data: ")) {
+      json_str <- trimws(sub("^data: ", "", lines[j]))
+      result <- tryCatch(
+        jsonlite::fromJSON(json_str, simplifyVector = FALSE),
+        error = function(e) NULL
+      )
+      if (!is.null(result) && length(result) >= 1L) {
+        return(result[[1L]])
+      }
+    }
+  }
+
+  stop("No completed result found in Gradio SSE response. ",
        "First 300 chars of response: ", substr(sse_text, 1, 300))
 }
 

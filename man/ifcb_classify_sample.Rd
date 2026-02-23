@@ -8,7 +8,8 @@ ifcb_classify_sample(
   roi_file,
   gradio_url = "https://ifcb.serve.scilifelab.se",
   top_n = 1,
-  contrast_stretch = FALSE,
+  model_name = "SMHI NIVA ResNet50 V5",
+  apply_threshold = FALSE,
   verbose = TRUE,
   ...
 )
@@ -23,8 +24,15 @@ application. Default is \code{"https://ifcb.serve.scilifelab.se"}.}
 per image. Default is \code{1} (top prediction only). Use \code{Inf} to return all
 predictions.}
 
-\item{contrast_stretch}{A logical value indicating whether to apply contrast
-stretching to the image before classification. Default is \code{FALSE}.}
+\item{model_name}{A character string specifying the name of the CNN model
+to use for classification. Default is \code{"SMHI NIVA ResNet50 V5"}. Use
+\code{\link[=ifcb_classify_models]{ifcb_classify_models()}} to list all available models.}
+
+\item{apply_threshold}{A logical value indicating whether to add a
+\code{class_name_above_threshold} column. When \code{TRUE}, per-class F2 optimal
+thresholds are fetched from the Gradio server; predictions scoring below
+the threshold for their class are labelled \code{"unclassified"}. Default is
+\code{FALSE}.}
 
 \item{verbose}{A logical value indicating whether to print progress messages.
 Default is \code{TRUE}.}
@@ -38,6 +46,10 @@ A data frame with the following columns:
 \item{\code{file_name}}{The PNG file name of the classified image.}
 \item{\code{class_name}}{The predicted class name.}
 \item{\code{score}}{The prediction confidence score (0–1).}
+\item{\code{model_name}}{The name of the CNN model used for classification.}
+\item{\code{class_name_above_threshold}}{(Only when \code{apply_threshold = TRUE})
+Same as \code{class_name} when the score meets or exceeds the per-class
+threshold; \code{"unclassified"} otherwise.}
 }
 Images that could not be classified have \code{NA} in \code{class_name} and \code{score}.
 When \code{top_n > 1}, multiple rows are returned per image (one per prediction).
@@ -69,10 +81,17 @@ result <- ifcb_classify_sample(
   "path/to/D20220522T003051_IFCB134.roi",
   ROInumbers = c(1, 5, 10)
 )
+
+# Apply per-class thresholds
+result <- ifcb_classify_sample(
+  "path/to/D20220522T003051_IFCB134.roi",
+  apply_threshold = TRUE
+)
 }
 
 }
 \seealso{
 \code{\link[=ifcb_classify_image]{ifcb_classify_image()}} to classify pre-extracted PNG files
-directly. \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} to extract PNG images from IFCB ROI files.
+directly. \code{\link[=ifcb_classify_models]{ifcb_classify_models()}} to list available CNN models.
+\code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} to extract PNG images from IFCB ROI files.
 }

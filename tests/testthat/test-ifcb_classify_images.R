@@ -147,10 +147,41 @@ test_that("ifcb_classify_image classifies a real PNG and returns non-NA results"
   result <- ifcb_classify_image(png_files, verbose = FALSE)
 
   expect_true(is.data.frame(result))
-  expect_named(result, c("file_name", "class_name", "score"))
+  expect_named(result, c("file_name", "class_name", "score", "model_name"))
   expect_equal(nrow(result), length(png_files))
   expect_false(anyNA(result$class_name),
                label = "class_name must have no NAs when API is reachable")
   expect_true(all(result$score >= 0 & result$score <= 1),
               label = "scores must be in [0, 1]")
+})
+
+test_that("ifcb_classify_image with apply_threshold adds threshold column", {
+  skip_on_cran()
+  skip_if_offline()
+  skip_if_resource_unavailable(
+    "https://ifcb.serve.scilifelab.se/gradio_api/call/predict_html"
+  )
+
+  test_data_zip <- test_path("test_data/test_data.zip")
+  temp_dir <- file.path(tempdir(), "ifcb_classify_image_threshold")
+  unzip(test_data_zip, exdir = temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  roi_file <- file.path(temp_dir, "test_data", "data",
+                        "D20220522T003051_IFCB134.roi")
+
+  png_dir <- file.path(temp_dir, "pngs")
+  dir.create(png_dir)
+  ifcb_extract_pngs(roi_file, out_folder = png_dir, verbose = FALSE)
+  png_files <- list.files(png_dir, pattern = "\\.png$",
+                          full.names = TRUE, recursive = TRUE)
+
+  # Only test with first 2 images for speed
+  result <- ifcb_classify_image(png_files[1:2], apply_threshold = TRUE,
+                                verbose = FALSE)
+
+  expect_true(is.data.frame(result))
+  expect_true("class_name_above_threshold" %in% names(result))
+  expect_true(all(result$class_name_above_threshold %in%
+                    c(result$class_name, "unclassified") | is.na(result$class_name_above_threshold)))
 })
