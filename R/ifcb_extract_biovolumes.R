@@ -132,15 +132,16 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
 
     # Check if hdr_files is a single folder path or a vector of file paths
     if (length(mat_files) == 1 && file.info(mat_files)$isdir) {
-      mat_files <- list.files(mat_files, pattern = "\\.mat$", recursive = mat_recursive, full.names = TRUE)
+      mat_files <- list.files(mat_files, pattern = "\\.(mat|h5)$", recursive = mat_recursive, full.names = TRUE)
     }
 
     if (length(mat_files) == 0) {
-      stop("No MAT files found")
+      stop("No classification files found")
     }
 
-    # Check if files are manually classified
-    is_manual <- "class2use_manual" %in% ifcb_get_mat_names(mat_files[1])
+    # Check if files are manually classified (.h5 files are never manual)
+    is_manual <- tolower(tools::file_ext(mat_files[1])) == "mat" &&
+      "class2use_manual" %in% ifcb_get_mat_names(mat_files[1])
 
     if (is_manual && is.null(class2use_file)) {
       stop("class2use must be specified when extracting manual biovolume data")
@@ -270,14 +271,10 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
         }
 
         temp <- suppressWarnings({
-          if (use_python && scipy_available()) {
-            ifcb_read_mat(matching_mat[i])
-          } else {
-            read_mat(matching_mat[i], fixNames = FALSE)
-          }
+          read_class_file(matching_mat[i], use_python = use_python)
         })
 
-        sample_name <- str_replace(basename(matching_mat[i]), "_class_v\\d+.mat", "")
+        sample_name <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(matching_mat[i]))
 
         tb_list[[i]] <- tibble(
           sample = sample_name,

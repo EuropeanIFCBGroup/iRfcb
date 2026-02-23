@@ -57,7 +57,7 @@ test_that("ifcb_summarize_biovolumes handles empty directories gracefully", {
   dir.create(hdr_folder, showWarnings = FALSE)
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, mat_folder, hdr_folder = hdr_folder),
-               "No MAT files found")
+               "No classification files found")
 })
 
 test_that("ifcb_summarize_biovolumes works correctly with custom class data", {

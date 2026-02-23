@@ -66,7 +66,7 @@ ifcb_extract_classified_images <- function(sample,
                                            verbose = TRUE) {
 
   # Get the list of classified files and find the one matching the sample
-  classifiedfiles <- list.files(classified_folder, pattern = "mat$", full.names = TRUE, recursive = TRUE)
+  classifiedfiles <- list.files(classified_folder, pattern = "(mat|h5)$", full.names = TRUE, recursive = TRUE)
   classifiedfilename <- classifiedfiles[grepl(sample, classifiedfiles)]
 
   if (length(classifiedfilename) == 0) {
@@ -78,12 +78,7 @@ ifcb_extract_classified_images <- function(sample,
   }
 
   # Read classified file
-  if (use_python && scipy_available()) {
-    classified.mat <- ifcb_read_mat(classifiedfilename)
-  } else {
-    # Read the contents of the MAT file
-    classified.mat <- read_mat(classifiedfilename)
-  }
+  classified.mat <- read_class_file(classifiedfilename, use_python = use_python)
 
   # Get the list of ROI files and find the one matching the sample
   roifiles <- list.files(roi_folder, pattern=".roi$", full.names = TRUE, recursive = TRUE)
@@ -91,6 +86,11 @@ ifcb_extract_classified_images <- function(sample,
 
   if (length(roifilename) == 0) {
     stop("ROI file for sample not found")
+  }
+
+  # Warn if adhoc threshold requested for .h5 file (not available)
+  if (threshold == "adhoc" && tolower(tools::file_ext(classifiedfilename)) == "h5") {
+    stop("Adhoc threshold is not available for .h5 classification files. Use 'opt' or 'none' instead.")
   }
 
   # Extract taxa list based on the specified threshold

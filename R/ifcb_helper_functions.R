@@ -219,20 +219,21 @@ extract_parts <- function(filenames, tz = "UTC") {
 
 #' Summarize TreeBagger Classifier Results
 #'
-#' This function reads a TreeBagger classifier result file (`.mat` format) and summarizes
+#' This function reads a TreeBagger classifier result file (`.mat` or `.h5` format) and summarizes
 #' the number of targets in each class based on the classification scores and thresholds.
 #'
-#' @param classfile Character string specifying the path to the TreeBagger classifier result file (`.mat` format).
+#' @param classfile Character string specifying the path to the classifier result file (`.mat` or `.h5` format).
 #' @param adhocthresh Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
-#'                    If a single numeric value is provided, it is applied to all classes.
+#'                    If a single numeric value is provided, it is applied to all classes. Not available for `.h5` files.
+#' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
 #'
 #' @return A list containing three elements:
 #'   \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
 #'   \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 #' @export
-summarize_TBclass <- function(classfile, adhocthresh = NULL) {
-  data <- readMat(classfile, fixNames = FALSE)
+summarize_TBclass <- function(classfile, adhocthresh = NULL, use_python = FALSE) {
+  data <- read_class_file(classfile, use_python = use_python)
   class2useTB <- data$class2useTB
   TBscores <- data$TBscores
   TBclass <- data$TBclass
@@ -635,6 +636,56 @@ read_mat <- function(file_path, fixNames = FALSE) {
     }
   })
   mat_contents_converted
+}
+#' Read Classification File (.mat or .h5)
+#'
+#' Reads either a `.mat` or `.h5` classification file and returns a standardized
+#' named list using `.mat`-equivalent field names for backward compatibility.
+#'
+#' @param filepath Character. Path to the classification file (`.mat` or `.h5`).
+#' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
+#'
+#' @return A named list with elements:
+#'   \item{classifierName}{Character. The classifier name.}
+#'   \item{class2useTB}{Character vector. Class labels.}
+#'   \item{roinum}{Numeric vector. ROI numbers.}
+#'   \item{TBscores}{Numeric matrix. Classification scores (N x C).}
+#'   \item{TBclass}{Character vector. Winning class per ROI.}
+#'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
+#'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`).}
+#'
+#' @noRd
+read_class_file <- function(filepath, use_python = FALSE) {
+  ext <- tolower(tools::file_ext(filepath))
+
+  if (ext == "h5") {
+    if (!requireNamespace("hdf5r", quietly = TRUE)) {
+      stop("Package 'hdf5r' is required to read .h5 classification files. ",
+           "Install it with: install.packages('hdf5r')")
+    }
+
+    h5file <- hdf5r::H5File$new(filepath, mode = "r")
+    on.exit(h5file$close_all(), add = TRUE)
+
+    result <- list(
+      classifierName = if (h5file$exists("classifierName")) h5file[["classifierName"]]$read() else NA_character_,
+      class2useTB = h5file[["class_labels"]]$read(),
+      roinum = h5file[["roi_numbers"]]$read(),
+      TBscores = h5file[["output_scores"]]$read(),
+      TBclass = h5file[["class_labels_auto"]]$read(),
+      TBclass_above_threshold = h5file[["class_labels_above_threshold"]]$read(),
+      TBclass_above_adhocthresh = NULL
+    )
+
+    return(result)
+  }
+
+  # Default: read .mat file
+  if (use_python && scipy_available()) {
+    ifcb_read_mat(filepath)
+  } else {
+    read_mat(filepath, fixNames = FALSE)
+  }
 }
 #' Extract the Class from the First Row of Each worms_records Tibble
 #'

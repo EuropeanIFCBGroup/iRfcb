@@ -137,11 +137,11 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
 
       # Check if hdr_files is a single folder path or a vector of file paths
       if (length(mat_files) == 1 && file.info(mat_files)$isdir) {
-        mat_files <- list.files(mat_files, pattern = "D.*\\.mat", recursive = mat_recursive, full.names = TRUE)
+        mat_files <- list.files(mat_files, pattern = "D.*\\.(mat|h5)", recursive = mat_recursive, full.names = TRUE)
       }
 
-      # Extract date-time from class file paths
-      mat_sample_names <- sub(".*/(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", mat_files)
+      # Extract sample names from class file paths
+      mat_sample_names <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(mat_files))
     }
 
     # Find common sample names between HDR and class files

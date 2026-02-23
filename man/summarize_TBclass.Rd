@@ -4,13 +4,15 @@
 \alias{summarize_TBclass}
 \title{Summarize TreeBagger Classifier Results}
 \usage{
-summarize_TBclass(classfile, adhocthresh = NULL)
+summarize_TBclass(classfile, adhocthresh = NULL, use_python = FALSE)
 }
 \arguments{
-\item{classfile}{Character string specifying the path to the TreeBagger classifier result file (\code{.mat} format).}
+\item{classfile}{Character string specifying the path to the classifier result file (\code{.mat} or \code{.h5} format).}
 
 \item{adhocthresh}{Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
-If a single numeric value is provided, it is applied to all classes.}
+If a single numeric value is provided, it is applied to all classes. Not available for \code{.h5} files.}
+
+\item{use_python}{Logical. If \code{TRUE}, uses Python-based reading for \code{.mat} files. Default is \code{FALSE}.}
 }
 \value{
 A list containing three elements:
@@ -19,6 +21,6 @@ A list containing three elements:
 \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 }
 \description{
-This function reads a TreeBagger classifier result file (\code{.mat} format) and summarizes
+This function reads a TreeBagger classifier result file (\code{.mat} or \code{.h5} format) and summarizes
 the number of targets in each class based on the classification scores and thresholds.
 }
