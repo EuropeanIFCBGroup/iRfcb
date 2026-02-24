@@ -9,7 +9,12 @@
 #'
 #' @param png_file A character vector of paths to PNG files to classify.
 #' @param gradio_url A character string specifying the base URL of the Gradio
-#'   application. Default is `"https://ifcb.serve.scilifelab.se"`.
+#'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
+#'   example Hugging Face Space with limited resources intended for testing and
+#'   demonstration. For large-scale classification, deploy your own instance of
+#'   the classification app (source code:
+#'   \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+#'   pass its URL here.
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
@@ -59,7 +64,7 @@
 #' @export
 ifcb_classify_image <- function(
     png_file,
-    gradio_url = "https://ifcb.serve.scilifelab.se",
+    gradio_url = "https://irfcb-classify.hf.space",
     top_n = 1,
     model_name = "SMHI NIVA ResNet50 V5",
     apply_threshold = FALSE,

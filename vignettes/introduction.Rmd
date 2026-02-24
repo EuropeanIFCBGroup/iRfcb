@@ -154,7 +154,7 @@ To extract annotated images or classified results from MATLAB files, please see 
 
 ## Classify IFCB Images
 
-IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application.
+IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application. By default, the classification functions use a public example Space hosted on Hugging Face (`https://irfcb-classify.hf.space`). This Space has limited resources and is intended for testing and demonstration purposes. For large-scale or production classification, we recommend deploying your own instance of the [IFCB Classification App](https://github.com/anderstorstensson/ifcb-classification-app) with your own model and passing its URL via the `gradio_url` argument.
 
 ### Available Models
 
@@ -198,7 +198,7 @@ results <- ifcb_classify_image(png_files, verbose = FALSE)
 print(results)
 ```
 
-Both functions return a data frame with `file_name`, `class_name`, `score`, and `model_name` columns, and query the Gradio API at `https://ifcb.serve.scilifelab.se` by default. The `top_n` argument controls how many top predictions are returned per image, and `model_name` specifies which CNN model to use (default: `"SMHI NIVA ResNet50 V5"`).
+Both functions return a data frame with `file_name`, `class_name`, `score`, and `model_name` columns, and query the Gradio API at `https://irfcb-classify.hf.space` by default. The `top_n` argument controls how many top predictions are returned per image, and `model_name` specifies which CNN model to use (default: `"SMHI NIVA ResNet50 V5"`).
 
 ### Apply Per-Class Thresholds
 

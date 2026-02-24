@@ -7,7 +7,7 @@
 ifcb_save_classification(
   roi_file,
   output_folder,
-  gradio_url = "https://ifcb.serve.scilifelab.se",
+  gradio_url = "https://irfcb-classify.hf.space",
   model_name = "SMHI NIVA ResNet50 V5",
   verbose = TRUE,
   ...
@@ -21,7 +21,12 @@ output HDF5 file will be saved. The file is named automatically based on
 the sample name (e.g. \code{D20220522T003051_IFCB134_class.h5}).}
 
 \item{gradio_url}{A character string specifying the base URL of the Gradio
-application. Default is \code{"https://ifcb.serve.scilifelab.se"}.}
+application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
+example Hugging Face Space with limited resources intended for testing and
+demonstration. For large-scale classification, deploy your own instance of
+the classification app (source code:
+\url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+pass its URL here.}
 
 \item{model_name}{A character string specifying the name of the CNN model
 to use for classification. Default is \code{"SMHI NIVA ResNet50 V5"}. Use
