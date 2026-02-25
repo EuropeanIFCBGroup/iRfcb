@@ -187,7 +187,7 @@ ifcb_save_classification <- function(
     h5file <- hdf5r::H5File$new(output_path, mode = "w")
     on.exit(h5file$close_all(), add = TRUE)
 
-    h5file[["output_scores"]] <- score_matrix
+    h5file[["output_scores"]] <- t(score_matrix)
     h5file[["class_labels"]] <- class_labels
     h5file[["roi_numbers"]] <- roi_numbers
     h5file[["classifier_name"]] <- model_name
