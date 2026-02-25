@@ -25,7 +25,7 @@ test_that("ifcb_classify_sample classifies a real ROI file and returns non-NA re
   result <- ifcb_classify_sample(roi_file, verbose = FALSE)
 
   expect_true(is.data.frame(result))
-  expect_named(result, c("file_name", "class_name", "score", "model_name"))
+  expect_named(result, c("file_name", "class_name", "class_name_auto", "score", "model_name"))
   expect_gt(nrow(result), 0)
   expect_false(anyNA(result$class_name),
                label = "class_name must have no NAs when API is reachable")

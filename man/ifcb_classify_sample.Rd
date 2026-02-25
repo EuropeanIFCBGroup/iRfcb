@@ -9,7 +9,6 @@ ifcb_classify_sample(
   gradio_url = "https://irfcb-classify.hf.space",
   top_n = 1,
   model_name = "SMHI NIVA ResNet50 V5",
-  apply_threshold = FALSE,
   verbose = TRUE,
   ...
 )
@@ -33,12 +32,6 @@ predictions.}
 to use for classification. Default is \code{"SMHI NIVA ResNet50 V5"}. Use
 \code{\link[=ifcb_classify_models]{ifcb_classify_models()}} to list all available models.}
 
-\item{apply_threshold}{A logical value indicating whether to add a
-\code{class_name_above_threshold} column. When \code{TRUE}, per-class F2 optimal
-thresholds are fetched from the Gradio server; predictions scoring below
-the threshold for their class are labelled \code{"unclassified"}. Default is
-\code{FALSE}.}
-
 \item{verbose}{A logical value indicating whether to print progress messages.
 Default is \code{TRUE}.}
 
@@ -49,24 +42,26 @@ Default is \code{TRUE}.}
 A data frame with the following columns:
 \describe{
 \item{\code{file_name}}{The PNG file name of the classified image.}
-\item{\code{class_name}}{The predicted class name.}
+\item{\code{class_name}}{The predicted class name with per-class thresholds
+applied; \code{"unclassified"} if the score is below the threshold.}
+\item{\code{class_name_auto}}{The winning class name without any threshold
+applied (argmax of scores).}
 \item{\code{score}}{The prediction confidence score (0–1).}
 \item{\code{model_name}}{The name of the CNN model used for classification.}
-\item{\code{class_name_above_threshold}}{(Only when \code{apply_threshold = TRUE})
-Same as \code{class_name} when the score meets or exceeds the per-class
-threshold; \code{"unclassified"} otherwise.}
 }
-Images that could not be classified have \code{NA} in \code{class_name} and \code{score}.
+Images that could not be classified have \code{NA} in \code{class_name},
+\code{class_name_auto}, and \code{score}.
 When \code{top_n > 1}, multiple rows are returned per image (one per prediction).
 }
 \description{
 Extracts PNG images from an IFCB sample (\code{.roi} file) using
 \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} into a temporary directory, then classifies each
-image through a CNN model served by a Gradio application. The temporary
-directory is automatically removed when the function exits.
+image through a CNN model served by a Gradio application. Per-class F2
+optimal thresholds are applied automatically. The temporary directory is
+automatically removed when the function exits.
 }
 \details{
-To classify individual pre-extracted PNG files, use \code{\link[=ifcb_classify_image]{ifcb_classify_image()}}
+To classify individual pre-extracted PNG files, use \code{\link[=ifcb_classify_images]{ifcb_classify_images()}}
 directly.
 }
 \examples{
@@ -86,17 +81,11 @@ result <- ifcb_classify_sample(
   "path/to/D20220522T003051_IFCB134.roi",
   ROInumbers = c(1, 5, 10)
 )
-
-# Apply per-class thresholds
-result <- ifcb_classify_sample(
-  "path/to/D20220522T003051_IFCB134.roi",
-  apply_threshold = TRUE
-)
 }
 
 }
 \seealso{
-\code{\link[=ifcb_classify_image]{ifcb_classify_image()}} to classify pre-extracted PNG files
+\code{\link[=ifcb_classify_images]{ifcb_classify_images()}} to classify pre-extracted PNG files
 directly. \code{\link[=ifcb_classify_models]{ifcb_classify_models()}} to list available CNN models.
 \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} to extract PNG images from IFCB ROI files.
 }

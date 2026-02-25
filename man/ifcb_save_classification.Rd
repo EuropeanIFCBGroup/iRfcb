@@ -2,11 +2,12 @@
 % Please edit documentation in R/ifcb_save_classification.R
 \name{ifcb_save_classification}
 \alias{ifcb_save_classification}
-\title{Classify an IFCB Sample and Save Results as HDF5}
+\title{Classify an IFCB Sample and Save Results}
 \usage{
 ifcb_save_classification(
   roi_file,
   output_folder,
+  format = c("h5", "mat", "csv"),
   gradio_url = "https://irfcb-classify.hf.space",
   model_name = "SMHI NIVA ResNet50 V5",
   verbose = TRUE,
@@ -17,8 +18,13 @@ ifcb_save_classification(
 \item{roi_file}{A character string specifying the path to the \code{.roi} file.}
 
 \item{output_folder}{A character string specifying the directory where the
-output HDF5 file will be saved. The file is named automatically based on
-the sample name (e.g. \code{D20220522T003051_IFCB134_class.h5}).}
+output file will be saved. The file is named automatically based on
+the sample name (e.g. \code{D20220522T003051_IFCB134_class.h5},
+\code{D20220522T003051_IFCB134_class_v1.mat}, or
+\code{D20220522T003051_IFCB134.csv}).}
+
+\item{format}{A character string specifying the output format. One of
+\code{"h5"} (default), \code{"mat"}, or \code{"csv"}.}
 
 \item{gradio_url}{A character string specifying the base URL of the Gradio
 application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
@@ -39,42 +45,54 @@ Default is \code{TRUE}.}
 \code{ROInumbers}, \code{gamma}).}
 }
 \value{
-The path to the saved HDF5 file (invisibly).
+The path to the saved file (invisibly).
 }
 \description{
 Extracts PNG images from an IFCB \code{.roi} file, classifies each image via the
 Gradio API \code{predict_scores} endpoint (returning all class scores), fetches
-per-class thresholds, and writes the results in the IFCB Dashboard v3 HDF5
-classification format.
+per-class thresholds, and writes the results in the specified format.
 }
 \details{
-The output HDF5 file contains:
+Three output formats are supported:
 \describe{
-\item{\code{output_scores}}{Float64 N x C matrix of class scores (Dashboard-required).}
-\item{\code{class_labels}}{ASCII string vector of class names (Dashboard-required).}
-\item{\code{roi_numbers}}{Integer vector of ROI numbers (Dashboard-required).}
-\item{\code{classifierName}}{String, the model name used.}
-\item{\code{class_labels_auto}}{ASCII string vector (N), winning class per ROI
-(argmax of scores, no threshold applied).}
-\item{\code{class_labels_above_threshold}}{ASCII string vector (N), winning class
-or \code{"unclassified"} if below threshold.}
-\item{\code{thresholds}}{Float64 vector (C) of per-class thresholds.}
+\item{\code{"h5"}}{IFCB Dashboard v3 HDF5 format. Contains \code{output_scores},
+\code{class_labels}, \code{roi_numbers} (Dashboard-required), plus
+\code{classifier_name}, \code{class_name}, \code{class_name_auto}, and \code{thresholds}.
+Requires the \pkg{hdf5r} package.}
+\item{\code{"mat"}}{IFCB Dashboard v1 MATLAB format. Contains \code{class2useTB},
+\code{TBscores}, \code{roinum}, \code{TBclass}, \code{TBclass_above_threshold}, and
+\code{classifierName}. Requires Python with \pkg{scipy} and \pkg{numpy}.}
+\item{\code{"csv"}}{\code{ClassiPyR}-compatible CSV format with columns \code{file_name},
+\code{class_name} (threshold-applied), \code{class_name_auto} (winning class
+without threshold), and \code{score} (winning class confidence). See
+\url{https://github.com/EuropeanIFCBGroup/ClassiPyR} for details.}
 }
-
-Requires the \pkg{hdf5r} package (listed in \code{Suggests}).
 }
 \examples{
 \dontrun{
-# Classify a sample and save as HDF5
+# Classify a sample and save as HDF5 (default)
 ifcb_save_classification(
   "path/to/D20220522T003051_IFCB134.roi",
   output_folder = "output"
 )
-# Creates: output/D20220522T003051_IFCB134_class.h5
+
+# Save as Dashboard v1 .mat format
+ifcb_save_classification(
+  "path/to/D20220522T003051_IFCB134.roi",
+  output_folder = "output",
+  format = "mat"
+)
+
+# Save as CSV
+ifcb_save_classification(
+  "path/to/D20220522T003051_IFCB134.roi",
+  output_folder = "output",
+  format = "csv"
+)
 }
 
 }
 \seealso{
-\code{\link[=ifcb_classify_image]{ifcb_classify_image()}}, \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}},
+\code{\link[=ifcb_classify_images]{ifcb_classify_images()}}, \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}},
 \code{\link[=ifcb_classify_models]{ifcb_classify_models()}}
 }

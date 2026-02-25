@@ -6,7 +6,7 @@
 \usage{
 ifcb_extract_biovolumes(
   feature_files,
-  mat_files = NULL,
+  class_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
   class2use_file = NULL,
@@ -17,23 +17,27 @@ ifcb_extract_biovolumes(
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
-  mat_recursive = TRUE,
+  class_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
   verbose = TRUE,
-  mat_folder = deprecated()
+  mat_folder = deprecated(),
+  mat_files = deprecated(),
+  mat_recursive = deprecated()
 )
 }
 \arguments{
 \item{feature_files}{A path to a folder containing feature files or a character vector of file paths.}
 
-\item{mat_files}{(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.}
+\item{class_files}{(Optional) A character vector of full paths to classification or manual
+annotation files (\code{.mat}, \code{.h5}, or \code{.csv}), or a single path to a folder
+containing such files.}
 
 \item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 These filenames should match the \code{roi_number} assignment in the \code{feature_files} and can be
-used as a substitute for MATLAB files.}
+used as a substitute for classification files.}
 
 \item{custom_classes}{(Optional) A character vector of corresponding class labels for \code{custom_images}.}
 
@@ -48,13 +52,17 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{marine_only}{Logical. If \code{TRUE}, restricts the WoRMS search to marine taxa only. Default: \code{FALSE}.}
 
-\item{threshold}{Threshold for selecting classification information (\code{"opt"} for above-threshold classification, otherwise \code{"all"}). Default: \code{"opt"}.}
+\item{threshold}{A character string controlling which classification to use.
+\code{"opt"} (default) uses the threshold-applied classification, where
+predictions below the per-class optimal threshold are labeled
+\code{"unclassified"}. Any other value (e.g. \code{"all"}) uses the raw winning
+class without any threshold applied.}
 
 \item{multiblob}{Logical. If \code{TRUE}, includes multiblob features. Default: \code{FALSE}.}
 
 \item{feature_recursive}{Logical. If \code{TRUE}, searches recursively for feature files when \code{feature_files} is a folder. Default: \code{TRUE}.}
 
-\item{mat_recursive}{Logical. If \code{TRUE} and \code{mat_files} is a folder, searches recursively for MATLAB files in \code{mat_files}. Default: \code{TRUE}.}
+\item{class_recursive}{Logical. If \code{TRUE} and \code{class_files} is a folder, searches recursively for classification files. Default: \code{TRUE}.}
 
 \item{drop_zero_volume}{Logical. If \code{TRUE}, rows where \code{Biovolume} equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: \code{FALSE}.}
 
@@ -65,7 +73,13 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 \item{verbose}{Logical. If \code{TRUE}, prints progress messages. Default: \code{TRUE}.}
 
 \item{mat_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{mat_files} instead.}
+Use \code{class_files} instead.}
+
+\item{mat_files}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{class_files} instead.}
+
+\item{mat_recursive}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{class_recursive} instead.}
 }
 \value{
 A data frame containing:
@@ -89,9 +103,9 @@ depending on whether the class is identified as a diatom.
 \itemize{
 \item \strong{Classification Data Handling:}
 \itemize{
-\item If \code{mat_files} is provided, the function reads class annotations from MATLAB \code{.mat} files.
-\item If \code{custom_images} and \code{custom_classes} are supplied, they override MATLAB classification data (e.g. data from a CNN model).
-\item If both \code{mat_files} and \code{custom_images/custom_classes} are given, \code{mat_files} takes precedence.
+\item If \code{class_files} is provided, the function reads class annotations from \code{.mat}, \code{.h5}, or \code{.csv} files.
+\item If \code{custom_images} and \code{custom_classes} are supplied, they override classification file data (e.g. data from a CNN model).
+\item If both \code{class_files} and \code{custom_images/custom_classes} are given, \code{class_files} takes precedence.
 }
 \item \strong{MAT File Processing:}
 \itemize{
@@ -102,12 +116,12 @@ depending on whether the class is identified as a diatom.
 }
 \examples{
 \dontrun{
-# Using MATLAB results:
+# Using classification results:
 feature_files <- "data/features"
-mat_files <- "data/classified"
+class_files <- "data/classified"
 
 biovolume_df <- ifcb_extract_biovolumes(feature_files,
-                                        mat_files)
+                                        class_files)
 
 print(biovolume_df)
 

@@ -81,9 +81,9 @@ test_that("ifcb_save_classification produces a valid HDF5 file", {
   expect_true("output_scores" %in% names(h5file))
   expect_true("class_labels" %in% names(h5file))
   expect_true("roi_numbers" %in% names(h5file))
-  expect_true("classifierName" %in% names(h5file))
-  expect_true("class_labels_auto" %in% names(h5file))
-  expect_true("class_labels_above_threshold" %in% names(h5file))
+  expect_true("classifier_name" %in% names(h5file))
+  expect_true("class_name_auto" %in% names(h5file))
+  expect_true("class_name" %in% names(h5file))
   expect_true("thresholds" %in% names(h5file))
 
   scores <- h5file[["output_scores"]]$read()

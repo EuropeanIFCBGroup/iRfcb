@@ -2,7 +2,7 @@
 #'
 #' Queries the Gradio API to retrieve the names of all CNN models available
 #' for IFCB image classification. These model names can be passed to the
-#' `model_name` argument of [ifcb_classify_image()] and [ifcb_classify_sample()].
+#' `model_name` argument of [ifcb_classify_images()] and [ifcb_classify_sample()].
 #'
 #' @param gradio_url A character string specifying the base URL of the Gradio
 #'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
@@ -21,10 +21,10 @@
 #' print(models)
 #'
 #' # Use a specific model for classification
-#' result <- ifcb_classify_image("image.png", model_name = models[1])
+#' result <- ifcb_classify_images("image.png", model_name = models[1])
 #' }
 #'
-#' @seealso [ifcb_classify_image()], [ifcb_classify_sample()]
+#' @seealso [ifcb_classify_images()], [ifcb_classify_sample()]
 #'
 #' @export
 ifcb_classify_models <- function(

@@ -1,29 +1,33 @@
-#' Classify an IFCB Sample and Save Results as HDF5
+utils::globalVariables("save_classification_mat")
+#' Classify an IFCB Sample and Save Results
 #'
 #' Extracts PNG images from an IFCB `.roi` file, classifies each image via the
 #' Gradio API `predict_scores` endpoint (returning all class scores), fetches
-#' per-class thresholds, and writes the results in the IFCB Dashboard v3 HDF5
-#' classification format.
+#' per-class thresholds, and writes the results in the specified format.
 #'
-#' The output HDF5 file contains:
+#' Three output formats are supported:
 #' \describe{
-#'   \item{`output_scores`}{Float64 N x C matrix of class scores (Dashboard-required).}
-#'   \item{`class_labels`}{ASCII string vector of class names (Dashboard-required).}
-#'   \item{`roi_numbers`}{Integer vector of ROI numbers (Dashboard-required).}
-#'   \item{`classifierName`}{String, the model name used.}
-#'   \item{`class_labels_auto`}{ASCII string vector (N), winning class per ROI
-#'     (argmax of scores, no threshold applied).}
-#'   \item{`class_labels_above_threshold`}{ASCII string vector (N), winning class
-#'     or `"unclassified"` if below threshold.}
-#'   \item{`thresholds`}{Float64 vector (C) of per-class thresholds.}
+#'   \item{`"h5"`}{IFCB Dashboard v3 HDF5 format. Contains `output_scores`,
+#'     `class_labels`, `roi_numbers` (Dashboard-required), plus
+#'     `classifier_name`, `class_name`, `class_name_auto`, and `thresholds`.
+#'     Requires the \pkg{hdf5r} package.}
+#'   \item{`"mat"`}{IFCB Dashboard v1 MATLAB format. Contains `class2useTB`,
+#'     `TBscores`, `roinum`, `TBclass`, `TBclass_above_threshold`, and
+#'     `classifierName`. Requires Python with \pkg{scipy} and \pkg{numpy}.}
+#'   \item{`"csv"`}{`ClassiPyR`-compatible CSV format with columns `file_name`,
+#'     `class_name` (threshold-applied), `class_name_auto` (winning class
+#'     without threshold), and `score` (winning class confidence). See
+#'     \url{https://github.com/EuropeanIFCBGroup/ClassiPyR} for details.}
 #' }
-#'
-#' Requires the \pkg{hdf5r} package (listed in `Suggests`).
 #'
 #' @param roi_file A character string specifying the path to the `.roi` file.
 #' @param output_folder A character string specifying the directory where the
-#'   output HDF5 file will be saved. The file is named automatically based on
-#'   the sample name (e.g. `D20220522T003051_IFCB134_class.h5`).
+#'   output file will be saved. The file is named automatically based on
+#'   the sample name (e.g. `D20220522T003051_IFCB134_class.h5`,
+#'   `D20220522T003051_IFCB134_class_v1.mat`, or
+#'   `D20220522T003051_IFCB134.csv`).
+#' @param format A character string specifying the output format. One of
+#'   `"h5"` (default), `"mat"`, or `"csv"`.
 #' @param gradio_url A character string specifying the base URL of the Gradio
 #'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
 #'   example Hugging Face Space with limited resources intended for testing and
@@ -39,33 +43,53 @@
 #' @param ... Additional arguments passed to [ifcb_extract_pngs()] (e.g.
 #'   `ROInumbers`, `gamma`).
 #'
-#' @return The path to the saved HDF5 file (invisibly).
+#' @return The path to the saved file (invisibly).
 #'
 #' @examples
 #' \dontrun{
-#' # Classify a sample and save as HDF5
+#' # Classify a sample and save as HDF5 (default)
 #' ifcb_save_classification(
 #'   "path/to/D20220522T003051_IFCB134.roi",
 #'   output_folder = "output"
 #' )
-#' # Creates: output/D20220522T003051_IFCB134_class.h5
+#'
+#' # Save as Dashboard v1 .mat format
+#' ifcb_save_classification(
+#'   "path/to/D20220522T003051_IFCB134.roi",
+#'   output_folder = "output",
+#'   format = "mat"
+#' )
+#'
+#' # Save as CSV
+#' ifcb_save_classification(
+#'   "path/to/D20220522T003051_IFCB134.roi",
+#'   output_folder = "output",
+#'   format = "csv"
+#' )
 #' }
 #'
-#' @seealso [ifcb_classify_image()], [ifcb_classify_sample()],
+#' @seealso [ifcb_classify_images()], [ifcb_classify_sample()],
 #'   [ifcb_classify_models()]
 #'
 #' @export
 ifcb_save_classification <- function(
     roi_file,
     output_folder,
+    format = c("h5", "mat", "csv"),
     gradio_url = "https://irfcb-classify.hf.space",
     model_name = "SMHI NIVA ResNet50 V5",
     verbose = TRUE,
     ...) {
 
-  if (!requireNamespace("hdf5r", quietly = TRUE)) {
-    stop("Package 'hdf5r' is required for ifcb_save_classification(). ",
+  format <- match.arg(format)
+
+  if (format == "h5" && !requireNamespace("hdf5r", quietly = TRUE)) {
+    stop("Package 'hdf5r' is required for format = \"h5\". ",
          "Install it with: install.packages('hdf5r')")
+  }
+
+  if (format == "mat") {
+    check_python_and_module(c("scipy", "numpy"))
   }
 
   if (!file.exists(roi_file)) {
@@ -76,7 +100,11 @@ ifcb_save_classification <- function(
 
   # Derive output path from sample name
   sample_name <- sub("\\.[^.]+$", "", basename(roi_file))
-  output_path <- file.path(output_folder, paste0(sample_name, "_class.h5"))
+  output_path <- switch(format,
+    h5  = file.path(output_folder, paste0(sample_name, "_class.h5")),
+    mat = file.path(output_folder, paste0(sample_name, "_class_v1.mat")),
+    csv = file.path(output_folder, paste0(sample_name, ".csv"))
+  )
 
   # Extract PNGs to temp dir
   temp_dir <- file.path(tempdir(), paste0("ifcb_save_", sample_name))
@@ -150,20 +178,57 @@ ifcb_save_classification <- function(
     if (winning_score[i] >= thr) cls else "unclassified"
   }, character(1))
 
-  # Write HDF5
-  if (verbose) message("Writing HDF5 file: ", output_path)
-
   dir.create(output_folder, showWarnings = FALSE, recursive = TRUE)
-  h5file <- hdf5r::H5File$new(output_path, mode = "w")
-  on.exit(h5file$close_all(), add = TRUE)
 
-  h5file[["output_scores"]] <- score_matrix
-  h5file[["class_labels"]] <- class_labels
-  h5file[["roi_numbers"]] <- roi_numbers
-  h5file[["classifierName"]] <- model_name
-  h5file[["class_labels_auto"]] <- winning_class
-  h5file[["class_labels_above_threshold"]] <- class_above_threshold
-  h5file[["thresholds"]] <- thresholds_vec
+  # Write output in the requested format
+  if (format == "h5") {
+    if (verbose) message("Writing HDF5 file: ", output_path)
+
+    h5file <- hdf5r::H5File$new(output_path, mode = "w")
+    on.exit(h5file$close_all(), add = TRUE)
+
+    h5file[["output_scores"]] <- score_matrix
+    h5file[["class_labels"]] <- class_labels
+    h5file[["roi_numbers"]] <- roi_numbers
+    h5file[["classifier_name"]] <- model_name
+    h5file[["class_name_auto"]] <- winning_class
+    h5file[["class_name"]] <- class_above_threshold
+    h5file[["thresholds"]] <- thresholds_vec
+
+  } else if (format == "mat") {
+    if (verbose) message("Writing MAT file: ", output_path)
+
+    source_python(system.file("python", "save_class_mat.py", package = "iRfcb"))
+
+    save_classification_mat(
+      score_matrix = score_matrix,
+      class_labels = class_labels,
+      roi_numbers = roi_numbers,
+      winning_class = winning_class,
+      class_above_threshold = class_above_threshold,
+      model_name = model_name,
+      output_path = output_path
+    )
+
+  } else if (format == "csv") {
+    if (verbose) message("Writing CSV file: ", output_path)
+
+    # ClassiPyR-compatible format: file_name, class_name, score
+    # class_name uses threshold-applied classification
+    # class_name_auto is the winning class without thresholds
+    roi_padded <- sprintf("%05d", roi_numbers)
+    file_names <- paste0(sample_name, "_", roi_padded, ".png")
+
+    csv_df <- data.frame(
+      file_name = file_names,
+      class_name = class_above_threshold,
+      class_name_auto = winning_class,
+      score = winning_score,
+      stringsAsFactors = FALSE
+    )
+
+    utils::write.csv(csv_df, file = output_path, row.names = FALSE)
+  }
 
   if (verbose) message("Done. Saved ", n_images, " ROIs x ", length(class_labels),
                        " classes to: ", output_path)

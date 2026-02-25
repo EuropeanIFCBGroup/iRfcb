@@ -21,7 +21,7 @@ A character vector of available model names.
 \description{
 Queries the Gradio API to retrieve the names of all CNN models available
 for IFCB image classification. These model names can be passed to the
-\code{model_name} argument of \code{\link[=ifcb_classify_image]{ifcb_classify_image()}} and \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}}.
+\code{model_name} argument of \code{\link[=ifcb_classify_images]{ifcb_classify_images()}} and \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}}.
 }
 \examples{
 \dontrun{
@@ -30,10 +30,10 @@ models <- ifcb_classify_models()
 print(models)
 
 # Use a specific model for classification
-result <- ifcb_classify_image("image.png", model_name = models[1])
+result <- ifcb_classify_images("image.png", model_name = models[1])
 }
 
 }
 \seealso{
-\code{\link[=ifcb_classify_image]{ifcb_classify_image()}}, \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}}
+\code{\link[=ifcb_classify_images]{ifcb_classify_images()}}, \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}}
 }

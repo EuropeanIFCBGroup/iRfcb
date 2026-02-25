@@ -2,21 +2,28 @@
 
 ## New features
 
-* New function `ifcb_classify_image()` to classify one or more pre-extracted IFCB PNG images through a ResNet model served by a Gradio application, returning a data frame of predicted class names and confidence scores.
-* New function `ifcb_classify_sample()` to classify all images in a raw IFCB sample (`.roi` file) without prior PNG extraction. Internally extracts images to a temporary directory and delegates to `ifcb_classify_image()`.
+* New function `ifcb_classify_images()` to classify one or more pre-extracted IFCB PNG images through a CNN model served by a Gradio application, returning a data frame of predicted class names and confidence scores. Per-class thresholds are applied automatically.
+* New function `ifcb_classify_sample()` to classify all images in a raw IFCB sample (`.roi` file) without prior PNG extraction. Internally extracts images to a temporary directory and delegates to `ifcb_classify_images()`.
+* New function `ifcb_save_classification()` to classify IFCB samples via Gradio API and save results as HDF5 (`.h5`), MAT (`.mat`), or CSV (`.csv`) files.
+* New function `ifcb_classify_models()` to list available CNN models from a Gradio classification server.
+* Added HDF5 (`.h5`) and CSV (`.csv`) classification file support to `ifcb_extract_biovolumes()`, `ifcb_extract_classified_images()`, `ifcb_summarize_class_counts()`, `ifcb_summarize_biovolumes()`, and `summarize_TBclass()`, in addition to existing `.mat` support.
 
 ## Breaking changes
 
-* Image extraction functions (`ifcb_extract_pngs()`, `ifcb_extract_annotated_images()`, and `ifcb_extract_classified_images()`) now preserve raw pixel values by default (`normalize = FALSE`), producing images comparable to IFCB Dashboard and other standard IFCB software. Previously, pixel values were stretched to the full 0-255 range using min-max normalization. This change can affect classifier training results. Set `normalize = TRUE` to restore the previous behavior.
+* Image extraction functions (`ifcb_extract_pngs()`, `ifcb_extract_annotated_images()`, and `ifcb_extract_classified_images()`) now preserve raw pixel values by default (`normalize = FALSE`), producing images comparable to IFCB Dashboard and other standard IFCB software. Previously, pixel values were stretched to the full 0-255 range using min-max normalization. This change can affect classifier training results. Set `normalize = TRUE` to restore the previous behavior (#75).
 
 ## Minor improvements and fixes
 
+* `ifcb_create_manual_file()` now writes `class2use_auto` as a numeric matrix, matching the format produced by `ifcb-analysis` (#74).
 * Corrected the parameter description of `micron_factor` in `ifcb_psd()` and `ifcb_extract_biovolumes()`.
 * Corrected the parameter description of `skip_class` in `ifcb_extract_annotated_images()`.
 
 ## Deprecations
 
-* `ifcb_run_image_gallery()` is deprecated in favour of `ClassiPyR::run_app()`. See <https://europeanifcbgroup.github.io/ClassiPyR/> for more information.
+* `ifcb_run_image_gallery()` is deprecated in favor of `ClassiPyR::run_app()`. See <https://europeanifcbgroup.github.io/ClassiPyR/> for more information.
+* Deprecated arguments:
+  * `mat_files` in `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` (replaced by `class_files`).
+  * `mat_recursive` in `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` (replaced by `class_recursive`).
 
 # iRfcb 0.7.0
 

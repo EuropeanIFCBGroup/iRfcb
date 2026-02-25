@@ -114,8 +114,9 @@ skip_if_resource_unavailable <- function(url, msg = NULL) {
     res <- curl::curl_fetch_memory(url)
     status <- res$status_code
 
-    # Treat ONLY 2xx as success
-    status >= 200 && status < 300
+    # Treat 2xx and 405 (Method Not Allowed) as available;
+    # 405 means the server is alive but the endpoint requires POST
+    (status >= 200 && status < 300) || status == 405
   }, error = function(e) FALSE)
 
   if (!ok) {

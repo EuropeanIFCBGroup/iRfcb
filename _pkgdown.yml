@@ -94,8 +94,10 @@ reference:
 - subtitle: Image classification
   desc: Functions for classifying IFCB images through a Gradio application.
   contents:
-  - '`ifcb_classify_image`'
+  - '`ifcb_classify_images`'
+  - '`ifcb_classify_models`'
   - '`ifcb_classify_sample`'
+  - '`ifcb_save_classification`'
 - subtitle: Python dependency ![Python Powered](../python-powered-w-70x28.png)
   desc: These functions depend on a working Python installation. For more information, see the [README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
   contents:

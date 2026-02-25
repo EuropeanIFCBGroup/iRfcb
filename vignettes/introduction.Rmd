@@ -181,7 +181,7 @@ print(results)
 
 ### Classify Pre-extracted PNG Images
 
-If images have already been extracted, pass a vector of PNG file paths to `ifcb_classify_image()`:
+If images have already been extracted, pass a vector of PNG file paths to `ifcb_classify_images()`:
 
 ```{r, eval=FALSE}
 # List extracted PNG files
@@ -192,36 +192,41 @@ png_files <- list.files(
 )
 
 # Classify images
-results <- ifcb_classify_image(png_files, verbose = FALSE)
+results <- ifcb_classify_images(png_files, verbose = FALSE)
 
 # Print result
 print(results)
 ```
 
-Both functions return a data frame with `file_name`, `class_name`, `score`, and `model_name` columns, and query the Gradio API at `https://irfcb-classify.hf.space` by default. The `top_n` argument controls how many top predictions are returned per image, and `model_name` specifies which CNN model to use (default: `"SMHI NIVA ResNet50 V5"`).
+Both functions return a data frame with `file_name`, `class_name`, `class_name_auto`, `score`, and `model_name` columns, and query the Gradio API at `https://irfcb-classify.hf.space` by default. Per-class F2 optimal thresholds are always applied: `class_name` contains the threshold-applied classification (labeled `"unclassified"` when below threshold), while `class_name_auto` contains the winning class without any threshold. The `top_n` argument controls how many top predictions are returned per image, and `model_name` specifies which CNN model to use (default: `"SMHI NIVA ResNet50 V5"`).
 
-### Apply Per-Class Thresholds
+### Save Classification Results
 
-Set `apply_threshold = TRUE` to add a `class_name_above_threshold` column. Predictions scoring below the per-class F2 optimal threshold are labelled `"unclassified"`:
-
-```{r, eval=FALSE}
-result <- ifcb_classify_sample(
-  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
-  apply_threshold = TRUE,
-  verbose = FALSE
-)
-```
-
-### Save Classification as HDF5
-
-`ifcb_save_classification()` classifies all images in a `.roi` file and saves the full score matrix in the IFCB Dashboard v3 HDF5 format (requires the `hdf5r` package):
+`ifcb_save_classification()` classifies all images in a `.roi` file and saves the full score matrix. Three output formats are supported via the `format` argument:
 
 ```{r, eval=FALSE}
+# HDF5 (default) - IFCB Dashboard v3 format (requires hdf5r package)
 ifcb_save_classification(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
   output_folder = "output"
 )
 # Creates: output/D20230314T001205_IFCB134_class.h5
+
+# MAT - IFCB Dashboard v1 format (requires Python with scipy)
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output",
+  format = "mat"
+)
+# Creates: output/D20230314T001205_IFCB134_class_v1.mat
+
+# CSV - ClassiPyR-compatible format
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output",
+  format = "csv"
+)
+# Creates: output/D20230314T001205_IFCB134.csv
 ```
 
 The output file contains `output_scores` (N x C matrix), `class_labels`, `roi_numbers`, per-class `thresholds`, and `class_labels_above_threshold`.

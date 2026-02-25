@@ -1,17 +1,17 @@
-test_that("ifcb_classify_image errors when a PNG file does not exist", {
+test_that("ifcb_classify_images errors when a PNG file does not exist", {
   expect_error(
-    ifcb_classify_image("nonexistent.png"),
+    ifcb_classify_images("nonexistent.png"),
     "PNG file\\(s\\) not found"
   )
 })
 
-test_that("ifcb_classify_image errors when any path in a vector does not exist", {
+test_that("ifcb_classify_images errors when any path in a vector does not exist", {
   skip_on_cran()
   tmp <- tempfile(fileext = ".png")
   writeBin(raw(0), tmp)
   on.exit(unlink(tmp))
   expect_error(
-    ifcb_classify_image(c(tmp, "missing.png")),
+    ifcb_classify_images(c(tmp, "missing.png")),
     "PNG file\\(s\\) not found"
   )
 })
@@ -122,7 +122,7 @@ test_that("gradio_parse_predictions errors on unrecognised HTML", {
 
 # ── Integration test (requires network access) ────────────────────────────────
 
-test_that("ifcb_classify_image classifies a real PNG and returns non-NA results", {
+test_that("ifcb_classify_images classifies a real PNG and returns non-NA results", {
   skip_on_cran()
   skip_if_offline()
   skip_if_resource_unavailable(
@@ -144,18 +144,20 @@ test_that("ifcb_classify_image classifies a real PNG and returns non-NA results"
   png_files <- list.files(png_dir, pattern = "\\.png$",
                           full.names = TRUE, recursive = TRUE)
 
-  result <- ifcb_classify_image(png_files, verbose = FALSE)
+  result <- ifcb_classify_images(png_files, verbose = FALSE)
 
   expect_true(is.data.frame(result))
-  expect_named(result, c("file_name", "class_name", "score", "model_name"))
+  expect_named(result, c("file_name", "class_name", "class_name_auto", "score", "model_name"))
   expect_equal(nrow(result), length(png_files))
   expect_false(anyNA(result$class_name),
                label = "class_name must have no NAs when API is reachable")
+  expect_false(anyNA(result$class_name_auto),
+               label = "class_name_auto must have no NAs when API is reachable")
   expect_true(all(result$score >= 0 & result$score <= 1),
               label = "scores must be in [0, 1]")
 })
 
-test_that("ifcb_classify_image with apply_threshold adds threshold column", {
+test_that("ifcb_classify_images applies thresholds: class_name may differ from class_name_auto", {
   skip_on_cran()
   skip_if_offline()
   skip_if_resource_unavailable(
@@ -177,11 +179,12 @@ test_that("ifcb_classify_image with apply_threshold adds threshold column", {
                           full.names = TRUE, recursive = TRUE)
 
   # Only test with first 2 images for speed
-  result <- ifcb_classify_image(png_files[1:2], apply_threshold = TRUE,
-                                verbose = FALSE)
+  result <- ifcb_classify_images(png_files[1:2], verbose = FALSE)
 
   expect_true(is.data.frame(result))
-  expect_true("class_name_above_threshold" %in% names(result))
-  expect_true(all(result$class_name_above_threshold %in%
-                    c(result$class_name, "unclassified") | is.na(result$class_name_above_threshold)))
+  expect_true("class_name" %in% names(result))
+  expect_true("class_name_auto" %in% names(result))
+  # class_name is either the same as class_name_auto or "unclassified"
+  expect_true(all(result$class_name %in%
+                    c(result$class_name_auto, "unclassified") | is.na(result$class_name)))
 })

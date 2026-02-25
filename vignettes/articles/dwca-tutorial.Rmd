@@ -110,7 +110,7 @@ You can also apply this process to automatically classified data by setting the 
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
-  mat_files = "data/manual",
+  class_files = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
   verbose = FALSE

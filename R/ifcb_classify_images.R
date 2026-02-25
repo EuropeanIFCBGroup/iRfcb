@@ -2,7 +2,9 @@
 #'
 #' Classifies one or more pre-extracted IFCB PNG images through a CNN model
 #' served by a Gradio application. Each PNG is uploaded to the Gradio server
-#' and the prediction result is returned as a data frame.
+#' and the prediction result is returned as a data frame. Per-class F2 optimal
+#' thresholds are applied automatically; predictions scoring below the
+#' threshold for their class are labeled `"unclassified"` in `class_name`.
 #'
 #' To classify all images in a raw IFCB sample (`.roi` file) without first
 #' extracting them manually, use [ifcb_classify_sample()] instead.
@@ -21,39 +23,32 @@
 #' @param model_name A character string specifying the name of the CNN model
 #'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
 #'   [ifcb_classify_models()] to list all available models.
-#' @param apply_threshold A logical value indicating whether to add a
-#'   `class_name_above_threshold` column. When `TRUE`, per-class F2 optimal
-#'   thresholds are fetched from the Gradio server; predictions scoring below
-#'   the threshold for their class are labelled `"unclassified"`. Default is
-#'   `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
 #'
 #' @return A data frame with the following columns:
 #'   \describe{
 #'     \item{`file_name`}{The PNG file name of the classified image.}
-#'     \item{`class_name`}{The predicted class name.}
+#'     \item{`class_name`}{The predicted class name with per-class thresholds
+#'       applied; `"unclassified"` if the score is below the threshold.}
+#'     \item{`class_name_auto`}{The winning class name without any threshold
+#'       applied (argmax of scores).}
 #'     \item{`score`}{The prediction confidence score (0–1).}
 #'     \item{`model_name`}{The name of the CNN model used for classification.}
-#'     \item{`class_name_above_threshold`}{(Only when `apply_threshold = TRUE`)
-#'       Same as `class_name` when the score meets or exceeds the per-class
-#'       threshold; `"unclassified"` otherwise.}
 #'   }
-#'   Images that could not be classified have `NA` in `class_name` and `score`.
+#'   Images that could not be classified have `NA` in `class_name`,
+#'   `class_name_auto`, and `score`.
 #'   When `top_n > 1`, multiple rows are returned per image (one per prediction).
 #'
 #' @examples
 #' \dontrun{
 #' # Classify a single pre-extracted PNG
-#' result <- ifcb_classify_image("path/to/D20220522T003051_IFCB134_00001.png")
+#' result <- ifcb_classify_images("path/to/D20220522T003051_IFCB134_00001.png")
 #'
 #' # Classify several PNGs at once
 #' pngs <- list.files("path/to/png_folder", pattern = "\\.png$",
 #'                    full.names = TRUE)
-#' result <- ifcb_classify_image(pngs, top_n = 3)
-#'
-#' # Apply per-class thresholds
-#' result <- ifcb_classify_image(pngs, apply_threshold = TRUE)
+#' result <- ifcb_classify_images(pngs, top_n = 3)
 #' }
 #'
 #' @seealso [ifcb_classify_sample()] to classify all images in a raw IFCB
@@ -62,12 +57,11 @@
 #'   IFCB ROI files.
 #'
 #' @export
-ifcb_classify_image <- function(
+ifcb_classify_images <- function(
     png_file,
     gradio_url = "https://irfcb-classify.hf.space",
     top_n = 1,
     model_name = "SMHI NIVA ResNet50 V5",
-    apply_threshold = FALSE,
     verbose = TRUE) {
 
   missing_files <- png_file[!file.exists(png_file)]
@@ -77,12 +71,9 @@ ifcb_classify_image <- function(
 
   gradio_url <- sub("/+$", "", gradio_url)
 
-  # Fetch thresholds once if needed
-  thresholds <- NULL
-  if (apply_threshold) {
-    if (verbose) message("Fetching per-class thresholds...")
-    thresholds <- gradio_get_thresholds(gradio_url, model_name)
-  }
+  # Fetch per-class thresholds
+  if (verbose) message("Fetching per-class thresholds...")
+  thresholds <- gradio_get_thresholds(gradio_url, model_name)
 
   if (verbose) message("Classifying ", length(png_file), " image(s)...")
 
@@ -95,19 +86,19 @@ ifcb_classify_image <- function(
     tryCatch({
       predictions <- gradio_classify_png(png_path, gradio_url, top_n, model_name)
       data.frame(
-        file_name  = file_name,
-        class_name = predictions$class_name,
-        score      = predictions$score,
-        model_name = model_name,
+        file_name       = file_name,
+        class_name_auto = predictions$class_name,
+        score           = predictions$score,
+        model_name      = model_name,
         stringsAsFactors = FALSE
       )
     }, error = function(e) {
       warning("Failed to classify image '", file_name, "': ", e$message)
       data.frame(
-        file_name  = file_name,
-        class_name = NA_character_,
-        score      = NA_real_,
-        model_name = model_name,
+        file_name       = file_name,
+        class_name_auto = NA_character_,
+        score           = NA_real_,
+        model_name      = model_name,
         stringsAsFactors = FALSE
       )
     })
@@ -117,21 +108,21 @@ ifcb_classify_image <- function(
 
   result <- do.call(rbind, results_list)
 
-  if (apply_threshold && !is.null(thresholds)) {
-    result$class_name_above_threshold <- vapply(
-      seq_len(nrow(result)), function(i) {
-        cls <- result$class_name[i]
-        scr <- result$score[i]
-        if (is.na(cls) || is.na(scr)) return(NA_character_)
-        thr <- thresholds$thresholds[cls]
-        if (is.null(thr) || is.na(thr)) return(cls)
-        if (scr >= thr) cls else "unclassified"
-      },
-      character(1)
-    )
-  }
+  # Apply per-class thresholds
+  result$class_name <- vapply(
+    seq_len(nrow(result)), function(i) {
+      cls <- result$class_name_auto[i]
+      scr <- result$score[i]
+      if (is.na(cls) || is.na(scr)) return(NA_character_)
+      thr <- thresholds$thresholds[cls]
+      if (is.null(thr) || is.na(thr)) return(cls)
+      if (scr >= thr) cls else "unclassified"
+    },
+    character(1)
+  )
 
-  result
+  # Reorder columns: file_name, class_name, class_name_auto, score, model_name
+  result[, c("file_name", "class_name", "class_name_auto", "score", "model_name")]
 }
 
 # ── Private Gradio API helpers ────────────────────────────────────────────────

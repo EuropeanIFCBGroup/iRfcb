@@ -637,12 +637,12 @@ read_mat <- function(file_path, fixNames = FALSE) {
   })
   mat_contents_converted
 }
-#' Read Classification File (.mat or .h5)
+#' Read Classification File (.mat, .h5, or .csv)
 #'
-#' Reads either a `.mat` or `.h5` classification file and returns a standardized
+#' Reads a `.mat`, `.h5`, or `.csv` classification file and returns a standardized
 #' named list using `.mat`-equivalent field names for backward compatibility.
 #'
-#' @param filepath Character. Path to the classification file (`.mat` or `.h5`).
+#' @param filepath Character. Path to the classification file (`.mat`, `.h5`, or `.csv`).
 #' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
 #'
 #' @return A named list with elements:
@@ -652,11 +652,54 @@ read_mat <- function(file_path, fixNames = FALSE) {
 #'   \item{TBscores}{Numeric matrix. Classification scores (N x C).}
 #'   \item{TBclass}{Character vector. Winning class per ROI.}
 #'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
-#'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`).}
+#'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`/`.csv`).}
 #'
 #' @noRd
 read_class_file <- function(filepath, use_python = FALSE) {
   ext <- tolower(tools::file_ext(filepath))
+
+  if (ext == "csv") {
+    csv_data <- utils::read.csv(filepath, stringsAsFactors = FALSE)
+
+    # Extract ROI numbers from file_name column (e.g. ..._00001.png -> 1)
+    roi_numbers <- as.integer(
+      sub(".*_(\\d+)\\.png$", "\\1", csv_data$file_name)
+    )
+
+    class_labels <- sort(unique(csv_data$class_name))
+
+    # Build a score matrix from the winning score if available
+    n_rois <- nrow(csv_data)
+    n_classes <- length(class_labels)
+    score_matrix <- matrix(0, nrow = n_rois, ncol = n_classes)
+    colnames(score_matrix) <- class_labels
+
+    if ("score" %in% colnames(csv_data)) {
+      class_idx <- match(csv_data$class_name, class_labels)
+      for (i in seq_len(n_rois)) {
+        score_matrix[i, class_idx[i]] <- csv_data$score[i]
+      }
+    }
+
+    # class_name is threshold-applied; class_name_auto is winning class
+    tb_class <- if ("class_name_auto" %in% colnames(csv_data)) {
+      csv_data$class_name_auto
+    } else {
+      csv_data$class_name
+    }
+
+    result <- list(
+      classifierName = NA_character_,
+      class2useTB = class_labels,
+      roinum = roi_numbers,
+      TBscores = score_matrix,
+      TBclass = tb_class,
+      TBclass_above_threshold = csv_data$class_name,
+      TBclass_above_adhocthresh = NULL
+    )
+
+    return(result)
+  }
 
   if (ext == "h5") {
     if (!requireNamespace("hdf5r", quietly = TRUE)) {
@@ -667,13 +710,36 @@ read_class_file <- function(filepath, use_python = FALSE) {
     h5file <- hdf5r::H5File$new(filepath, mode = "r")
     on.exit(h5file$close_all(), add = TRUE)
 
+    # Read classifier name (support both new and legacy field names)
+    classifier_name <- if (h5file$exists("classifier_name")) {
+      h5file[["classifier_name"]]$read()
+    } else if (h5file$exists("classifierName")) {
+      h5file[["classifierName"]]$read()
+    } else {
+      NA_character_
+    }
+
+    # Read class_name_auto (fallback to legacy class_labels_auto)
+    class_auto <- if (h5file$exists("class_name_auto")) {
+      h5file[["class_name_auto"]]$read()
+    } else {
+      h5file[["class_labels_auto"]]$read()
+    }
+
+    # Read class_name (fallback to legacy class_labels_above_threshold)
+    class_threshold <- if (h5file$exists("class_name")) {
+      h5file[["class_name"]]$read()
+    } else {
+      h5file[["class_labels_above_threshold"]]$read()
+    }
+
     result <- list(
-      classifierName = if (h5file$exists("classifierName")) h5file[["classifierName"]]$read() else NA_character_,
+      classifierName = classifier_name,
       class2useTB = h5file[["class_labels"]]$read(),
       roinum = h5file[["roi_numbers"]]$read(),
       TBscores = h5file[["output_scores"]]$read(),
-      TBclass = h5file[["class_labels_auto"]]$read(),
-      TBclass_above_threshold = h5file[["class_labels_above_threshold"]]$read(),
+      TBclass = class_auto,
+      TBclass_above_threshold = class_threshold,
       TBclass_above_adhocthresh = NULL
     )
 
