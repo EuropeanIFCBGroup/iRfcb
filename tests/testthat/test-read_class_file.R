@@ -3,7 +3,6 @@
 test_data_zip <- test_path("test_data/test_data.zip")
 temp_dir <- file.path(tempdir(), "read_class_file_tests")
 utils::unzip(test_data_zip, exdir = temp_dir)
-withr::defer(unlink(temp_dir, recursive = TRUE), testthat::teardown_env())
 
 mat_file <- file.path(temp_dir, "test_data", "class", "class2022_v1",
                       "D20220522T003051_IFCB134_class_v1.mat")
