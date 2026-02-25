@@ -11,7 +11,7 @@ ifcb_classify_models(gradio_url = "https://irfcb-classify.hf.space")
 application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
 example Hugging Face Space with limited resources intended for testing and
 demonstration. For large-scale classification, deploy your own instance of
-the classification app (source code:
+the classification app with your own model (source code:
 \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
 pass its URL here.}
 }

@@ -55,11 +55,11 @@ per-class thresholds, and writes the results in the specified format.
 \details{
 Three output formats are supported:
 \describe{
-\item{\code{"h5"}}{IFCB Dashboard v3 HDF5 format. Contains \code{output_scores},
+\item{\code{"h5"}}{IFCB Dashboard class_scores v3 HDF5 format. Contains \code{output_scores},
 \code{class_labels}, \code{roi_numbers} (Dashboard-required), plus
 \code{classifier_name}, \code{class_name}, \code{class_name_auto}, and \code{thresholds}.
 Requires the \pkg{hdf5r} package.}
-\item{\code{"mat"}}{IFCB Dashboard v1 MATLAB format. Contains \code{class2useTB},
+\item{\code{"mat"}}{IFCB Dashboard class_scores v1 MATLAB format. Contains \code{class2useTB},
 \code{TBscores}, \code{roinum}, \code{TBclass}, \code{TBclass_above_threshold}, and
 \code{classifierName}. Requires Python with \pkg{scipy} and \pkg{numpy}.}
 \item{\code{"csv"}}{\code{ClassiPyR}-compatible CSV format with columns \code{file_name},

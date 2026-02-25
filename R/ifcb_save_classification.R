@@ -7,11 +7,11 @@ utils::globalVariables("save_classification_mat")
 #'
 #' Three output formats are supported:
 #' \describe{
-#'   \item{`"h5"`}{IFCB Dashboard v3 HDF5 format. Contains `output_scores`,
+#'   \item{`"h5"`}{IFCB Dashboard class_scores v3 HDF5 format. Contains `output_scores`,
 #'     `class_labels`, `roi_numbers` (Dashboard-required), plus
 #'     `classifier_name`, `class_name`, `class_name_auto`, and `thresholds`.
 #'     Requires the \pkg{hdf5r} package.}
-#'   \item{`"mat"`}{IFCB Dashboard v1 MATLAB format. Contains `class2useTB`,
+#'   \item{`"mat"`}{IFCB Dashboard class_scores v1 MATLAB format. Contains `class2useTB`,
 #'     `TBscores`, `roinum`, `TBclass`, `TBclass_above_threshold`, and
 #'     `classifierName`. Requires Python with \pkg{scipy} and \pkg{numpy}.}
 #'   \item{`"csv"`}{`ClassiPyR`-compatible CSV format with columns `file_name`,
