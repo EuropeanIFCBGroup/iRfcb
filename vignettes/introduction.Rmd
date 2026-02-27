@@ -9,9 +9,9 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-is_cran <- identical(Sys.getenv("NOT_CRAN"), "false")
+NOT_CRAN <- identical(Sys.getenv("NOT_CRAN"), "true")
 knitr::opts_chunk$set(
-  eval = !is_cran
+  eval = NOT_CRAN
 )
 ```
 
