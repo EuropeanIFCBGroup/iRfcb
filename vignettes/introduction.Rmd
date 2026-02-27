@@ -154,7 +154,7 @@ To extract annotated images or classified results from MATLAB files, please see 
 
 ## Classify IFCB Images
 
-IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application. By default, the classification functions use a public example Space hosted on Hugging Face (`https://irfcb-classify.hf.space`). This Space has limited resources and is intended for testing and demonstration purposes. For large-scale or production classification, we recommend deploying your own instance of the [IFCB Classification App](https://github.com/anderstorstensson/ifcb-classification-app) with your own model and passing its URL via the `gradio_url` argument.
+IFCB images can be classified directly in R using a CNN model served by a [Gradio](https://www.gradio.app/) application. By default, the classification functions use a public example Space hosted on Hugging Face (`https://irfcb-classify.hf.space`). This Space has limited resources and is intended for testing and demonstration purposes. For large-scale or production classification, we recommend deploying your own instance of the [IFCB Classification App](https://github.com/EuropeanIFCBGroup/ifcb-inference-app) with your own model and passing its URL via the `gradio_url` argument.
 
 ### Available Models
 

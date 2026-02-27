@@ -53,7 +53,9 @@ ifcb_extract_annotated_images(
 
 \item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
 
-\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
+\item{old_adc}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Previously used to indicate old ADC format. ADC format is now auto-detected
+from the HDR file and column count. This parameter is ignored.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 

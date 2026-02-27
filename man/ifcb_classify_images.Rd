@@ -20,7 +20,7 @@ application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
 example Hugging Face Space with limited resources intended for testing and
 demonstration. For large-scale classification, deploy your own instance of
 the classification app (source code:
-\url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+\url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 pass its URL here.}
 
 \item{top_n}{An integer specifying the number of top predictions to return
