@@ -24,7 +24,7 @@ def create_and_save_mat_structure(classlist_length, class2use_manual, output_pat
     ))
 
     # Create an empty class2use_auto array
-    class2use_auto = np.array([], dtype=object).reshape(0, 0)
+    class2use_auto = np.array([], dtype=float).reshape(0, 0)
 
     # Create the dictionary structure for the .mat file
     mat_structure = {

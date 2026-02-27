@@ -51,7 +51,7 @@ ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quie
 
   # Parse CSV
   df <- tryCatch(
-    readr::read_csv(csv_content,
+    readr::read_csv(I(csv_content),
                     show_col_types = FALSE,
                     progress = FALSE,
                     col_types = cols(.default = col_character())),

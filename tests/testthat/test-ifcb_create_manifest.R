@@ -17,6 +17,8 @@ test_that("ifcb_create_manifest creates MANIFEST.txt correctly", {
 
   # Expected content
   expected_content <- c(
+    "class/class2022_csv/D20220522T003051_IFCB134.csv [215 bytes]",
+    "class/class2022_h5/D20220522T003051_IFCB134_class.h5 [24,544 bytes]",
     "class/class2022_v1/D20220522T003051_IFCB134_class_v1.mat [1,552 bytes]",
     "config/class2use.mat [2,151 bytes]",
     "data/D20220522T000439_IFCB134.adc [1,688 bytes]",
@@ -56,6 +58,8 @@ test_that("ifcb_create_manifest excludes existing MANIFEST.txt when specified", 
 
   # Expected content (should not include the initial MANIFEST.txt file)
   expected_content <- c(
+    "class/class2022_csv/D20220522T003051_IFCB134.csv [215 bytes]",
+    "class/class2022_h5/D20220522T003051_IFCB134_class.h5 [24,544 bytes]",
     "class/class2022_v1/D20220522T003051_IFCB134_class_v1.mat [1,552 bytes]",
     "config/class2use.mat [2,151 bytes]",
     "data/D20220522T000439_IFCB134.adc [1,688 bytes]",
@@ -96,8 +100,8 @@ test_that("ifcb_create_manifest includes existing MANIFEST.txt when specified", 
   # Check if the MANIFEST is included in the file
   expect_true(any(grepl("MANIFEST.txt", manifest_content)))
 
-  # Check that all elements are in the file
-  expect_length(manifest_content, 15)
+  # Check that all elements are in the file (16 data files + 1 MANIFEST.txt)
+  expect_length(manifest_content, 17)
 })
 
 test_that("ifcb_create_manifest fails gracefully", {

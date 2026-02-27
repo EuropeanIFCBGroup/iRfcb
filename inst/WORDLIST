@@ -31,6 +31,9 @@ Ferrybox
 Figshare
 FlowCytobot
 GBIF
+GeoPackage
+Gradio
+HDF
 HDR
 HH
 HHMMSS
@@ -70,6 +73,7 @@ Ostend
 PMT
 POSIXct
 PSD
+Pre
 Protists
 README
 ROI
@@ -110,6 +114,7 @@ Zenodo
 adc
 adhoc
 al
+argmax
 associatedMedia
 autoclass
 autotrophic

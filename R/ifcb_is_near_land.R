@@ -6,7 +6,7 @@
 #' @param latitudes Numeric vector of latitudes for positions.
 #' @param longitudes Numeric vector of longitudes for positions. Must be the same length as `latitudes`.
 #' @param distance Buffer distance (in meters) from the coastline to consider "near land." Default is 500 meters.
-#' @param shape Optional path to a shapefile (`.shp` or `.gpkg`) containing coastline data. If provided,
+#' @param shape Optional path to a spatial file (`.shp` shapefile or `.gpkg` GeoPackage) containing coastline data. If provided,
 #'   this file will be used instead of the default Natural Earth 1:10m land vectors.
 #'   A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 #'   Alternatively, you can retrieve a more detailed European coastline automatically by
@@ -19,8 +19,8 @@
 #' @param remove_small_islands Logical indicating whether to remove small islands from
 #'   the coastline. Useful in archipelagos. Default is `TRUE`.
 #' @param small_island_threshold Area threshold in square meters below which islands
-#'   will be considered small and removed, if remove_small_islands is set to `TRUE`. Default is 2 square km.
-#' @param plot A boolean indicating whether to plot the points, land polygon and buffer. Default is `FALSE`.
+#'   will be considered small and removed, if remove_small_islands is set to `TRUE`. Default is 2,000,000 (2 km^2).
+#' @param plot A logical indicating whether to plot the points, land polygon and buffer. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param utm_zone `r lifecycle::badge("deprecated")`
 #'   This argument is deprecated. UTM zones are now determined automatically based on the longitude of the input positions.
@@ -132,7 +132,7 @@ ifcb_is_near_land <- function(latitudes,
 
         # set up progress bar
         if (verbose && n_chunks > 0) {
-          cat("Downloading EEA coastline data...\n")
+          message("Downloading EEA coastline data...")
           pb <- txtProgressBar(min = 0, max = n_chunks, style = 3)
         }
 

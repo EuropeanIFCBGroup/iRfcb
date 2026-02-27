@@ -64,6 +64,26 @@ test_that("ifcb_extract_pngs works correctly", {
                  "images were printed without a scale bar because the scale bar was too long for the image")
   expect_true(file.exists(file.path(out_folder, "D20220522T003051_IFCB134", "D20220522T003051_IFCB134_00002.png")))
 
+  # Remove folder
+  unlink(out_folder, recursive = TRUE)
+
+  # Test normalize = FALSE (raw pixel values preserved)
+  ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(2), verbose = FALSE, normalize = FALSE)
+  raw_file <- file.path(out_folder, "D20220522T003051_IFCB134", "D20220522T003051_IFCB134_00002.png")
+  expect_true(file.exists(raw_file))
+  raw_img <- png::readPNG(raw_file)
+  # Raw images should NOT span full 0-1 range (min > 0 or max < 1)
+  expect_true(min(raw_img) > 0 || max(raw_img) < 1,
+              info = "Raw pixel values should not span the full 0-1 range")
+
+  # Compare with normalized version
+  unlink(out_folder, recursive = TRUE)
+  ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(2), verbose = FALSE, normalize = TRUE)
+  norm_img <- png::readPNG(raw_file)
+  # Normalized images should span full 0-1 range
+  expect_equal(min(norm_img), 0, tolerance = 0.01)
+  expect_equal(max(norm_img), 1, tolerance = 0.01)
+
   # Test errors
   expect_error(ifcb_extract_pngs(roi_file, scale_bar_position = "leftright"),
                "Invalid scale_bar_position")

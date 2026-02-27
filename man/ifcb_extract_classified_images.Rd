@@ -2,7 +2,7 @@
 % Please edit documentation in R/ifcb_extract_classified_images.R
 \name{ifcb_extract_classified_images}
 \alias{ifcb_extract_classified_images}
-\title{Extract Taxa Images from MATLAB Classified Sample}
+\title{Extract Taxa Images from Classified Sample}
 \usage{
 ifcb_extract_classified_images(
   sample,
@@ -18,6 +18,7 @@ ifcb_extract_classified_images(
   scale_bar_color = "black",
   old_adc = FALSE,
   gamma = 1,
+  normalize = FALSE,
   use_python = FALSE,
   verbose = TRUE
 )
@@ -45,9 +46,13 @@ ifcb_extract_classified_images(
 
 \item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
 
-\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
+\item{old_adc}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Previously used to indicate old ADC format. ADC format is now auto-detected
+from the HDR file and column count. This parameter is ignored.}
 
-\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
+\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.}
+
+\item{normalize}{A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} for details.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
@@ -57,10 +62,12 @@ ifcb_extract_classified_images(
 No return value, called for side effects. Extracts and saves taxa images to a directory.
 }
 \description{
-This function reads a MATLAB classified sample file (.mat) generated
-by the \code{start_classify_batch_user_training} function from the \code{ifcb-analysis} repository (Sosik and Olson 2007),
+This function reads a classified sample file (\code{.mat}, \code{.h5}, or \code{.csv}) and
 extracts specified taxa images from the corresponding ROI files,
-and saves each image in a specified directory.
+saving each image in a specified directory. Supports \code{.mat} files generated
+by \code{start_classify_batch_user_training} from the \code{ifcb-analysis} repository
+(Sosik and Olson 2007), \code{.h5} files in IFCB Dashboard class_scores format,
+and \code{.csv} files in \code{ClassiPyR}-compatible format.
 }
 \details{
 If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.

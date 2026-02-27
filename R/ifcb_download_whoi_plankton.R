@@ -45,7 +45,6 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
     year = names(url_map),
     url = unlist(url_map),
     zip_files = file.path(dest_folder, paste0(names(url_map), ".zip")),
-    stringsAsFactors = FALSE,
     row.names = NULL
   )
 
@@ -138,7 +137,6 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
         year = yr,
         folder = basename(dirname(file_list$Name)),
         image = file.path(dest_folder, file_list$Name),
-        stringsAsFactors = FALSE,
         row.names = NULL
       )
 

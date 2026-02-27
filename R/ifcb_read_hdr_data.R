@@ -1,17 +1,17 @@
 utils::globalVariables(c("parameter", "roi_numbers"))
 
-#' Reads HDR Data from IFCB HDR Files
+#' Read Data from IFCB HDR Files
 #'
 #' This function reads all IFCB instrument settings information files (.hdr) from a specified directory.
 #'
-#' @param hdr_files A character string specifying the path to hdr files or a folder path.
+#' @param hdr_files A character string or character vector specifying the path(s) to `.hdr` files, or a single folder path.
 #' @param gps_only A logical value indicating whether to include only GPS information (latitude and longitude). Default is FALSE.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param hdr_folder `r lifecycle::badge("deprecated")`
 #'
 #'    Use \code{hdr_files} instead.
 #'
-#' @return A data frame with sample names, GPS latitude, GPS longitude, and optionally timestamps.
+#' @return A data frame with sample names, GPS latitude, GPS longitude, and timestamps. When `gps_only = TRUE`, only samples with GPS coordinates are included.
 #' @examples
 #' \dontrun{
 #' # Extract all HDR data
@@ -55,7 +55,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
     )
   }
 
-  if (verbose) cat("Found", length(hdr_files), ".hdr files.\n")
+  if (verbose) message("Found ", length(hdr_files), " .hdr files.")
   if (verbose) pb <- txtProgressBar(min = 0, max = length(hdr_files), style = 3)
 
   # Read all files into a list of data frames using a helper function
@@ -108,7 +108,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
                                                   col_types = cols(GPSFeed = col_character())))
 
-  if (verbose) cat("Processing completed.\n")
+  if (verbose) message("Processing completed.")
 
   # Remove the 'file' column from the returned data frame
   dplyr::select(hdr_data_pivot, -file)

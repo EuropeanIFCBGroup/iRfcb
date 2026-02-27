@@ -12,10 +12,10 @@
 #'
 #' @param taxa_names A character vector of taxa names to retrieve records for.
 #' @param best_match_only A logical value indicating whether to automatically select the first match and return a single match. Default is TRUE.
-#' @param max_retries An integer specifying the maximum number of attempts to retrieve records.
-#' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
+#' @param max_retries An integer specifying the maximum number of attempts to retrieve records. Default is 3.
+#' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts. Default is 10.
 #' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
-#' @param return_list A logical value indicating whether to to return the output as a list. Default is FALSE, where the result is returned as a dataframe.
+#' @param return_list A logical value indicating whether to return the output as a list. Default is FALSE, where the result is returned as a dataframe.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param fuzzy
 #'    `r lifecycle::badge("deprecated")`
@@ -104,7 +104,7 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
   }
 
   if (verbose && length(no_content_messages) > 0) {
-    cat(paste(no_content_messages, collapse = "\n"), "\n")
+    message(paste(no_content_messages, collapse = "\n"))
   }
 
   if (return_list) {

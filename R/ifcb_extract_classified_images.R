@@ -1,9 +1,11 @@
-#' Extract Taxa Images from MATLAB Classified Sample
+#' Extract Taxa Images from Classified Sample
 #'
-#' This function reads a MATLAB classified sample file (.mat) generated
-#' by the `start_classify_batch_user_training` function from the `ifcb-analysis` repository (Sosik and Olson 2007),
+#' This function reads a classified sample file (`.mat`, `.h5`, or `.csv`) and
 #' extracts specified taxa images from the corresponding ROI files,
-#' and saves each image in a specified directory.
+#' saving each image in a specified directory. Supports `.mat` files generated
+#' by `start_classify_batch_user_training` from the `ifcb-analysis` repository
+#' (Sosik and Olson 2007), `.h5` files in IFCB Dashboard class_scores format,
+#' and `.csv` files in `ClassiPyR`-compatible format.
 #'
 #' @param sample A character string specifying the sample name.
 #' @param classified_folder A character string specifying the directory containing the classified files.
@@ -16,8 +18,12 @@
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
-#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
-#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
+#' @param old_adc
+#'    `r lifecycle::badge("deprecated")`
+#'    Previously used to indicate old ADC format. ADC format is now auto-detected
+#'    from the HDR file and column count. This parameter is ignored.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.
+#' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See [ifcb_extract_pngs()] for details.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
@@ -60,11 +66,18 @@ ifcb_extract_classified_images <- function(sample,
                                            scale_bar_color = "black",
                                            old_adc = FALSE,
                                            gamma = 1,
+                                           normalize = FALSE,
                                            use_python = FALSE,
                                            verbose = TRUE) {
 
+  # Deprecate old_adc parameter (format is now auto-detected)
+  if (!missing(old_adc) && old_adc) {
+    lifecycle::deprecate_warn("0.8.0", "ifcb_extract_classified_images(old_adc)",
+                              details = "ADC format is now auto-detected from the HDR file and column count.")
+  }
+
   # Get the list of classified files and find the one matching the sample
-  classifiedfiles <- list.files(classified_folder, pattern = "mat$", full.names = TRUE, recursive = TRUE)
+  classifiedfiles <- list.files(classified_folder, pattern = "(mat|h5|csv)$", full.names = TRUE, recursive = TRUE)
   classifiedfilename <- classifiedfiles[grepl(sample, classifiedfiles)]
 
   if (length(classifiedfilename) == 0) {
@@ -76,12 +89,7 @@ ifcb_extract_classified_images <- function(sample,
   }
 
   # Read classified file
-  if (use_python && scipy_available()) {
-    classified.mat <- ifcb_read_mat(classifiedfilename)
-  } else {
-    # Read the contents of the MAT file
-    classified.mat <- read_mat(classifiedfilename)
-  }
+  classified.mat <- read_class_file(classifiedfilename, use_python = use_python)
 
   # Get the list of ROI files and find the one matching the sample
   roifiles <- list.files(roi_folder, pattern=".roi$", full.names = TRUE, recursive = TRUE)
@@ -89,6 +97,11 @@ ifcb_extract_classified_images <- function(sample,
 
   if (length(roifilename) == 0) {
     stop("ROI file for sample not found")
+  }
+
+  # Warn if adhoc threshold requested for .h5 file (not available)
+  if (threshold == "adhoc" && tolower(tools::file_ext(classifiedfilename)) == "h5") {
+    stop("Adhoc threshold is not available for .h5 classification files. Use 'opt' or 'none' instead.")
   }
 
   # Extract taxa list based on the specified threshold
@@ -126,10 +139,11 @@ ifcb_extract_classified_images <- function(sample,
           scale_bar_color = scale_bar_color,
           overwrite = overwrite,
           old_adc = old_adc,
-          gamma = gamma
+          gamma = gamma,
+          normalize = normalize
         )
       }, error = function(e) {
-        cat("Error occurred while processing taxon", taxon, ":", conditionMessage(e), "\n")
+        message("Error occurred while processing taxon ", taxon, ": ", conditionMessage(e))
         Sys.sleep(10) # Pause for 10 seconds
       })
     }

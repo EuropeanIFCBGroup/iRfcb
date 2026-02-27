@@ -5,8 +5,8 @@ test_that("ifcb_run_image_gallery launches the Shiny app", {
   # Replace shiny::runApp with the mock
   mockery::stub(ifcb_run_image_gallery, "shiny::runApp", mock_runApp)
 
-  # Call the function and ensure it runs without errors
-  expect_silent(ifcb_run_image_gallery())
+  # Call the function and ensure it emits a deprecation warning
+  lifecycle::expect_deprecated(ifcb_run_image_gallery())
 
   # Verify that shiny::runApp was called
   mockery::expect_called(mock_runApp, 1)

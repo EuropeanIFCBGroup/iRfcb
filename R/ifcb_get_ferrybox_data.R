@@ -95,7 +95,6 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
       read.table(file,
                  header = TRUE,
                  sep = "\t",
-                 stringsAsFactors = FALSE,
                  check.names = FALSE,
                  colClasses = "character",
                  na.strings = "")

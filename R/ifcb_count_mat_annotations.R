@@ -53,8 +53,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   # Create a lookup table from class2use
   lookup_table <- data.frame(
     manual = seq_along(class2use),
-    name = class2use,
-    stringsAsFactors = FALSE
+    name = class2use
   )
 
   # Convert skip_class names to manual IDs if they are character strings

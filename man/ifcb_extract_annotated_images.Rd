@@ -21,6 +21,7 @@ ifcb_extract_annotated_images(
   old_adc = FALSE,
   use_python = FALSE,
   gamma = 1,
+  normalize = FALSE,
   add_trailing_numbers = TRUE,
   roi_folder = deprecated()
 )
@@ -34,13 +35,13 @@ ifcb_extract_annotated_images(
 
 \item{out_folder}{A character string specifying the output directory where the extracted images will be saved.}
 
-\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.}
+\item{skip_class}{A numeric vector of class IDs or a character vector of class names to be excluded from the \code{.png} extraction. Default is NA (include all classes).}
 
 \item{verbose}{A logical value indicating whether to print progress messages. Default is TRUE.}
 
 \item{manual_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively within the \code{manual_folder}. Default is FALSE.}
 
-\item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folder} (if provided). Default is TRUE.}
+\item{roi_recursive}{Logical. If TRUE, the function will search for data files recursively within the \code{roi_folders} (if provided). Default is TRUE.}
 
 \item{overwrite}{A logical value indicating whether to overwrite existing PNG files. Default is FALSE.}
 
@@ -52,11 +53,15 @@ ifcb_extract_annotated_images(
 
 \item{scale_bar_color}{A character string specifying the scale bar color. Options are \code{"black"} or \code{"white"}. Defaults to \code{"black"}.}
 
-\item{old_adc}{A logical value indicating whether the \code{adc} file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.}
+\item{old_adc}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Previously used to indicate old ADC format. ADC format is now auto-detected
+from the HDR file and column count. This parameter is ignored.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
-\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.}
+\item{gamma}{A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.}
+
+\item{normalize}{A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See \code{\link[=ifcb_extract_pngs]{ifcb_extract_pngs()}} for details.}
 
 \item{add_trailing_numbers}{Logical. If \code{TRUE}, appends a zero-padded numeric suffix derived from the manual class index to the class name when naming output files. If \code{FALSE}, uses only the class name without a numeric suffix. Default is \code{TRUE}.}
 

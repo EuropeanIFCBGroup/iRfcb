@@ -82,30 +82,48 @@ mock_replace_value_in_classlist <- function(input_file, output_file, target_valu
   R.matlab::writeMat(output_file, classlist = classlist)
 }
 
-skip_if_no_scipy <- function() {
-  reticulate::py_available(initialize = TRUE)
+# Cache for Python package availability (avoids repeated slow py_list_packages calls)
+.py_pkg_cache <- new.env(parent = emptyenv())
+
+.check_py_package <- function(pkg) {
+  # Skip early on CRAN — no Python venv is created there
+  if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
+    testthat::skip(paste(pkg, "not available for testing (CRAN)"))
+  }
+  # Return cached result if available
+  if (!is.null(.py_pkg_cache[[pkg]])) {
+    if (!.py_pkg_cache[[pkg]]) testthat::skip(paste(pkg, "not available for testing"))
+    return(invisible(TRUE))
+  }
+  # Perform the check once and cache
+  if (!reticulate::py_available(initialize = TRUE)) {
+    .py_pkg_cache[[pkg]] <- FALSE
+    testthat::skip(paste(pkg, "not available for testing"))
+  }
   available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
-  if (!"scipy" %in% available_packages$package)
-    skip("scipy not available for testing")
+  .py_pkg_cache[[pkg]] <- pkg %in% available_packages$package
+  if (!.py_pkg_cache[[pkg]])
+    testthat::skip(paste(pkg, "not available for testing"))
+}
+
+skip_if_no_scipy <- function() {
+  .check_py_package("scipy")
 }
 
 skip_if_no_matplotlib <- function() {
-  reticulate::py_available(initialize = TRUE)
-  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
-  if (!"matplotlib" %in% available_packages$package)
-    skip("matplotlib not available for testing")
+  .check_py_package("matplotlib")
 }
 
 skip_if_no_pandas <- function() {
-  reticulate::py_available(initialize = TRUE)
-  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
-  if (!"pandas" %in% available_packages$package)
-    skip("pandas not available for testing")
+  .check_py_package("pandas")
 }
 
 skip_if_no_python <- function() {
-    if (!reticulate::py_available(initialize = TRUE))
-    skip("Python not available for testing")
+  if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
+    testthat::skip("Python not available for testing (CRAN)")
+  }
+  if (!reticulate::py_available(initialize = TRUE))
+    testthat::skip("Python not available for testing")
 }
 
 # Skip test if a remote resource is not responding (HTTP errors included)
@@ -114,8 +132,9 @@ skip_if_resource_unavailable <- function(url, msg = NULL) {
     res <- curl::curl_fetch_memory(url)
     status <- res$status_code
 
-    # Treat ONLY 2xx as success
-    status >= 200 && status < 300
+    # Treat 2xx and 405 (Method Not Allowed) as available;
+    # 405 means the server is alive but the endpoint requires POST
+    (status >= 200 && status < 300) || status == 405
   }, error = function(e) FALSE)
 
   if (!ok) {

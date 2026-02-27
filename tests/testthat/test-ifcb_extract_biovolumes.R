@@ -94,7 +94,7 @@ test_that("ifcb_extract_biovolumes handles empty directories", {
   expect_error(ifcb_extract_biovolumes(empty_feature_dir, class_folder), "No feature data files found")
 
   # Run the function with empty class directory and expect an error
-  expect_error(ifcb_extract_biovolumes(feature_folder, empty_class_dir), "No MAT files found")
+  expect_error(ifcb_extract_biovolumes(feature_folder, empty_class_dir), "No classification files found")
 })
 
 test_that("ifcb_extract_biovolumes handles invalid directories gracefully", {
@@ -208,7 +208,7 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
   image <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
 
   expect_warning(ifcb_extract_biovolumes(feature_folder, class_folder, custom_images = image, verbose = FALSE),
-                 "Both `mat_files` and `custom_images/custom_classes` were provided")
+                 "Both `class_files` and `custom_images/custom_classes` were provided")
 
   expect_error(ifcb_extract_biovolumes(feature_folder, verbose = FALSE),
                "No classification information supplied")

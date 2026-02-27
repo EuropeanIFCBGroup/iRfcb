@@ -60,7 +60,7 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom
                                       return_list = FALSE,
                                       verbose = verbose)
 
-  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_data$class, stringsAsFactors = FALSE)
+  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_data$class)
 
   # Check if the class is the specified diatom class
   is_diatom <- result_df$class %in% diatom_class

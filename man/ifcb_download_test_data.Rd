@@ -24,7 +24,7 @@ By default, the \code{iRfcb} test dataset (48158716) from Torstensson et al. (20
 
 \item{sleep_time}{The sleep time between download attempts, in seconds. Default is 10.}
 
-\item{keep_zip}{A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.}
+\item{keep_zip}{A logical indicating whether to keep the downloaded zip archive after extraction. Default is FALSE.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
@@ -41,7 +41,7 @@ This function downloads a zip archive containing MATLAB files from the \code{iRf
 dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 unzips them into the specified folder and extracts png images. These data can be used, for instance,
 for testing \code{iRfcb} and for creating the tutorial vignette
-using \code{vignette("introduction", package = "iRfcb")}
+using \code{vignette("introduction", package = "iRfcb")}.
 }
 \examples{
 \dontrun{

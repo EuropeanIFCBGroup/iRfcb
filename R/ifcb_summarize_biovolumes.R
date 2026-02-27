@@ -3,33 +3,43 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'
 #' This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
 #' samples based on biovolume information from feature files. Images are grouped into classes either
-#' based on MATLAB classification, manually annotated files, or a user-supplied list of images and
-#' their corresponding class labels (e.g. from a CNN model).
+#' based on classification files (`.mat`, `.h5`, or `.csv`), manually annotated files, or a
+#' user-supplied list of images and their corresponding class labels (e.g. from a CNN model).
 #'
 #' @param feature_folder Path to the folder containing feature files (e.g., CSV format).
-#' @param mat_files (Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.
+#' @param class_files (Optional) A character vector of full paths to classification or manual
+#'   annotation files (`.mat`, `.h5`, or `.csv`), or a single path to a folder
+#'   containing such files.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.
-#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ,
+#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 #'        where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
-#'        used as a substitute for MATLAB files.
+#'        used as a substitute for classification files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
-#' @param diatom_class A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
+#' @param diatom_class A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
-#' @param threshold Threshold for classification (default: "opt").
+#' @param threshold A character string controlling which classification to use.
+#'   `"opt"` (default) uses the threshold-applied classification, where
+#'   predictions below the per-class optimal threshold are labeled
+#'   `"unclassified"`. Any other value (e.g. `"all"`) uses the raw winning
+#'   class without any threshold applied.
 #' @param feature_recursive Logical. If TRUE, the function will search for feature files recursively within the `feature_folder`. Default is TRUE.
-#' @param mat_recursive Logical. If TRUE, the function will search for MATLAB files recursively when the `mat_files` is a folder. Default is TRUE.
+#' @param class_recursive Logical. If TRUE, the function will search for classification files recursively when `class_files` is a folder. Default is TRUE.
 #' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
-#'    Use \code{mat_files} instead.
+#'    Use \code{class_files} instead.
+#' @param mat_files `r lifecycle::badge("deprecated")`
+#'    Use \code{class_files} instead.
+#' @param mat_recursive `r lifecycle::badge("deprecated")`
+#'    Use \code{class_recursive} instead.
 #'
 #' @return A data frame summarizing aggregated biovolume and carbon content per class per sample.
 #'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
@@ -42,10 +52,10 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   \item Computes biovolume and carbon content per liter of sample analyzed.
 #' }
 #'
-#' The MATLAB classification or manual annotation files are generated by the `ifcb-analysis` repository
+#' The classification or manual annotation files are generated by the `ifcb-analysis` repository
 #' (Sosik and Olson 2007). Users can optionally provide a **custom classification** by supplying a vector of image filenames
 #' (`custom_images`) along with corresponding class labels (`custom_classes`). This allows summarization
-#' of biovolume and carbon content without requiring MATLAB classification or manual annotation files
+#' of biovolume and carbon content without requiring classification or manual annotation files
 #' (e.g. results from a CNN model).
 #'
 #' Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000
@@ -61,13 +71,14 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @examples
 #' \dontrun{
 #' # Example usage:
-#' ifcb_summarize_biovolumes("path/to/features", "path/to/mat", hdr_folder = "path/to/hdr")
+#' ifcb_summarize_biovolumes("path/to/features", "path/to/classified",
+#'                           hdr_folder = "path/to/hdr")
 #'
 #' # Using custom classification result:
 #' images <- c("D20220522T003051_IFCB134_00002",
 #'             "D20220522T003051_IFCB134_00003")
-#' classes = c("Mesodinium_rubrum",
-#'             "Mesodinium_rubrum")
+#' classes <- c("Mesodinium_rubrum",
+#'              "Mesodinium_rubrum")
 #'
 #' ifcb_summarize_biovolumes(feature_folder = "path/to/features",
 #'                           hdr_folder = "path/to/hdr",
@@ -75,30 +86,39 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'                           custom_classes = classes)
 #' }
 #'
-#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @export
-ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2use_file = NULL,
+ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2use_file = NULL,
                                       hdr_folder = NULL, custom_images = NULL, custom_classes = NULL,
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", diatom_include = NULL,
                                       marine_only = FALSE, threshold = "opt", feature_recursive = TRUE,
-                                      mat_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
-                                      feature_version = NULL, use_python = FALSE, verbose = TRUE, mat_folder = deprecated()) {
+                                      class_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
+                                      feature_version = NULL, use_python = FALSE, verbose = TRUE,
+                                      mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
 
-  # Warn the user if mat_folder is used
+  # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
+    deprecate_warn("0.7.0", "iRfcb::ifcb_summarize_biovolumes(mat_folder = )", "iRfcb::ifcb_summarize_biovolumes(class_files = )")
+    class_files <- mat_folder
+  }
 
-    # Signal the deprecation to the user
-    deprecate_warn("0.7.0", "iRfcb::ifcb_summarize_biovolumes(mat_folder = )", "iRfcb::ifcb_summarize_biovolumes(mat_files = )")
+  # Handle deprecated mat_files argument
+  if (lifecycle::is_present(mat_files)) {
+    deprecate_warn("0.8.0", "iRfcb::ifcb_summarize_biovolumes(mat_files = )", "iRfcb::ifcb_summarize_biovolumes(class_files = )")
+    class_files <- mat_files
+  }
 
-    # Deal with the deprecated argument for compatibility
-    mat_files <- mat_folder
+  # Handle deprecated mat_recursive argument
+  if (lifecycle::is_present(mat_recursive)) {
+    deprecate_warn("0.8.0", "iRfcb::ifcb_summarize_biovolumes(mat_recursive = )", "iRfcb::ifcb_summarize_biovolumes(class_recursive = )")
+    class_recursive <- mat_recursive
   }
 
   # Extract biovolumes and carbon content from feature and class files
   biovolumes <- ifcb_extract_biovolumes(feature_files = feature_folder,
-                                        mat_files = mat_files,
+                                        class_files = class_files,
                                         custom_images = custom_images,
                                         custom_classes = custom_classes,
                                         class2use_file = class2use_file,
@@ -108,7 +128,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
                                         marine_only = marine_only,
                                         threshold = threshold,
                                         feature_recursive = feature_recursive,
-                                        mat_recursive = mat_recursive,
+                                        class_recursive = class_recursive,
                                         drop_zero_volume = drop_zero_volume,
                                         feature_version = feature_version,
                                         use_python = use_python,
@@ -126,26 +146,26 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
   if (!is.null(hdr_folder)) {
     hdr_files <- list.files(hdr_folder, pattern = "D.*\\.hdr", full.names = TRUE, recursive = hdr_recursive)
 
-    # Extract sample names from HDR and class files using a general regular expression
+    # Extract sample names from HDR files
     hdr_sample_names <- sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files)
-    # mat_sample_names <- sub(".*/(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", mat_files)
 
     if (!is.null(custom_images)) {
       # Extract date-time from class file paths
-      mat_sample_names <- sub("^(D\\d{8}T\\d{6}_IFCB\\d+)_.*", "\\1", custom_images)
+      class_sample_names <- sub("^(D\\d{8}T\\d{6}_IFCB\\d+)_.*", "\\1", custom_images)
     } else {
 
-      # Check if hdr_files is a single folder path or a vector of file paths
-      if (length(mat_files) == 1 && file.info(mat_files)$isdir) {
-        mat_files <- list.files(mat_files, pattern = "D.*\\.mat", recursive = mat_recursive, full.names = TRUE)
+      # Check if class_files is a single folder path or a vector of file paths
+      if (length(class_files) == 1 && file.info(class_files)$isdir) {
+        class_files <- list.files(class_files, pattern = "D.*\\.(mat|h5|csv)", recursive = class_recursive, full.names = TRUE)
       }
 
-      # Extract date-time from class file paths
-      mat_sample_names <- sub(".*/(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", mat_files)
+      # Extract sample names from class file paths
+      class_sample_names <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(class_files))
+      class_sample_names <- sub("\\.(mat|h5|csv)$", "", class_sample_names)
     }
 
     # Find common sample names between HDR and class files
-    common_sample_names <- intersect(hdr_sample_names, mat_sample_names)
+    common_sample_names <- intersect(hdr_sample_names, class_sample_names)
 
     # Filter HDR files to include only those matching common sample names
     hdr_files_filtered <- hdr_files[hdr_sample_names %in% common_sample_names]
@@ -157,7 +177,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, mat_files = NULL, class2us
 
     # Set up the progress bar
     if (verbose && n_hdr > 0) {
-      cat("Calculating sample volumes...\n")
+      message("Calculating sample volumes...")
       pb <- txtProgressBar(min = 0, max = n_hdr, style = 3)
     }
 

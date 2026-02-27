@@ -44,9 +44,6 @@ The correction file is expected to contain at least one column: \code{image_file
 The function processes each file, corrects the annotations, and saves the updated files in the output folder.
 
 If a character vector is provided as \code{correction}, it will be used directly as a list of filenames for correction.
-
-The \code{correction} is typically generated using a Shiny app that provides an interactive interface for browsing and managing
-IFCB (Imaging FlowCytobot) image galleries. This Shiny app can be initialized using the function \code{ifcb_run_image_gallery()}.
 }
 \examples{
 \dontrun{

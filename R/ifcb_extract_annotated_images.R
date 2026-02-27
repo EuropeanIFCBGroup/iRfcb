@@ -10,17 +10,21 @@ utils::globalVariables(c("name", "manual"))
 #' @param class2use_file A character string specifying the path to the file containing class names.
 #' @param roi_folders A character vector specifying one or more directories containing the ROI files.
 #' @param out_folder A character string specifying the output directory where the extracted images will be saved.
-#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the count. Default is NULL.
+#' @param skip_class A numeric vector of class IDs or a character vector of class names to be excluded from the `.png` extraction. Default is NA (include all classes).
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param manual_recursive Logical. If TRUE, the function will search for MATLAB files recursively within the `manual_folder`. Default is FALSE.
-#' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folder` (if provided). Default is TRUE.
+#' @param roi_recursive Logical. If TRUE, the function will search for data files recursively within the `roi_folders` (if provided). Default is TRUE.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #' @param scale_bar_um An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
-#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
-#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
+#' @param old_adc
+#'    `r lifecycle::badge("deprecated")`
+#'    Previously used to indicate old ADC format. ADC format is now auto-detected
+#'    from the HDR file and column count. This parameter is ignored.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.
+#' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See [ifcb_extract_pngs()] for details.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param add_trailing_numbers Logical. If `TRUE`, appends a zero-padded numeric suffix derived from the manual class index to the class name when naming output files. If `FALSE`, uses only the class name without a numeric suffix. Default is `TRUE`.
 #' @param roi_folder
@@ -55,7 +59,13 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                                           roi_recursive = TRUE, overwrite = FALSE, scale_bar_um = NULL,
                                           scale_micron_factor = 1/3.4, scale_bar_position = "bottomright",
                                           scale_bar_color = "black", old_adc = FALSE, use_python = FALSE,
-                                          gamma = 1, add_trailing_numbers = TRUE, roi_folder = deprecated()) {
+                                          gamma = 1, normalize = FALSE, add_trailing_numbers = TRUE, roi_folder = deprecated()) {
+
+  # Deprecate old_adc parameter (format is now auto-detected)
+  if (!missing(old_adc) && old_adc) {
+    lifecycle::deprecate_warn("0.8.0", "ifcb_extract_annotated_images(old_adc)",
+                              details = "ADC format is now auto-detected from the HDR file and column count.")
+  }
 
   # Warn the user if roi_folder is used
   if (lifecycle::is_present(roi_folder)) {
@@ -160,6 +170,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                         scale_bar_color = scale_bar_color,
                         overwrite = overwrite,
                         gamma = gamma,
+                        normalize = normalize,
                         old_adc = old_adc
                         )
     }

@@ -58,7 +58,7 @@ test_that("ifcb_is_diatom overrides ", {
   result <- ifcb_is_diatom(taxa_list)
 
   # Expected logical vector (true for diatoms, false for others)
-  expected_result <- c(FALSE, FALSE, FALSE)
+  expected_result <- c(TRUE, FALSE, FALSE)
 
   # Assert the results
   expect_equal(result, expected_result)

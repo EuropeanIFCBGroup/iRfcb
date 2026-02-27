@@ -9,13 +9,17 @@
 #' @param out_folder A character string specifying the directory where the PNG images will be saved. Defaults to the directory of the ROI file.
 #' @param ROInumbers An optional numeric vector specifying the ROI numbers to extract. If NULL, all ROIs with valid dimensions are extracted.
 #' @param taxaname An optional character string specifying the taxa name for organizing images into subdirectories. Defaults to NULL.
-#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 increase contrast in dark regions, while values >1 decrease contrast.
+#' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.
+#' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, which preserves raw pixel values from the camera, producing images comparable to IFCB Dashboard and other standard IFCB software. Set to TRUE to stretch contrast to the full 0-255 range.
 #' @param overwrite A logical value indicating whether to overwrite existing PNG files. Default is FALSE.
 #' @param scale_bar_um An optional numeric value specifying the length of the scale bar in micrometers. If NULL, no scale bar is added.
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
-#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
+#' @param old_adc
+#'    `r lifecycle::badge("deprecated")`
+#'    Previously used to indicate old ADC format. ADC format is now auto-detected
+#'    from the HDR file and column count. This parameter is ignored.
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #'
 #' @return This function is called for its side effects: it writes PNG images to a directory.
@@ -35,7 +39,7 @@
 #' @seealso \code{\link{ifcb_extract_classified_images}} for extracting ROIs from automatic classification.
 #' @seealso \code{\link{ifcb_extract_annotated_images}} for extracting ROIs from manual annotation.
 ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbers = NULL, taxaname = NULL,
-                              gamma = 1, overwrite = FALSE, scale_bar_um = NULL, scale_micron_factor = 1/3.4,
+                              gamma = 1, normalize = FALSE, overwrite = FALSE, scale_bar_um = NULL, scale_micron_factor = 1/3.4,
                               scale_bar_position = "bottomright", scale_bar_color = "black", old_adc = FALSE,
                               verbose = TRUE) {
 
@@ -68,35 +72,45 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   }
   dir.create(outpath, showWarnings = FALSE, recursive = TRUE)
 
+  # Deprecate old_adc parameter (format is now auto-detected)
+  if (!missing(old_adc) && old_adc) {
+    lifecycle::deprecate_warn("0.8.0", "ifcb_extract_pngs(old_adc)",
+                              details = "ADC format is now auto-detected from the HDR file and column count.")
+  }
+
   # Get ADC data for start byte and length of each ROI
   adcfile <- sub("\\.roi$", ".adc", roi_file)
-  adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
-  x <- as.numeric(if (old_adc) adcdata$V12 else adcdata$V16)
-  y <- as.numeric(if (old_adc) adcdata$V13 else adcdata$V17)
-  startbyte <- as.numeric(if (old_adc) adcdata$V14 else adcdata$V18)
+  if (!file.exists(adcfile)) {
+    stop("ADC file not found: ", adcfile)
+  }
+  adcdata <- read_adc_columns(adcfile)
+  roi_cols <- adc_get_roi_columns(adcdata)
+  x <- roi_cols$x
+  y <- roi_cols$y
+  startbyte <- roi_cols$startbyte
 
   if (!is.null(ROInumbers)) {
-    adcdata <- adcdata[ROInumbers,]
-    x <- as.numeric(if (old_adc) adcdata$V12 else adcdata$V16)
-    y <- as.numeric(if (old_adc) adcdata$V13 else adcdata$V17)
-    startbyte <- as.numeric(if (old_adc) adcdata$V14 else adcdata$V18)
+    invalid_rois <- ROInumbers[ROInumbers < 1 | ROInumbers > nrow(adcdata)]
+    if (length(invalid_rois) > 0) {
+      stop("ROI number(s) out of range: ", paste(invalid_rois, collapse = ", "),
+           ". ADC file contains ", nrow(adcdata), " ROIs.")
+    }
+    x <- x[ROInumbers]
+    y <- y[ROInumbers]
+    startbyte <- startbyte[ROInumbers]
   } else {
     ROInumbers <- seq_along(startbyte)
   }
 
   # Open roi file
-  tryCatch({
-    fid <- file(roi_file, "rb")
-  }, error = function(e) {
-    cat("An error occurred:", conditionMessage(e), "\n")
-    NULL
-  })
+  fid <- file(roi_file, "rb")
+  on.exit(close(fid), add = TRUE)
 
   # Track images where the scale bar was skipped
   skipped_scale_bar <- 0
 
   # Loop over ROIs and save PNG images
-  if (verbose) cat(paste("Writing", length(x[x > 0]), "ROIs from", basename(roi_file), "to", outpath), "\n")
+  if (verbose) message("Writing ", length(x[x > 0]), " ROIs from ", basename(roi_file), " to ", outpath)
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
@@ -109,8 +123,13 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
         img_matrix <- matrix(as.integer(img_data), ncol = x[count], byrow = TRUE)  # Reshape to original x-y array
 
         tryCatch({
-          # Normalize pixel values to [0,1] using min-max scaling
-          img_matrix <- (img_matrix - min(img_matrix)) / (max(img_matrix) - min(img_matrix))
+          if (normalize) {
+            # Normalize pixel values to [0,1] using min-max scaling (stretches to full contrast range)
+            img_matrix <- (img_matrix - min(img_matrix)) / (max(img_matrix) - min(img_matrix))
+          } else {
+            # Preserve raw pixel values by scaling to [0,1] without stretching
+            img_matrix <- img_matrix / 255
+          }
 
           # Apply gamma correction only if gamma != 1
           if (gamma != 1) {
@@ -145,10 +164,16 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
               bar_x2 <- bar_x1 + scale_bar_px
               bar_y2 <- bar_y1 + bar_height
 
+              # Clamp coordinates to image bounds
+              bar_x1 <- max(1, bar_x1)
+              bar_y1 <- max(1, bar_y1)
+              bar_x2 <- min(bar_x2, x[count])
+              bar_y2 <- min(bar_y2, y[count])
+
               # Set scale bar color (black = 0, white = 1)
               scale_bar_value <- ifelse(scale_bar_color == "black", 0, 1)
 
-              # Draw the black scale bar directly on the image
+              # Draw the scale bar directly on the image
               img_matrix[bar_y1:bar_y2, bar_x1:bar_x2] <- scale_bar_value
             }
           }
@@ -156,16 +181,13 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
           # Save using png::writePNG
           png::writePNG(img_matrix, pngfile)
         }, error = function(e) {
-          cat("An error occurred:", conditionMessage(e), "\n")
+          warning("Failed to extract ROI ", num, ": ", conditionMessage(e))
         })
       } else {
-        if (verbose) cat("PNG file already exists:", pngfile, "\n")
+        if (verbose) message("PNG file already exists: ", pngfile)
       }
     }
   }
-
-  # Close the roi file
-  close(fid)
 
   # Warn if any scale bars were skipped
   if (skipped_scale_bar > 0) {

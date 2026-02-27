@@ -41,8 +41,7 @@ create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_
   # Create a data frame with filenames and their sizes
   manifest_df <- data.frame(
     file = gsub(paste0(temp_dir, "/"), "", all_files, fixed = TRUE),
-    size = file_sizes,
-    stringsAsFactors = FALSE
+    size = file_sizes
   )
 
   # Format the file information as "filename [size]"
@@ -116,7 +115,7 @@ find_matching_data <- function(mat_file, data_files) {
 #' This function reads an HDR file and extracts relevant lines containing parameters and their values.
 #'
 #' @param file A character string specifying the path to the HDR file.
-#' @return A data frame with columns: `parameter`, `value`, and `file.`
+#' @return A data frame with columns: `parameter`, `value`, and `file`.
 #' @export
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
@@ -125,7 +124,7 @@ read_hdr_file <- function(file) {
   data <- do.call(rbind, lapply(lines, function(line) {
     split_line <- strsplit(line, ": ", fixed = TRUE)[[1]]
     if (length(split_line) == 2) {
-      data.frame(parameter = split_line[1], value = split_line[2], file = file, stringsAsFactors = FALSE)
+      data.frame(parameter = split_line[1], value = split_line[2], file = file)
     }
   }))
   data <- na.omit(data)
@@ -219,20 +218,21 @@ extract_parts <- function(filenames, tz = "UTC") {
 
 #' Summarize TreeBagger Classifier Results
 #'
-#' This function reads a TreeBagger classifier result file (`.mat` format) and summarizes
+#' This function reads a TreeBagger classifier result file (`.mat` or `.h5` format) and summarizes
 #' the number of targets in each class based on the classification scores and thresholds.
 #'
-#' @param classfile Character string specifying the path to the TreeBagger classifier result file (`.mat` format).
+#' @param classfile Character string specifying the path to the classifier result file (`.mat` or `.h5` format).
 #' @param adhocthresh Numeric vector specifying the adhoc thresholds for each class. If NULL (default), no adhoc thresholding is applied.
-#'                    If a single numeric value is provided, it is applied to all classes.
+#'                    If a single numeric value is provided, it is applied to all classes. Not available for `.h5` files.
+#' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
 #'
 #' @return A list containing three elements:
 #'   \item{classcount}{Numeric vector of counts for each class based on the winning class assignment.}
 #'   \item{classcount_above_optthresh}{Numeric vector of counts for each class above the optimal threshold for maximum accuracy.}
 #'   \item{classcount_above_adhocthresh}{Numeric vector of counts for each class above the specified adhoc thresholds (if provided).}
 #' @export
-summarize_TBclass <- function(classfile, adhocthresh = NULL) {
-  data <- readMat(classfile, fixNames = FALSE)
+summarize_TBclass <- function(classfile, adhocthresh = NULL, use_python = FALSE) {
+  data <- read_class_file(classfile, use_python = use_python)
   class2useTB <- data$class2useTB
   TBscores <- data$TBscores
   TBclass <- data$TBclass
@@ -401,7 +401,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   # Step 0: Check if the zip file is smaller than max_size
   if (zip_file_size <= max_size_bytes) {
     if (!quiet) {
-      cat("The zip file is already smaller than the specified max size (", max_size, " MB).\n", sep = "")
+      message("The zip file is already smaller than the specified max size (", max_size, " MB).")
     }
     return(invisible(NULL))
   }
@@ -475,9 +475,8 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
     groups
   }
 
-  # Step 5: Set max zip size and group subfolders
-  max_zip_size <- 500 * 1024 * 1024  # 500 MB in bytes
-  subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_zip_size)
+  # Step 5: Group subfolders using the specified max size
+  subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_size_bytes)
 
 
   # Vector to store the names of the created zip files
@@ -500,8 +499,8 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   unlink(unzip_dir, recursive = TRUE)
 
   if (!quiet) {
-    cat("Successfully created", length(subfolder_groups), "smaller zip files:\n")
-    cat(paste(created_zip_files, collapse = "\n"), "\n")
+    message("Successfully created ", length(subfolder_groups), " smaller zip files:")
+    message(paste(created_zip_files, collapse = "\n"))
   }
 }
 #' Check Python and Required Modules Availability
@@ -636,6 +635,122 @@ read_mat <- function(file_path, fixNames = FALSE) {
   })
   mat_contents_converted
 }
+#' Read Classification File (.mat, .h5, or .csv)
+#'
+#' Reads a `.mat`, `.h5`, or `.csv` classification file and returns a standardized
+#' named list using `.mat`-equivalent field names for backward compatibility.
+#'
+#' @param filepath Character. Path to the classification file (`.mat`, `.h5`, or `.csv`).
+#' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
+#'
+#' @return A named list with elements:
+#'   \item{classifierName}{Character. The classifier name.}
+#'   \item{class2useTB}{Character vector. Class labels.}
+#'   \item{roinum}{Numeric vector. ROI numbers.}
+#'   \item{TBscores}{Numeric matrix. Classification scores (N x C).}
+#'   \item{TBclass}{Character vector. Winning class per ROI.}
+#'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
+#'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`/`.csv`).}
+#'
+#' @noRd
+read_class_file <- function(filepath, use_python = FALSE) {
+  ext <- tolower(tools::file_ext(filepath))
+
+  if (ext == "csv") {
+    csv_data <- utils::read.csv(filepath)
+
+    # Extract ROI numbers from file_name column (e.g. ..._00001.png -> 1)
+    roi_numbers <- as.integer(
+      sub(".*_(\\d+)\\.png$", "\\1", csv_data$file_name)
+    )
+
+    class_labels <- sort(unique(csv_data$class_name))
+
+    # Build a score matrix from the winning score if available
+    n_rois <- nrow(csv_data)
+    n_classes <- length(class_labels)
+    score_matrix <- matrix(0, nrow = n_rois, ncol = n_classes)
+    colnames(score_matrix) <- class_labels
+
+    if ("score" %in% colnames(csv_data)) {
+      class_idx <- match(csv_data$class_name, class_labels)
+      for (i in seq_len(n_rois)) {
+        score_matrix[i, class_idx[i]] <- csv_data$score[i]
+      }
+    }
+
+    # class_name is threshold-applied; class_name_auto is winning class
+    tb_class <- if ("class_name_auto" %in% colnames(csv_data)) {
+      csv_data$class_name_auto
+    } else {
+      csv_data$class_name
+    }
+
+    result <- list(
+      classifierName = NA_character_,
+      class2useTB = class_labels,
+      roinum = roi_numbers,
+      TBscores = score_matrix,
+      TBclass = tb_class,
+      TBclass_above_threshold = csv_data$class_name,
+      TBclass_above_adhocthresh = NULL
+    )
+
+    return(result)
+  }
+
+  if (ext == "h5") {
+    if (!requireNamespace("hdf5r", quietly = TRUE)) {
+      stop("Package 'hdf5r' is required to read .h5 classification files. ",
+           "Install it with: install.packages('hdf5r')")
+    }
+
+    h5file <- hdf5r::H5File$new(filepath, mode = "r")
+    on.exit(h5file$close_all(), add = TRUE)
+
+    # Read classifier name (support both new and legacy field names)
+    classifier_name <- if (h5file$exists("classifier_name")) {
+      h5file[["classifier_name"]]$read()
+    } else if (h5file$exists("classifierName")) {
+      h5file[["classifierName"]]$read()
+    } else {
+      NA_character_
+    }
+
+    # Read class_name_auto (fallback to legacy class_labels_auto)
+    class_auto <- if (h5file$exists("class_name_auto")) {
+      h5file[["class_name_auto"]]$read()
+    } else {
+      h5file[["class_labels_auto"]]$read()
+    }
+
+    # Read class_name (fallback to legacy class_labels_above_threshold)
+    class_threshold <- if (h5file$exists("class_name")) {
+      h5file[["class_name"]]$read()
+    } else {
+      h5file[["class_labels_above_threshold"]]$read()
+    }
+
+    result <- list(
+      classifierName = classifier_name,
+      class2useTB = h5file[["class_labels"]]$read(),
+      roinum = h5file[["roi_numbers"]]$read(),
+      TBscores = t(h5file[["output_scores"]]$read()),
+      TBclass = class_auto,
+      TBclass_above_threshold = class_threshold,
+      TBclass_above_adhocthresh = NULL
+    )
+
+    return(result)
+  }
+
+  # Default: read .mat file
+  if (use_python && scipy_available()) {
+    ifcb_read_mat(filepath)
+  } else {
+    read_mat(filepath, fixNames = FALSE)
+  }
+}
 #' Extract the Class from the First Row of Each worms_records Tibble
 #'
 #' @description
@@ -751,4 +866,66 @@ process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
       NA  # Return NA for unknown formats
     }
   }, USE.NAMES = FALSE)
+}
+
+#' Read ADC File with Column Names from HDR
+#'
+#' Reads an ADC file and attempts to assign column names from the
+#' corresponding HDR file's `ADCFileFormat` parameter. Falls back to
+#' default `V1`, `V2`, ... names if no HDR or no `ADCFileFormat` is found.
+#'
+#' @param adc_file Character. Path to the `.adc` file.
+#' @return A data frame of ADC data, with named columns if available.
+#' @noRd
+read_adc_columns <- function(adc_file) {
+  hdr_file <- sub("\\.adc$", ".hdr", adc_file)
+
+  adc_data <- read.csv(adc_file, header = FALSE)
+
+  if (file.exists(hdr_file)) {
+    hdr_lines <- readLines(hdr_file, warn = FALSE)
+    fmt_line <- grep("^ADCFileFormat:", hdr_lines, value = TRUE)
+
+    if (length(fmt_line) > 0) {
+      col_names <- trimws(strsplit(sub("^ADCFileFormat:\\s*", "", fmt_line[1]), ",")[[1]])
+      col_names <- gsub("#", "_num", col_names)
+      col_names <- make.names(col_names, unique = TRUE)
+
+      if (length(col_names) == ncol(adc_data)) {
+        colnames(adc_data) <- col_names
+      }
+    }
+  }
+
+  adc_data
+}
+
+#' Get ROI Columns from ADC Data
+#'
+#' Extracts ROI width, height, and start byte columns from an ADC data frame,
+#' handling both named columns (from HDR) and positional access (old/new format).
+#'
+#' @param adc_data A data frame of ADC data as returned by `read_adc_columns()`.
+#' @return A list with elements `x` (width), `y` (height), and `startbyte`.
+#' @noRd
+adc_get_roi_columns <- function(adc_data) {
+  if ("RoiWidth" %in% colnames(adc_data)) {
+    list(
+      x = as.numeric(adc_data$RoiWidth),
+      y = as.numeric(adc_data$RoiHeight),
+      startbyte = as.numeric(adc_data$StartByte)
+    )
+  } else if (ncol(adc_data) >= 18) {
+    list(
+      x = as.numeric(adc_data$V16),
+      y = as.numeric(adc_data$V17),
+      startbyte = as.numeric(adc_data$V18)
+    )
+  } else {
+    list(
+      x = as.numeric(adc_data$V12),
+      y = as.numeric(adc_data$V13),
+      startbyte = as.numeric(adc_data$V14)
+    )
+  }
 }

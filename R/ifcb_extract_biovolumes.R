@@ -8,11 +8,13 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #' depending on whether the class is identified as a diatom.
 #'
 #' @param feature_files A path to a folder containing feature files or a character vector of file paths.
-#' @param mat_files (Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.
-#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png,
+#' @param class_files (Optional) A character vector of full paths to classification or manual
+#'   annotation files (`.mat`, `.h5`, or `.csv`), or a single path to a folder
+#'   containing such files.
+#' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 #'        where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
-#'        used as a substitute for MATLAB files.
+#'        used as a substitute for classification files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the `class2use` variable. Only required for manual results (default: NULL).
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
@@ -20,16 +22,24 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If `TRUE`, restricts the WoRMS search to marine taxa only. Default: `FALSE`.
-#' @param threshold Threshold for selecting classification information (`"opt"` for above-threshold classification, otherwise `"all"`). Default: `"opt"`.
+#' @param threshold A character string controlling which classification to use.
+#'   `"opt"` (default) uses the threshold-applied classification, where
+#'   predictions below the per-class optimal threshold are labeled
+#'   `"unclassified"`. Any other value (e.g. `"all"`) uses the raw winning
+#'   class without any threshold applied.
 #' @param multiblob Logical. If `TRUE`, includes multiblob features. Default: `FALSE`.
 #' @param feature_recursive Logical. If `TRUE`, searches recursively for feature files when `feature_files` is a folder. Default: `TRUE`.
-#' @param mat_recursive Logical. If `TRUE` and `mat_files` is a folder, searches recursively for MATLAB files in `mat_files`. Default: `TRUE`.
+#' @param class_recursive Logical. If `TRUE` and `class_files` is a folder, searches recursively for classification files. Default: `TRUE`.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param use_python Logical. If `TRUE`, attempts to read `.mat` files using a Python-based method (`SciPy`). Default: `FALSE`.
 #' @param verbose Logical. If `TRUE`, prints progress messages. Default: `TRUE`.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
-#'    Use \code{mat_files} instead.
+#'    Use \code{class_files} instead.
+#' @param mat_files `r lifecycle::badge("deprecated")`
+#'    Use \code{class_files} instead.
+#' @param mat_recursive `r lifecycle::badge("deprecated")`
+#'    Use \code{class_recursive} instead.
 #'
 #' @return A data frame containing:
 #' - `sample`: The sample name.
@@ -41,9 +51,9 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #'
 #' @details
 #' - **Classification Data Handling:**
-#'   - If `mat_files` is provided, the function reads class annotations from MATLAB `.mat` files.
-#'   - If `custom_images` and `custom_classes` are supplied, they override MATLAB classification data (e.g. data from a CNN model).
-#'   - If both `mat_files` and `custom_images/custom_classes` are given, `mat_files` takes precedence.
+#'   - If `class_files` is provided, the function reads class annotations from `.mat`, `.h5`, or `.csv` files.
+#'   - If `custom_images` and `custom_classes` are supplied, they override classification file data (e.g. data from a CNN model).
+#'   - If both `class_files` and `custom_images/custom_classes` are given, `class_files` takes precedence.
 #'
 #' - **MAT File Processing:**
 #'   - If `use_python = TRUE`, the function reads `.mat` files using `ifcb_read_mat()` (requires Python + `SciPy`).
@@ -51,57 +61,66 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #'
 #' @examples
 #' \dontrun{
-#' # Using MATLAB results:
+#' # Using classification results:
 #' feature_files <- "data/features"
-#' mat_files <- "data/classified"
+#' class_files <- "data/classified"
 #'
 #' biovolume_df <- ifcb_extract_biovolumes(feature_files,
-#'                                         mat_files)
+#'                                         class_files)
 #'
 #' print(biovolume_df)
 #'
 #' # Using custom classification result:
-#' class = c("Mesodinium_rubrum",
-#'           "Mesodinium_rubrum")
-#' image <- c("D20220522T003051_IFCB134_00002",
+#' classes <- c("Mesodinium_rubrum",
+#'              "Mesodinium_rubrum")
+#' images <- c("D20220522T003051_IFCB134_00002",
 #'            "D20220522T003051_IFCB134_00003")
 #'
 #' biovolume_df_custom <- ifcb_extract_biovolumes(feature_files,
-#'                                                custom_images = image,
-#'                                                custom_classes = class)
+#'                                                custom_images = images,
+#'                                                custom_classes = classes)
 #'
 #' print(biovolume_df_custom)
 #' }
 #'
-#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @export
 #'
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
-ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_images = NULL, custom_classes = NULL,
+ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_images = NULL, custom_classes = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
-                                    mat_recursive = TRUE, drop_zero_volume = FALSE,
-                                    feature_version = NULL, use_python = FALSE, verbose = TRUE, mat_folder = deprecated()) {
+                                    class_recursive = TRUE, drop_zero_volume = FALSE,
+                                    feature_version = NULL, use_python = FALSE, verbose = TRUE,
+                                    mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
 
-  # Warn the user if mat_folder is used
+  # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
-
-    # Signal the deprecation to the user
-    deprecate_warn("0.7.0", "iRfcb::ifcb_extract_biovolumes(mat_folder = )", "iRfcb::ifcb_extract_biovolumes(mat_files = )")
-
-    # Deal with the deprecated argument for compatibility
-    mat_files <- mat_folder
+    deprecate_warn("0.7.0", "iRfcb::ifcb_extract_biovolumes(mat_folder = )", "iRfcb::ifcb_extract_biovolumes(class_files = )")
+    class_files <- mat_folder
   }
 
-  if (is.null(mat_files) && (is.null(custom_images) || is.null(custom_classes))) {
-    stop("Error: No classification information supplied. Provide either `mat_files` for MATLAB data or both `custom_images` and `custom_classes` for a custom list.")
+  # Handle deprecated mat_files argument
+  if (lifecycle::is_present(mat_files)) {
+    deprecate_warn("0.8.0", "iRfcb::ifcb_extract_biovolumes(mat_files = )", "iRfcb::ifcb_extract_biovolumes(class_files = )")
+    class_files <- mat_files
   }
 
-  if (!is.null(mat_files) && (!is.null(custom_images) || !is.null(custom_classes))) {
-    warning("Warning: Both `mat_files` and `custom_images/custom_classes` were provided. The function will use the data from `mat_files` and ignore `custom_images` and `custom_classes`.")
+  # Handle deprecated mat_recursive argument
+  if (lifecycle::is_present(mat_recursive)) {
+    deprecate_warn("0.8.0", "iRfcb::ifcb_extract_biovolumes(mat_recursive = )", "iRfcb::ifcb_extract_biovolumes(class_recursive = )")
+    class_recursive <- mat_recursive
+  }
+
+  if (is.null(class_files) && (is.null(custom_images) || is.null(custom_classes))) {
+    stop("No classification information supplied. Provide either `class_files` or both `custom_images` and `custom_classes`.")
+  }
+
+  if (!is.null(class_files) && (!is.null(custom_images) || !is.null(custom_classes))) {
+    warning("Both `class_files` and `custom_images/custom_classes` were provided. The function will use `class_files` and ignore `custom_images` and `custom_classes`.")
   }
 
   if (is.character(feature_files)) {
@@ -128,19 +147,20 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = feature_recursive)
   }
 
-  if (!is.null(mat_files)) {
+  if (!is.null(class_files)) {
 
-    # Check if hdr_files is a single folder path or a vector of file paths
-    if (length(mat_files) == 1 && file.info(mat_files)$isdir) {
-      mat_files <- list.files(mat_files, pattern = "\\.mat$", recursive = mat_recursive, full.names = TRUE)
+    # Check if class_files is a single folder path or a vector of file paths
+    if (length(class_files) == 1 && file.info(class_files)$isdir) {
+      class_files <- list.files(class_files, pattern = "\\.(mat|h5|csv)$", recursive = class_recursive, full.names = TRUE)
     }
 
-    if (length(mat_files) == 0) {
-      stop("No MAT files found")
+    if (length(class_files) == 0) {
+      stop("No classification files found")
     }
 
-    # Check if files are manually classified
-    is_manual <- "class2use_manual" %in% ifcb_get_mat_names(mat_files[1])
+    # Check if files are manually classified (.h5 and .csv files are never manual)
+    is_manual <- tolower(tools::file_ext(class_files[1])) == "mat" &&
+      "class2use_manual" %in% ifcb_get_mat_names(class_files[1])
 
     if (is_manual && is.null(class2use_file)) {
       stop("class2use must be specified when extracting manual biovolume data")
@@ -152,7 +172,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     class_date_times <- gsub(".*D(\\d{8}T\\d{6})_.*", "\\1", custom_images)
   } else {
     # Extract date-time from class file paths
-    class_date_times <- gsub(".*D(\\d{8}T\\d{6})_.*", "\\1", mat_files)
+    class_date_times <- gsub(".*D(\\d{8}T\\d{6})_.*", "\\1", class_files)
   }
 
   # Extract date-time from feature file paths
@@ -162,7 +182,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   feature_files <- feature_files[extracted_dates %in% class_date_times]
 
   if (verbose) {
-    cat("Reading feature files...\n")
+    message("Reading feature files...")
   }
 
   # Read feature files
@@ -235,16 +255,16 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
     # Find unique samples in biovolume_df
     unique_samples <- unique(biovolume_df$sample)
 
-    # Identify matching mat files
-    mat_samples <- sub(".*(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", mat_files)
-    matching_mat <- mat_files[mat_samples %in% unique_samples]
+    # Identify matching class files
+    class_samples <- sub(".*(D\\d{8}T\\d{6}_IFCB\\d+).*", "\\1", class_files)
+    matching_class_files <- class_files[class_samples %in% unique_samples]
 
     # Initialize an empty list to store data frames
     tb_list <- list()
 
     if (is_manual) {
 
-      class_df <- ifcb_count_mat_annotations(matching_mat,
+      class_df <- ifcb_count_mat_annotations(matching_class_files,
                                              class2use_file,
                                              sum_level = "roi",
                                              use_python = use_python)
@@ -254,30 +274,28 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
       class_df$classifier <- NA
 
     } else {
-      n_files <- length(matching_mat)
+      n_files <- length(matching_class_files)
       tb_list <- vector("list", n_files)
 
       # Set up the progress bar
       if (verbose && n_files > 0) {
-        cat("Reading .mat files...\n")
+        message("Reading classification files...")
         pb <- txtProgressBar(min = 0, max = n_files, style = 3)
       }
 
-      for (i in seq_along(matching_mat)) {
+      for (i in seq_along(matching_class_files)) {
 
         if (verbose && n_files > 0) {
           setTxtProgressBar(pb, i)
         }
 
         temp <- suppressWarnings({
-          if (use_python && scipy_available()) {
-            ifcb_read_mat(matching_mat[i])
-          } else {
-            read_mat(matching_mat[i], fixNames = FALSE)
-          }
+          read_class_file(matching_class_files[i], use_python = use_python)
         })
 
-        sample_name <- str_replace(basename(matching_mat[i]), "_class_v\\d+.mat", "")
+        sample_name <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(matching_class_files[i]))
+        # Also handle CSV files where the filename is just the sample name
+        sample_name <- sub("\\.csv$", "", sample_name)
 
         tb_list[[i]] <- tibble(
           sample = sample_name,
@@ -310,7 +328,7 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   unique_classes <- unique(biovolume_df$class)
 
   if (verbose) {
-    cat("Retrieving WoRMS records...\n")
+    message("Retrieving WoRMS records...")
   }
 
   is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
@@ -322,8 +340,8 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
   if (!is.null(diatom_include)) {
     matched <- is_diatom$class %in% diatom_include
     if (verbose && any(matched)) {
-      cat("INFO: The following classes were manually included as diatoms via diatom_include:\n")
-      cat(sort(is_diatom$class[matched]), sep = "\n")
+      message("INFO: The following classes were manually included as diatoms via diatom_include:")
+      message(paste(sort(is_diatom$class[matched]), collapse = "\n"))
     }
     is_diatom$is_diatom[matched] <- TRUE
   }
@@ -338,14 +356,14 @@ ifcb_extract_biovolumes <- function(feature_files, mat_files = NULL, custom_imag
 
   # Print the classes with NA values
   if (length(na_classes$class) > 0 & verbose) {
-    cat("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:\n")
-    cat(sort(na_classes$class), sep = "\n")
+    message("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:")
+    message(paste(sort(na_classes$class), collapse = "\n"))
   }
 
   # Print the classes that are non-Diatoms
   if (length(non_diatoms$class) > 0 & verbose) {
-    cat("INFO: The following classes are considered NOT diatoms for carbon calculations:\n")
-    cat(sort(non_diatoms$class), sep = "\n")
+    message("INFO: The following classes are considered NOT diatoms for carbon calculations:")
+    message(paste(sort(non_diatoms$class), collapse = "\n"))
   }
 
   # Calculate carbon content based on diatom classification

@@ -38,7 +38,7 @@ the dataset.}
 \code{"D20251021T133007_IFCB134"}) to restrict processing to a specified subset of bins.
 If \code{NULL} (default), all bins present in \code{feature_folder} are processed.}
 
-\item{save_data}{A boolean indicating whether to save data to CSV files. Default is FALSE.}
+\item{save_data}{A logical indicating whether to save data to CSV files. Default is FALSE.}
 
 \item{output_file}{A string with the base file name for the .csv output (including path).
 Set to NULL to avoid saving data (default).}
@@ -47,7 +47,7 @@ Set to NULL to avoid saving data (default).}
 If \code{NULL} (default), plots are not saved. If \code{use_plot_subfolders = TRUE},
 plots are organized into subfolders based on their flag status.}
 
-\item{use_marker}{A boolean indicating whether to show markers on the plot. Default is FALSE.}
+\item{use_marker}{A logical indicating whether to show markers on the plot. Default is FALSE.}
 
 \item{start_fit}{An integer indicating the start fit value for the plot. Default is 10.}
 
@@ -83,7 +83,7 @@ high humidity. Optional.}
 
 \item{fea_v}{The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
-\item{use_plot_subfolders}{A boolean indicating whether to save plots in subfolders
+\item{use_plot_subfolders}{A logical indicating whether to save plots in subfolders
 based on the sample's flag status. If TRUE (default), samples without flags are
 saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
 named after their flag(s). If FALSE, all plots are saved directly in \code{plot_folder}.}
@@ -149,5 +149,5 @@ International Society for the Study of Harmful Algae. https://doi.org/10.15027/0
 }
 \seealso{
 \code{\link{ifcb_py_install}},
-\url{https://github.com/kudelalab/PSD},
+\url{https://github.com/kudelalab/PSD}
 }

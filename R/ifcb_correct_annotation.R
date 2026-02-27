@@ -26,9 +26,6 @@ utils::globalVariables("edit_manual_file")
 #'
 #' If a character vector is provided as `correction`, it will be used directly as a list of filenames for correction.
 #'
-#' The `correction` is typically generated using a Shiny app that provides an interactive interface for browsing and managing
-#' IFCB (Imaging FlowCytobot) image galleries. This Shiny app can be initialized using the function `ifcb_run_image_gallery()`.
-#'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
@@ -82,7 +79,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     corrections <- read.table(correction, header = TRUE, row.names = NULL)
   } else if (is.character(correction)) {
     # Use the provided character vector as corrections
-    corrections <- data.frame(image_filename = correction, stringsAsFactors = FALSE)
+    corrections <- data.frame(image_filename = correction)
   } else {
     stop("Invalid input: `correction` should be a file path or a character vector.")
   }

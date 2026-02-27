@@ -32,48 +32,72 @@ navbar:
 reference:
 - title: Main functions
 
-- subtitle: Core functions
-  desc: Core functions for processing and analyzing IFCB data.
+- subtitle: Data download
+  desc: Functions for downloading IFCB data from dashboards and external repositories.
   contents:
-  - '`ifcb_convert_filenames`'
-  - '`ifcb_count_mat_annotations`'
-  - '`ifcb_create_manifest`'
   - '`ifcb_download_dashboard_data`'
   - '`ifcb_download_dashboard_metadata`'
   - '`ifcb_download_test_data`'
   - '`ifcb_download_whoi_plankton`'
-  - '`ifcb_extract_annotated_images`'
-  - '`ifcb_extract_biovolumes`'
-  - '`ifcb_extract_classified_images`'
-  - '`ifcb_extract_pngs`'
-  - '`ifcb_get_ecotaxa_example`'
-  - '`ifcb_get_ferrybox_data`'
+  - '`ifcb_list_dashboard_bins`'
+- subtitle: Data reading
+  desc: Functions for reading raw IFCB files and extracting metadata.
+  contents:
+  - '`ifcb_convert_filenames`'
   - '`ifcb_get_mat_names`'
   - '`ifcb_get_mat_variable`'
   - '`ifcb_get_runtime`'
-  - '`ifcb_get_shark_colnames`'
-  - '`ifcb_get_shark_example`'
-  - '`ifcb_get_trophic_type`'
-  - '`ifcb_is_diatom`'
-  - '`ifcb_is_in_basin`'
-  - '`ifcb_is_near_land`'
-  - '`ifcb_list_dashboard_bins`'
-  - '`ifcb_match_taxa_names`'
-  - '`ifcb_psd_plot`'
   - '`ifcb_read_features`'
   - '`ifcb_read_hdr_data`'
   - '`ifcb_read_summary`'
-  - '`ifcb_run_image_gallery`'
+  - '`ifcb_volume_analyzed`'
+  - '`ifcb_volume_analyzed_from_adc`'
+- subtitle: Summarizing and counting
+  desc: Functions for counting and summarizing annotated or classified images, biovolumes, and carbon content.
+  contents:
+  - '`ifcb_count_mat_annotations`'
+  - '`ifcb_extract_biovolumes`'
   - '`ifcb_summarize_biovolumes`'
   - '`ifcb_summarize_class_counts`'
   - '`ifcb_summarize_png_counts`'
   - '`ifcb_summarize_png_metadata`'
-  - '`ifcb_volume_analyzed`'
-  - '`ifcb_volume_analyzed_from_adc`'
+- subtitle: Image extraction
+  desc: Functions for extracting images from raw IFCB `.roi` files.
+  contents:
+  - '`ifcb_extract_annotated_images`'
+  - '`ifcb_extract_classified_images`'
+  - '`ifcb_extract_pngs`'
+- subtitle: Quality control
+  desc: Functions for geospatial quality control and particle size distribution analysis.
+  contents:
+  - '`ifcb_get_ferrybox_data`'
+  - '`ifcb_is_in_basin`'
+  - '`ifcb_is_near_land`'
+  - '`ifcb_psd_plot`'
   - '`ifcb_which_basin`'
-  - '`ifcb_zip_matlab`'
+- subtitle: Taxonomic data
+  desc: Functions for taxonomic name matching, diatom classification, and trophic type lookup.
+  contents:
+  - '`ifcb_get_trophic_type`'
+  - '`ifcb_is_diatom`'
+  - '`ifcb_match_taxa_names`'
+- subtitle: Data export
+  desc: Functions for packaging images and MATLAB files and preparing data for external repositories.
+  contents:
+  - '`ifcb_create_manifest`'
+  - '`ifcb_get_ecotaxa_example`'
+  - '`ifcb_get_shark_colnames`'
+  - '`ifcb_get_shark_example`'
   - '`ifcb_zip_images_by_class`'
+  - '`ifcb_zip_matlab`'
   - '`ifcb_zip_pngs`'
+- subtitle: Image classification
+  desc: Functions for classifying IFCB images through a Gradio application.
+  contents:
+  - '`ifcb_classify_images`'
+  - '`ifcb_classify_models`'
+  - '`ifcb_classify_sample`'
+  - '`ifcb_save_classification`'
 - subtitle: Python dependency ![Python Powered](../python-powered-w-70x28.png)
   desc: These functions depend on a working Python installation. For more information, see the [README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
   contents:
@@ -102,3 +126,4 @@ reference:
   contents:
   - '`ifcb_create_empty_manual_file`'
   - '`retrieve_worms_records`'
+  - '`ifcb_run_image_gallery`'

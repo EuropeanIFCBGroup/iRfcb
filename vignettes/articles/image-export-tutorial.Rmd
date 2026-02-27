@@ -86,7 +86,7 @@ Prepare the PNG directory for publication as a zip-archive, similar to the files
 ifcb_zip_pngs(
   png_folder = "data/extracted_images",
   zip_filename = "data/zip/ifcb_annotated_images_corrected.zip",
-  # Template icluded in `iRfcb`
+  # Template included in `iRfcb`
   readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
   email_address = "tutorial@test.com",
   version = "1.1",
@@ -106,7 +106,7 @@ ifcb_zip_matlab(
   class2use_file = "data/config/class2use.mat",
   zip_filename = "data/zip/ifcb_matlab_files_corrected.zip",
   data_folder = "data/data",
-  # Templates icluded in `iRfcb`
+  # Templates included in `iRfcb`
   readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
   matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"),
   email_address = "tutorial@test.com",

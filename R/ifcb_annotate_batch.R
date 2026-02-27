@@ -2,7 +2,7 @@
 #'
 #' This function creates or updates manual `.mat` classlist files with a user specified class in batch,
 #' based on input vector of IFCB image names.
-#' These `.mat` can be used with the code in the `ifcb-analysis` repository (Sosik and Olson 2007).
+#' These `.mat` files can be used with the code in the `ifcb-analysis` repository (Sosik and Olson 2007).
 #'
 #' @param png_images A character vector containing the names of the PNG images to be annotated in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png, where XXX represent the IFCB number and ZZZZZ the roi number.
 #' @param class A character string or integer specifying the class name or class2use index to annotate the images with. If a string is provided, it is matched against the available classes in `class2use_file`.
@@ -29,7 +29,7 @@
 #' If a string is provided, the function will attempt to match it to one of the available
 #' classes in `class2use_file`. If no match is found, an error is thrown.
 #'
-#' The function assumes that the ADC files are organized in subfolders by year (YYYY) and date (DYYYYMMDD) within `adc_folder`.
+#' The function assumes that the ADC files are organized in subfolders by year (YYYY) and date (DYYYYMMDD) within `adc_files`.
 #'
 #' @return The function does not return a value. It creates or updates `.mat` files in the `manual_folder` to
 #' reflect the specified annotations.

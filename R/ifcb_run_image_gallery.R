@@ -1,5 +1,11 @@
 #' Run IFCB Image Gallery
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' This function was deprecated as there is a better alternative: `ClassiPyR::run_app()`. For more information,
+#' please see: <https://europeanifcbgroup.github.io/ClassiPyR/>
+#'
 #' Launches a Shiny application that provides an interactive interface for
 #' browsing and managing IFCB (Imaging FlowCytobot) image galleries.
 #'
@@ -22,6 +28,13 @@
 #' }
 #' }
 ifcb_run_image_gallery <- function() {
+  lifecycle::deprecate_warn(
+    when = "0.7.0.9000",
+    what = "ifcb_run_image_gallery()",
+    with = "ClassiPyR::run_app()",
+    details = "ClassiPyR is a better alternative, see: https://europeanifcbgroup.github.io/ClassiPyR/"
+  )
+
   appDir <- system.file("shiny", "ifcb_image_gallery", package = "iRfcb")
   if (appDir == "") {
     stop("Could not find ifcb_image_gallery directory. Try re-installing `iRfcb`.", call. = FALSE)

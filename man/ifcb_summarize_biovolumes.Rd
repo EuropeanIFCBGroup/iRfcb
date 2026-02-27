@@ -6,7 +6,7 @@
 \usage{
 ifcb_summarize_biovolumes(
   feature_folder,
-  mat_files = NULL,
+  class_files = NULL,
   class2use_file = NULL,
   hdr_folder = NULL,
   custom_images = NULL,
@@ -17,45 +17,53 @@ ifcb_summarize_biovolumes(
   marine_only = FALSE,
   threshold = "opt",
   feature_recursive = TRUE,
-  mat_recursive = TRUE,
+  class_recursive = TRUE,
   hdr_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
   verbose = TRUE,
-  mat_folder = deprecated()
+  mat_folder = deprecated(),
+  mat_files = deprecated(),
+  mat_recursive = deprecated()
 )
 }
 \arguments{
 \item{feature_folder}{Path to the folder containing feature files (e.g., CSV format).}
 
-\item{mat_files}{(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.}
+\item{class_files}{(Optional) A character vector of full paths to classification or manual
+annotation files (\code{.mat}, \code{.h5}, or \code{.csv}), or a single path to a folder
+containing such files.}
 
 \item{class2use_file}{(Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.}
 
 \item{hdr_folder}{(Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.}
 
-\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ,
+\item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 These filenames should match the \code{roi_number} assignment in the \code{feature_files} and can be
-used as a substitute for MATLAB files.}
+used as a substitute for classification files.}
 
 \item{custom_classes}{(Optional) A character vector of corresponding class labels for \code{custom_images}.}
 
 \item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
-\item{diatom_class}{A string vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
+\item{diatom_class}{A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
 
 \item{diatom_include}{Optional character vector of class names that should always be treated as diatoms,
 overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{marine_only}{Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.}
 
-\item{threshold}{Threshold for classification (default: "opt").}
+\item{threshold}{A character string controlling which classification to use.
+\code{"opt"} (default) uses the threshold-applied classification, where
+predictions below the per-class optimal threshold are labeled
+\code{"unclassified"}. Any other value (e.g. \code{"all"}) uses the raw winning
+class without any threshold applied.}
 
 \item{feature_recursive}{Logical. If TRUE, the function will search for feature files recursively within the \code{feature_folder}. Default is TRUE.}
 
-\item{mat_recursive}{Logical. If TRUE, the function will search for MATLAB files recursively when the \code{mat_files} is a folder. Default is TRUE.}
+\item{class_recursive}{Logical. If TRUE, the function will search for classification files recursively when \code{class_files} is a folder. Default is TRUE.}
 
 \item{hdr_recursive}{Logical. If TRUE, the function will search for HDR files recursively within the \code{hdr_folder} (if provided). Default is TRUE.}
 
@@ -68,7 +76,13 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
 \item{mat_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
-Use \code{mat_files} instead.}
+Use \code{class_files} instead.}
+
+\item{mat_files}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{class_files} instead.}
+
+\item{mat_recursive}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Use \code{class_recursive} instead.}
 }
 \value{
 A data frame summarizing aggregated biovolume and carbon content per class per sample.
@@ -78,8 +92,8 @@ Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', '
 \description{
 This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
 samples based on biovolume information from feature files. Images are grouped into classes either
-based on MATLAB classification, manually annotated files, or a user-supplied list of images and
-their corresponding class labels (e.g. from a CNN model).
+based on classification files (\code{.mat}, \code{.h5}, or \code{.csv}), manually annotated files, or a
+user-supplied list of images and their corresponding class labels (e.g. from a CNN model).
 }
 \details{
 This function performs the following steps:
@@ -89,10 +103,10 @@ This function performs the following steps:
 \item Computes biovolume and carbon content per liter of sample analyzed.
 }
 
-The MATLAB classification or manual annotation files are generated by the \code{ifcb-analysis} repository
+The classification or manual annotation files are generated by the \code{ifcb-analysis} repository
 (Sosik and Olson 2007). Users can optionally provide a \strong{custom classification} by supplying a vector of image filenames
 (\code{custom_images}) along with corresponding class labels (\code{custom_classes}). This allows summarization
-of biovolume and carbon content without requiring MATLAB classification or manual annotation files
+of biovolume and carbon content without requiring classification or manual annotation files
 (e.g. results from a CNN model).
 
 Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000
@@ -108,13 +122,14 @@ You can initialize the Python environment and install necessary packages using \
 \examples{
 \dontrun{
 # Example usage:
-ifcb_summarize_biovolumes("path/to/features", "path/to/mat", hdr_folder = "path/to/hdr")
+ifcb_summarize_biovolumes("path/to/features", "path/to/classified",
+                          hdr_folder = "path/to/hdr")
 
 # Using custom classification result:
 images <- c("D20220522T003051_IFCB134_00002",
             "D20220522T003051_IFCB134_00003")
-classes = c("Mesodinium_rubrum",
-            "Mesodinium_rubrum")
+classes <- c("Mesodinium_rubrum",
+             "Mesodinium_rubrum")
 
 ifcb_summarize_biovolumes(feature_folder = "path/to/features",
                           hdr_folder = "path/to/hdr",
@@ -124,7 +139,7 @@ ifcb_summarize_biovolumes(feature_folder = "path/to/features",
 
 }
 \references{
-Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }

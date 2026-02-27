@@ -1,7 +1,7 @@
 Type: Package
 Package: iRfcb
 Title: Tools for Managing Imaging FlowCytobot (IFCB) Data
-Version: 0.7.0.9000
+Version: 0.8.0
 Authors@R: c(
     person("Anders", "Torstensson", email = "anders.torstensson@smhi.se", role = c("aut", "cre"),
            comment = c("Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
@@ -53,13 +53,15 @@ Imports:
     worrms,
     zip,
     jsonlite
-Suggests: 
+Suggests:
+    hdf5r,
     knitr,
     mockery,
     rmarkdown,
     spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/testthat/parallel: true
 Encoding: UTF-8
 Language: en-US
 LazyData: true

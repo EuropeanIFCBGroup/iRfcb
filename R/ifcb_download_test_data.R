@@ -4,14 +4,14 @@
 #' dataset available in the SMHI IFCB Plankton Image Reference Library (Torstensson et al. 2024),
 #' unzips them into the specified folder and extracts png images. These data can be used, for instance,
 #' for testing `iRfcb` and for creating the tutorial vignette
-#' using \code{vignette("introduction", package = "iRfcb")}
+#' using \code{vignette("introduction", package = "iRfcb")}.
 #'
 #' @param dest_dir The destination directory where the files will be unzipped.
 #' @param figshare_article The file article number at the SciLifeLab Figshare data repository.
 #' By default, the `iRfcb` test dataset (48158716) from Torstensson et al. (2024) is used.
 #' @param max_retries The maximum number of retry attempts in case of download failure. Default is 3.
 #' @param sleep_time The sleep time between download attempts, in seconds. Default is 10.
-#' @param keep_zip A logical indicating whether to keep the downloaded zip archive after its download. Default is FALSE.
+#' @param keep_zip A logical indicating whether to keep the downloaded zip archive after extraction. Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param expected_checksum `r lifecycle::badge("deprecated")`
 #'   Optional. The expected MD5 checksum of the downloaded zip file.
@@ -128,6 +128,6 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   file.copy(ferrybox_file, dest_ferrybox_file)
 
   if (verbose) {
-    cat("Download and extraction complete.\n")
+    message("Download and extraction complete.")
   }
 }

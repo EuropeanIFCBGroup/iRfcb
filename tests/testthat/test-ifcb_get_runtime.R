@@ -53,27 +53,23 @@ test_that("ifcb_get_runtime handles missing fields gracefully", {
 })
 
 test_that("ifcb_get_runtime handles header file from URL", {
-  # Example URL
-  url <- "https://habon-ifcb.whoi.edu/tangosund/D20161017T161534_IFCB110.hdr"
+  url <- "https://ifcb-data.whoi.edu/mvco/D20190402T200352_IFCB010.hdr"
 
   # Check for internet connection and skip the test if offline
   skip_if_offline()
   skip_on_cran()
-  skip_if_resource_unavailable("https://habon-ifcb.whoi.edu")
+  skip_if_resource_unavailable("https://ifcb-data.whoi.edu")
 
   # Attempt to read the header file from the URL, handle potential errors
   hdr_info_db <- tryCatch(
     {
-      # Call the function to read the header file from the URL
       ifcb_get_runtime(url)
     },
     error = function(e) {
-      # Skip the test with an informative message if the URL fails
       skip(paste("URL not accessible or file not found:", url))
     }
   )
 
-  # Check if the extracted values are correct (example values, adjust as needed)
-  expect_equal(hdr_info_db$runtime, 1198.026000, info = "Extracted runtime should be 1198.026")
-  expect_equal(hdr_info_db$inhibittime, 0.000000, info = "Extracted inhibittime should be 0")
+  expect_equal(hdr_info_db$runtime, 1198.002569)
+  expect_equal(hdr_info_db$inhibittime, 151.315095)
 })

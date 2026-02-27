@@ -228,7 +228,7 @@ This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Sk
 
 ### Check If Positions Are Within the Baltic Sea or Elsewhere
 
-This check is useful if only you want to apply a classifier specifically to phytoplankton from the Baltic Sea.
+This check is useful if you only want to apply a classifier specifically to phytoplankton from the Baltic Sea.
 
 ```{r}
 # Define example latitude and longitude vectors

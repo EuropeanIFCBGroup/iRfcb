@@ -58,10 +58,10 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
 
   for (yr in year_range) {
     classpath <- gsub("xxxx", as.character(yr), classpath_generic)
-    temp <- list.files(classpath, pattern = "D.*\\.mat", full.names = TRUE)
+    temp <- list.files(classpath, pattern = "D.*\\.(mat|h5)", full.names = TRUE)
     if (length(temp) > 0) {
       classfiles <- c(classfiles, temp)
-      filelist <- c(filelist, substr(basename(temp), 1, 24))
+      filelist <- c(filelist, sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(temp)))
     }
   }
 
@@ -82,12 +82,7 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
   mdate <- sapply(filelist, function(f) { ymd_hms(gsub("T", "", substr(f, 2, 16)), tz = "UTC") })
 
   # Load the first class file to get class2useTB
-  if (use_python && scipy_available()) {
-    temp <- ifcb_read_mat(classfiles[1])
-  } else {
-    # Read the contents of the MAT file
-    temp <- read_mat(classfiles[1])
-  }
+  temp <- read_class_file(classfiles[1], use_python = use_python)
   class2use <- temp$class2useTB
   classcount <- matrix(NA, nrow = length(classfiles), ncol = length(class2use))
   classcount_above_optthresh <- classcount
@@ -97,16 +92,16 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
 
   for (filecount in seq_along(classfiles)) {
     if (filecount %% 10 == 0) {
-      cat("reading", filecount, "of", length(classfiles), "\n")
+      message("reading ", filecount, " of ", length(classfiles))
     }
     ml_analyzed[filecount] <- ifcb_volume_analyzed(hdrfiles[filecount])
     if (exists("adhocthresh")) {
-      res <- summarize_TBclass(classfiles[filecount], adhocthresh)
+      res <- summarize_TBclass(classfiles[filecount], adhocthresh, use_python = use_python)
       classcount[filecount,] <- res[[1]]
       classcount_above_optthresh[filecount,] <- res[[2]]
       classcount_above_adhocthresh[filecount,] <- res[[3]]
     } else {
-      res <- summarize_TBclass(classfiles[filecount])
+      res <- summarize_TBclass(classfiles[filecount], use_python = use_python)
       classcount[filecount,] <- res[[1]]
       classcount_above_optthresh[filecount,] <- res[[2]]
     }

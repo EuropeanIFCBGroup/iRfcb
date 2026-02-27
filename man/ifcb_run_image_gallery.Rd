@@ -10,10 +10,14 @@ ifcb_run_image_gallery()
 No return value. This function launches a Shiny application for interactive image browsing and management.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function was deprecated as there is a better alternative: \code{ClassiPyR::run_app()}. For more information,
+please see: \url{https://europeanifcbgroup.github.io/ClassiPyR/}
+
 Launches a Shiny application that provides an interactive interface for
 browsing and managing IFCB (Imaging FlowCytobot) image galleries.
-}
-\details{
+
 Users can specify a folder containing .png images, navigate through the images,
 select and unselect images, and download a list of selected images.
 This feature is particularly useful for quality control of annotated images.

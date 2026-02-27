@@ -25,7 +25,7 @@ ifcb_is_near_land(
 
 \item{distance}{Buffer distance (in meters) from the coastline to consider "near land." Default is 500 meters.}
 
-\item{shape}{Optional path to a shapefile (\code{.shp} or \code{.gpkg}) containing coastline data. If provided,
+\item{shape}{Optional path to a spatial file (\code{.shp} shapefile or \code{.gpkg} GeoPackage) containing coastline data. If provided,
 this file will be used instead of the default Natural Earth 1:10m land vectors.
 A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 Alternatively, you can retrieve a more detailed European coastline automatically by
@@ -42,9 +42,9 @@ Default is EPSG code 4326 (WGS84).}
 the coastline. Useful in archipelagos. Default is \code{TRUE}.}
 
 \item{small_island_threshold}{Area threshold in square meters below which islands
-will be considered small and removed, if remove_small_islands is set to \code{TRUE}. Default is 2 square km.}
+will be considered small and removed, if remove_small_islands is set to \code{TRUE}. Default is 2,000,000 (2 km^2).}
 
-\item{plot}{A boolean indicating whether to plot the points, land polygon and buffer. Default is \code{FALSE}.}
+\item{plot}{A logical indicating whether to plot the points, land polygon and buffer. Default is \code{FALSE}.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 

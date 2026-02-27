@@ -20,7 +20,7 @@ A numeric vector containing the estimated sample volume analyzed for each header
 This function reads an IFCB header file to extract sample run time and inhibittime,
 and returns the associated estimate of sample volume analyzed (in milliliters).
 The function assumes a standard IFCB configuration with a sample syringe operating
-at 0.25 mL per minute. For IFCB instruments after 007 and higher (except 008). This is
+at 0.25 mL per minute, for IFCB instruments 007 and higher (except 008). This is
 the R equivalent function of \code{IFCB_volume_analyzed} from the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \examples{
