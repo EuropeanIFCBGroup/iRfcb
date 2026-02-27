@@ -97,7 +97,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
   # If readme_file is provided, update it
   if (!is.null(readme_file)) {
     if (!quiet) {
-      cat("Creating README file...\n")
+      message("Creating README file...")
     }
 
     # Read the template README.md content
@@ -158,7 +158,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
     if (!is.null(readme_file)) {
       # Print message to indicate creating of MANIFEST.txt
       if (!quiet) {
-        cat("Creating MANIFEST.txt...\n")
+        message("Creating MANIFEST.txt...")
       }
 
       # Create a manifest for the zip package
@@ -169,7 +169,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
     # Print message to indicate starting zip creation
     if (!quiet) {
-      cat("Creating zip archive...\n")
+      message("Creating zip archive...")
     }
 
     if (!dir.exists(dirname(zip_filename))) {
@@ -178,7 +178,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
     zip::zipr(zipfile = zip_filename, files = files_to_zip)
     if (!quiet) {
-      cat("Zip archive created successfully:", normalizePath(zip_filename, winslash = "/"), "\n")
+      message("Zip archive created successfully: ", normalizePath(zip_filename, winslash = "/"))
     }
 
     # Check zip file size and split only if necessary
@@ -186,7 +186,7 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
 
     if (split_zip && zip_file_size > max_size) {
       if (!quiet) {
-        cat(zip_filename, "is larger than", max_size, "MB. Splitting the zip file into smaller parts...\n")
+        message(zip_filename, " is larger than ", max_size, " MB. Splitting the zip file into smaller parts...")
       }
 
       split_large_zip(zip_filename, max_size, quiet)

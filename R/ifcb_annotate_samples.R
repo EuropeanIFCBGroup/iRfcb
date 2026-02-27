@@ -183,17 +183,11 @@ ifcb_annotate_samples <- function(png_folder,
       adc_file <- adc_file[1]
     }
 
-    adc_data <- readr::read_csv(
-      adc_file,
-      col_names = FALSE,
-      show_col_types = FALSE,
-      progress = FALSE
-    )
+    adc_data <- read_adc_columns(adc_file)
 
-    # Identify trigger without an image from ROIheight and start_byte
-    empty_triggers <- which(
-      rowSums(adc_data[, 16:17], na.rm = TRUE) == 0
-    )
+    # Identify trigger without an image from ROIwidth and ROIheight
+    roi_cols <- adc_get_roi_columns(adc_data)
+    empty_triggers <- which(roi_cols$x == 0 & roi_cols$y == 0)
 
     annotation_sample <- annotation %>%
       dplyr::filter(sample == smp)

@@ -1,4 +1,4 @@
-# iRfcb (development version)
+# iRfcb 0.8.0
 
 ## New features
 
@@ -22,6 +22,7 @@
 
 * `ifcb_run_image_gallery()` is deprecated in favor of `ClassiPyR::run_app()`. See <https://europeanifcbgroup.github.io/ClassiPyR/> for more information.
 * Deprecated arguments:
+  * `old_adc` in `ifcb_extract_pngs()`, `ifcb_extract_annotated_images()`, and `ifcb_extract_classified_images()`. ADC format (old IFCB1-6 vs new) is now auto-detected from the HDR file's `ADCFileFormat` parameter and the ADC column count.
   * `mat_files` in `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` (replaced by `class_files`).
   * `mat_recursive` in `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` (replaced by `class_recursive`).
 

@@ -132,7 +132,7 @@ ifcb_is_near_land <- function(latitudes,
 
         # set up progress bar
         if (verbose && n_chunks > 0) {
-          cat("Downloading EEA coastline data...\n")
+          message("Downloading EEA coastline data...")
           pb <- txtProgressBar(min = 0, max = n_chunks, style = 3)
         }
 

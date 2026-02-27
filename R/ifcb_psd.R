@@ -245,7 +245,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
       ))
 
       # Inform user
-      cat("Saving plot ", sample, "\n", sep = "")
+      message("Saving plot ", sample)
     }
   }
 

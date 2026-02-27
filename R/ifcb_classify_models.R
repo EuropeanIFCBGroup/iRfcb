@@ -9,7 +9,7 @@
 #'   example Hugging Face Space with limited resources intended for testing and
 #'   demonstration. For large-scale classification, deploy your own instance of
 #'   the classification app with your own model (source code:
-#'   \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #'
 #' @return A character vector of available model names.

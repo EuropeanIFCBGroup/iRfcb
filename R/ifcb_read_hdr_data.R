@@ -55,7 +55,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
     )
   }
 
-  if (verbose) cat("Found", length(hdr_files), ".hdr files.\n")
+  if (verbose) message("Found ", length(hdr_files), " .hdr files.")
   if (verbose) pb <- txtProgressBar(min = 0, max = length(hdr_files), style = 3)
 
   # Read all files into a list of data frames using a helper function
@@ -108,7 +108,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
                                                   col_types = cols(GPSFeed = col_character())))
 
-  if (verbose) cat("Processing completed.\n")
+  if (verbose) message("Processing completed.")
 
   # Remove the 'file' column from the returned data frame
   dplyr::select(hdr_data_pivot, -file)

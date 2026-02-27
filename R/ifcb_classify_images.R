@@ -15,7 +15,7 @@
 #'   example Hugging Face Space with limited resources intended for testing and
 #'   demonstration. For large-scale classification, deploy your own instance of
 #'   the classification app (source code:
-#'   \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
@@ -89,8 +89,7 @@ ifcb_classify_images <- function(
         file_name       = file_name,
         class_name_auto = predictions$class_name,
         score           = predictions$score,
-        model_name      = model_name,
-        stringsAsFactors = FALSE
+        model_name      = model_name
       )
     }, error = function(e) {
       warning("Failed to classify image '", file_name, "': ", e$message)
@@ -98,8 +97,7 @@ ifcb_classify_images <- function(
         file_name       = file_name,
         class_name_auto = NA_character_,
         score           = NA_real_,
-        model_name      = model_name,
-        stringsAsFactors = FALSE
+        model_name      = model_name
       )
     })
   })

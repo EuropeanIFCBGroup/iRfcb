@@ -45,35 +45,40 @@ ifcb_volume_analyzed_from_adc <- function(adc_file) {
     if (startsWith(adc_file[[count]], 'http')) {
       adc <- read.csv(adc_file[[count]], header = FALSE)
     } else {
-      adc <- read.csv(adc_file[[count]], header = FALSE)
+      adc <- read_adc_columns(adc_file[[count]])
     }
 
-    if (nrow(adc) > 1 && any(adc$V24 != 0)) {
-      diffinh <- diff(adc$V24)
-      iii <- c(1, which(adc$V24[-1] > 0 & diffinh > -0.1 & diffinh < 5) + 1)
+    # Access columns by name if available, fallback to position
+    adc_time <- if ("ADCtime" %in% names(adc)) adc$ADCtime else adc$V2
+    run_time_col <- if ("RunTime" %in% names(adc)) adc$RunTime else adc$V23
+    inhibit_time_col <- if ("InhibitTime" %in% names(adc)) adc$InhibitTime else adc$V24
 
-      modeinhibittime <- mode(round(diff(adc$V24[iii]), 4))
+    if (nrow(adc) > 1 && any(inhibit_time_col != 0)) {
+      diffinh <- diff(inhibit_time_col)
+      iii <- c(1, which(inhibit_time_col[-1] > 0 & diffinh > -0.1 & diffinh < 5) + 1)
+
+      modeinhibittime <- mode(round(diff(inhibit_time_col[iii]), 4))
 
       runtime_offset <- 0
       inhibittime_offset <- 0
 
       if (nrow(adc) > 1) {
-        runtime_offset_test <- adc$V23[2] - adc$V2[2]
+        runtime_offset_test <- run_time_col[2] - adc_time[2]
 
         if (runtime_offset_test > 10) {
           runtime_offset <- runtime_offset_test
-          inhibittime_offset <- adc$V24[2] + modeinhibittime * 2
+          inhibittime_offset <- inhibit_time_col[2] + modeinhibittime * 2
         }
 
-        runtime2 <- adc$V2[nrow(adc)] + median(adc$V23[seq_len(min(nrow(adc), 50))] - adc$V2[seq_len(min(nrow(adc), 50))]) - runtime_offset
+        runtime2 <- adc_time[nrow(adc)] + median(run_time_col[seq_len(min(nrow(adc), 50))] - adc_time[seq_len(min(nrow(adc), 50))]) - runtime_offset
 
         if (abs(runtime - runtime2) > 0.2) {
           runtime[count] <- runtime2
         }
       }
 
-      inhibittime[count] <- adc$V24[nrow(adc)] - inhibittime_offset
-      runtime[count] <- adc$V23[nrow(adc)] - runtime_offset
+      inhibittime[count] <- inhibit_time_col[nrow(adc)] - inhibittime_offset
+      runtime[count] <- run_time_col[nrow(adc)] - runtime_offset
 
       looktime <- runtime[count] - inhibittime[count]
       ml_analyzed[count] <- flowrate * looktime / 60

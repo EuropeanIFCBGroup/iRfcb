@@ -79,7 +79,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     corrections <- read.table(correction, header = TRUE, row.names = NULL)
   } else if (is.character(correction)) {
     # Use the provided character vector as corrections
-    corrections <- data.frame(image_filename = correction, stringsAsFactors = FALSE)
+    corrections <- data.frame(image_filename = correction)
   } else {
     stop("Invalid input: `correction` should be a file path or a character vector.")
   }

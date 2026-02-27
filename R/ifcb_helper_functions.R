@@ -41,8 +41,7 @@ create_package_manifest <- function(paths, manifest_path = "MANIFEST.txt", temp_
   # Create a data frame with filenames and their sizes
   manifest_df <- data.frame(
     file = gsub(paste0(temp_dir, "/"), "", all_files, fixed = TRUE),
-    size = file_sizes,
-    stringsAsFactors = FALSE
+    size = file_sizes
   )
 
   # Format the file information as "filename [size]"
@@ -116,7 +115,7 @@ find_matching_data <- function(mat_file, data_files) {
 #' This function reads an HDR file and extracts relevant lines containing parameters and their values.
 #'
 #' @param file A character string specifying the path to the HDR file.
-#' @return A data frame with columns: `parameter`, `value`, and `file.`
+#' @return A data frame with columns: `parameter`, `value`, and `file`.
 #' @export
 read_hdr_file <- function(file) {
   lines <- readLines(file, warn = FALSE)
@@ -125,7 +124,7 @@ read_hdr_file <- function(file) {
   data <- do.call(rbind, lapply(lines, function(line) {
     split_line <- strsplit(line, ": ", fixed = TRUE)[[1]]
     if (length(split_line) == 2) {
-      data.frame(parameter = split_line[1], value = split_line[2], file = file, stringsAsFactors = FALSE)
+      data.frame(parameter = split_line[1], value = split_line[2], file = file)
     }
   }))
   data <- na.omit(data)
@@ -402,7 +401,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   # Step 0: Check if the zip file is smaller than max_size
   if (zip_file_size <= max_size_bytes) {
     if (!quiet) {
-      cat("The zip file is already smaller than the specified max size (", max_size, " MB).\n", sep = "")
+      message("The zip file is already smaller than the specified max size (", max_size, " MB).")
     }
     return(invisible(NULL))
   }
@@ -476,9 +475,8 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
     groups
   }
 
-  # Step 5: Set max zip size and group subfolders
-  max_zip_size <- 500 * 1024 * 1024  # 500 MB in bytes
-  subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_zip_size)
+  # Step 5: Group subfolders using the specified max size
+  subfolder_groups <- group_subfolders_into_zips(relative_subfolder_files, subfolder_sizes, max_size_bytes)
 
 
   # Vector to store the names of the created zip files
@@ -501,8 +499,8 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   unlink(unzip_dir, recursive = TRUE)
 
   if (!quiet) {
-    cat("Successfully created", length(subfolder_groups), "smaller zip files:\n")
-    cat(paste(created_zip_files, collapse = "\n"), "\n")
+    message("Successfully created ", length(subfolder_groups), " smaller zip files:")
+    message(paste(created_zip_files, collapse = "\n"))
   }
 }
 #' Check Python and Required Modules Availability
@@ -659,7 +657,7 @@ read_class_file <- function(filepath, use_python = FALSE) {
   ext <- tolower(tools::file_ext(filepath))
 
   if (ext == "csv") {
-    csv_data <- utils::read.csv(filepath, stringsAsFactors = FALSE)
+    csv_data <- utils::read.csv(filepath)
 
     # Extract ROI numbers from file_name column (e.g. ..._00001.png -> 1)
     roi_numbers <- as.integer(
@@ -868,4 +866,66 @@ process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
       NA  # Return NA for unknown formats
     }
   }, USE.NAMES = FALSE)
+}
+
+#' Read ADC File with Column Names from HDR
+#'
+#' Reads an ADC file and attempts to assign column names from the
+#' corresponding HDR file's `ADCFileFormat` parameter. Falls back to
+#' default `V1`, `V2`, ... names if no HDR or no `ADCFileFormat` is found.
+#'
+#' @param adc_file Character. Path to the `.adc` file.
+#' @return A data frame of ADC data, with named columns if available.
+#' @noRd
+read_adc_columns <- function(adc_file) {
+  hdr_file <- sub("\\.adc$", ".hdr", adc_file)
+
+  adc_data <- read.csv(adc_file, header = FALSE)
+
+  if (file.exists(hdr_file)) {
+    hdr_lines <- readLines(hdr_file, warn = FALSE)
+    fmt_line <- grep("^ADCFileFormat:", hdr_lines, value = TRUE)
+
+    if (length(fmt_line) > 0) {
+      col_names <- trimws(strsplit(sub("^ADCFileFormat:\\s*", "", fmt_line[1]), ",")[[1]])
+      col_names <- gsub("#", "_num", col_names)
+      col_names <- make.names(col_names, unique = TRUE)
+
+      if (length(col_names) == ncol(adc_data)) {
+        colnames(adc_data) <- col_names
+      }
+    }
+  }
+
+  adc_data
+}
+
+#' Get ROI Columns from ADC Data
+#'
+#' Extracts ROI width, height, and start byte columns from an ADC data frame,
+#' handling both named columns (from HDR) and positional access (old/new format).
+#'
+#' @param adc_data A data frame of ADC data as returned by `read_adc_columns()`.
+#' @return A list with elements `x` (width), `y` (height), and `startbyte`.
+#' @noRd
+adc_get_roi_columns <- function(adc_data) {
+  if ("RoiWidth" %in% colnames(adc_data)) {
+    list(
+      x = as.numeric(adc_data$RoiWidth),
+      y = as.numeric(adc_data$RoiHeight),
+      startbyte = as.numeric(adc_data$StartByte)
+    )
+  } else if (ncol(adc_data) >= 18) {
+    list(
+      x = as.numeric(adc_data$V16),
+      y = as.numeric(adc_data$V17),
+      startbyte = as.numeric(adc_data$V18)
+    )
+  } else {
+    list(
+      x = as.numeric(adc_data$V12),
+      y = as.numeric(adc_data$V13),
+      startbyte = as.numeric(adc_data$V14)
+    )
+  }
 }

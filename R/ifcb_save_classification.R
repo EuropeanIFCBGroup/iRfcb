@@ -33,7 +33,7 @@ utils::globalVariables("save_classification_mat")
 #'   example Hugging Face Space with limited resources intended for testing and
 #'   demonstration. For large-scale classification, deploy your own instance of
 #'   the classification app (source code:
-#'   \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #' @param model_name A character string specifying the name of the CNN model
 #'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
@@ -223,8 +223,7 @@ ifcb_save_classification <- function(
       file_name = file_names,
       class_name = class_above_threshold,
       class_name_auto = winning_class,
-      score = winning_score,
-      stringsAsFactors = FALSE
+      score = winning_score
     )
 
     utils::write.csv(csv_df, file = output_path, row.names = FALSE)

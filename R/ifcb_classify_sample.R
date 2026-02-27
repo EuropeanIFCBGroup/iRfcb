@@ -15,7 +15,7 @@
 #'   example Hugging Face Space with limited resources intended for testing and
 #'   demonstration. For large-scale classification, deploy your own instance of
 #'   the classification app (source code:
-#'   \url{https://github.com/anderstorstensson/ifcb-classification-app}) and
+#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
@@ -97,8 +97,7 @@ ifcb_classify_sample <- function(
     warning("No PNG images were extracted from: ", roi_file)
     return(data.frame(file_name = character(), class_name = character(),
                       class_name_auto = character(),
-                      score = numeric(), model_name = character(),
-                      stringsAsFactors = FALSE))
+                      score = numeric(), model_name = character()))
   }
 
   ifcb_classify_images(png_files, gradio_url = gradio_url, top_n = top_n,

@@ -182,7 +182,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   feature_files <- feature_files[extracted_dates %in% class_date_times]
 
   if (verbose) {
-    cat("Reading feature files...\n")
+    message("Reading feature files...")
   }
 
   # Read feature files
@@ -279,7 +279,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
       # Set up the progress bar
       if (verbose && n_files > 0) {
-        cat("Reading classification files...\n")
+        message("Reading classification files...")
         pb <- txtProgressBar(min = 0, max = n_files, style = 3)
       }
 
@@ -328,7 +328,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   unique_classes <- unique(biovolume_df$class)
 
   if (verbose) {
-    cat("Retrieving WoRMS records...\n")
+    message("Retrieving WoRMS records...")
   }
 
   is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
@@ -340,8 +340,8 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   if (!is.null(diatom_include)) {
     matched <- is_diatom$class %in% diatom_include
     if (verbose && any(matched)) {
-      cat("INFO: The following classes were manually included as diatoms via diatom_include:\n")
-      cat(sort(is_diatom$class[matched]), sep = "\n")
+      message("INFO: The following classes were manually included as diatoms via diatom_include:")
+      message(paste(sort(is_diatom$class[matched]), collapse = "\n"))
     }
     is_diatom$is_diatom[matched] <- TRUE
   }
@@ -356,14 +356,14 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
   # Print the classes with NA values
   if (length(na_classes$class) > 0 & verbose) {
-    cat("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:\n")
-    cat(sort(na_classes$class), sep = "\n")
+    message("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:")
+    message(paste(sort(na_classes$class), collapse = "\n"))
   }
 
   # Print the classes that are non-Diatoms
   if (length(non_diatoms$class) > 0 & verbose) {
-    cat("INFO: The following classes are considered NOT diatoms for carbon calculations:\n")
-    cat(sort(non_diatoms$class), sep = "\n")
+    message("INFO: The following classes are considered NOT diatoms for carbon calculations:")
+    message(paste(sort(non_diatoms$class), collapse = "\n"))
   }
 
   # Calculate carbon content based on diatom classification

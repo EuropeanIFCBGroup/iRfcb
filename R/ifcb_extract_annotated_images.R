@@ -19,7 +19,10 @@ utils::globalVariables(c("name", "manual"))
 #' @param scale_micron_factor A numeric value defining the conversion factor from micrometers to pixels. Defaults to 1/3.4.
 #' @param scale_bar_position A character string specifying the position of the scale bar in the image. Options are `"topright"`, `"topleft"`, `"bottomright"`, or `"bottomleft"`. Defaults to `"bottomright"`.
 #' @param scale_bar_color A character string specifying the scale bar color. Options are `"black"` or `"white"`. Defaults to `"black"`.
-#' @param old_adc A logical value indicating whether the `adc` file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.
+#' @param old_adc
+#'    `r lifecycle::badge("deprecated")`
+#'    Previously used to indicate old ADC format. ADC format is now auto-detected
+#'    from the HDR file and column count. This parameter is ignored.
 #' @param gamma A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values <1 brighten dark regions, while values >1 darken the image.
 #' @param normalize A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, preserving raw pixel values comparable to IFCB Dashboard output. See [ifcb_extract_pngs()] for details.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
@@ -57,6 +60,12 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
                                           scale_micron_factor = 1/3.4, scale_bar_position = "bottomright",
                                           scale_bar_color = "black", old_adc = FALSE, use_python = FALSE,
                                           gamma = 1, normalize = FALSE, add_trailing_numbers = TRUE, roi_folder = deprecated()) {
+
+  # Deprecate old_adc parameter (format is now auto-detected)
+  if (!missing(old_adc) && old_adc) {
+    lifecycle::deprecate_warn("0.8.0", "ifcb_extract_annotated_images(old_adc)",
+                              details = "ADC format is now auto-detected from the HDR file and column count.")
+  }
 
   # Warn the user if roi_folder is used
   if (lifecycle::is_present(roi_folder)) {

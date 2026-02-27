@@ -104,7 +104,7 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
   }
 
   if (verbose && length(no_content_messages) > 0) {
-    cat(paste(no_content_messages, collapse = "\n"), "\n")
+    message(paste(no_content_messages, collapse = "\n"))
   }
 
   if (return_list) {

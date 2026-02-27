@@ -92,7 +92,7 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
 
   for (filecount in seq_along(classfiles)) {
     if (filecount %% 10 == 0) {
-      cat("reading", filecount, "of", length(classfiles), "\n")
+      message("reading ", filecount, " of ", length(classfiles))
     }
     ml_analyzed[filecount] <- ifcb_volume_analyzed(hdrfiles[filecount])
     if (exists("adhocthresh")) {

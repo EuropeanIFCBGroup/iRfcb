@@ -49,8 +49,7 @@ ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_p
   # Create a data frame with filenames and their sizes
   manifest_df <- data.frame(
     file = gsub(paste0(normalizePath(folder_path, winslash = "/"), "/"), "", files, fixed = TRUE),  # Remove the folder path from the file names
-    size = file_sizes,
-    stringsAsFactors = FALSE
+    size = file_sizes
   )
 
   # Format the file information as "filename [size bytes]"
@@ -64,5 +63,5 @@ ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_p
   # Write the manifest content to MANIFEST.txt
   writeLines(manifest_content, manifest_path)
 
-  cat("MANIFEST.txt has been created at", manifest_path, "\n")
+  message("MANIFEST.txt has been created at ", manifest_path)
 }

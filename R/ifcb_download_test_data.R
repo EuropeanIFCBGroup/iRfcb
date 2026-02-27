@@ -128,6 +128,6 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   file.copy(ferrybox_file, dest_ferrybox_file)
 
   if (verbose) {
-    cat("Download and extraction complete.\n")
+    message("Download and extraction complete.")
   }
 }

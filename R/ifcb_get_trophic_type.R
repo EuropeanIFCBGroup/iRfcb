@@ -58,7 +58,7 @@ ifcb_get_trophic_type <- function(taxa_list = NULL, print_complete_list = FALSE)
 
   if (!is.null(taxa_list)) {
 
-    result <- data.frame(scientific_name = taxa_list, trophic_type = NA, stringsAsFactors = FALSE)
+    result <- data.frame(scientific_name = taxa_list, trophic_type = NA)
 
     # Match scientific_name with the specified list of taxa and return the trophic type
     for (i in seq_len(nrow(result))) {
