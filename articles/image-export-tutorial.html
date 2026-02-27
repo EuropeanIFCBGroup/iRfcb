@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,16 +173,16 @@ the <code>iRfcb</code> package.</p>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span></span>
 <span>  png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>  zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_annotated_images_corrected.zip"</span>,</span>
-<span>  <span class="co"># Template icluded in `iRfcb`</span></span>
+<span>  <span class="co"># Template included in `iRfcb`</span></span>
 <span>  readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
 <span>  email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
 <span>  version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
 <span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Creating README file...</span></span>
-<span><span class="co">## Creating MANIFEST.txt...</span></span>
-<span><span class="co">## Creating zip archive...</span></span>
-<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip</span></span></code></pre>
+<pre><code><span><span class="co">## Creating README file...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating MANIFEST.txt...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
+<pre><code><span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="package-matlab-directory">Package MATLAB Directory<a class="anchor" aria-label="anchor" href="#package-matlab-directory"></a>
@@ -190,7 +190,7 @@ the <code>iRfcb</code> package.</p>
 <p>Prepare the MATLAB directory for publication as a zip-archive,
 similar to the files in the <a href="https://doi.org/10.17044/scilifelab.25883455" class="external-link">SMHI IFCB Plankton
 Image Reference Library</a>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_matlab.html">ifcb_zip_matlab</a></span><span class="op">(</span></span>
 <span>  manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -198,29 +198,29 @@ Image Reference Library</a>:</p>
 <span>  class2use_file <span class="op">=</span> <span class="st">"data/config/class2use.mat"</span>,</span>
 <span>  zip_filename <span class="op">=</span> <span class="st">"data/zip/ifcb_matlab_files_corrected.zip"</span>,</span>
 <span>  data_folder <span class="op">=</span> <span class="st">"data/data"</span>,</span>
-<span>  <span class="co"># Templates icluded in `iRfcb`</span></span>
+<span>  <span class="co"># Templates included in `iRfcb`</span></span>
 <span>  readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
 <span>  matlab_readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/MATLAB-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
 <span>  email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
 <span>  version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
 <span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Listing all files...</span></span>
-<span><span class="co">## Copying manual files...</span></span>
-<span><span class="co">## Copying feature files...</span></span>
-<span><span class="co">## Copying data files...</span></span>
-<span><span class="co">## Copying class2use file...</span></span>
-<span><span class="co">## Creating README file...</span></span>
-<span><span class="co">## Creating MANIFEST.txt...</span></span>
-<span><span class="co">## Creating zip archive...</span></span>
-<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip</span></span></code></pre>
+<pre><code><span><span class="co">## Listing all files...</span></span></code></pre>
+<pre><code><span><span class="co">## Copying manual files...</span></span></code></pre>
+<pre><code><span><span class="co">## Copying feature files...</span></span></code></pre>
+<pre><code><span><span class="co">## Copying data files...</span></span></code></pre>
+<pre><code><span><span class="co">## Copying class2use file...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating README file...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating MANIFEST.txt...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
+<pre><code><span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="create-manifest-txt">Create MANIFEST.txt<a class="anchor" aria-label="anchor" href="#create-manifest-txt"></a>
 </h2>
 <p>Create a manifest file for the zip-archive (required for some data
 repositories):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create MANIFEST.txt of the zip folder content</span></span>
 <span><span class="fu"><a href="../reference/ifcb_create_manifest.html">ifcb_create_manifest</a></span><span class="op">(</span><span class="st">"data/zip"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## MANIFEST.txt has been created at data/zip/MANIFEST.txt</span></span></code></pre>
@@ -241,7 +241,7 @@ Plankton Image Reference Library (version 3)</a> (Torstensson et
 al. 2024) and combined into a single dataset. Please note that these
 datasets are large, and the downloading and merging processes may take
 considerable time.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define data directories</span></span>
 <span><span class="va">skagerrak_kattegat_dir</span> <span class="op">&lt;-</span> <span class="st">"data_skagerrak_kattegat"</span></span>
 <span><span class="va">tangesund_dir</span> <span class="op">&lt;-</span> <span class="st">"data_tangesund"</span></span>
@@ -280,7 +280,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.7.0.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.8.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -289,7 +289,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2026},</span></span>
-<span><span class="co">##     note = {R package version 0.7.0},</span></span>
+<span><span class="co">##     note = {R package version 0.8.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

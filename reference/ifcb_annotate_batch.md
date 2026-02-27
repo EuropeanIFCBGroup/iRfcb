@@ -2,8 +2,8 @@
 
 This function creates or updates manual `.mat` classlist files with a
 user specified class in batch, based on input vector of IFCB image
-names. These `.mat` can be used with the code in the `ifcb-analysis`
-repository (Sosik and Olson 2007).
+names. These `.mat` files can be used with the code in the
+`ifcb-analysis` repository (Sosik and Olson 2007).
 
 ## Usage
 
@@ -105,7 +105,7 @@ attempt to match it to one of the available classes in `class2use_file`.
 If no match is found, an error is thrown.
 
 The function assumes that the ADC files are organized in subfolders by
-year (YYYY) and date (DYYYYMMDD) within `adc_folder`.
+year (YYYY) and date (DYYYYMMDD) within `adc_files`.
 
 ## References
 

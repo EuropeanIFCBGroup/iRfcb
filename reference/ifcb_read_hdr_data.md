@@ -1,4 +1,4 @@
-# Reads HDR Data from IFCB HDR Files
+# Read Data from IFCB HDR Files
 
 This function reads all IFCB instrument settings information files
 (.hdr) from a specified directory.
@@ -18,7 +18,8 @@ ifcb_read_hdr_data(
 
 - hdr_files:
 
-  A character string specifying the path to hdr files or a folder path.
+  A character string or character vector specifying the path(s) to
+  `.hdr` files, or a single folder path.
 
 - gps_only:
 
@@ -39,7 +40,8 @@ ifcb_read_hdr_data(
 ## Value
 
 A data frame with sample names, GPS latitude, GPS longitude, and
-optionally timestamps.
+timestamps. When `gps_only = TRUE`, only samples with GPS coordinates
+are included.
 
 ## Examples
 

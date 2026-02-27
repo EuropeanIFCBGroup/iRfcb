@@ -75,6 +75,15 @@ ifcb_extract_pngs(sample_path)
 
     ## Writing 1122 ROIs from D20230314T003836_IFCB134.roi to data/data/2023/D20230314/D20230314T003836_IFCB134
 
+By default, images are extracted with raw pixel values preserved from
+the camera, matching the output of IFCB Dashboard and other standard
+IFCB software. To stretch pixel values to the full 0-255 contrast range,
+set `normalize = TRUE`:
+
+``` r
+ifcb_extract_pngs(sample_path, normalize = TRUE)
+```
+
 ### Summarize Image Metadata
 
 Extract image metadata from the `.png` directory:
@@ -133,6 +142,7 @@ ifcb_zip_pngs(
 ```
 
     ## Creating zip archive...
+
     ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip
 
 ## Annotated Images
@@ -628,7 +638,7 @@ ifcb_zip_pngs(
   png_folder = "data/extracted_images",
   zip_filename = "data/zip/iRfcb_ecotaxa.zip",
   readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
-  # Template icluded in `iRfcb`
+  # Template included in `iRfcb`
   email_address = "tutorial@test.com",
   version = "1.1",
   include_txt = TRUE,
@@ -640,8 +650,11 @@ ifcb_zip_pngs(
 ```
 
     ## Creating README file...
+
     ## Creating MANIFEST.txt...
+
     ## Creating zip archive...
+
     ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip
 
 This concludes this tutorial for the `iRfcb` package. For more detailed
@@ -656,7 +669,7 @@ Happy analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
+    ##   FlowCytobot (IFCB) Data. R package version 0.8.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -665,7 +678,7 @@ Happy analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2026},
-    ##     note = {R package version 0.7.0},
+    ##     note = {R package version 0.8.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

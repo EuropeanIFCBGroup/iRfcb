@@ -21,13 +21,16 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/news/news-0.5.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/news/news-0.6.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/news/news-0.7.html</loc></url>
-<url><loc>https://europeanifcbgroup.github.io/iRfcb/news/news-dev.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/news/news-0.8.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/create_package_manifest.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/defunct.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/iRfcb-package.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.html</loc></url>
@@ -67,6 +70,7 @@
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_summary.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_run_image_gallery.html</loc></url>
+<url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_class_counts.html</loc></url>
 <url><loc>https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_counts.html</loc></url>

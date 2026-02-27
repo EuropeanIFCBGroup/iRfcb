@@ -108,7 +108,7 @@ setting `class2use_file` to `NULL`.
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
-  mat_files = "data/manual",
+  class_files = "data/manual",
   class2use_file = "data/config/class2use.mat",
   hdr_folder = "data/data",
   verbose = FALSE
@@ -191,7 +191,7 @@ data_event <- data_event %>%
     institutionCode = "SMHI",
     
     # Defining CC-BY data licence
-    license = "http://creativecommons.org/licenses/by/4.0/legalcodeY",
+    license = "http://creativecommons.org/licenses/by/4.0/legalcode",
     
     # Specifying the type of record, which is Sample in this case
     eventType = "Sample",
@@ -298,16 +298,16 @@ tibble(event_df)
     ## # A tibble: 10 × 26
     ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
     ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
-    ##  1 NA               32a114… Project   iRfcb-DwC-A 2022-05-… NA                  
-    ##  2 32a11408-9986-4… 8aed64… Sample    NA          2022-05-… SMHI                
-    ##  3 32a11408-9986-4… 392c65… Sample    NA          2022-05-… SMHI                
-    ##  4 32a11408-9986-4… 90fef0… Sample    NA          2022-07-… SMHI                
-    ##  5 32a11408-9986-4… 10a6e0… Sample    NA          2022-07-… SMHI                
-    ##  6 32a11408-9986-4… 212046… Sample    NA          2023-03-… SMHI                
-    ##  7 32a11408-9986-4… 253e2f… Sample    NA          2023-03-… SMHI                
-    ##  8 32a11408-9986-4… 18ed9f… Sample    NA          2023-08-… SMHI                
-    ##  9 32a11408-9986-4… b3a875… Sample    NA          2023-09-… SMHI                
-    ## 10 32a11408-9986-4… e0a910… Sample    NA          2023-09-… SMHI                
+    ##  1 NA               dfaaa4… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 dfaaa422-76f6-4… 43bbd7… Sample    NA          2022-05-… SMHI                
+    ##  3 dfaaa422-76f6-4… 2311ad… Sample    NA          2022-05-… SMHI                
+    ##  4 dfaaa422-76f6-4… b93803… Sample    NA          2022-07-… SMHI                
+    ##  5 dfaaa422-76f6-4… 2e0396… Sample    NA          2022-07-… SMHI                
+    ##  6 dfaaa422-76f6-4… 5a0a7a… Sample    NA          2023-03-… SMHI                
+    ##  7 dfaaa422-76f6-4… f9bec0… Sample    NA          2023-03-… SMHI                
+    ##  8 dfaaa422-76f6-4… de90b8… Sample    NA          2023-08-… SMHI                
+    ##  9 dfaaa422-76f6-4… a8fe76… Sample    NA          2023-09-… SMHI                
+    ## 10 dfaaa422-76f6-4… 6e449e… Sample    NA          2023-09-… SMHI                
     ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
     ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
     ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
@@ -496,16 +496,16 @@ tibble(occurrence_df)
     ## # A tibble: 101 × 22
     ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
     ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
-    ##  1 fe9b42d4-33d4-41ab-… 8aed64… 2022-05-22 present          iRfcb          Stil…
-    ##  2 a1491ccf-4734-4a6a-… 8aed64… 2022-05-22 present          iRfcb          Stil…
-    ##  3 4ec2c6ae-9bc2-4607-… 8aed64… 2022-05-22 present          iRfcb          Stil…
-    ##  4 fe91177c-3738-4499-… 8aed64… 2022-05-22 present          iRfcb          Stil…
-    ##  5 7c4e577b-f1f3-4d3b-… 392c65… 2022-05-22 present          iRfcb          Stil…
-    ##  6 7094f013-7f98-4258-… 90fef0… 2022-07-12 present          iRfcb          Stil…
-    ##  7 4c05475f-dd17-4d4a-… 90fef0… 2022-07-12 present          iRfcb          Stil…
-    ##  8 4187ea3a-71d9-414d-… 90fef0… 2022-07-12 present          iRfcb          Stil…
-    ##  9 3b32a0b3-aea4-4eac-… 10a6e0… 2022-07-12 present          iRfcb          Stil…
-    ## 10 efe61fa6-12b5-4591-… 10a6e0… 2022-07-12 present          iRfcb          Stil…
+    ##  1 125e2b64-9b90-4030-… 43bbd7… 2022-05-22 present          iRfcb          Stil…
+    ##  2 51ea7cea-5af0-4289-… 43bbd7… 2022-05-22 present          iRfcb          Stil…
+    ##  3 568b0ca5-66e6-443b-… 43bbd7… 2022-05-22 present          iRfcb          Stil…
+    ##  4 86385086-9365-411a-… 43bbd7… 2022-05-22 present          iRfcb          Stil…
+    ##  5 61342abe-c2bd-4962-… 2311ad… 2022-05-22 present          iRfcb          Stil…
+    ##  6 87fbaa39-208a-4e28-… b93803… 2022-07-12 present          iRfcb          Stil…
+    ##  7 bd906863-e052-424a-… b93803… 2022-07-12 present          iRfcb          Stil…
+    ##  8 b3f8f0e0-ffb6-4c14-… b93803… 2022-07-12 present          iRfcb          Stil…
+    ##  9 15faf6a2-d95c-4c5b-… 2e0396… 2022-07-12 present          iRfcb          Stil…
+    ## 10 d2d46acb-c413-484d-… 2e0396… 2022-07-12 present          iRfcb          Stil…
     ## # ℹ 91 more rows
     ## # ℹ 16 more variables: basisOfRecord <chr>,
     ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
@@ -707,16 +707,16 @@ tibble(mof_df)
     ## # A tibble: 415 × 10
     ##    measurementID              eventID parentEventID occurrenceID measurementType
     ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
-    ##  1 64300363-ceb2-42f6-a0bb-f… 32a114… NA            NA           Imaging instru…
-    ##  2 1e019d5c-0cea-4f00-b998-9… 32a114… NA            NA           Instrument ide…
-    ##  3 cce9fd40-b13a-45d7-8bff-1… 8aed64… 32a11408-998… NA           Sample volume  
-    ##  4 00431725-f980-489e-8948-f… 392c65… 32a11408-998… NA           Sample volume  
-    ##  5 a2ade583-4758-4a1e-986d-a… 90fef0… 32a11408-998… NA           Sample volume  
-    ##  6 25baf01a-08e7-42b8-baca-6… 10a6e0… 32a11408-998… NA           Sample volume  
-    ##  7 85a48c71-ee93-4d8e-8d2e-0… 212046… 32a11408-998… NA           Sample volume  
-    ##  8 83280bb2-1eea-41e6-bed2-b… 253e2f… 32a11408-998… NA           Sample volume  
-    ##  9 a666ab26-d79b-4e1f-a95c-c… 18ed9f… 32a11408-998… NA           Sample volume  
-    ## 10 484bd4bc-3fcc-4175-b6c9-a… b3a875… 32a11408-998… NA           Sample volume  
+    ##  1 0661d52e-b6f9-4fe0-b37a-8… dfaaa4… NA            NA           Imaging instru…
+    ##  2 da3e8b12-d2e7-4479-b95b-d… dfaaa4… NA            NA           Instrument ide…
+    ##  3 6e3a7694-3f3b-406e-b907-6… 43bbd7… dfaaa422-76f… NA           Sample volume  
+    ##  4 0fae47dd-c8a0-465a-a6db-6… 2311ad… dfaaa422-76f… NA           Sample volume  
+    ##  5 56e6e108-bfbc-48a1-8155-7… b93803… dfaaa422-76f… NA           Sample volume  
+    ##  6 7296cc7e-c174-4f4f-b63c-7… 2e0396… dfaaa422-76f… NA           Sample volume  
+    ##  7 872929f8-88b8-4abf-8f01-1… 5a0a7a… dfaaa422-76f… NA           Sample volume  
+    ##  8 814653cd-e73e-4dee-8581-9… f9bec0… dfaaa422-76f… NA           Sample volume  
+    ##  9 3c963f25-7dee-451f-9929-2… de90b8… dfaaa422-76f… NA           Sample volume  
+    ## 10 0d7de904-7798-4417-94ef-5… a8fe76… dfaaa422-76f… NA           Sample volume  
     ## # ℹ 405 more rows
     ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
     ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>
@@ -796,7 +796,7 @@ analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
+    ##   FlowCytobot (IFCB) Data. R package version 0.8.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -805,7 +805,7 @@ analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2026},
-    ##     note = {R package version 0.7.0},
+    ##     note = {R package version 0.8.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

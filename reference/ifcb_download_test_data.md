@@ -5,7 +5,7 @@ This function downloads a zip archive containing MATLAB files from the
 Library (Torstensson et al. 2024), unzips them into the specified folder
 and extracts png images. These data can be used, for instance, for
 testing `iRfcb` and for creating the tutorial vignette using
-[`vignette("introduction", package = "iRfcb")`](https://europeanifcbgroup.github.io/iRfcb/articles/introduction.md)
+[`vignette("introduction", package = "iRfcb")`](https://europeanifcbgroup.github.io/iRfcb/articles/introduction.md).
 
 ## Usage
 
@@ -45,7 +45,7 @@ ifcb_download_test_data(
 - keep_zip:
 
   A logical indicating whether to keep the downloaded zip archive after
-  its download. Default is FALSE.
+  extraction. Default is FALSE.
 
 - verbose:
 

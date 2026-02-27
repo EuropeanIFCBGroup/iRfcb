@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +125,6 @@ following function:</p>
 <span></span>
 <span><span class="co"># Download and extract test data in the data folder</span></span>
 <span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">data_dir</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Download and extraction complete.</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -134,10 +133,10 @@ following function:</p>
 <p>This section demonstrates a selection of general data extraction
 tools available in <code>iRfcb</code>.</p>
 <div class="section level3">
-<h3 id="extract-timestamps-from-ifcb-sample-filenames">Extract Timestamps from IFCB sample Filenames<a class="anchor" aria-label="anchor" href="#extract-timestamps-from-ifcb-sample-filenames"></a>
+<h3 id="extract-timestamps-from-ifcb-sample-filenames">Extract Timestamps from IFCB Sample Filenames<a class="anchor" aria-label="anchor" href="#extract-timestamps-from-ifcb-sample-filenames"></a>
 </h3>
 <p>Extract timestamps from sample names or filenames:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example sample names</span></span>
 <span><span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"data/data/2023/D20230314"</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
@@ -146,7 +145,7 @@ tools available in <code>iRfcb</code>.</p>
 <pre><code><span><span class="co">## [1] "D20230314T001205_IFCB134.adc" "D20230314T001205_IFCB134.hdr"</span></span>
 <span><span class="co">## [3] "D20230314T001205_IFCB134.roi" "D20230314T003836_IFCB134.adc"</span></span>
 <span><span class="co">## [5] "D20230314T003836_IFCB134.hdr" "D20230314T003836_IFCB134.roi"</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert filenames to timestamps</span></span>
 <span><span class="va">timestamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_convert_filenames.html">ifcb_convert_filenames</a></span><span class="op">(</span><span class="va">filenames</span><span class="op">)</span></span>
 <span></span>
@@ -164,7 +163,7 @@ tools available in <code>iRfcb</code>.</p>
 <p>If the filename includes ROI numbers (e.g., in an extracted
 <code>.png</code> image), a separate column, <code>roi</code>, will be
 added to the output.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example sample names</span></span>
 <span><span class="va">filenames</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"data/png/Alexandrium_pseudogonyaulax_050"</span><span class="op">)</span></span>
 <span></span>
@@ -172,7 +171,7 @@ added to the output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">filenames</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "D20220712T210855_IFCB134_00042.png" "D20220712T210855_IFCB134_00164.png"</span></span>
 <span><span class="co">## [3] "D20220712T222710_IFCB134_00044.png"</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert filenames to timestamps</span></span>
 <span><span class="va">timestamps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_convert_filenames.html">ifcb_convert_filenames</a></span><span class="op">(</span><span class="va">filenames</span><span class="op">)</span></span>
 <span></span>
@@ -191,7 +190,7 @@ added to the output.</p>
 </h3>
 <p>The analyzed volume of a sample can be calculated using data from
 <code>.hdr</code> and <code>.adc</code> files.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Path to HDR file</span></span>
 <span><span class="va">hdr_file</span> <span class="op">&lt;-</span> <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.hdr"</span></span>
 <span></span>
@@ -206,7 +205,7 @@ added to the output.</p>
 <h3 id="get-sample-runtime">Get Sample Runtime<a class="anchor" aria-label="anchor" href="#get-sample-runtime"></a>
 </h3>
 <p>Get the runtime from a <code>.hdr</code> file:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get runtime from HDR-file</span></span>
 <span><span class="va">run_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_runtime.html">ifcb_get_runtime</a></span><span class="op">(</span><span class="va">hdr_file</span><span class="op">)</span></span>
 <span></span>
@@ -222,7 +221,7 @@ added to the output.</p>
 <h3 id="read-feature-data">Read Feature Data<a class="anchor" aria-label="anchor" href="#read-feature-data"></a>
 </h3>
 <p>Read all feature files (<code>.csv</code>) from a folder:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read feature files from a folder</span></span>
 <span><span class="va">features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023/"</span>,</span>
 <span>                               verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># Do not print progress bar</span></span>
@@ -249,7 +248,7 @@ added to the output.</p>
 <span><span class="co">## <span style="color: #949494;">#   Orientation &lt;dbl&gt;, Perimeter &lt;dbl&gt;, RWcenter2total_powerratio &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   RWhalfpowerintegral &lt;dbl&gt;, Solidity &lt;dbl&gt;, moment_invariant1 &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   moment_invariant2 &lt;dbl&gt;, moment_invariant3 &lt;dbl&gt;, …</span></span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read only multiblob feature files</span></span>
 <span><span class="va">multiblob_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_features.html">ifcb_read_features</a></span><span class="op">(</span><span class="st">"data/features/2023"</span>, </span>
 <span>                                         multiblob <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -292,7 +291,7 @@ subdirectory within the same directory as the ROI file. The
 <code>gamma</code> can be adjusted to enhance image contrast, and an
 optional scale bar can be added by specifying
 <code>scale_bar_um</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># All ROIs in sample</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
@@ -301,7 +300,7 @@ optional scale bar can be added by specifying
 <span><span class="op">)</span> </span></code></pre></div>
 <pre><code><span><span class="co">## Writing 1218 ROIs from D20230314T001205_IFCB134.roi to data/data/2023/D20230314/D20230314T001205_IFCB134</span></span></code></pre>
 <p>Extract specific ROIs:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only ROI number 2 and 5</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span><span class="st">"data/data/2023/D20230314/D20230314T003836_IFCB134.roi"</span>,</span>
 <span>                  ROInumbers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -309,6 +308,108 @@ optional scale bar can be added by specifying
 <p>To extract annotated images or classified results from MATLAB files,
 please see the <code>vignette("image-export-tutorial")</code> and
 <code>vignette("matlab-tutorial")</code> tutorials.</p>
+</div>
+<div class="section level2">
+<h2 id="classify-ifcb-images">Classify IFCB Images<a class="anchor" aria-label="anchor" href="#classify-ifcb-images"></a>
+</h2>
+<p>IFCB images can be classified directly in R using a CNN model served
+by a <a href="https://www.gradio.app/" class="external-link">Gradio</a> application. By
+default, the classification functions use a public example Space hosted
+on Hugging Face (<code>https://irfcb-classify.hf.space</code>). This
+Space has limited resources and is intended for testing and
+demonstration purposes. For large-scale or production classification, we
+recommend deploying your own instance of the <a href="https://github.com/EuropeanIFCBGroup/ifcb-inference-app" class="external-link">IFCB
+Classification App</a> with your own model and passing its URL via the
+<code>gradio_url</code> argument.</p>
+<div class="section level3">
+<h3 id="available-models">Available Models<a class="anchor" aria-label="anchor" href="#available-models"></a>
+</h3>
+<p>Use <code><a href="../reference/ifcb_classify_models.html">ifcb_classify_models()</a></code> to list the CNN models
+available on the Gradio server:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ifcb_classify_models.html">ifcb_classify_models</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="classify-all-images-in-a-sample">Classify All Images in a Sample<a class="anchor" aria-label="anchor" href="#classify-all-images-in-a-sample"></a>
+</h3>
+<p><code><a href="../reference/ifcb_classify_sample.html">ifcb_classify_sample()</a></code> extracts images from a
+<code>.roi</code> file internally and returns predictions without
+requiring a separate extraction step:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Classify all images in a sample</span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_classify_sample.html">ifcb_classify_sample</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="classify-pre-extracted-png-images">Classify Pre-extracted PNG Images<a class="anchor" aria-label="anchor" href="#classify-pre-extracted-png-images"></a>
+</h3>
+<p>If images have already been extracted, pass a vector of PNG file
+paths to <code><a href="../reference/ifcb_classify_images.html">ifcb_classify_images()</a></code>:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># List extracted PNG files</span></span>
+<span><span class="va">png_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134"</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="st">"\\.png$"</span>,</span>
+<span>  full.names <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Classify images</span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_classify_images.html">ifcb_classify_images</a></span><span class="op">(</span><span class="va">png_files</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Print result</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span></code></pre></div>
+<p>Both functions return a data frame with <code>file_name</code>,
+<code>class_name</code>, <code>class_name_auto</code>,
+<code>score</code>, and <code>model_name</code> columns, and query the
+Gradio API at <code>https://irfcb-classify.hf.space</code> by default.
+Per-class F2 optimal thresholds are always applied:
+<code>class_name</code> contains the threshold-applied classification
+(labeled <code>"unclassified"</code> when below threshold), while
+<code>class_name_auto</code> contains the winning class without any
+threshold. The <code>top_n</code> argument controls how many top
+predictions are returned per image, and <code>model_name</code>
+specifies which CNN model to use (default:
+<code>"SMHI NIVA ResNet50 V5"</code>).</p>
+</div>
+<div class="section level3">
+<h3 id="save-classification-results">Save Classification Results<a class="anchor" aria-label="anchor" href="#save-classification-results"></a>
+</h3>
+<p><code><a href="../reference/ifcb_save_classification.html">ifcb_save_classification()</a></code> classifies all images in a
+<code>.roi</code> file and saves the full score matrix. Three output
+formats are supported via the <code>format</code> argument:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># HDF5 (default) - IFCB Dashboard v3 format (requires hdf5r package)</span></span>
+<span><span class="fu"><a href="../reference/ifcb_save_classification.html">ifcb_save_classification</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
+<span>  output_folder <span class="op">=</span> <span class="st">"output"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Creates: output/D20230314T001205_IFCB134_class.h5</span></span>
+<span></span>
+<span><span class="co"># MAT - IFCB Dashboard v1 format (requires Python with scipy)</span></span>
+<span><span class="fu"><a href="../reference/ifcb_save_classification.html">ifcb_save_classification</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
+<span>  output_folder <span class="op">=</span> <span class="st">"output"</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"mat"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Creates: output/D20230314T001205_IFCB134_class_v1.mat</span></span>
+<span></span>
+<span><span class="co"># CSV - ClassiPyR-compatible format</span></span>
+<span><span class="fu"><a href="../reference/ifcb_save_classification.html">ifcb_save_classification</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023/D20230314/D20230314T001205_IFCB134.roi"</span>,</span>
+<span>  output_folder <span class="op">=</span> <span class="st">"output"</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"csv"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Creates: output/D20230314T001205_IFCB134.csv</span></span></code></pre></div>
+<p>The output file contains <code>output_scores</code> (N x C matrix),
+<code>class_labels</code>, <code>roi_numbers</code>, per-class
+<code>thresholds</code>, and
+<code>class_labels_above_threshold</code>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="taxonomical-data">Taxonomical Data<a class="anchor" aria-label="anchor" href="#taxonomical-data"></a>
@@ -332,7 +433,7 @@ particularly useful for automated data pipelines. For additional tools
 and functionality, the R package <a href="https://cran.r-project.org/package=worrms" class="external-link"><code>worrms</code></a>
 provides a comprehensive suite of options for interacting with the WoRMS
 database.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Alexandrium_pseudogonyaulax"</span>, <span class="st">"Guinardia_delicatula"</span><span class="op">)</span></span>
 <span></span>
@@ -365,7 +466,7 @@ can be useful for converting biovolumes to carbon according to
 Menden-Deuer and Lessard (2000). See <code><a href="../reference/vol2C_nondiatom.html">vol2C_nondiatom()</a></code> and
 <code><a href="../reference/vol2C_lgdiatom.html">vol2C_lgdiatom()</a></code> for carbon calculations (not included in
 NAMESPACE).</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file and select five taxa</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
 <span></span>
@@ -390,7 +491,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 </h3>
 <p>This function takes a list of taxa names and matches them with the
 <strong>SMHI Trophic Type</strong> list used in <a href="https://shark.smhi.se/en/" class="external-link">SHARK</a>.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example taxa names</span></span>
 <span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Acanthoceras zachariasii"</span>,</span>
@@ -414,7 +515,7 @@ may be adjusted using the <code>diatom_class</code> argument.</p>
 <p>This function is used by SMHI to map IFCB data into the <a href="https://shark.smhi.se/hamta-data/" class="external-link">SHARK</a> standard data
 delivery format. An example submission is also provided in
 <code>iRfcb</code>.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get column names from example</span></span>
 <span><span class="va">shark_colnames</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_colnames.html">ifcb_get_shark_colnames</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -428,7 +529,7 @@ delivery format. An example submission is also provided in
 <span><span class="co">## <span style="color: #949494;">#   SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;, SMTYP &lt;chr&gt;, PDMET &lt;chr&gt;, SMVOL &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   METFP &lt;chr&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;, SFLAG &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   LATNM_SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, APHIA_ID &lt;dbl&gt;, IMAGE_VERIFICATION &lt;chr&gt;, …</span></span></span></code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load example stored from `iRfcb`</span></span>
 <span><span class="va">shark_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_shark_example.html">ifcb_get_shark_example</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -463,7 +564,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.7.0.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.8.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -472,7 +573,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2026},</span></span>
-<span><span class="co">##     note = {R package version 0.7.0},</span></span>
+<span><span class="co">##     note = {R package version 0.8.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

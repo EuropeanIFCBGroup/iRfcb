@@ -13,7 +13,7 @@ can be added to the extracted images based on a specified micron-to-pixel conver
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,6 +69,7 @@ can be added to the extracted images based on a specified micron-to-pixel conver
 <span>  ROInumbers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  taxaname <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gamma <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  scale_bar_um <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale_micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
@@ -100,7 +101,11 @@ can be added to the extracted images based on a specified micron-to-pixel conver
 
 
 <dt id="arg-gamma">gamma<a class="anchor" aria-label="anchor" href="#arg-gamma"></a></dt>
-<dd><p>A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values &lt;1 increase contrast in dark regions, while values &gt;1 decrease contrast.</p></dd>
+<dd><p>A numeric value for gamma correction applied to the image. Default is 1 (no correction). Values &lt;1 brighten dark regions, while values &gt;1 darken the image.</p></dd>
+
+
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
+<dd><p>A logical value indicating whether to apply min-max normalization to stretch pixel values to the full 0-255 range. Default is FALSE, which preserves raw pixel values from the camera, producing images comparable to IFCB Dashboard and other standard IFCB software. Set to TRUE to stretch contrast to the full 0-255 range.</p></dd>
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
@@ -124,7 +129,9 @@ can be added to the extracted images based on a specified micron-to-pixel conver
 
 
 <dt id="arg-old-adc">old_adc<a class="anchor" aria-label="anchor" href="#arg-old-adc"></a></dt>
-<dd><p>A logical value indicating whether the <code>adc</code> file is of the old format (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is FALSE.</p></dd>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
+Previously used to indicate old ADC format. ADC format is now auto-detected
+from the HDR file and column count. This parameter is ignored.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

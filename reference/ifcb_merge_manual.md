@@ -101,8 +101,8 @@ present in the base set are appended.
 The function works by aligning the class labels from the additions set
 with those in the base set, handling conflicts by using a temporary
 index system. It copies `.mat` files from both the base and additions
-folders into the output folder, while adjusting indices and and class
-names for the additions.
+folders into the output folder, while adjusting indices and class names
+for the additions.
 
 Note that the maximum limit for `uint16` is 65,535, so ensure that
 `temp_index_offset` remains below this value.

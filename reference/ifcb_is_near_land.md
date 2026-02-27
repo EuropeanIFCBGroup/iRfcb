@@ -40,12 +40,12 @@ ifcb_is_near_land(
 
 - shape:
 
-  Optional path to a shapefile (`.shp` or `.gpkg`) containing coastline
-  data. If provided, this file will be used instead of the default
-  Natural Earth 1:10m land vectors. A high-resolution shapefile can
-  improve the accuracy of buffer distance calculations. Alternatively,
-  you can retrieve a more detailed European coastline automatically by
-  setting the `source` argument to `"eea"`.
+  Optional path to a spatial file (`.shp` shapefile or `.gpkg`
+  GeoPackage) containing coastline data. If provided, this file will be
+  used instead of the default Natural Earth 1:10m land vectors. A
+  high-resolution shapefile can improve the accuracy of buffer distance
+  calculations. Alternatively, you can retrieve a more detailed European
+  coastline automatically by setting the `source` argument to `"eea"`.
 
 - source:
 
@@ -68,11 +68,11 @@ ifcb_is_near_land(
 
   Area threshold in square meters below which islands will be considered
   small and removed, if remove_small_islands is set to `TRUE`. Default
-  is 2 square km.
+  is 2,000,000 (2 km^2).
 
 - plot:
 
-  A boolean indicating whether to plot the points, land polygon and
+  A logical indicating whether to plot the points, land polygon and
   buffer. Default is `FALSE`.
 
 - verbose:

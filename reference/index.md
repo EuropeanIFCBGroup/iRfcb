@@ -2,16 +2,11 @@
 
 ## Main functions
 
-### Core functions
+### Data download
 
-Core functions for processing and analyzing IFCB data.
+Functions for downloading IFCB data from dashboards and external
+repositories.
 
-- [`ifcb_convert_filenames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.md)
-  : Convert IFCB Filenames to Timestamps
-- [`ifcb_count_mat_annotations()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.md)
-  : Count IFCB Annotations from .mat Files
-- [`ifcb_create_manifest()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manifest.md)
-  : Create a MANIFEST.txt File
 - [`ifcb_download_dashboard_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_data.md)
   : Download IFCB data files from an IFCB Dashboard
 - [`ifcb_download_dashboard_metadata()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_metadata.md)
@@ -20,50 +15,41 @@ Core functions for processing and analyzing IFCB data.
   : Download Test IFCB Data
 - [`ifcb_download_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.md)
   : Download and Extract WHOI-Plankton Data
-- [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md)
-  : Extract Annotated Images from IFCB Data
-- [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
-  : Extract Biovolumes from IFCB Data and Compute Carbon Content
-- [`ifcb_extract_classified_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_classified_images.md)
-  : Extract Taxa Images from MATLAB Classified Sample
-- [`ifcb_extract_pngs()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_pngs.md)
-  : Extract Images from IFCB ROI File
-- [`ifcb_get_ecotaxa_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ecotaxa_example.md)
-  : Get EcoTaxa Column Names
-- [`ifcb_get_ferrybox_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ferrybox_data.md)
-  : Retrieve Ferrybox Data for Specified Timestamps
+- [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
+  : Download bin list from the IFCB Dashboard API
+
+### Data reading
+
+Functions for reading raw IFCB files and extracting metadata.
+
+- [`ifcb_convert_filenames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_convert_filenames.md)
+  : Convert IFCB Filenames to Timestamps
 - [`ifcb_get_mat_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.md)
   : Get Variable Names from a MAT File
 - [`ifcb_get_mat_variable()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.md)
   : Get Classes from a MAT File
 - [`ifcb_get_runtime()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_runtime.md)
   : Read IFCB Header File and Extract Runtime Information
-- [`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)
-  : Get Shark Column Names
-- [`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md)
-  : Get Shark Column Example
-- [`ifcb_get_trophic_type()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_trophic_type.md)
-  : Get Trophic Type for a List of Plankton Taxa
-- [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
-  : Identify Diatoms in Taxa List
-- [`ifcb_is_in_basin()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.md)
-  : Check if Points are in a Specific Sea Basin
-- [`ifcb_is_near_land()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_near_land.md)
-  : Determine if Positions are Near Land
-- [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
-  : Download bin list from the IFCB Dashboard API
-- [`ifcb_match_taxa_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.md)
-  **\[superseded\]** : Retrieve WoRMS Records with Retry Mechanism
-- [`ifcb_psd_plot()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.md)
-  : Generate PSD Plot for a Given Sample
 - [`ifcb_read_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_features.md)
   : Read Feature Files from a Specified Folder or File Paths
 - [`ifcb_read_hdr_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_hdr_data.md)
-  : Reads HDR Data from IFCB HDR Files
+  : Read Data from IFCB HDR Files
 - [`ifcb_read_summary()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_summary.md)
   : Read and Summarize Classified IFCB Data
-- [`ifcb_run_image_gallery()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_run_image_gallery.md)
-  : Run IFCB Image Gallery
+- [`ifcb_volume_analyzed()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed.md)
+  : Estimate Volume Analyzed from IFCB Header File
+- [`ifcb_volume_analyzed_from_adc()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.md)
+  : Estimate Volume Analyzed from IFCB ADC File
+
+### Summarizing and counting
+
+Functions for counting and summarizing annotated or classified images,
+biovolumes, and carbon content.
+
+- [`ifcb_count_mat_annotations()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.md)
+  : Count IFCB Annotations from .mat Files
+- [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+  : Extract Biovolumes from IFCB Data and Compute Carbon Content
 - [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
   : Summarize Biovolumes and Carbon Content from IFCB Data
 - [`ifcb_summarize_class_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_class_counts.md)
@@ -72,18 +58,78 @@ Core functions for processing and analyzing IFCB data.
   : Summarize Image Counts by Class and Sample
 - [`ifcb_summarize_png_metadata()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_metadata.md)
   : Summarize PNG Image Metadata
-- [`ifcb_volume_analyzed()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed.md)
-  : Estimate Volume Analyzed from IFCB Header File
-- [`ifcb_volume_analyzed_from_adc()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.md)
-  : Estimate Volume Analyzed from IFCB ADC File
+
+### Image extraction
+
+Functions for extracting images from raw IFCB `.roi` files.
+
+- [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md)
+  : Extract Annotated Images from IFCB Data
+- [`ifcb_extract_classified_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_classified_images.md)
+  : Extract Taxa Images from Classified Sample
+- [`ifcb_extract_pngs()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_pngs.md)
+  : Extract Images from IFCB ROI File
+
+### Quality control
+
+Functions for geospatial quality control and particle size distribution
+analysis.
+
+- [`ifcb_get_ferrybox_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ferrybox_data.md)
+  : Retrieve Ferrybox Data for Specified Timestamps
+- [`ifcb_is_in_basin()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.md)
+  : Check if Points are in a Specific Sea Basin
+- [`ifcb_is_near_land()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_near_land.md)
+  : Determine if Positions are Near Land
+- [`ifcb_psd_plot()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd_plot.md)
+  : Generate PSD Plot for a Given Sample
 - [`ifcb_which_basin()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_which_basin.md)
   : Determine if Points are in a Specified Sea Basin
-- [`ifcb_zip_matlab()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_matlab.md)
-  : Create a Zip Archive of Manual MATLAB Files
+
+### Taxonomic data
+
+Functions for taxonomic name matching, diatom classification, and
+trophic type lookup.
+
+- [`ifcb_get_trophic_type()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_trophic_type.md)
+  : Get Trophic Type for a List of Plankton Taxa
+- [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
+  : Identify Diatoms in Taxa List
+- [`ifcb_match_taxa_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_match_taxa_names.md)
+  **\[superseded\]** : Retrieve WoRMS Records with Retry Mechanism
+
+### Data export
+
+Functions for packaging images and MATLAB files and preparing data for
+external repositories.
+
+- [`ifcb_create_manifest()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manifest.md)
+  : Create a MANIFEST.txt File
+- [`ifcb_get_ecotaxa_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ecotaxa_example.md)
+  : Get EcoTaxa Column Names
+- [`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)
+  : Get Shark Column Names
+- [`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md)
+  : Get Shark Column Example
 - [`ifcb_zip_images_by_class()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_images_by_class.md)
   : Zip Image Subfolders by Class
+- [`ifcb_zip_matlab()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_matlab.md)
+  : Create a Zip Archive of Manual MATLAB Files
 - [`ifcb_zip_pngs()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_zip_pngs.md)
   : Zip PNG Folders
+
+### Image classification
+
+Functions for classifying IFCB images through a Gradio application.
+
+- [`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md)
+  : Classify Pre-Extracted IFCB PNG Images Using a Gradio Application
+- [`ifcb_classify_models()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.md)
+  : List Available CNN Models from a Gradio Classification Server
+- [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)
+  : Classify All Images in an IFCB Sample Using a Gradio Application
+- [`ifcb_save_classification()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.md)
+  : Classify an IFCB Sample and Save Results
 
 ### Python dependency ![Python Powered](../python-powered-w-70x28.png)
 
@@ -152,3 +198,5 @@ information, see the
   **\[deprecated\]** : Create an Empty Manual Classification MAT File
 - [`retrieve_worms_records()`](https://europeanifcbgroup.github.io/iRfcb/reference/retrieve_worms_records.md)
   **\[deprecated\]** : Retrieve WoRMS Records with Retry Mechanism
+- [`ifcb_run_image_gallery()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_run_image_gallery.md)
+  **\[deprecated\]** : Run IFCB Image Gallery

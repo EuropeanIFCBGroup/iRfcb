@@ -17,4 +17,4 @@ read_hdr_file(file)
 
 ## Value
 
-A data frame with columns: `parameter`, `value`, and `file.`
+A data frame with columns: `parameter`, `value`, and `file`.

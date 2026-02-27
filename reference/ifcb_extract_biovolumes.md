@@ -14,7 +14,7 @@ whether the class is identified as a diatom.
 ``` r
 ifcb_extract_biovolumes(
   feature_files,
-  mat_files = NULL,
+  class_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
   class2use_file = NULL,
@@ -25,12 +25,14 @@ ifcb_extract_biovolumes(
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
-  mat_recursive = TRUE,
+  class_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
   use_python = FALSE,
   verbose = TRUE,
-  mat_folder = deprecated()
+  mat_folder = deprecated(),
+  mat_files = deprecated(),
+  mat_recursive = deprecated()
 )
 ```
 
@@ -41,18 +43,19 @@ ifcb_extract_biovolumes(
   A path to a folder containing feature files or a character vector of
   file paths.
 
-- mat_files:
+- class_files:
 
-  (Optional) A character vector of full paths to class or manual
-  annotation files, or a single path to a folder containing such files.
+  (Optional) A character vector of full paths to classification or
+  manual annotation files (`.mat`, `.h5`, or `.csv`), or a single path
+  to a folder containing such files.
 
 - custom_images:
 
   (Optional) A character vector of image filenames in the format
-  DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png, where "XXX" represents the IFCB
+  DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png), where "XXX" represents the IFCB
   number and "ZZZZZ" represents the ROI number. These filenames should
   match the `roi_number` assignment in the `feature_files` and can be
-  used as a substitute for MATLAB files.
+  used as a substitute for classification files.
 
 - custom_classes:
 
@@ -87,8 +90,11 @@ ifcb_extract_biovolumes(
 
 - threshold:
 
-  Threshold for selecting classification information (`"opt"` for
-  above-threshold classification, otherwise `"all"`). Default: `"opt"`.
+  A character string controlling which classification to use. `"opt"`
+  (default) uses the threshold-applied classification, where predictions
+  below the per-class optimal threshold are labeled `"unclassified"`.
+  Any other value (e.g. `"all"`) uses the raw winning class without any
+  threshold applied.
 
 - multiblob:
 
@@ -99,10 +105,10 @@ ifcb_extract_biovolumes(
   Logical. If `TRUE`, searches recursively for feature files when
   `feature_files` is a folder. Default: `TRUE`.
 
-- mat_recursive:
+- class_recursive:
 
-  Logical. If `TRUE` and `mat_files` is a folder, searches recursively
-  for MATLAB files in `mat_files`. Default: `TRUE`.
+  Logical. If `TRUE` and `class_files` is a folder, searches recursively
+  for classification files. Default: `TRUE`.
 
 - drop_zero_volume:
 
@@ -126,7 +132,15 @@ ifcb_extract_biovolumes(
 
 - mat_folder:
 
-  **\[deprecated\]** Use `mat_files` instead.
+  **\[deprecated\]** Use `class_files` instead.
+
+- mat_files:
+
+  **\[deprecated\]** Use `class_files` instead.
+
+- mat_recursive:
+
+  **\[deprecated\]** Use `class_recursive` instead.
 
 ## Value
 
@@ -148,14 +162,14 @@ A data frame containing:
 
 - **Classification Data Handling:**
 
-  - If `mat_files` is provided, the function reads class annotations
-    from MATLAB `.mat` files.
+  - If `class_files` is provided, the function reads class annotations
+    from `.mat`, `.h5`, or `.csv` files.
 
   - If `custom_images` and `custom_classes` are supplied, they override
-    MATLAB classification data (e.g. data from a CNN model).
+    classification file data (e.g. data from a CNN model).
 
-  - If both `mat_files` and `custom_images/custom_classes` are given,
-    `mat_files` takes precedence.
+  - If both `class_files` and `custom_images/custom_classes` are given,
+    `class_files` takes precedence.
 
 - **MAT File Processing:**
 
@@ -170,7 +184,8 @@ A data frame containing:
 
 Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume
 relationships for dinoflagellates, diatoms, and other protist plankton,
-Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.
+Limnology and Oceanography, 45(3), 569-579, doi:
+10.4319/lo.2000.45.3.0569.
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification
 of phytoplankton sampled with imaging-in-flow cytometry. Limnol.
@@ -186,24 +201,24 @@ Oceanogr: Methods 5, 204–216.
 
 ``` r
 if (FALSE) { # \dontrun{
-# Using MATLAB results:
+# Using classification results:
 feature_files <- "data/features"
-mat_files <- "data/classified"
+class_files <- "data/classified"
 
 biovolume_df <- ifcb_extract_biovolumes(feature_files,
-                                        mat_files)
+                                        class_files)
 
 print(biovolume_df)
 
 # Using custom classification result:
-class = c("Mesodinium_rubrum",
-          "Mesodinium_rubrum")
-image <- c("D20220522T003051_IFCB134_00002",
+classes <- c("Mesodinium_rubrum",
+             "Mesodinium_rubrum")
+images <- c("D20220522T003051_IFCB134_00002",
            "D20220522T003051_IFCB134_00003")
 
 biovolume_df_custom <- ifcb_extract_biovolumes(feature_files,
-                                               custom_images = image,
-                                               custom_classes = class)
+                                               custom_images = images,
+                                               custom_classes = classes)
 
 print(biovolume_df_custom)
 } # }

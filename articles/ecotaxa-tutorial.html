@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -152,12 +152,18 @@ submission to EcoTaxa as a zip-archive.</p>
 <span><span class="co"># Extract .png images</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span><span class="va">sample_path</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Writing 1122 ROIs from D20230314T003836_IFCB134.roi to data/data/2023/D20230314/D20230314T003836_IFCB134</span></span></code></pre>
+<p>By default, images are extracted with raw pixel values preserved from
+the camera, matching the output of IFCB Dashboard and other standard
+IFCB software. To stretch pixel values to the full 0-255 contrast range,
+set <code>normalize = TRUE</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span><span class="va">sample_path</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="summarize-image-metadata">Summarize Image Metadata<a class="anchor" aria-label="anchor" href="#summarize-image-metadata"></a>
 </h3>
 <p>Extract image metadata from the <code>.png</code> directory:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract image metadata</span></span>
 <span><span class="va">metadata_sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata</a></span><span class="op">(</span><span class="va">sample_path</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -169,7 +175,7 @@ are required when submitting data to EcoTaxa. In this example, a minimal
 dataset is used, containing only the image name. More comprehensive
 headers can be specified through the arguments of
 <code><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get the minimal EcoTaxa metadata header names</span></span>
 <span><span class="va">ecotaxa_minimal_headers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example</a></span><span class="op">(</span><span class="st">"minimal"</span><span class="op">)</span><span class="op">[</span><span class="fl">0</span>, <span class="op">]</span></span>
 <span></span>
@@ -189,7 +195,7 @@ headers can be specified through the arguments of
 <p>The metadata for all images in the subfolder are stored in a
 <code>.tsv</code> file, and a zipped archive is prepared for submission
 to EcoTaxa.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Write metadata tsv file</span></span>
 <span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_tsv</a></span><span class="op">(</span><span class="va">ecotaxa_minimal</span>,</span>
 <span>          <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span></span>
@@ -207,8 +213,8 @@ to EcoTaxa.</p>
 <span>  max_size <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Creating zip archive...</span></span>
-<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip</span></span></code></pre>
+<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
+<pre><code><span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -224,7 +230,7 @@ repository (Sosik and Olson, 2007).</p>
 <p>Extract annotated ROIs as <code>.png</code> images in subfolders for
 each class, skipping the <strong>unclassified</strong> (class id 1)
 category:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract .png images</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_annotated_images.html">ifcb_extract_annotated_images</a></span><span class="op">(</span></span>
 <span>  manual_folder <span class="op">=</span> <span class="st">"data/manual"</span>,</span>
@@ -243,7 +249,7 @@ images in the <code>png_folder</code> by combining data from feature and
 <code>.hdr</code> files. Additionally, it retrieves the analysis date
 and time for each sample based on <code>.mat</code> file creation dates
 and appends this information to the summarized dataset.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Summarize image metadata from feature and hdr files</span></span>
 <span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_summarize_png_metadata.html">ifcb_summarize_png_metadata</a></span><span class="op">(</span></span>
 <span>  png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
@@ -276,7 +282,7 @@ These names need to be cleaned before mapping them to higher taxonomic
 levels using external sources like <a href="https://www.marinespecies.org/" class="external-link">WoRMS</a>. The following code
 demonstrates how to clean class names and retrieve taxonomic details
 from WoRMS, such as <strong>AphiaID</strong>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get taxa names</span></span>
 <span><span class="va">taxa_names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">$</span><span class="va">subfolder</span><span class="op">)</span></span>
 <span></span>
@@ -326,7 +332,7 @@ suitable for submitting images to EcoTaxa. The example below is
 comprehensive and includes several feature fields. For a simpler
 dataset, minimal fields can be retrieved using
 <code>ifcb_get_ecotaxa_example(example = "minimal")</code>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get EcoTaxa metadata header names</span></span>
 <span><span class="va">ecotaxa_headers</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">0</span>, <span class="op">]</span></span>
 <span></span>
@@ -648,7 +654,7 @@ containing metadata for each class subfolder. These files are essential
 for uploading data into EcoTaxa. Each <code>.tsv</code> file is written
 to its respective class subfolder and includes the relevant metadata for
 that class.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Loop .tsv creation for each class</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ecotaxa_metadata</span><span class="op">$</span><span class="va">object_annotation_hierarchy</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Define path to subfolder</span></span>
@@ -693,13 +699,13 @@ interface has a maximum file size limit of 500 MB. To accommodate this
 limitation, the zip archive can be split into multiple files by setting
 <code>split_zip</code> to <code>TRUE</code> and specifying the
 <code>max_size</code> parameter in megabytes.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create zip-archive</span></span>
 <span><span class="fu"><a href="../reference/ifcb_zip_pngs.html">ifcb_zip_pngs</a></span><span class="op">(</span></span>
 <span>  png_folder <span class="op">=</span> <span class="st">"data/extracted_images"</span>,</span>
 <span>  zip_filename <span class="op">=</span> <span class="st">"data/zip/iRfcb_ecotaxa.zip"</span>,</span>
 <span>  readme_file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/README-template.md"</span>, package <span class="op">=</span> <span class="st">"iRfcb"</span><span class="op">)</span>,</span>
-<span>  <span class="co"># Template icluded in `iRfcb`</span></span>
+<span>  <span class="co"># Template included in `iRfcb`</span></span>
 <span>  email_address <span class="op">=</span> <span class="st">"tutorial@test.com"</span>,</span>
 <span>  version <span class="op">=</span> <span class="st">"1.1"</span>,</span>
 <span>  include_txt <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -708,10 +714,10 @@ limitation, the zip archive can be split into multiple files by setting
 <span>  max_size <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>  print_progress <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Creating README file...</span></span>
-<span><span class="co">## Creating MANIFEST.txt...</span></span>
-<span><span class="co">## Creating zip archive...</span></span>
-<span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip</span></span></code></pre>
+<pre><code><span><span class="co">## Creating README file...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating MANIFEST.txt...</span></span></code></pre>
+<pre><code><span><span class="co">## Creating zip archive...</span></span></code></pre>
+<pre><code><span><span class="co">## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip</span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 more detailed information, refer to the package documentation or the
 other <a href="https://europeanifcbgroup.github.io/iRfcb/articles/">tutorials</a>.
@@ -726,7 +732,7 @@ Project</a>. Happy analyzing!</p>
 <pre><code><span><span class="co">## To cite package 'iRfcb' in publications use:</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging</span></span>
-<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.7.0.</span></span>
+<span><span class="co">##   FlowCytobot (IFCB) Data. R package version 0.8.0.</span></span>
 <span><span class="co">##   https://CRAN.R-project.org/package=iRfcb</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## A BibTeX entry for LaTeX users is</span></span>
@@ -735,7 +741,7 @@ Project</a>. Happy analyzing!</p>
 <span><span class="co">##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},</span></span>
 <span><span class="co">##     author = {Anders Torstensson},</span></span>
 <span><span class="co">##     year = {2026},</span></span>
-<span><span class="co">##     note = {R package version 0.7.0},</span></span>
+<span><span class="co">##     note = {R package version 0.8.0},</span></span>
 <span><span class="co">##     url = {https://CRAN.R-project.org/package=iRfcb},</span></span>
 <span><span class="co">##   }</span></span></code></pre>
 </div>

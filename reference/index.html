@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,8 @@
 
       <dl></dl></div><div class="section level2">
 
-      <h3 id="core-functions">Core functions<a class="anchor" aria-label="anchor" href="#core-functions"></a></h3>
-      <div class="section-desc"><p>Core functions for processing and analyzing IFCB data.</p></div>
+      <h3 id="data-download">Data download<a class="anchor" aria-label="anchor" href="#data-download"></a></h3>
+      <div class="section-desc"><p>Functions for downloading IFCB data from dashboards and external repositories.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -62,27 +62,6 @@
 
 
       <dl><dt>
-
-          <code><a href="ifcb_convert_filenames.html">ifcb_convert_filenames()</a></code>
-
-        </dt>
-        <dd>Convert IFCB Filenames to Timestamps</dd>
-
-        <dt>
-
-          <code><a href="ifcb_count_mat_annotations.html">ifcb_count_mat_annotations()</a></code>
-
-        </dt>
-        <dd>Count IFCB Annotations from .mat Files</dd>
-
-        <dt>
-
-          <code><a href="ifcb_create_manifest.html">ifcb_create_manifest()</a></code>
-
-        </dt>
-        <dd>Create a MANIFEST.txt File</dd>
-
-        <dt>
 
           <code><a href="ifcb_download_dashboard_data.html">ifcb_download_dashboard_data()</a></code>
 
@@ -112,45 +91,26 @@
 
         <dt>
 
-          <code><a href="ifcb_extract_annotated_images.html">ifcb_extract_annotated_images()</a></code>
+          <code><a href="ifcb_list_dashboard_bins.html">ifcb_list_dashboard_bins()</a></code>
 
         </dt>
-        <dd>Extract Annotated Images from IFCB Data</dd>
+        <dd>Download bin list from the IFCB Dashboard API</dd>
+      </dl></div><div class="section level2">
 
-        <dt>
+      <h3 id="data-reading">Data reading<a class="anchor" aria-label="anchor" href="#data-reading"></a></h3>
+      <div class="section-desc"><p>Functions for reading raw IFCB files and extracting metadata.</p></div>
 
-          <code><a href="ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code>
+      <dl></dl></div><div class="section level2">
 
-        </dt>
-        <dd>Extract Biovolumes from IFCB Data and Compute Carbon Content</dd>
 
-        <dt>
 
-          <code><a href="ifcb_extract_classified_images.html">ifcb_extract_classified_images()</a></code>
 
-        </dt>
-        <dd>Extract Taxa Images from MATLAB Classified Sample</dd>
+      <dl><dt>
 
-        <dt>
-
-          <code><a href="ifcb_extract_pngs.html">ifcb_extract_pngs()</a></code>
+          <code><a href="ifcb_convert_filenames.html">ifcb_convert_filenames()</a></code>
 
         </dt>
-        <dd>Extract Images from IFCB ROI File</dd>
-
-        <dt>
-
-          <code><a href="ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code>
-
-        </dt>
-        <dd>Get EcoTaxa Column Names</dd>
-
-        <dt>
-
-          <code><a href="ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code>
-
-        </dt>
-        <dd>Retrieve Ferrybox Data for Specified Timestamps</dd>
+        <dd>Convert IFCB Filenames to Timestamps</dd>
 
         <dt>
 
@@ -175,69 +135,6 @@
 
         <dt>
 
-          <code><a href="ifcb_get_shark_colnames.html">ifcb_get_shark_colnames()</a></code>
-
-        </dt>
-        <dd>Get Shark Column Names</dd>
-
-        <dt>
-
-          <code><a href="ifcb_get_shark_example.html">ifcb_get_shark_example()</a></code>
-
-        </dt>
-        <dd>Get Shark Column Example</dd>
-
-        <dt>
-
-          <code><a href="ifcb_get_trophic_type.html">ifcb_get_trophic_type()</a></code>
-
-        </dt>
-        <dd>Get Trophic Type for a List of Plankton Taxa</dd>
-
-        <dt>
-
-          <code><a href="ifcb_is_diatom.html">ifcb_is_diatom()</a></code>
-
-        </dt>
-        <dd>Identify Diatoms in Taxa List</dd>
-
-        <dt>
-
-          <code><a href="ifcb_is_in_basin.html">ifcb_is_in_basin()</a></code>
-
-        </dt>
-        <dd>Check if Points are in a Specific Sea Basin</dd>
-
-        <dt>
-
-          <code><a href="ifcb_is_near_land.html">ifcb_is_near_land()</a></code>
-
-        </dt>
-        <dd>Determine if Positions are Near Land</dd>
-
-        <dt>
-
-          <code><a href="ifcb_list_dashboard_bins.html">ifcb_list_dashboard_bins()</a></code>
-
-        </dt>
-        <dd>Download bin list from the IFCB Dashboard API</dd>
-
-        <dt>
-
-          <code><a href="ifcb_match_taxa_names.html">ifcb_match_taxa_names()</a></code>
-          <span class="badge lifecycle lifecycle-superseded">superseded</span>
-        </dt>
-        <dd>Retrieve WoRMS Records with Retry Mechanism</dd>
-
-        <dt>
-
-          <code><a href="ifcb_psd_plot.html">ifcb_psd_plot()</a></code>
-
-        </dt>
-        <dd>Generate PSD Plot for a Given Sample</dd>
-
-        <dt>
-
           <code><a href="ifcb_read_features.html">ifcb_read_features()</a></code>
 
         </dt>
@@ -248,7 +145,7 @@
           <code><a href="ifcb_read_hdr_data.html">ifcb_read_hdr_data()</a></code>
 
         </dt>
-        <dd>Reads HDR Data from IFCB HDR Files</dd>
+        <dd>Read Data from IFCB HDR Files</dd>
 
         <dt>
 
@@ -259,10 +156,40 @@
 
         <dt>
 
-          <code><a href="ifcb_run_image_gallery.html">ifcb_run_image_gallery()</a></code>
+          <code><a href="ifcb_volume_analyzed.html">ifcb_volume_analyzed()</a></code>
 
         </dt>
-        <dd>Run IFCB Image Gallery</dd>
+        <dd>Estimate Volume Analyzed from IFCB Header File</dd>
+
+        <dt>
+
+          <code><a href="ifcb_volume_analyzed_from_adc.html">ifcb_volume_analyzed_from_adc()</a></code>
+
+        </dt>
+        <dd>Estimate Volume Analyzed from IFCB ADC File</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="summarizing-and-counting">Summarizing and counting<a class="anchor" aria-label="anchor" href="#summarizing-and-counting"></a></h3>
+      <div class="section-desc"><p>Functions for counting and summarizing annotated or classified images, biovolumes, and carbon content.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_count_mat_annotations.html">ifcb_count_mat_annotations()</a></code>
+
+        </dt>
+        <dd>Count IFCB Annotations from .mat Files</dd>
+
+        <dt>
+
+          <code><a href="ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code>
+
+        </dt>
+        <dd>Extract Biovolumes from IFCB Data and Compute Carbon Content</dd>
 
         <dt>
 
@@ -291,20 +218,73 @@
 
         </dt>
         <dd>Summarize PNG Image Metadata</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="image-extraction">Image extraction<a class="anchor" aria-label="anchor" href="#image-extraction"></a></h3>
+      <div class="section-desc"><p>Functions for extracting images from raw IFCB <code>.roi</code> files.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_extract_annotated_images.html">ifcb_extract_annotated_images()</a></code>
+
+        </dt>
+        <dd>Extract Annotated Images from IFCB Data</dd>
 
         <dt>
 
-          <code><a href="ifcb_volume_analyzed.html">ifcb_volume_analyzed()</a></code>
+          <code><a href="ifcb_extract_classified_images.html">ifcb_extract_classified_images()</a></code>
 
         </dt>
-        <dd>Estimate Volume Analyzed from IFCB Header File</dd>
+        <dd>Extract Taxa Images from Classified Sample</dd>
 
         <dt>
 
-          <code><a href="ifcb_volume_analyzed_from_adc.html">ifcb_volume_analyzed_from_adc()</a></code>
+          <code><a href="ifcb_extract_pngs.html">ifcb_extract_pngs()</a></code>
 
         </dt>
-        <dd>Estimate Volume Analyzed from IFCB ADC File</dd>
+        <dd>Extract Images from IFCB ROI File</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="quality-control">Quality control<a class="anchor" aria-label="anchor" href="#quality-control"></a></h3>
+      <div class="section-desc"><p>Functions for geospatial quality control and particle size distribution analysis.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data()</a></code>
+
+        </dt>
+        <dd>Retrieve Ferrybox Data for Specified Timestamps</dd>
+
+        <dt>
+
+          <code><a href="ifcb_is_in_basin.html">ifcb_is_in_basin()</a></code>
+
+        </dt>
+        <dd>Check if Points are in a Specific Sea Basin</dd>
+
+        <dt>
+
+          <code><a href="ifcb_is_near_land.html">ifcb_is_near_land()</a></code>
+
+        </dt>
+        <dd>Determine if Positions are Near Land</dd>
+
+        <dt>
+
+          <code><a href="ifcb_psd_plot.html">ifcb_psd_plot()</a></code>
+
+        </dt>
+        <dd>Generate PSD Plot for a Given Sample</dd>
 
         <dt>
 
@@ -312,13 +292,73 @@
 
         </dt>
         <dd>Determine if Points are in a Specified Sea Basin</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="taxonomic-data">Taxonomic data<a class="anchor" aria-label="anchor" href="#taxonomic-data"></a></h3>
+      <div class="section-desc"><p>Functions for taxonomic name matching, diatom classification, and trophic type lookup.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_get_trophic_type.html">ifcb_get_trophic_type()</a></code>
+
+        </dt>
+        <dd>Get Trophic Type for a List of Plankton Taxa</dd>
 
         <dt>
 
-          <code><a href="ifcb_zip_matlab.html">ifcb_zip_matlab()</a></code>
+          <code><a href="ifcb_is_diatom.html">ifcb_is_diatom()</a></code>
 
         </dt>
-        <dd>Create a Zip Archive of Manual MATLAB Files</dd>
+        <dd>Identify Diatoms in Taxa List</dd>
+
+        <dt>
+
+          <code><a href="ifcb_match_taxa_names.html">ifcb_match_taxa_names()</a></code>
+          <span class="badge lifecycle lifecycle-superseded">superseded</span>
+        </dt>
+        <dd>Retrieve WoRMS Records with Retry Mechanism</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="data-export">Data export<a class="anchor" aria-label="anchor" href="#data-export"></a></h3>
+      <div class="section-desc"><p>Functions for packaging images and MATLAB files and preparing data for external repositories.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_create_manifest.html">ifcb_create_manifest()</a></code>
+
+        </dt>
+        <dd>Create a MANIFEST.txt File</dd>
+
+        <dt>
+
+          <code><a href="ifcb_get_ecotaxa_example.html">ifcb_get_ecotaxa_example()</a></code>
+
+        </dt>
+        <dd>Get EcoTaxa Column Names</dd>
+
+        <dt>
+
+          <code><a href="ifcb_get_shark_colnames.html">ifcb_get_shark_colnames()</a></code>
+
+        </dt>
+        <dd>Get Shark Column Names</dd>
+
+        <dt>
+
+          <code><a href="ifcb_get_shark_example.html">ifcb_get_shark_example()</a></code>
+
+        </dt>
+        <dd>Get Shark Column Example</dd>
 
         <dt>
 
@@ -329,10 +369,54 @@
 
         <dt>
 
+          <code><a href="ifcb_zip_matlab.html">ifcb_zip_matlab()</a></code>
+
+        </dt>
+        <dd>Create a Zip Archive of Manual MATLAB Files</dd>
+
+        <dt>
+
           <code><a href="ifcb_zip_pngs.html">ifcb_zip_pngs()</a></code>
 
         </dt>
         <dd>Zip PNG Folders</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="image-classification">Image classification<a class="anchor" aria-label="anchor" href="#image-classification"></a></h3>
+      <div class="section-desc"><p>Functions for classifying IFCB images through a Gradio application.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ifcb_classify_images.html">ifcb_classify_images()</a></code>
+
+        </dt>
+        <dd>Classify Pre-Extracted IFCB PNG Images Using a Gradio Application</dd>
+
+        <dt>
+
+          <code><a href="ifcb_classify_models.html">ifcb_classify_models()</a></code>
+
+        </dt>
+        <dd>List Available CNN Models from a Gradio Classification Server</dd>
+
+        <dt>
+
+          <code><a href="ifcb_classify_sample.html">ifcb_classify_sample()</a></code>
+
+        </dt>
+        <dd>Classify All Images in an IFCB Sample Using a Gradio Application</dd>
+
+        <dt>
+
+          <code><a href="ifcb_save_classification.html">ifcb_save_classification()</a></code>
+
+        </dt>
+        <dd>Classify an IFCB Sample and Save Results</dd>
       </dl></div><div class="section level2">
 
       <h3 id="python-dependency-python-powered-python-powered-w-x-png-">Python dependency <img src="../python-powered-w-70x28.png" alt="Python Powered"><a class="anchor" aria-label="anchor" href="#python-dependency-python-powered-python-powered-w-x-png-"></a></h3>
@@ -507,6 +591,13 @@
           <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
         </dt>
         <dd>Retrieve WoRMS Records with Retry Mechanism</dd>
+
+        <dt>
+
+          <code><a href="ifcb_run_image_gallery.html">ifcb_run_image_gallery()</a></code>
+          <span class="badge lifecycle lifecycle-deprecated">deprecated</span>
+        </dt>
+        <dd>Run IFCB Image Gallery</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

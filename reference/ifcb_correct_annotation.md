@@ -72,12 +72,6 @@ output folder.
 If a character vector is provided as `correction`, it will be used
 directly as a list of filenames for correction.
 
-The `correction` is typically generated using a Shiny app that provides
-an interactive interface for browsing and managing IFCB (Imaging
-FlowCytobot) image galleries. This Shiny app can be initialized using
-the function
-[`ifcb_run_image_gallery()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_run_image_gallery.md).
-
 ## References
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification

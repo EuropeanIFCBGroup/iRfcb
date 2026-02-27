@@ -100,7 +100,7 @@ the `iRfcb` package.
 ifcb_zip_pngs(
   png_folder = "data/extracted_images",
   zip_filename = "data/zip/ifcb_annotated_images_corrected.zip",
-  # Template icluded in `iRfcb`
+  # Template included in `iRfcb`
   readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
   email_address = "tutorial@test.com",
   version = "1.1",
@@ -109,8 +109,11 @@ ifcb_zip_pngs(
 ```
 
     ## Creating README file...
+
     ## Creating MANIFEST.txt...
+
     ## Creating zip archive...
+
     ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip
 
 ## Package MATLAB Directory
@@ -127,7 +130,7 @@ ifcb_zip_matlab(
   class2use_file = "data/config/class2use.mat",
   zip_filename = "data/zip/ifcb_matlab_files_corrected.zip",
   data_folder = "data/data",
-  # Templates icluded in `iRfcb`
+  # Templates included in `iRfcb`
   readme_file = system.file("exdata/README-template.md", package = "iRfcb"),
   matlab_readme_file = system.file("exdata/MATLAB-template.md", package = "iRfcb"),
   email_address = "tutorial@test.com",
@@ -137,13 +140,21 @@ ifcb_zip_matlab(
 ```
 
     ## Listing all files...
+
     ## Copying manual files...
+
     ## Copying feature files...
+
     ## Copying data files...
+
     ## Copying class2use file...
+
     ## Creating README file...
+
     ## Creating MANIFEST.txt...
+
     ## Creating zip archive...
+
     ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip
 
 ## Create MANIFEST.txt
@@ -218,7 +229,7 @@ Happy analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
+    ##   FlowCytobot (IFCB) Data. R package version 0.8.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -227,7 +238,7 @@ Happy analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2026},
-    ##     note = {R package version 0.7.0},
+    ##     note = {R package version 0.8.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

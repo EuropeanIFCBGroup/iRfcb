@@ -16,6 +16,7 @@ ifcb_extract_pngs(
   ROInumbers = NULL,
   taxaname = NULL,
   gamma = 1,
+  normalize = FALSE,
   overwrite = FALSE,
   scale_bar_um = NULL,
   scale_micron_factor = 1/3.4,
@@ -50,8 +51,16 @@ ifcb_extract_pngs(
 - gamma:
 
   A numeric value for gamma correction applied to the image. Default is
-  1 (no correction). Values \<1 increase contrast in dark regions, while
-  values \>1 decrease contrast.
+  1 (no correction). Values \<1 brighten dark regions, while values \>1
+  darken the image.
+
+- normalize:
+
+  A logical value indicating whether to apply min-max normalization to
+  stretch pixel values to the full 0-255 range. Default is FALSE, which
+  preserves raw pixel values from the camera, producing images
+  comparable to IFCB Dashboard and other standard IFCB software. Set to
+  TRUE to stretch contrast to the full 0-255 range.
 
 - overwrite:
 
@@ -81,9 +90,9 @@ ifcb_extract_pngs(
 
 - old_adc:
 
-  A logical value indicating whether the `adc` file is of the old format
-  (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is
-  FALSE.
+  **\[deprecated\]** Previously used to indicate old ADC format. ADC
+  format is now auto-detected from the HDR file and column count. This
+  parameter is ignored.
 
 - verbose:
 

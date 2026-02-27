@@ -15,7 +15,7 @@ depending on whether the class is identified as a diatom."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@ depending on whether the class is identified as a diatom.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_extract_biovolumes</span><span class="op">(</span></span>
 <span>  <span class="va">feature_files</span>,</span>
-<span>  mat_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  class_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_images <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -79,12 +79,14 @@ depending on whether the class is identified as a diatom.</p>
 <span>  threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
 <span>  multiblob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  mat_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  class_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  drop_zero_volume <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  mat_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
+<span>  mat_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mat_files <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mat_recursive <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,15 +98,17 @@ depending on whether the class is identified as a diatom.</p>
 <dd><p>A path to a folder containing feature files or a character vector of file paths.</p></dd>
 
 
-<dt id="arg-mat-files">mat_files<a class="anchor" aria-label="anchor" href="#arg-mat-files"></a></dt>
-<dd><p>(Optional) A character vector of full paths to class or manual annotation files, or a single path to a folder containing such files.</p></dd>
+<dt id="arg-class-files">class_files<a class="anchor" aria-label="anchor" href="#arg-class-files"></a></dt>
+<dd><p>(Optional) A character vector of full paths to classification or manual
+annotation files (<code>.mat</code>, <code>.h5</code>, or <code>.csv</code>), or a single path to a folder
+containing such files.</p></dd>
 
 
 <dt id="arg-custom-images">custom_images<a class="anchor" aria-label="anchor" href="#arg-custom-images"></a></dt>
-<dd><p>(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ.png,
+<dd><p>(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 These filenames should match the <code>roi_number</code> assignment in the <code>feature_files</code> and can be
-used as a substitute for MATLAB files.</p></dd>
+used as a substitute for classification files.</p></dd>
 
 
 <dt id="arg-custom-classes">custom_classes<a class="anchor" aria-label="anchor" href="#arg-custom-classes"></a></dt>
@@ -133,7 +137,11 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
-<dd><p>Threshold for selecting classification information (<code>"opt"</code> for above-threshold classification, otherwise <code>"all"</code>). Default: <code>"opt"</code>.</p></dd>
+<dd><p>A character string controlling which classification to use.
+<code>"opt"</code> (default) uses the threshold-applied classification, where
+predictions below the per-class optimal threshold are labeled
+<code>"unclassified"</code>. Any other value (e.g. <code>"all"</code>) uses the raw winning
+class without any threshold applied.</p></dd>
 
 
 <dt id="arg-multiblob">multiblob<a class="anchor" aria-label="anchor" href="#arg-multiblob"></a></dt>
@@ -144,8 +152,8 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 <dd><p>Logical. If <code>TRUE</code>, searches recursively for feature files when <code>feature_files</code> is a folder. Default: <code>TRUE</code>.</p></dd>
 
 
-<dt id="arg-mat-recursive">mat_recursive<a class="anchor" aria-label="anchor" href="#arg-mat-recursive"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> and <code>mat_files</code> is a folder, searches recursively for MATLAB files in <code>mat_files</code>. Default: <code>TRUE</code>.</p></dd>
+<dt id="arg-class-recursive">class_recursive<a class="anchor" aria-label="anchor" href="#arg-class-recursive"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> and <code>class_files</code> is a folder, searches recursively for classification files. Default: <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-drop-zero-volume">drop_zero_volume<a class="anchor" aria-label="anchor" href="#arg-drop-zero-volume"></a></dt>
@@ -166,7 +174,17 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 
 <dt id="arg-mat-folder">mat_folder<a class="anchor" aria-label="anchor" href="#arg-mat-folder"></a></dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
-Use <code>mat_files</code> instead.</p></dd>
+Use <code>class_files</code> instead.</p></dd>
+
+
+<dt id="arg-mat-files">mat_files<a class="anchor" aria-label="anchor" href="#arg-mat-files"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
+Use <code>class_files</code> instead.</p></dd>
+
+
+<dt id="arg-mat-recursive">mat_recursive<a class="anchor" aria-label="anchor" href="#arg-mat-recursive"></a></dt>
+<dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
+Use <code>class_recursive</code> instead.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -181,9 +199,9 @@ Use <code>mat_files</code> instead.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
-<ul><li><p><strong>Classification Data Handling:</strong></p><ul><li><p>If <code>mat_files</code> is provided, the function reads class annotations from MATLAB <code>.mat</code> files.</p></li>
-<li><p>If <code>custom_images</code> and <code>custom_classes</code> are supplied, they override MATLAB classification data (e.g. data from a CNN model).</p></li>
-<li><p>If both <code>mat_files</code> and <code>custom_images/custom_classes</code> are given, <code>mat_files</code> takes precedence.</p></li>
+<ul><li><p><strong>Classification Data Handling:</strong></p><ul><li><p>If <code>class_files</code> is provided, the function reads class annotations from <code>.mat</code>, <code>.h5</code>, or <code>.csv</code> files.</p></li>
+<li><p>If <code>custom_images</code> and <code>custom_classes</code> are supplied, they override classification file data (e.g. data from a CNN model).</p></li>
+<li><p>If both <code>class_files</code> and <code>custom_images/custom_classes</code> are given, <code>class_files</code> takes precedence.</p></li>
 </ul></li>
 <li><p><strong>MAT File Processing:</strong></p><ul><li><p>If <code>use_python = TRUE</code>, the function reads <code>.mat</code> files using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code> (requires Python + <code>SciPy</code>).</p></li>
 <li><p>Otherwise, it falls back to <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p></li>
@@ -191,7 +209,7 @@ Use <code>mat_files</code> instead.</p></dd>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 3, doi: 10.4319/lo.2000.45.3.0569.</p>
+    <p>Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.</p>
 <p>Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.</p>
     </div>
     <div class="section level2">
@@ -202,24 +220,24 @@ Use <code>mat_files</code> instead.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Using MATLAB results:</span></span></span>
+<span class="r-in"><span><span class="co"># Using classification results:</span></span></span>
 <span class="r-in"><span><span class="va">feature_files</span> <span class="op">&lt;-</span> <span class="st">"data/features"</span></span></span>
-<span class="r-in"><span><span class="va">mat_files</span> <span class="op">&lt;-</span> <span class="st">"data/classified"</span></span></span>
+<span class="r-in"><span><span class="va">class_files</span> <span class="op">&lt;-</span> <span class="st">"data/classified"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">biovolume_df</span> <span class="op">&lt;-</span> <span class="fu">ifcb_extract_biovolumes</span><span class="op">(</span><span class="va">feature_files</span>,</span></span>
-<span class="r-in"><span>                                        <span class="va">mat_files</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                        <span class="va">class_files</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">biovolume_df</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using custom classification result:</span></span></span>
-<span class="r-in"><span><span class="va">class</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mesodinium_rubrum"</span>,</span></span>
-<span class="r-in"><span>          <span class="st">"Mesodinium_rubrum"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"D20220522T003051_IFCB134_00002"</span>,</span></span>
+<span class="r-in"><span><span class="va">classes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mesodinium_rubrum"</span>,</span></span>
+<span class="r-in"><span>             <span class="st">"Mesodinium_rubrum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">images</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"D20220522T003051_IFCB134_00002"</span>,</span></span>
 <span class="r-in"><span>           <span class="st">"D20220522T003051_IFCB134_00003"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">biovolume_df_custom</span> <span class="op">&lt;-</span> <span class="fu">ifcb_extract_biovolumes</span><span class="op">(</span><span class="va">feature_files</span>,</span></span>
-<span class="r-in"><span>                                               custom_images <span class="op">=</span> <span class="va">image</span>,</span></span>
-<span class="r-in"><span>                                               custom_classes <span class="op">=</span> <span class="va">class</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                               custom_images <span class="op">=</span> <span class="va">images</span>,</span></span>
+<span class="r-in"><span>                                               custom_classes <span class="op">=</span> <span class="va">classes</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">biovolume_df_custom</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

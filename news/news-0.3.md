@@ -4,7 +4,7 @@
 
 ### New features
 
-- Introduced unit testing with `testthat` for improve stability.
+- Introduced unit testing with `testthat` for improved stability.
 - Improved consistency and functionality across multiple functions.
 
 ## iRfcb 0.3.1

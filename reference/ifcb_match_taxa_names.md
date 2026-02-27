@@ -40,12 +40,12 @@ ifcb_match_taxa_names(
 - max_retries:
 
   An integer specifying the maximum number of attempts to retrieve
-  records.
+  records. Default is 3.
 
 - sleep_time:
 
   A numeric value indicating the number of seconds to wait between retry
-  attempts.
+  attempts. Default is 10.
 
 - marine_only:
 
@@ -54,7 +54,7 @@ ifcb_match_taxa_names(
 
 - return_list:
 
-  A logical value indicating whether to to return the output as a list.
+  A logical value indicating whether to return the output as a list.
   Default is FALSE, where the result is returned as a dataframe.
 
 - verbose:

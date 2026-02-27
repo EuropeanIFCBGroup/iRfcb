@@ -1,27 +1,33 @@
 # Summarize TreeBagger Classifier Results
 
-This function reads a TreeBagger classifier result file (`.mat` format)
-and summarizes the number of targets in each class based on the
+This function reads a TreeBagger classifier result file (`.mat` or `.h5`
+format) and summarizes the number of targets in each class based on the
 classification scores and thresholds.
 
 ## Usage
 
 ``` r
-summarize_TBclass(classfile, adhocthresh = NULL)
+summarize_TBclass(classfile, adhocthresh = NULL, use_python = FALSE)
 ```
 
 ## Arguments
 
 - classfile:
 
-  Character string specifying the path to the TreeBagger classifier
-  result file (`.mat` format).
+  Character string specifying the path to the classifier result file
+  (`.mat` or `.h5` format).
 
 - adhocthresh:
 
   Numeric vector specifying the adhoc thresholds for each class. If NULL
   (default), no adhoc thresholding is applied. If a single numeric value
-  is provided, it is applied to all classes.
+  is provided, it is applied to all classes. Not available for `.h5`
+  files.
+
+- use_python:
+
+  Logical. If `TRUE`, uses Python-based reading for `.mat` files.
+  Default is `FALSE`.
 
 ## Value
 

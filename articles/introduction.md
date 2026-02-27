@@ -47,14 +47,12 @@ data_dir <- "data"
 ifcb_download_test_data(dest_dir = data_dir)
 ```
 
-    ## Download and extraction complete.
-
 ## Extract IFCB Data
 
 This section demonstrates a selection of general data extraction tools
 available in `iRfcb`.
 
-### Extract Timestamps from IFCB sample Filenames
+### Extract Timestamps from IFCB Sample Filenames
 
 Extract timestamps from sample names or filenames:
 
@@ -256,6 +254,111 @@ To extract annotated images or classified results from MATLAB files,
 please see the `vignette("image-export-tutorial")` and
 `vignette("matlab-tutorial")` tutorials.
 
+## Classify IFCB Images
+
+IFCB images can be classified directly in R using a CNN model served by
+a [Gradio](https://www.gradio.app/) application. By default, the
+classification functions use a public example Space hosted on Hugging
+Face (`https://irfcb-classify.hf.space`). This Space has limited
+resources and is intended for testing and demonstration purposes. For
+large-scale or production classification, we recommend deploying your
+own instance of the [IFCB Classification
+App](https://github.com/EuropeanIFCBGroup/ifcb-inference-app) with your
+own model and passing its URL via the `gradio_url` argument.
+
+### Available Models
+
+Use
+[`ifcb_classify_models()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.md)
+to list the CNN models available on the Gradio server:
+
+``` r
+ifcb_classify_models()
+```
+
+### Classify All Images in a Sample
+
+[`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)
+extracts images from a `.roi` file internally and returns predictions
+without requiring a separate extraction step:
+
+``` r
+# Classify all images in a sample
+results <- ifcb_classify_sample(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  verbose = FALSE
+)
+
+# Print result
+print(results)
+```
+
+### Classify Pre-extracted PNG Images
+
+If images have already been extracted, pass a vector of PNG file paths
+to
+[`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md):
+
+``` r
+# List extracted PNG files
+png_files <- list.files(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134",
+  pattern = "\\.png$",
+  full.names = TRUE
+)
+
+# Classify images
+results <- ifcb_classify_images(png_files, verbose = FALSE)
+
+# Print result
+print(results)
+```
+
+Both functions return a data frame with `file_name`, `class_name`,
+`class_name_auto`, `score`, and `model_name` columns, and query the
+Gradio API at `https://irfcb-classify.hf.space` by default. Per-class F2
+optimal thresholds are always applied: `class_name` contains the
+threshold-applied classification (labeled `"unclassified"` when below
+threshold), while `class_name_auto` contains the winning class without
+any threshold. The `top_n` argument controls how many top predictions
+are returned per image, and `model_name` specifies which CNN model to
+use (default: `"SMHI NIVA ResNet50 V5"`).
+
+### Save Classification Results
+
+[`ifcb_save_classification()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.md)
+classifies all images in a `.roi` file and saves the full score matrix.
+Three output formats are supported via the `format` argument:
+
+``` r
+# HDF5 (default) - IFCB Dashboard v3 format (requires hdf5r package)
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output"
+)
+# Creates: output/D20230314T001205_IFCB134_class.h5
+
+# MAT - IFCB Dashboard v1 format (requires Python with scipy)
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output",
+  format = "mat"
+)
+# Creates: output/D20230314T001205_IFCB134_class_v1.mat
+
+# CSV - ClassiPyR-compatible format
+ifcb_save_classification(
+  "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
+  output_folder = "output",
+  format = "csv"
+)
+# Creates: output/D20230314T001205_IFCB134.csv
+```
+
+The output file contains `output_scores` (N x C matrix), `class_labels`,
+`roi_numbers`, per-class `thresholds`, and
+`class_labels_above_threshold`.
+
 ## Taxonomical Data
 
 Maintaining up-to-date taxonomic data is essential for ensuring accurate
@@ -423,7 +526,7 @@ Happy analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.7.0.
+    ##   FlowCytobot (IFCB) Data. R package version 0.8.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -432,7 +535,7 @@ Happy analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2026},
-    ##     note = {R package version 0.7.0},
+    ##     note = {R package version 0.8.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

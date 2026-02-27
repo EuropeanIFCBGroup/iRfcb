@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,8 @@
 <li>
 <strong>Image Extraction</strong>: Tools to extract and prepare images for publication.</li>
 <li>
+<strong>Image Classification</strong>: Functions to classify IFCB images through a CNN model served by a <a href="https://www.gradio.app/" class="external-link">Gradio</a> application.</li>
+<li>
 <strong>Taxonomical Data</strong>: Tools for handling and analyzing taxonomic data and calculating biomass concentration from image data.</li>
 </ul>
 </div>
@@ -150,8 +152,8 @@
 <div class="section level2">
 <h2 id="python-dependency">Python Dependency<a class="anchor" aria-label="anchor" href="#python-dependency"></a>
 </h2>
-<p>Some functions in <code>iRfcb</code> require Python, and you will be notified when you call one of these functions. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For details on what function that require Python, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/reference/index.html#python-dependency-python-powered-python-powered-w-x-png-">Function Reference</a>.</p>
-<p>A Python virtual environment (venv) can be created using the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function before calling the function that require Python.</p>
+<p>Some functions in <code>iRfcb</code> require Python, and you will be notified when you call one of these functions. You can download Python from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>. For details on which functions require Python, please visit the project’s <a href="https://europeanifcbgroup.github.io/iRfcb/reference/index.html#python-dependency-python-powered-python-powered-w-x-png-">Function Reference</a>.</p>
+<p>A Python virtual environment (venv) can be created using the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function before calling functions that require Python.</p>
 <p>The <code>iRfcb</code> package can also be configured to automatically activate an installed Python venv upon loading by setting an environment variable. This feature is especially useful for users who regularly interact with Python dependencies within the <code>iRfcb</code> package.</p>
 <div class="section level3">
 <h3 id="use_irfcb_python">USE_IRFCB_PYTHON<a class="anchor" aria-label="anchor" href="#use_irfcb_python"></a>
@@ -160,7 +162,7 @@
 <li>
 <strong>Description</strong>: The <code>USE_IRFCB_PYTHON</code> environment variable controls whether the package automatically activates a pre-installed Python venv named <code>iRfcb</code> when the package is loaded.</li>
 <li>
-<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> functions manually before using a Python feature.</li>
+<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function manually before using a Python feature.</li>
 <li>
 <strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. Ensure that a venv named <code>iRfcb</code> is installed (e.g. through <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code>) in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>.</li>
 </ul>

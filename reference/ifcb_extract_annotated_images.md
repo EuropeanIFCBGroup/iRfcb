@@ -26,6 +26,7 @@ ifcb_extract_annotated_images(
   old_adc = FALSE,
   use_python = FALSE,
   gamma = 1,
+  normalize = FALSE,
   add_trailing_numbers = TRUE,
   roi_folder = deprecated()
 )
@@ -56,7 +57,8 @@ ifcb_extract_annotated_images(
 - skip_class:
 
   A numeric vector of class IDs or a character vector of class names to
-  be excluded from the count. Default is NULL.
+  be excluded from the `.png` extraction. Default is NA (include all
+  classes).
 
 - verbose:
 
@@ -71,7 +73,7 @@ ifcb_extract_annotated_images(
 - roi_recursive:
 
   Logical. If TRUE, the function will search for data files recursively
-  within the `roi_folder` (if provided). Default is TRUE.
+  within the `roi_folders` (if provided). Default is TRUE.
 
 - overwrite:
 
@@ -101,9 +103,9 @@ ifcb_extract_annotated_images(
 
 - old_adc:
 
-  A logical value indicating whether the `adc` file is of the old format
-  (samples from IFCB1-6, labeled "IFCBxxx_YYYY_DDD_HHMMSS"). Default is
-  FALSE.
+  **\[deprecated\]** Previously used to indicate old ADC format. ADC
+  format is now auto-detected from the HDR file and column count. This
+  parameter is ignored.
 
 - use_python:
 
@@ -113,8 +115,16 @@ ifcb_extract_annotated_images(
 - gamma:
 
   A numeric value for gamma correction applied to the image. Default is
-  1 (no correction). Values \<1 increase contrast in dark regions, while
-  values \>1 decrease contrast.
+  1 (no correction). Values \<1 brighten dark regions, while values \>1
+  darken the image.
+
+- normalize:
+
+  A logical value indicating whether to apply min-max normalization to
+  stretch pixel values to the full 0-255 range. Default is FALSE,
+  preserving raw pixel values comparable to IFCB Dashboard output. See
+  [`ifcb_extract_pngs()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_pngs.md)
+  for details.
 
 - add_trailing_numbers:
 

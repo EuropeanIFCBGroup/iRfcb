@@ -52,7 +52,7 @@ ifcb_psd(
 
 - save_data:
 
-  A boolean indicating whether to save data to CSV files. Default is
+  A logical indicating whether to save data to CSV files. Default is
   FALSE.
 
 - output_file:
@@ -68,7 +68,7 @@ ifcb_psd(
 
 - use_marker:
 
-  A boolean indicating whether to show markers on the plot. Default is
+  A logical indicating whether to show markers on the plot. Default is
   FALSE.
 
 - start_fit:
@@ -133,7 +133,7 @@ ifcb_psd(
 
 - use_plot_subfolders:
 
-  A boolean indicating whether to save plots in subfolders based on the
+  A logical indicating whether to save plots in subfolders based on the
   sample's flag status. If TRUE (default), samples without flags are
   saved in a "PSD.OK" subfolder, and samples with flags are saved in
   subfolders named after their flag(s). If FALSE, all plots are saved
@@ -183,7 +183,7 @@ Study of Harmful Algae. https://doi.org/10.15027/0002041270
 ## See also
 
 [`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md),
-<https://github.com/kudelalab/PSD>,
+<https://github.com/kudelalab/PSD>
 
 ## Examples
 

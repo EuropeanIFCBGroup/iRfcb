@@ -9,7 +9,7 @@ The Natural Earth 1:10m land vectors are included as a default shapefile in iRfc
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,7 @@ The Natural Earth 1:10m land vectors are included as a default shapefile in <cod
 
 
 <dt id="arg-shape">shape<a class="anchor" aria-label="anchor" href="#arg-shape"></a></dt>
-<dd><p>Optional path to a shapefile (<code>.shp</code> or <code>.gpkg</code>) containing coastline data. If provided,
+<dd><p>Optional path to a spatial file (<code>.shp</code> shapefile or <code>.gpkg</code> GeoPackage) containing coastline data. If provided,
 this file will be used instead of the default Natural Earth 1:10m land vectors.
 A high-resolution shapefile can improve the accuracy of buffer distance calculations.
 Alternatively, you can retrieve a more detailed European coastline automatically by
@@ -114,11 +114,11 @@ the coastline. Useful in archipelagos. Default is <code>TRUE</code>.</p></dd>
 
 <dt id="arg-small-island-threshold">small_island_threshold<a class="anchor" aria-label="anchor" href="#arg-small-island-threshold"></a></dt>
 <dd><p>Area threshold in square meters below which islands
-will be considered small and removed, if remove_small_islands is set to <code>TRUE</code>. Default is 2 square km.</p></dd>
+will be considered small and removed, if remove_small_islands is set to <code>TRUE</code>. Default is 2,000,000 (2 km^2).</p></dd>
 
 
 <dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
-<dd><p>A boolean indicating whether to plot the points, land polygon and buffer. Default is <code>FALSE</code>.</p></dd>
+<dd><p>A logical indicating whether to plot the points, land polygon and buffer. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
