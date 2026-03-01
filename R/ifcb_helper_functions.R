@@ -909,23 +909,28 @@ read_adc_columns <- function(adc_file) {
 #' @return A list with elements `x` (width), `y` (height), and `startbyte`.
 #' @noRd
 adc_get_roi_columns <- function(adc_data) {
-  if ("RoiWidth" %in% colnames(adc_data)) {
+  cnames <- tolower(colnames(adc_data))
+
+  if ("roiwidth" %in% cnames) {
+    width_col  <- which(cnames == "roiwidth")
+    height_col <- which(cnames == "roiheight")
+    start_col  <- which(cnames == "startbyte" | cnames == "start_byte")
     list(
-      x = as.numeric(adc_data$RoiWidth),
-      y = as.numeric(adc_data$RoiHeight),
-      startbyte = as.numeric(adc_data$StartByte)
+      x = as.numeric(adc_data[[width_col]]),
+      y = as.numeric(adc_data[[height_col]]),
+      startbyte = as.numeric(adc_data[[start_col]])
     )
   } else if (ncol(adc_data) >= 18) {
     list(
-      x = as.numeric(adc_data$V16),
-      y = as.numeric(adc_data$V17),
-      startbyte = as.numeric(adc_data$V18)
+      x = as.numeric(adc_data[[16]]),
+      y = as.numeric(adc_data[[17]]),
+      startbyte = as.numeric(adc_data[[18]])
     )
   } else {
     list(
-      x = as.numeric(adc_data$V12),
-      y = as.numeric(adc_data$V13),
-      startbyte = as.numeric(adc_data$V14)
+      x = as.numeric(adc_data[[12]]),
+      y = as.numeric(adc_data[[13]]),
+      startbyte = as.numeric(adc_data[[14]])
     )
   }
 }
