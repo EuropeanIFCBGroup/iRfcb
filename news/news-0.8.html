@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,6 +80,13 @@
 <li>
 <code>mat_recursive</code> in <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> (replaced by <code>class_recursive</code>).</li>
 </ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.1" id="irfcb-081">iRfcb 0.8.1<a class="anchor" aria-label="anchor" href="#irfcb-081"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-8-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1"></a></h3>
+<ul><li>Fixed <code>adc_get_roi_columns()</code> failing to detect ROI dimension columns for older IFCB instruments (e.g. IFCB110) where HDR files use different column name casing (<code>ROIwidth</code>/<code>ROIheight</code>/<code>start_byte</code>) compared to newer instruments (<code>RoiWidth</code>/<code>RoiHeight</code>/<code>StartByte</code>). Column matching is now case-insensitive and positional fallback uses column indices instead of V-prefixed names (<a href="https://github.com/EuropeanIFCBGroup/iRfcb/issues/77" class="external-link">#77</a>).</li>
 </ul></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

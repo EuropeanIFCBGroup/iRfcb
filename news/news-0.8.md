@@ -83,3 +83,15 @@
     and
     [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
     (replaced by `class_recursive`).
+
+## iRfcb 0.8.1
+
+### Bug fixes
+
+- Fixed `adc_get_roi_columns()` failing to detect ROI dimension columns
+  for older IFCB instruments (e.g. IFCB110) where HDR files use
+  different column name casing (`ROIwidth`/`ROIheight`/`start_byte`)
+  compared to newer instruments (`RoiWidth`/`RoiHeight`/`StartByte`).
+  Column matching is now case-insensitive and positional fallback uses
+  column indices instead of V-prefixed names
+  ([\#77](https://github.com/EuropeanIFCBGroup/iRfcb/issues/77)).
