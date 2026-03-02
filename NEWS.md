@@ -1,3 +1,9 @@
+# iRfcb (development version)
+
+## New features
+
+* Added a new `dataset_name` argument to `ifcb_list_dashboard_bins()` to only optionally only list bins from a specific dataset.
+
 # iRfcb 0.8.1
 
 ## Bug fixes

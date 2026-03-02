@@ -2,12 +2,15 @@
 #'
 #' @param base_url Character. Base URL to the IFCB Dashboard
 #'   (e.g. "https://ifcb-data.whoi.edu/").
+#' @param dataset_name Optional character. Dataset slug (e.g. "mvco") to retrieve metadata for a specific dataset.
+#' If NULL, all available metadata are downloaded.
 #' @param quiet Logical. If TRUE, suppresses progress messages. Default is FALSE.
 #'
 #' @return A data frame containing the bin list returned by the API.
 #' @examples
 #' \donttest{
-#'   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
+#'   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/",
+#'                                    dataset_name = "mvco")
 #'   head(bins)
 #' }
 #'
@@ -15,12 +18,17 @@
 #' @seealso [ifcb_download_dashboard_metadata()] to retrieve metadata from the IFCB Dashboard API.
 #'
 #' @export
-ifcb_list_dashboard_bins <- function(base_url, quiet = FALSE) {
+ifcb_list_dashboard_bins <- function(base_url, dataset_name = NULL, quiet = FALSE) {
   # Ensure base_url has no trailing slash
   base_url <- sub("/+$", "", base_url)
 
   # Construct full API URL
   api_url <- paste0(base_url, "/api/list_bins")
+
+  if (!is.null(dataset_name) && nzchar(dataset_name)) {
+    dataset_name <- utils::URLencode(dataset_name, reserved = TRUE)
+    api_url <- paste0(api_url, "?dataset=", dataset_name)
+  }
 
   if (!quiet) message("Fetching bin list from: ", api_url)
 

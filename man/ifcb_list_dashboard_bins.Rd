@@ -4,11 +4,14 @@
 \alias{ifcb_list_dashboard_bins}
 \title{Download bin list from the IFCB Dashboard API}
 \usage{
-ifcb_list_dashboard_bins(base_url, quiet = FALSE)
+ifcb_list_dashboard_bins(base_url, dataset_name = NULL, quiet = FALSE)
 }
 \arguments{
 \item{base_url}{Character. Base URL to the IFCB Dashboard
 (e.g. "https://ifcb-data.whoi.edu/").}
+
+\item{dataset_name}{Optional character. Dataset slug (e.g. "mvco") to retrieve metadata for a specific dataset.
+If NULL, all available metadata are downloaded.}
 
 \item{quiet}{Logical. If TRUE, suppresses progress messages. Default is FALSE.}
 }
@@ -20,7 +23,8 @@ Download bin list from the IFCB Dashboard API
 }
 \examples{
 \donttest{
-  bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
+  bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/",
+                                   dataset_name = "mvco")
   head(bins)
 }
 
