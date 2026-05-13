@@ -81,7 +81,7 @@ test_that("ifcb_annotate_samples correctly updates the .mat classlist files if c
                                        adc_folder = adc_folder,
                                        output_folder = output_folder,
                                        class2use_file = class2use_file_new),
-                 "Some classes could not be matched to class_id values")
+                 "could not be matched")
 
   # Define path to the newly created file
   new_file <- file.path(output_folder, paste0(sample_names, ".mat"))
@@ -129,21 +129,21 @@ test_that("ifcb_annotate_samples handles missing directories and files gracefull
                                      adc_folder = adc_folder,
                                      output_folder = output_folder,
                                      class2use_file = class2use_file),
-               "directory does not exist")
+               "does not exist")
 
   expect_error(ifcb_annotate_samples(sample_names = sample_names,
                                      png_folder = png_folder,
                                      adc_folder = "not_a_dir",
                                      output_folder = output_folder,
                                      class2use_file = class2use_file),
-               "directory does not exist")
+               "does not exist")
 
   expect_error(ifcb_annotate_samples(sample_names = sample_names,
                                      png_folder = png_folder,
                                      adc_folder = adc_folder,
                                      output_folder = output_folder,
                                      class2use_file = "not_a_file"),
-               "class2use file does not exist")
+               "does not exist")
 
   expect_error(ifcb_annotate_samples(sample_names = sample_names,
                                      png_folder = adc_folder,

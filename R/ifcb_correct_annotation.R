@@ -52,7 +52,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
 
   # Check if manual folder exists
   if (!dir.exists(manual_folder)) {
-    stop(paste("Manual folder does not exist:", manual_folder))
+    cli_abort("{.arg manual_folder} does not exist: {.file {manual_folder}}")
   }
 
   # Warn the user if correction_file is used
@@ -64,7 +64,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
   }
 
   if (is.null(correction)) {
-    stop("argument `correction` is missing, with no default")
+    cli_abort("{.arg correction} is missing, with no default.")
   }
 
   # Initialize python check
@@ -81,7 +81,7 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     # Use the provided character vector as corrections
     corrections <- data.frame(image_filename = correction)
   } else {
-    stop("Invalid input: `correction` should be a file path or a character vector.")
+    cli_abort("{.arg correction} should be a file path or a character vector.")
   }
 
   # Extract sample filenames without the trailing part after the last underscore

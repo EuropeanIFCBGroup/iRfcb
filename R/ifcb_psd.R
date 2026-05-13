@@ -108,19 +108,25 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
                      use_plot_subfolders = TRUE, ...) {
 
   if (!dir.exists(feature_folder)) {
-    stop(paste("Feature folder does not exist:", feature_folder))
+    cli_abort("{.arg feature_folder} does not exist: {.file {feature_folder}}")
   }
 
   if (!dir.exists(hdr_folder)) {
-    stop(paste("HDR folder does not exist:", hdr_folder))
+    cli_abort("{.arg hdr_folder} does not exist: {.file {hdr_folder}}")
   }
 
   if (!reticulate::py_available(initialize = TRUE)) {
-    stop("Python is not installed on this machine. Please install Python to use this function.")
+    cli_abort(c(
+      "Python is not installed on this machine.",
+      "i" = "Install Python to use this function."
+    ))
   }
 
   if (save_data & is.null(output_file)) {
-    stop("No output file specified. Please provide a valid output file path to save the data.")
+    cli_abort(c(
+      "No output file specified.",
+      "i" = "Provide a valid {.arg output_file} path to save the data."
+    ))
   }
 
   # Initialize python check
@@ -244,8 +250,7 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
         ggsave_args
       ))
 
-      # Inform user
-      message("Saving plot ", sample)
+      cli_inform("Saving plot {.val {sample}}")
     }
   }
 

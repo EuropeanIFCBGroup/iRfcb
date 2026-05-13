@@ -35,17 +35,16 @@ ifcb_classify_models <- function(
 
   resp <- tryCatch(
     curl::curl_fetch_memory(info_url),
-    error = function(e) stop("Failed to connect to Gradio API at '", info_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Failed to connect to Gradio API at {.url {info_url}}: {e$message}")
   )
 
   if (resp$status_code != 200) {
-    stop("Gradio API info request failed [", resp$status_code, "]: ", info_url)
+    cli_abort("Gradio API info request failed [{resp$status_code}]: {.url {info_url}}")
   }
 
   api_info <- tryCatch(
     jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE),
-    error = function(e) stop("Failed to parse Gradio API info: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio API info: {e$message}")
   )
 
   # Navigate to the predict_html endpoint and find the model_name parameter
@@ -53,7 +52,7 @@ ifcb_classify_models <- function(
   predict_endpoint <- endpoints$`/predict_html`
 
   if (is.null(predict_endpoint)) {
-    stop("No /predict_html endpoint found in Gradio API info")
+    cli_abort("No {.path /predict_html} endpoint found in Gradio API info.")
   }
 
   params <- predict_endpoint$parameters
@@ -66,12 +65,12 @@ ifcb_classify_models <- function(
   }
 
   if (is.null(model_param)) {
-    stop("No model_name parameter found in Gradio /predict_html endpoint")
+    cli_abort("No {.var model_name} parameter found in Gradio {.path /predict_html} endpoint.")
   }
 
   model_names <- model_param$type$enum
   if (is.null(model_names) || length(model_names) == 0) {
-    stop("No models listed in Gradio API")
+    cli_abort("No models listed in Gradio API.")
   }
 
   unlist(model_names)

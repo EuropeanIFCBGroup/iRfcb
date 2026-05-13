@@ -106,5 +106,5 @@ test_that("ifcb_create_manifest includes existing MANIFEST.txt when specified", 
 
 test_that("ifcb_create_manifest fails gracefully", {
   expect_error(ifcb_create_manifest("not_a_dir"),
-               "Folder does not exist")
+               "does not exist")
 })

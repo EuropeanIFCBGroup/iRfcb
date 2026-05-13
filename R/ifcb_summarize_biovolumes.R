@@ -177,15 +177,15 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
 
     # Set up the progress bar
     if (verbose && n_hdr > 0) {
-      message("Calculating sample volumes...")
-      pb <- txtProgressBar(min = 0, max = n_hdr, style = 3)
+      cli_inform("Calculating sample volumes...")
+      cli_progress_bar("Calculating sample volumes", total = n_hdr)
     }
 
     # Loop through filtered HDR files to extract volume analyzed per sample
     for (i in seq_along(hdr_files_filtered)) {
 
       if (verbose && n_hdr > 0) {
-        setTxtProgressBar(pb, i)
+        cli_progress_update()
       }
 
       volume_list[[i]] <- tibble(
@@ -194,9 +194,8 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
       )
     }
 
-    # Close the progress bar
     if (verbose && n_hdr > 0) {
-      close(pb)
+      cli_progress_done()
     }
 
     # Combine into a single data frame

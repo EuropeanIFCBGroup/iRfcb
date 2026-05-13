@@ -61,11 +61,11 @@ ifcb_read_features <- function(feature_files = NULL,
   n_features <- length(feature_files)
 
   # Set up the progress bar
-  if (verbose && n_features > 0) pb <- txtProgressBar(min = 0, max = n_features, style = 3)
+  if (verbose && n_features > 0) cli_progress_bar("Reading feature files", total = n_features)
 
   # Loop through each file and store its contents in the feature list
   for (i in seq_along(feature_files)) {
-    if (verbose && n_features > 0) setTxtProgressBar(pb, i)
+    if (verbose && n_features > 0) cli_progress_update()
     feature[[basename(feature_files[i])]] <-
       if (biovolume_only) {
         read_csv(
@@ -83,8 +83,7 @@ ifcb_read_features <- function(feature_files = NULL,
       }
   }
 
-  # Close the progress bar
-  if (verbose && n_features > 0) close(pb)
+  if (verbose && n_features > 0) cli_progress_done()
 
   feature
 }

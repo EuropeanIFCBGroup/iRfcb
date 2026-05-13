@@ -89,7 +89,7 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
         worms_records <<- tibble(name = taxa_names, status = "not found", AphiaID = NA, class = NA)
         success <<- TRUE  # Prevent further retries
       } else if (attempt == max_retries) {
-        stop("Error retrieving WoRMS records after ", max_retries, " attempts: ", error_message)
+        cli_abort("Error retrieving WoRMS records after {max_retries} attempt{?s}: {error_message}")
       } else {
         Sys.sleep(sleep_time)
       }
@@ -104,7 +104,7 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
   }
 
   if (verbose && length(no_content_messages) > 0) {
-    message(paste(no_content_messages, collapse = "\n"))
+    cli_inform(no_content_messages)
   }
 
   if (return_list) {

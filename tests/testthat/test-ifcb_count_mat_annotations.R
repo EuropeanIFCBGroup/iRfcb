@@ -23,11 +23,11 @@ test_that("ifcb_count_mat_annotations works correctly", {
 
   # Run the function and expect error
   expect_error(ifcb_count_mat_annotations(manual_folder, class2use_file, sum_level = NA),
-               "sum_level should either be `class`, `roi` or `sample`")
+               "must be one of")
 
   # Run the function and expect error
   expect_error(ifcb_count_mat_annotations(manual_folder, class2use_file, skip_class = "not_a_class"),
-               "None of the class names provided in skip_class were found in class2use.")
+               "None of the class names")
 
   # Run the function with skipping specific class IDs
   skip_ids <- 1
@@ -63,7 +63,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_warning(ifcb_count_mat_annotations(
     manual_files = manual_folder,
     class2use_file = class2use_file
-  ), "Empty .mat file"
+  ), "Empty"
   )
 
   # Cleanup temporary files

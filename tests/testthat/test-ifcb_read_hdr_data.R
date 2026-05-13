@@ -28,8 +28,8 @@ test_that("ifcb_read_hdr_data filters GPS data correctly", {
 test_that("ifcb_read_hdr_data handles verbose output correctly", {
   hdr_folder <- create_temp_hdr_from_example(exdir, hdr_file_path)
 
-  expect_message(ifcb_read_hdr_data(hdr_folder, verbose = TRUE), "Found 1 .hdr files.")
-  expect_message(ifcb_read_hdr_data(hdr_folder, verbose = TRUE), "Processing completed.")
+  expect_message(ifcb_read_hdr_data(hdr_folder, verbose = TRUE), "Found 1")
+  expect_message(ifcb_read_hdr_data(hdr_folder, verbose = TRUE), "Processing completed")
 
   unlink(file.path(hdr_folder, "D20230314T001205_IFCB134.hdr"))
 })
@@ -56,7 +56,7 @@ test_that("ifcb_read_hdr_data handles empty HDR or non-existing data folders cor
                "No HDR data found")
 
   expect_error(ifcb_read_hdr_data("not_a_folder", verbose = FALSE),
-               "The following hdr_files do not exist")
+               "do.* not exist")
 
   unlink(hdr_file)
 })

@@ -1,7 +1,7 @@
 test_that("ifcb_classify_images errors when a PNG file does not exist", {
   expect_error(
     ifcb_classify_images("nonexistent.png"),
-    "PNG file\\(s\\) not found"
+    "PNG file.*not found"
   )
 })
 
@@ -12,7 +12,7 @@ test_that("ifcb_classify_images errors when any path in a vector does not exist"
   on.exit(unlink(tmp))
   expect_error(
     ifcb_classify_images(c(tmp, "missing.png")),
-    "PNG file\\(s\\) not found"
+    "PNG file.*not found"
   )
 })
 

@@ -37,6 +37,7 @@ URL: https://europeanifcbgroup.github.io/iRfcb/,
     https://github.com/EuropeanIFCBGroup/iRfcb
 Depends: R (>= 4.1)
 Imports:
+    cli,
     curl (>= 6.0.0),
     dplyr,
     ggplot2,

@@ -28,7 +28,7 @@
 
 ifcb_volume_analyzed_from_adc <- function(adc_file) {
   if (!file.exists(adc_file)) {
-    stop("ADC file does not exist: ", adc_file)
+    cli_abort("ADC file does not exist: {.file {adc_file}}")
   }
 
   flowrate <- 0.25  # milliliters per minute for syringe pump

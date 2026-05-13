@@ -107,7 +107,7 @@ test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
 test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, manual_folder, hdr_folder = hdr_folder),
-               "class2use must be specified when extracting manual biovolume data")
+               "class2use_file.*must be specified")
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)

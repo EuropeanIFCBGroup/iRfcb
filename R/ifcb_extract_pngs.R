@@ -49,19 +49,25 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   }
 
   if (!file.exists(roi_file)) {
-    stop("ROI file does not exist: ", roi_file)
+    cli_abort("ROI file does not exist: {.file {roi_file}}")
   }
 
   # Valid positions for scale bar
   valid_positions <- c("topright", "topleft", "bottomright", "bottomleft")
   if (!(scale_bar_position %in% valid_positions)) {
-    stop("Invalid scale_bar_position. Choose from 'topright', 'topleft', 'bottomright', 'bottomleft'.")
+    cli_abort(c(
+      "{.arg scale_bar_position} must be one of {.val {valid_positions}}.",
+      "x" = "You supplied {.val {scale_bar_position}}."
+    ))
   }
 
   # Valid scale bar colors
   valid_colors <- c("black", "white")
   if (!(scale_bar_color %in% valid_colors)) {
-    stop("Invalid scale_bar_color. Choose 'black' or 'white'.")
+    cli_abort(c(
+      "{.arg scale_bar_color} must be one of {.val {valid_colors}}.",
+      "x" = "You supplied {.val {scale_bar_color}}."
+    ))
   }
 
   # Create output directory if needed
@@ -81,7 +87,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   # Get ADC data for start byte and length of each ROI
   adcfile <- sub("\\.roi$", ".adc", roi_file)
   if (!file.exists(adcfile)) {
-    stop("ADC file not found: ", adcfile)
+    cli_abort("ADC file not found: {.file {adcfile}}")
   }
   adcdata <- read_adc_columns(adcfile)
   roi_cols <- adc_get_roi_columns(adcdata)
@@ -92,8 +98,10 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   if (!is.null(ROInumbers)) {
     invalid_rois <- ROInumbers[ROInumbers < 1 | ROInumbers > nrow(adcdata)]
     if (length(invalid_rois) > 0) {
-      stop("ROI number(s) out of range: ", paste(invalid_rois, collapse = ", "),
-           ". ADC file contains ", nrow(adcdata), " ROIs.")
+      cli_abort(c(
+        "ROI number{?s} out of range: {.val {invalid_rois}}.",
+        "i" = "ADC file contains {nrow(adcdata)} ROI{?s}."
+      ))
     }
     x <- x[ROInumbers]
     y <- y[ROInumbers]
@@ -110,7 +118,7 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
   skipped_scale_bar <- 0
 
   # Loop over ROIs and save PNG images
-  if (verbose) message("Writing ", length(x[x > 0]), " ROIs from ", basename(roi_file), " to ", outpath)
+  if (verbose) cli_inform("Writing {length(x[x > 0])} ROI{?s} from {.file {basename(roi_file)}} to {.file {outpath}}")
   for (count in seq_along(ROInumbers)) {
     if (x[count] > 0) {
       num <- ROInumbers[count]
@@ -181,16 +189,16 @@ ifcb_extract_pngs <- function(roi_file, out_folder = dirname(roi_file), ROInumbe
           # Save using png::writePNG
           png::writePNG(img_matrix, pngfile)
         }, error = function(e) {
-          warning("Failed to extract ROI ", num, ": ", conditionMessage(e))
+          cli_warn("Failed to extract ROI {num}: {conditionMessage(e)}")
         })
       } else {
-        if (verbose) message("PNG file already exists: ", pngfile)
+        if (verbose) cli_inform("PNG file already exists: {.file {pngfile}}")
       }
     }
   }
 
   # Warn if any scale bars were skipped
   if (skipped_scale_bar > 0) {
-    warning(paste(skipped_scale_bar, "images were printed without a scale bar because the scale bar was too long for the image."))
+    cli_warn("{skipped_scale_bar} image{?s} {?was/were} printed without a scale bar because the scale bar was too long for the image.")
   }
 }

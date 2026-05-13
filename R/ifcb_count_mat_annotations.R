@@ -39,7 +39,10 @@ utils::globalVariables(c("name", "manual", "roi number"))
 #' }
 ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class = NULL, sum_level = "class", mat_recursive = FALSE, use_python = FALSE) {
   if (!sum_level %in% c("class", "sample", "roi")) {
-    stop("sum_level should either be `class`, `roi` or `sample`")
+    cli_abort(c(
+      "{.arg sum_level} must be one of {.val class}, {.val roi} or {.val sample}.",
+      "x" = "You supplied {.val {sum_level}}."
+    ))
   }
 
   # Check if feature_files is a single folder path or a vector of file paths
@@ -60,7 +63,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   if (is.character(skip_class)) {
     filtered_skip_class <- lookup_table %>% filter(name %in% skip_class)
     if (nrow(filtered_skip_class) == 0) {
-      stop("None of the class names provided in skip_class were found in class2use.")
+      cli_abort("None of the class names provided in {.arg skip_class} were found in {.arg class2use}.")
     }
     skip_class <- filtered_skip_class %>% pull(manual)
   }
@@ -75,7 +78,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
 
     # Skip empty/corrupt files
     if (file.size(file) == 0) {
-      warning(paste("Empty .mat file:", file, "Skipping."))
+      cli_warn("Empty {.file .mat} file: {.file {file}}. Skipping.")
       next
     }
 
@@ -125,7 +128,7 @@ ifcb_count_mat_annotations <- function(manual_files, class2use_file, skip_class 
   num_warnings <- length(warning_list)
 
   if (num_warnings > 0) {
-    message(sprintf("There were %d warnings (use warnings() to see them)", num_warnings))
+    cli_inform("There {?was/were} {num_warnings} warning{?s} (use {.fn warnings} to see them)")
   }
 
   total_sum

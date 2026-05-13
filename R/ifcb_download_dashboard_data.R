@@ -86,8 +86,11 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
   # Check if ext is valid
   if (!all(file_types %in% allowed_file_types)) {  # Ensure all are valid
-    stop("Invalid extension(s): ", paste(setdiff(file_types, allowed_file_types), collapse = ", "),
-         ". Allowed file types are: ", paste(allowed_file_types, collapse = ", "))
+    invalid <- setdiff(file_types, allowed_file_types)
+    cli_abort(c(
+      "Invalid extension{?s}: {.val {invalid}}",
+      "i" = "Allowed file types are: {.val {allowed_file_types}}"
+    ))
   }
 
   # Add "/data/" only if there's no path after the domain, and ensure it ends with "/"
@@ -191,8 +194,8 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
     file_df <- data.frame(filename, destfile, file_url)
 
-    if (!quiet) message("Downloading ", nrow(file_df), " ", ext, " files")
-    if (!quiet) pb <- txtProgressBar(min = 0, max = nrow(file_df), style = 3)
+    if (!quiet) cli_inform("Downloading {nrow(file_df)} {ext} file{?s}")
+    if (!quiet) cli_progress_bar(paste("Downloading", ext), total = nrow(file_df))
 
     # Process in chunks
     for (i in seq(1, nrow(file_df), by = parallel_downloads)) {
@@ -241,9 +244,8 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       # Print each skipped file on a separate line
       if (any(existing_files)) {
         if (!quiet) {
-          message("\n")
           for (f in chunk$destfile[existing_files]) {
-            message("Skipping existing file: ", f)
+            cli_inform("Skipping existing file: {.file {f}}")
           }
         }
         chunk <- chunk[!existing_files, ]  # Remove already existing files
@@ -329,12 +331,14 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
       # Check for failed downloads
       if (any(!res$status_code == 200, na.rm = TRUE)) {
-        warning("Some downloads failed:\n",
-                paste(res$url[!res$status_code == 200], collapse = "\n"),
-                "\nPlease check the following:\n",
-                "1. Verify the URL(s) for any errors or issues.\n",
-                "2. Retry the download in case of transient network issues.\n",
-                "3. Consider adjusting the `parallel_downloads`, `multi_timeout`, or `sleep_time` parameters to optimize the download process.")
+        failed_urls <- res$url[!res$status_code == 200]
+        cli_warn(c(
+          "Some downloads failed:",
+          "x" = "{.url {failed_urls}}",
+          "i" = "Verify the URL(s) for any errors or issues.",
+          "i" = "Retry the download in case of transient network issues.",
+          "i" = "Consider adjusting {.arg parallel_downloads}, {.arg multi_timeout}, or {.arg sleep_time}."
+        ))
         # Remove partial downloads
         if (!is.null(bad_files) && nrow(bad_files) > 0) {
           unlink(bad_files$destfile)
@@ -347,12 +351,12 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
       # Update progress bar correctly
       if (!quiet) {
-        setTxtProgressBar(pb, min(i + parallel_downloads - 1, nrow(file_df)))
+        cli_progress_update(set = min(i + parallel_downloads - 1, nrow(file_df)))
       }
     }
 
     # Close the progress bar
-    if (!quiet) close(pb)
+    if (!quiet) cli_progress_done()
 
     if (ext == "adc" & convert_adc) {
 
@@ -367,7 +371,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
         if (ncol(adc_file) > 16) {
           if (!quiet) {
-            message("ADC file already have > 16 columns, does not need to be converted: ", file)
+            cli_inform("ADC file already has > 16 columns, does not need to be converted: {.file {file}}")
           }
         } else {
           # Insert four empty columns after column 7

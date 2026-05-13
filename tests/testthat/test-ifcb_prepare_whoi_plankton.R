@@ -60,7 +60,7 @@ test_that("ifcb_prepare_whoi_plankton works", {
                                             download_features = TRUE,
                                             features_folder = whoi_features_folder,
                                             sleep = 0),
-                 "The following classes are in both include_classes and skip_classes")
+                 "in both")
 
   class2use <- ifcb_get_mat_variable(class2use_file)
   classlist <- ifcb_get_mat_variable(file.path(manual_folder, "D20061007T035827_IFCB1.mat"), "classlist")
@@ -138,7 +138,7 @@ test_that("ifcb_prepare_whoi_plankton throws errors", {
                                           "not_a_dir",
                                           "not_a_file",
                                           download_features = TRUE),
-               "`features_folder` must be specified when `download_features = TRUE`")
+               "features_folder.*must be specified")
 
   # Check error
   expect_error(ifcb_prepare_whoi_plankton(2,
@@ -147,6 +147,6 @@ test_that("ifcb_prepare_whoi_plankton throws errors", {
                                           "not_a_dir",
                                           "not_a_file",
                                           download_blobs = TRUE),
-               "`blobs_folder` must be specified when `download_blobs = TRUE`")
+               "blobs_folder.*must be specified")
 
 })

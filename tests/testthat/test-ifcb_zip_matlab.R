@@ -95,7 +95,7 @@ test_that("ifcb_zip_matlab fails gracefully", {
     readme_file = temp_file,
     matlab_readme_file = temp_file
   ),
-  "Manual folder does not exist")
+  "does not exist")
 
   expect_error(ifcb_zip_matlab(
     manual_folder = temp_dir,
@@ -106,7 +106,7 @@ test_that("ifcb_zip_matlab fails gracefully", {
     readme_file = temp_file,
     matlab_readme_file = temp_file
   ),
-  "Feature folder does not exist")
+  "does not exist")
 
   expect_error(ifcb_zip_matlab(
     manual_folder = temp_dir,
@@ -117,7 +117,7 @@ test_that("ifcb_zip_matlab fails gracefully", {
     readme_file = temp_file,
     matlab_readme_file = temp_file
   ),
-  "Data folder does not exist")
+  "does not exist")
 
   expect_error(ifcb_zip_matlab(
     manual_folder = temp_dir,
@@ -128,7 +128,7 @@ test_that("ifcb_zip_matlab fails gracefully", {
     readme_file = "not_a_file",
     matlab_readme_file = temp_file
   ),
-  "README file does not exist")
+  "does not exist")
 
   expect_error(ifcb_zip_matlab(
     manual_folder = temp_dir,
@@ -139,7 +139,7 @@ test_that("ifcb_zip_matlab fails gracefully", {
     readme_file = temp_file,
     matlab_readme_file = "not_a_file"
   ),
-  "MATLAB README file does not exist")
+  "does not exist")
 })
 
 

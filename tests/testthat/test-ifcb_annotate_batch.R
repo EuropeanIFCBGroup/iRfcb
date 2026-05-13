@@ -33,7 +33,7 @@ test_that("ifcb_annotate_batch creates and updates mat files as expected", {
                                      manual_folder = new_folder,
                                      adc_files = manual_folder,
                                      class2use_file = file.path(manual_folder, "class2use.mat")),
-                 "More than one .adc found for sample, will continue with")
+                 "More than one")
 
   classlist <- ifcb_get_mat_variable(file.path(new_folder, "D20220522T003051_IFCB134.mat"),
                                      "classlist")
@@ -103,7 +103,7 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
                                    manual_folder = new_folder,
                                    adc_files = manual_folder,
                                    class2use_file = file.path(manual_folder, "non_exisiting_file")),
-               "The specified class2use_file file does not exist")
+               "does not exist")
 
   # Expect error for non exisiting class
   expect_error(ifcb_annotate_batch(png_images = c("D20220522T003051_IFCB134_00002.png",
@@ -112,7 +112,7 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
                                    manual_folder = new_folder,
                                    adc_files = manual_folder,
                                    class2use_file = file.path(manual_folder, "class2use.mat")),
-               "Class non_exisiting_class not found in class2use")
+               "not found in")
 
   unlink(adc_folder, recursive = TRUE)
   unlink(file.path(manual_folder, "D20220522T003051_IFCB134.adc"))

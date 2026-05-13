@@ -4,6 +4,10 @@
 
 * Added a new `dataset_name` argument to `ifcb_list_dashboard_bins()` to only optionally only list bins from a specific dataset.
 
+## Minor improvements and fixes
+
+* Migrated all user-facing messaging from base R (`stop()`, `warning()`, `message()`) and `utils::txtProgressBar` to the `cli` package. Errors, warnings, and informational messages now use semantic inline markup (file paths, argument names, function names, values) and pluralization. Progress bars are rendered via `cli::cli_progress_bar()`. `cli` is now an `Imports` dependency.
+
 # iRfcb 0.8.1
 
 ## Bug fixes

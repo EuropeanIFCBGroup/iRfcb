@@ -25,7 +25,7 @@ test_that("ifcb_extract_annotated_images works correctly", {
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
-  ), "ROI file for sample D20220712T210855_IFCB134 not found. Skipping this sample."
+  ), "ROI file for sample"
   )
 
   # Remove unnecessary file
@@ -84,7 +84,7 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
-  ), "ROI file for sample D20220712T210855_IFCB134 not found. Skipping this sample."
+  ), "ROI file for sample"
   )
 
   # Remove unnecessary file
@@ -103,7 +103,7 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
     skip_class = NULL,
     verbose = FALSE,
     use_python = TRUE,
-  ), "Empty .mat file"
+  ), "Empty"
   )
 
   # Remove empty file
@@ -122,7 +122,7 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
     out_folder = out_folder,
     skip_class = NULL,
     verbose = FALSE
-  ), "No manual files found in the specified directory."
+  ), "No manual files found"
   )
 
   # Run the function and expect deprecated warning
@@ -145,7 +145,7 @@ test_that("ifcb_extract_annotated_images handles errors gracefully", {
     out_folder = out_folder,
     skip_class = "non-exisiting-class",
     verbose = FALSE
-  ), "None of the class names provided in skip_class were found in class2use."
+  ), "None of the class names"
   )
 
   # Clean up temporary files

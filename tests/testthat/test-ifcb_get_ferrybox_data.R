@@ -45,7 +45,7 @@ test_that("ifcb_get_ferrybox_data handles missing ferrybox folder", {
 
   # Run the function with a non-existent folder
   expect_error(ifcb_get_ferrybox_data(test_timestamps, "non_existent_folder"),
-               "The specified ferrybox folder does not exist.")
+               "does not exist")
 })
 
 test_that("ifcb_get_ferrybox_data handles no ferrybox files in folder", {
@@ -61,7 +61,7 @@ test_that("ifcb_get_ferrybox_data handles no ferrybox files in folder", {
 
   # Run the function with an empty folder
   expect_error(ifcb_get_ferrybox_data(test_timestamps, temp_dir),
-               "No .txt files found in the specified ferrybox folder.")
+               "No .* files found")
 
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
@@ -90,7 +90,7 @@ test_that("ifcb_get_ferrybox_data handles no matching ship name", {
 
   # Run the function with a ship name that doesn't match
   expect_error(ifcb_get_ferrybox_data(test_timestamps, temp_dir),
-               "No ferrybox files matching the specified ship name were found.")
+               "No ferrybox files matching")
 
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
@@ -109,7 +109,7 @@ test_that("ifcb_get_ferrybox_data handles mistyped timestamps", {
 
   # Run the function with an empty folder
   expect_error(ifcb_get_ferrybox_data(test_timestamps, temp_dir),
-               "The 'timestamps' argument must be a vector of POSIXct timestamps.")
+               "must be a vector of")
 
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)

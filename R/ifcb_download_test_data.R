@@ -51,12 +51,12 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   # Use existing zip if present, otherwise download
   if (file.exists(dest_file)) {
     if (verbose) {
-      message("Using existing zip file: ", dest_file)
+      cli_inform("Using existing zip file: {.file {dest_file}}")
     }
   } else {
     downloaded <- FALSE
     for (url in urls) {
-      if (verbose) message("Attempting download from: ", url)
+      if (verbose) cli_inform("Attempting download from {.url {url}}")
       attempts <- 0
       while (attempts < max_retries && !downloaded) {
         attempts <- attempts + 1
@@ -68,7 +68,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
           downloaded <- TRUE
         }, error = function(e) {
           if (verbose) {
-            message("Attempt ", attempts, " failed. Retrying in ", sleep_time, " s")
+            cli_inform("Attempt {attempts} failed. Retrying in {sleep_time} s")
           }
           Sys.sleep(sleep_time)
         })
@@ -78,7 +78,7 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
 
     if (!downloaded) {
       unlink(dest_file)
-      stop("Download failed from all sources after ", max_retries, " attempts each.")
+      cli_abort("Download failed from all sources after {max_retries} attempt{?s} each.")
     }
   }
 
@@ -128,6 +128,6 @@ ifcb_download_test_data <- function(dest_dir, figshare_article = "48158716", max
   file.copy(ferrybox_file, dest_ferrybox_file)
 
   if (verbose) {
-    message("Download and extraction complete.")
+    cli_alert_success("Download and extraction complete.")
   }
 }

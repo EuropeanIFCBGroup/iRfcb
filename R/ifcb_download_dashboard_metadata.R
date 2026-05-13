@@ -32,17 +32,17 @@ ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quie
     api_url <- paste0(api_url, dataset_name)
   }
 
-  if (!quiet) message("Fetching metadata from: ", api_url)
+  if (!quiet) cli_inform("Fetching metadata from {.url {api_url}}")
 
   # Perform GET request with curl
   response <- tryCatch(
     curl::curl_fetch_memory(api_url, handle = curl::new_handle(httpheader = c(Accept = "text/csv"))),
-    error = function(e) stop("Failed to connect to IFCB Dashboard API: ", e$message)
+    error = function(e) cli_abort("Failed to connect to IFCB Dashboard API: {e$message}")
   )
 
   # Check response status
   if (response$status_code != 200) {
-    stop("API request failed [", response$status_code, "]: ", api_url)
+    cli_abort("API request failed [{response$status_code}]: {.url {api_url}}")
   }
 
   # Convert raw content to UTF-8 text
@@ -55,15 +55,18 @@ ifcb_download_dashboard_metadata <- function(base_url, dataset_name = NULL, quie
                     show_col_types = FALSE,
                     progress = FALSE,
                     col_types = cols(.default = col_character())),
-    error = function(e) stop("Failed to parse CSV content: ", e$message)
+    error = function(e) cli_abort("Failed to parse CSV content: {e$message}")
   )
 
   df <- type_convert(df,
                      col_types = cols())
 
   if (!quiet) {
-    message("Successfully retrieved ", nrow(df), " records",
-            if (!is.null(dataset_name)) paste0(" for dataset '", dataset_name, "'"), ".")
+    if (!is.null(dataset_name)) {
+      cli_alert_success("Retrieved {nrow(df)} record{?s} for dataset {.val {dataset_name}}.")
+    } else {
+      cli_alert_success("Retrieved {nrow(df)} record{?s}.")
+    }
   }
 
   df

@@ -30,17 +30,17 @@ ifcb_list_dashboard_bins <- function(base_url, dataset_name = NULL, quiet = FALS
     api_url <- paste0(api_url, "?dataset=", dataset_name)
   }
 
-  if (!quiet) message("Fetching bin list from: ", api_url)
+  if (!quiet) cli_inform("Fetching bin list from {.url {api_url}}")
 
   # Perform GET request with curl
   response <- tryCatch(
     curl::curl_fetch_memory(api_url, handle = curl::new_handle(httpheader = c(Accept = "application/json"))),
-    error = function(e) stop("Failed to connect to IFCB Dashboard API: ", e$message)
+    error = function(e) cli_abort("Failed to connect to IFCB Dashboard API: {e$message}")
   )
 
   # Check status code
   if (response$status_code != 200) {
-    stop("API request failed [", response$status_code, "]: ", api_url)
+    cli_abort("API request failed [{response$status_code}]: {.url {api_url}}")
   }
 
   # Convert raw JSON to text
@@ -50,13 +50,13 @@ ifcb_list_dashboard_bins <- function(base_url, dataset_name = NULL, quiet = FALS
   # Parse JSON
   parsed_data <- tryCatch(
     jsonlite::fromJSON(json_content, flatten = TRUE),
-    error = function(e) stop("Failed to parse JSON content: ", e$message)
+    error = function(e) cli_abort("Failed to parse JSON content: {e$message}")
   )
 
   # Convert to tibble
   df <- as_tibble(parsed_data[[1]])
 
-  if (!quiet) message("Successfully retrieved ", nrow(df), " bins.")
+  if (!quiet) cli_alert_success("Retrieved {nrow(df)} bin{?s}.")
 
   df
 }

@@ -30,7 +30,7 @@ test_that("ifcb_get_mat_variable handles missing variable gracefully", {
 
   # Call the function with a non-existent variable name and expect an error
   expect_error(ifcb_get_mat_variable(mat_file, "non_existent_variable"),
-               regexp = "Variable name not found in MAT file",
+               regexp = "not found in MAT file",
                info = "Function should handle non-existent variable name gracefully")
 })
 
@@ -48,7 +48,7 @@ test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
 
   # Call the function and expect an error due to missing variable
   expect_error(ifcb_get_mat_variable(empty_mat_file, "classifierName"),
-               regexp = "Variable name not found in MAT file",
+               regexp = "not found in MAT file",
                info = "Function should handle empty MAT file gracefully")
 
   # Clean up the temporary file

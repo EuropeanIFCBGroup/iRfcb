@@ -84,8 +84,10 @@ ifcb_save_classification <- function(
   format <- match.arg(format)
 
   if (format == "h5" && !requireNamespace("hdf5r", quietly = TRUE)) {
-    stop("Package 'hdf5r' is required for format = \"h5\". ",
-         "Install it with: install.packages('hdf5r')")
+    cli_abort(c(
+      "Package {.pkg hdf5r} is required for {.code format = \"h5\"}.",
+      "i" = "Install it with {.run install.packages(\"hdf5r\")}"
+    ))
   }
 
   if (format == "mat") {
@@ -93,7 +95,7 @@ ifcb_save_classification <- function(
   }
 
   if (!file.exists(roi_file)) {
-    stop("roi_file not found: ", roi_file)
+    cli_abort("{.arg roi_file} not found: {.file {roi_file}}")
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
@@ -111,14 +113,14 @@ ifcb_save_classification <- function(
   dir.create(temp_dir, showWarnings = FALSE, recursive = TRUE)
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
 
-  if (verbose) message("Extracting images from: ", basename(roi_file))
+  if (verbose) cli_inform("Extracting images from {.file {basename(roi_file)}}")
   ifcb_extract_pngs(roi_file, out_folder = temp_dir, verbose = verbose, ...)
 
   png_files <- list.files(temp_dir, pattern = "\\.png$", full.names = TRUE,
                           recursive = TRUE)
 
   if (length(png_files) == 0) {
-    stop("No PNG images were extracted from: ", roi_file)
+    cli_abort("No PNG images were extracted from {.file {roi_file}}.")
   }
 
   # Extract ROI numbers from filenames (e.g. D20220522T003051_IFCB134_00001.png -> 1)
@@ -128,13 +130,14 @@ ifcb_save_classification <- function(
 
   # Classify each image via predict_scores endpoint
   n_images <- length(png_files)
-  if (verbose) message("Classifying ", n_images, " image(s) via predict_scores...")
+  if (verbose) cli_inform("Classifying {n_images} image{?s} via {.code predict_scores}...")
+  if (verbose) cli_progress_bar("Classifying images", total = n_images)
 
   scores_list <- vector("list", n_images)
   class_labels <- NULL
 
   for (i in seq_len(n_images)) {
-    if (verbose) print_progress(i, n_images)
+    if (verbose) cli_progress_update()
 
     server_path <- gradio_upload_file(png_files[i], gradio_url)
     image_data <- list(
@@ -151,13 +154,13 @@ ifcb_save_classification <- function(
     scores_list[[i]] <- result$scores
   }
 
-  if (verbose) cat("\n")
+  if (verbose) cli_progress_done()
 
   # Build score matrix (N x C)
   score_matrix <- do.call(rbind, scores_list)
 
   # Fetch thresholds
-  if (verbose) message("Fetching per-class thresholds...")
+  if (verbose) cli_inform("Fetching per-class thresholds...")
   threshold_info <- gradio_get_thresholds(gradio_url, model_name)
   thresholds_vec <- vapply(class_labels, function(cls) {
     thr <- threshold_info$thresholds[cls]
@@ -182,7 +185,7 @@ ifcb_save_classification <- function(
 
   # Write output in the requested format
   if (format == "h5") {
-    if (verbose) message("Writing HDF5 file: ", output_path)
+    if (verbose) cli_inform("Writing HDF5 file: {.file {output_path}}")
 
     h5file <- hdf5r::H5File$new(output_path, mode = "w")
     on.exit(h5file$close_all(), add = TRUE)
@@ -196,7 +199,7 @@ ifcb_save_classification <- function(
     h5file[["thresholds"]] <- thresholds_vec
 
   } else if (format == "mat") {
-    if (verbose) message("Writing MAT file: ", output_path)
+    if (verbose) cli_inform("Writing MAT file: {.file {output_path}}")
 
     source_python(system.file("python", "save_class_mat.py", package = "iRfcb"))
 
@@ -211,7 +214,7 @@ ifcb_save_classification <- function(
     )
 
   } else if (format == "csv") {
-    if (verbose) message("Writing CSV file: ", output_path)
+    if (verbose) cli_inform("Writing CSV file: {.file {output_path}}")
 
     # ClassiPyR-compatible format: file_name, class_name, score
     # class_name uses threshold-applied classification
@@ -229,8 +232,9 @@ ifcb_save_classification <- function(
     utils::write.csv(csv_df, file = output_path, row.names = FALSE)
   }
 
-  if (verbose) message("Done. Saved ", n_images, " ROIs x ", length(class_labels),
-                       " classes to: ", output_path)
+  if (verbose) cli_alert_success(
+    "Saved {n_images} ROI{?s} x {length(class_labels)} class{?es} to {.file {output_path}}"
+  )
 
   invisible(output_path)
 }

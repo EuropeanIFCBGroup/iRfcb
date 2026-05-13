@@ -75,7 +75,7 @@ ifcb_classify_sample <- function(
     ...) {
 
   if (!file.exists(roi_file)) {
-    stop("roi_file not found: ", roi_file)
+    cli_abort("{.arg roi_file} not found: {.file {roi_file}}")
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
@@ -87,14 +87,14 @@ ifcb_classify_sample <- function(
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
 
   # Extract PNG images from the ROI file
-  if (verbose) message("Extracting images from: ", basename(roi_file))
+  if (verbose) cli_inform("Extracting images from {.file {basename(roi_file)}}")
   ifcb_extract_pngs(roi_file, out_folder = temp_dir, verbose = verbose, ...)
 
   png_files <- list.files(temp_dir, pattern = "\\.png$", full.names = TRUE,
                           recursive = TRUE)
 
   if (length(png_files) == 0) {
-    warning("No PNG images were extracted from: ", roi_file)
+    cli_warn("No PNG images were extracted from {.file {roi_file}}.")
     return(data.frame(file_name = character(), class_name = character(),
                       class_name_auto = character(),
                       score = numeric(), model_name = character()))

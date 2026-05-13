@@ -36,7 +36,7 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
 
   # Check if the manual_folder exists
   if (!dir.exists(manual_folder)) {
-    stop(paste("The manual folder does not exist:", manual_folder))
+    cli_abort("The {.arg manual_folder} does not exist: {.file {manual_folder}}")
   }
 
   # Create the output folder if it does not exist
@@ -48,7 +48,7 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
   files <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE)
 
   if (length(files) == 0) {
-    stop(paste("No files found in the manual folder:", manual_folder))
+    cli_abort("No {.file .mat} files found in the manual folder: {.file {manual_folder}}")
   }
 
   for (i in seq_along(files)) {
@@ -56,7 +56,7 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
 
     # Skip empty/corrupt files
     if (file.size(file_path_in) == 0) {
-      warning(paste("Empty .mat file:", file_path_in, "Skipping."))
+      cli_warn("Empty {.file .mat} file: {.file {file_path_in}}. Skipping.")
       next
     }
 

@@ -33,7 +33,10 @@ ifcb_get_ecotaxa_example <- function(example = "ifcb") {
                       "full_unknown" = "exdata/ecotaxa_table_without_classification.tsv",
                       "full_classified" = "exdata/ecotaxa_table_with_classification.tsv",
                       "ifcb" = "exdata/example_table_ifcb.tsv",
-                      stop("Invalid example type. Choose either 'minimal', 'full_unknown', 'full_classified', or 'ifcb'.")
+                      cli_abort(c(
+                        "{.arg example} must be one of {.val minimal}, {.val full_unknown}, {.val full_classified} or {.val ifcb}.",
+                        "x" = "You supplied {.val {example}}."
+                      ))
   )
 
   read_tsv(system.file(file_path, package = "iRfcb"), show_col_types = FALSE, progress = FALSE)

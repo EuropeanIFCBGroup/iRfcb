@@ -58,12 +58,20 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
 
   # Check if base and additions files exist
   if (!file.exists(class2use_file_base) || !file.exists(class2use_file_additions)) {
-    stop("Base or additions class2use file does not exist.")
+    cli_abort(c(
+      "{.arg class2use_file_base} or {.arg class2use_file_additions} does not exist.",
+      "x" = "{.arg class2use_file_base} = {.file {class2use_file_base}}",
+      "x" = "{.arg class2use_file_additions} = {.file {class2use_file_additions}}"
+    ))
   }
 
-  # Check if base and additions files exist
+  # Check if base and additions folders exist
   if (!dir.exists(manual_folder_base) || !dir.exists(manual_folder_additions)) {
-    stop("Base or additions manual folder does not exist.")
+    cli_abort(c(
+      "{.arg manual_folder_base} or {.arg manual_folder_additions} does not exist.",
+      "x" = "{.arg manual_folder_base} = {.file {manual_folder_base}}",
+      "x" = "{.arg manual_folder_additions} = {.file {manual_folder_additions}}"
+    ))
   }
 
   # Get base and additional class names
@@ -105,7 +113,7 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   ifcb_create_class2use(class2use_combined, class2use_file_output, do_compression)
 
   if (!quiet) {
-    message("class2use file stored in ", class2use_file_output)
+    cli_alert_success("class2use file stored in {.file {class2use_file_output}}")
   }
 
   # Get base and additions files
@@ -113,11 +121,11 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   additions_files <- list.files(manual_folder_additions, pattern = "\\.mat$", full.names = TRUE, recursive = FALSE)
 
   if (length(base_files) == 0) {
-    stop("No .mat files found in manual_folder_base")
+    cli_abort("No {.file .mat} files found in {.arg manual_folder_base}: {.file {manual_folder_base}}")
   }
 
   if (length(additions_files) == 0) {
-    stop("No .mat files found in manual_folder_additions")
+    cli_abort("No {.file .mat} files found in {.arg manual_folder_additions}: {.file {manual_folder_additions}}")
   }
 
   # Create the combined folder if it doesn't exist
@@ -128,24 +136,24 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   # Copy the addition files with logging
   copied_additions <- file.copy(additions_files, manual_folder_output, overwrite = TRUE)
   if (!quiet) {
-    message("Copied ", sum(copied_additions), " addition files to ", manual_folder_output)
+    cli_inform("Copied {sum(copied_additions)} addition file{?s} to {.file {manual_folder_output}}")
   }
 
   # Filter translation data
   addition_translations <- translation_df[!is.na(translation_df$index_in_additions) & translation_df$index_in_additions != translation_df$rownumber, ]
 
   if (!quiet) {
-    # Message indicating the number of indices being replaced
-    message(paste0("Replacing ", nrow(addition_translations), " class indices with temporary placeholders..."))
+    cli_inform("Replacing {nrow(addition_translations)} class {?index/indices} with temporary placeholders...")
   }
 
   # Set up the progress bar
-  if (!quiet & nrow(addition_translations) > 0) {pb <- txtProgressBar(min = 0, max = nrow(addition_translations), style = 3)}
+  if (!quiet & nrow(addition_translations) > 0) {
+    cli_progress_bar("Inserting placeholders", total = nrow(addition_translations))
+  }
 
   # Replace index with placeholder index
   for (i in seq_len(nrow(addition_translations))) {
-    # Update progress bar
-    if (!quiet & nrow(addition_translations) > 0) {setTxtProgressBar(pb, i)}
+    if (!quiet & nrow(addition_translations) > 0) cli_progress_update()
 
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
@@ -155,23 +163,20 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     )
   }
 
-  # Close the progress bar
-  if (!quiet & nrow(addition_translations) > 0) {
-    close(pb)
-  }
+  if (!quiet & nrow(addition_translations) > 0) cli_progress_done()
 
   if (!quiet) {
-    # Message indicating the number of indices being replaced
-    message(paste0("Replacing ", nrow(addition_translations), " class indices with updated values..."))
+    cli_inform("Replacing {nrow(addition_translations)} class {?index/indices} with updated values...")
   }
 
   # Set up the progress bar
-  if (!quiet & nrow(addition_translations) > 0) {pb2 <- txtProgressBar(min = 0, max = nrow(addition_translations), style = 3)}
+  if (!quiet & nrow(addition_translations) > 0) {
+    cli_progress_bar("Updating indices", total = nrow(addition_translations))
+  }
 
   # Replace placeholder index with rownumber
   for (i in seq_len(nrow(addition_translations))) {
-    # Update progress bar
-    if (!quiet & nrow(addition_translations) > 0) {setTxtProgressBar(pb2, i)}
+    if (!quiet & nrow(addition_translations) > 0) cli_progress_update()
 
     ifcb_replace_mat_values(
       manual_folder_output, manual_folder_output,
@@ -181,21 +186,17 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
     )
   }
 
-  # Close the progress bar
-  if (!quiet & nrow(addition_translations) > 0) {
-    close(pb2)
-  }
+  if (!quiet & nrow(addition_translations) > 0) cli_progress_done()
 
   # Copy the base files with logging
   copied_base <- file.copy(base_files, manual_folder_output, overwrite = TRUE)
 
   if (!quiet) {
-    message("Copied ", sum(copied_base), " base files to ", manual_folder_output)
+    cli_inform("Copied {sum(copied_base)} base file{?s} to {.file {manual_folder_output}}")
   }
 
-  # Message indicating the number of indices being replaced
   if (!quiet) {
-    message(paste0("Adjusting class names in ", sum(copied_additions) + sum(copied_base), " files..."))
+    cli_inform("Adjusting class names in {sum(copied_additions) + sum(copied_base)} file{?s}...")
   }
 
   # Adjust the class names for all files

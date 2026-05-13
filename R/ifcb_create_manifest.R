@@ -26,7 +26,7 @@
 ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_path, "MANIFEST.txt"), exclude_manifest = TRUE) {
   # Check if manual folder exists
   if (!dir.exists(folder_path)) {
-    stop(paste("Folder does not exist:", folder_path))
+    cli_abort("{.arg folder_path} does not exist: {.file {folder_path}}")
   }
 
   # List all files in the folder and subfolders
@@ -63,5 +63,5 @@ ifcb_create_manifest <- function(folder_path, manifest_path = file.path(folder_p
   # Write the manifest content to MANIFEST.txt
   writeLines(manifest_content, manifest_path)
 
-  message("MANIFEST.txt has been created at ", manifest_path)
+  cli_alert_success("MANIFEST.txt has been created at {.file {manifest_path}}")
 }

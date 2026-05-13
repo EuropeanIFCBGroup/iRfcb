@@ -69,7 +69,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
 
   # Check if class2use_file exists
   if (!file.exists(class2use_file)) {
-    stop("The specified class2use_file file does not exist")
+    cli_abort("{.arg class2use_file} does not exist: {.file {class2use_file}}")
   }
 
   # Warn the user if adc_folder is used
@@ -102,7 +102,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   if (is.character(class)) {
     class_match <- which(class == class2use)
     if (length(class_match) == 0) {
-      stop(paste("Class", class, "not found in class2use"))
+      cli_abort("Class {.val {class}} not found in {.arg class2use}.")
     }
     class <- class_match
   }
@@ -136,7 +136,7 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
 
       # Check if no ADC file was found
       if (length(adcfile) == 0) {
-        warning(paste("ADC file not found for sample:", sample_name))
+        cli_warn("ADC file not found for sample {.val {sample_name}}.")
         next
       }
 
@@ -144,12 +144,12 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
         # If multiple ADC files are found, use the first one
         adcfile <- adcfile[1]
 
-        warning("More than one .adc found for sample, will continue with: ", adcfile)
+        cli_warn("More than one {.file .adc} found for sample, will continue with {.file {adcfile}}.")
       }
 
       # Check if the ADC file exists
       if (!file.exists(adcfile)) {
-        warning(paste("ADC file not found for sample:", sample_name))
+        cli_warn("ADC file not found for sample {.val {sample_name}}.")
         next
       }
 

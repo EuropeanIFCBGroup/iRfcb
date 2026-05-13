@@ -41,7 +41,7 @@ ifcb_zip_images_by_class <- function(
 ) {
 
   if (!dir.exists(image_folder)) {
-    stop("Image folder does not exist: ", image_folder)
+    cli_abort("{.arg image_folder} does not exist: {.file {image_folder}}")
   }
 
   if (!dir.exists(output_dir)) {
@@ -50,7 +50,7 @@ ifcb_zip_images_by_class <- function(
 
   if (!is.null(n_images)) {
     if (!is.numeric(n_images) || length(n_images) != 1 || n_images <= 0) {
-      stop("n_images must be a single positive integer or NULL")
+      cli_abort("{.arg n_images} must be a single positive integer or {.code NULL}.")
     }
     n_images <- as.integer(n_images)
   }
@@ -63,9 +63,11 @@ ifcb_zip_images_by_class <- function(
   total_subdirs <- length(subdirs)
 
   if (total_subdirs == 0) {
-    message("No subdirectories found in image folder")
+    cli_inform("No subdirectories found in {.arg image_folder}.")
     return(invisible(NULL))
   }
+
+  if (!quiet) cli_progress_bar("Zipping classes", total = total_subdirs)
 
   temp_root <- tempdir()
 
@@ -108,14 +110,10 @@ ifcb_zip_images_by_class <- function(
       unlink(temp_class_dir, recursive = TRUE)
     }
 
-    if (!quiet) {
-      print_progress(i, total_subdirs)
-    }
+    if (!quiet) cli_progress_update()
   }
 
-  if (!quiet) {
-    cat("\n")
-  }
+  if (!quiet) cli_progress_done()
 
   invisible(NULL)
 }

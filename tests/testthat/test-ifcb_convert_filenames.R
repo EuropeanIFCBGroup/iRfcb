@@ -94,5 +94,5 @@ test_that("ifcb_convert_filenames handles empty input", {
 
 test_that("ifcb_convert_filenames handles incorrect format input", {
   incorrect_filenames <- c("20230314T001205_IFCB134", "D20230615_IFCB135")
-  expect_error(ifcb_convert_filenames(incorrect_filenames), "Error")
+  expect_error(ifcb_convert_filenames(incorrect_filenames), "not in the correct format")
 })

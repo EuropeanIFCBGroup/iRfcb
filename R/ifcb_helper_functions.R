@@ -65,23 +65,6 @@ truncate_folder_name <- function(folder_name) {
   sub("_\\d{3}$", "", basename(folder_name))
 }
 
-#' Function to Print the Progress Bar
-#'
-#' This function prints a progress bar to the console to indicate the progress of a process.
-#'
-#' @param current An integer specifying the current progress.
-#' @param total An integer specifying the total steps for the process.
-#' @param bar_width An integer specifying the width of the progress bar. Default is 50.
-#' @noRd
-print_progress <- function(current, total, bar_width = 50) {
-  progress <- current / total
-  complete <- round(progress * bar_width)
-  bar <- paste(rep("=", complete), collapse = "")
-  remaining <- paste(rep(" ", bar_width - complete), collapse = "")
-  cat(sprintf("\r[%s%s] %d%%", bar, remaining, round(progress * 100)))
-  flush.console()
-}
-
 #' Function to Find Matching Feature Files with a General Pattern
 #'
 #' This function finds feature files that match the base name of a given .mat file.
@@ -389,7 +372,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 
   # Check if the zip file exists
   if (!file.exists(zip_file)) {
-    stop("The specified zip file does not exist")
+    cli_abort("The specified zip file does not exist: {.file {zip_file}}")
   }
 
   # Check the size of the zip file
@@ -401,7 +384,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   # Step 0: Check if the zip file is smaller than max_size
   if (zip_file_size <= max_size_bytes) {
     if (!quiet) {
-      message("The zip file is already smaller than the specified max size (", max_size, " MB).")
+      cli_inform("The zip file is already smaller than the specified max size ({max_size} MB).")
     }
     return(invisible(NULL))
   }
@@ -499,8 +482,8 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   unlink(unzip_dir, recursive = TRUE)
 
   if (!quiet) {
-    message("Successfully created ", length(subfolder_groups), " smaller zip files:")
-    message(paste(created_zip_files, collapse = "\n"))
+    cli_alert_success("Created {length(subfolder_groups)} smaller zip file{?s}:")
+    cli_inform("{.file {created_zip_files}}")
   }
 }
 #' Check Python and Required Modules Availability
@@ -526,10 +509,10 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
   # Check if Python is available
   if (!reticulate::py_available(initialize = initialize)) {
-    stop(
-      "Python is not available. Please ensure Python is installed and initialized, ",
-      "or see `ifcb_py_install`."
-    )
+    cli_abort(c(
+      "Python is not available.",
+      "i" = "Ensure Python is installed and initialized, or see {.fn ifcb_py_install}."
+    ))
   }
 
   # Discover Python configuration
@@ -545,12 +528,10 @@ check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
 
   # Error if any modules are missing
   if (length(missing_modules) > 0) {
-    stop(
-      "The following Python package(s) are not available: ",
-      paste(sprintf("'%s'", missing_modules), collapse = ", "),
-      ". Please install them in your Python environment, ",
-      "or see `ifcb_py_install`."
-    )
+    cli_abort(c(
+      "The following Python package{?s} {?is/are} not available: {.val {missing_modules}}",
+      "i" = "Install them in your Python environment, or see {.fn ifcb_py_install}."
+    ))
   }
 
   invisible(TRUE)
@@ -596,7 +577,7 @@ install_missing_packages <- function(packages, envname = NULL) {
   missing_packages <- setdiff(packages, installed)
 
   if (length(missing_packages) > 0) {
-    message("Installing missing Python packages: ", paste(missing_packages, collapse = ", "))
+    cli_inform("Installing missing Python package{?s}: {.val {missing_packages}}")
 
     if (is.null(envname)) {
       # Install globally if system Python is used
@@ -606,7 +587,7 @@ install_missing_packages <- function(packages, envname = NULL) {
       reticulate::virtualenv_install(envname, missing_packages, ignore_installed = TRUE)
     }
   } else {
-    message("All requested packages are already installed.")
+    cli_inform("All requested packages are already installed.")
   }
 }
 #' Read MATLAB (.mat) Files
@@ -701,8 +682,10 @@ read_class_file <- function(filepath, use_python = FALSE) {
 
   if (ext == "h5") {
     if (!requireNamespace("hdf5r", quietly = TRUE)) {
-      stop("Package 'hdf5r' is required to read .h5 classification files. ",
-           "Install it with: install.packages('hdf5r')")
+      cli_abort(c(
+        "Package {.pkg hdf5r} is required to read {.file .h5} classification files.",
+        "i" = "Install it with {.run install.packages(\"hdf5r\")}"
+      ))
     }
 
     h5file <- hdf5r::H5File$new(filepath, mode = "r")
@@ -861,7 +844,7 @@ process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
 
     } else {
       if (!quiet) {
-        message("Unknown format: ", str)
+        cli_inform("Unknown format: {.val {str}}")
       }
       NA  # Return NA for unknown formats
     }

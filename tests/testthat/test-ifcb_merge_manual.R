@@ -117,16 +117,16 @@ test_that("ifcb_merge_manual throws the correct error messages", {
 
   # Check that errors are thrown when expected (invalid paths or empty folders)
   expect_error(ifcb_merge_manual(no_class2use_file, class2use_file_new, NULL, manual_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
-               "Base or additions class2use file does not exist")
+               "does not exist")
 
   expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, no_base_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
-               "Base or additions manual folder does not exist")
+               "does not exist")
 
   expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, empty_folder, manual_folder_additions, manual_folder_merged, quiet = TRUE),
-               "No .mat files found in manual_folder_base")
+               "No .* files found")
 
   expect_error(ifcb_merge_manual(class2use_file, class2use_file_new, NULL, manual_folder, empty_folder, manual_folder_merged, quiet = TRUE),
-               "No .mat files found in manual_folder_additions")
+               "No .* files found")
 
   # Clean up the temporary directory after the test
   unlink(temp_dir, recursive = TRUE)

@@ -46,7 +46,10 @@ ifcb_is_in_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
 
   # Ensure the shapefile is in WGS84 (EPSG:4326)
   if (sf::st_crs(basins) != sf::st_crs(4326)) {
-    warning("The CRS of the shapefile is not in WGS84 (EPSG:4326). Transforming CRS to WGS84.")
+    cli_warn(c(
+      "The CRS of the shapefile is not in WGS84 ({.val EPSG:4326}).",
+      "i" = "Transforming CRS to WGS84."
+    ))
     basins <- sf::st_transform(basins, 4326)
   }
 

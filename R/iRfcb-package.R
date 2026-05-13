@@ -2,6 +2,8 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom cli cli_abort cli_alert_info cli_alert_success cli_alert_warning
+#'   cli_inform cli_progress_bar cli_progress_done cli_progress_update cli_warn
 #' @importFrom curl curl_download new_handle curl_fetch_memory handle_setopt multi_download
 #' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
 #'   filter first full_join group_by if_any left_join mutate n n_distinct
@@ -28,8 +30,7 @@
 #'   str_replace_all word str_match str_wrap
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
-#' @importFrom utils flush.console read.csv read.table setTxtProgressBar txtProgressBar
-#'   write.table modifyList
+#' @importFrom utils read.csv read.table write.table modifyList
 #' @importFrom worrms wm_records_names
 #' @importFrom zip unzip zip zipr
 ## usethis namespace: end

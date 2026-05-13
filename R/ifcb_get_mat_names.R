@@ -28,7 +28,7 @@
 #' @seealso \code{\link{ifcb_get_mat_variable}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_names <- function(mat_file, use_python = FALSE) {
   if (!file.exists(mat_file)) {
-    stop("MAT file does not exist: ", mat_file)
+    cli_abort("MAT file does not exist: {.file {mat_file}}")
   }
 
   if (use_python && scipy_available()) {

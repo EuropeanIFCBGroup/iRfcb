@@ -66,12 +66,12 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
 
   # Check if any valid years are specified
   if (nrow(url_df) == 0) {
-    stop("No valid years specified.")
+    cli_abort("No valid years specified.")
   }
 
   # Warn if any years are not available
   if (length(not_available) > 0) {
-    warning("Skipping year(s) ", paste(not_available, collapse = ", "), ": No URL found.")
+    cli_warn("Skipping year{?s} {.val {not_available}}: No URL found.")
   }
 
   # Ensure the destination folder exists
@@ -84,7 +84,7 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
   success <- FALSE
 
   while (attempt <= max_retries && !success) {
-    if (!quiet) message("Downloading WHOI-Plankton images from year(s):\n", paste(url_df$year, collapse = ", "), " (Attempt ", attempt, ")...")
+    if (!quiet) cli_inform("Downloading WHOI-Plankton images from year{?s} {.val {url_df$year}} (attempt {attempt})...")
 
     # Perform the download with multi_download()
     res <- curl::multi_download(
@@ -105,13 +105,13 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
 
     # Check results
     if (nrow(incomplete) == 0) {
-      if (!quiet) message("Download completed for year(s):\n", paste(years, collapse = ", "))
+      if (!quiet) cli_alert_success("Download completed for year{?s} {.val {years}}.")
       success <- TRUE
     } else {
       url_df_complete <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(complete$url)))
       url_df <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(incomplete$url)))
-      if (!quiet && nrow(url_df_complete) > 0) message("Download successful for year(s):\n", paste(url_df_complete$year, collapse = ", "))
-      if (!quiet) message("Download interrupted for year(s):\n", paste(url_df$year, collapse = ", "), "\nRetrying...")
+      if (!quiet && nrow(url_df_complete) > 0) cli_alert_success("Download successful for year{?s} {.val {url_df_complete$year}}.")
+      if (!quiet) cli_inform("Download interrupted for year{?s} {.val {url_df$year}}. Retrying...")
       attempt <- attempt + 1
     }
   }
@@ -164,11 +164,11 @@ ifcb_download_whoi_plankton <- function(years, dest_folder, extract_images = TRU
 
       # Extract if the download was successful
       if (file.exists(url_df_year$zip_files)) {
-        if (!quiet) message("Extracting .png images from year ", yr, "...")
+        if (!quiet) cli_inform("Extracting {.file .png} images from year {.val {yr}}...")
         unzip(url_df_year$zip_files, exdir = dest_folder)
         file.remove(url_df_year$zip_files) # Remove zip file after extraction
       }
     }
   }
-  if (!quiet) message("Download and extraction complete.")
+  if (!quiet) cli_alert_success("Download and extraction complete.")
 }

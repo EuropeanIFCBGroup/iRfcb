@@ -36,12 +36,12 @@ ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = 
 
   # Check if file exists
   if (!file.exists(class2use_file)) {
-    stop(paste("File does not exist:", class2use_file))
+    cli_abort("{.arg class2use_file} does not exist: {.file {class2use_file}}")
   }
 
   # Check if manual folder exists
   if (!dir.exists(manual_folder)) {
-    stop(paste("Manual folder does not exist:", manual_folder))
+    cli_abort("{.arg manual_folder} does not exist: {.file {manual_folder}}")
   }
 
   # Initialize python check
