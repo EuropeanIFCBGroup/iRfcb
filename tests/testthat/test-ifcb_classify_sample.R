@@ -1,7 +1,7 @@
 test_that("ifcb_classify_sample errors when roi_file does not exist", {
   expect_error(
     ifcb_classify_sample("nonexistent.roi"),
-    "roi_file not found"
+    "`roi_file` not found"
   )
 })
 

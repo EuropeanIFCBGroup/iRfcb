@@ -3,7 +3,7 @@
 test_that("ifcb_save_classification errors when roi_file does not exist", {
   expect_error(
     ifcb_save_classification("nonexistent.roi", output_folder = tempdir()),
-    "roi_file not found"
+    "`roi_file` not found"
   )
 })
 

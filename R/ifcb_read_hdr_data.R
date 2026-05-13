@@ -55,18 +55,19 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   }
 
   if (verbose) cli_inform("Found {length(hdr_files)} {.file .hdr} file{?s}.")
-  if (verbose) cli_progress_bar("Reading HDR files", total = length(hdr_files))
+  env <- environment()
+  if (verbose) cli_progress_bar("Reading HDR files", total = length(hdr_files), .envir = env)
 
   # Read all files into a list of data frames using a helper function
   all_hdr_data_list <- lapply(seq_along(hdr_files), function(i) {
     # Update the progress bar
-    if (verbose) cli_progress_update()
+    if (verbose) cli_progress_update(.envir = env)
 
     # Call the helper function
     read_hdr_file(hdr_files[[i]])
   })
 
-  if (verbose) cli_progress_done()
+  if (verbose) cli_progress_done(.envir = env)
 
   # Combine all data frames into one
   hdr_data <- bind_rows(all_hdr_data_list)

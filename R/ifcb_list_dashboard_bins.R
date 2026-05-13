@@ -1,5 +1,15 @@
 #' Download bin list from the IFCB Dashboard API
 #'
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' The `api/list_bins` endpoint was removed from the upstream IFCB Dashboard
+#' (\href{https://github.com/WHOIGit/ifcbdb/commit/8c5839f1}{WHOIGit/ifcbdb@8c5839f1},
+#' 2026-03-08), so this function no longer works against the WHOI dashboard and
+#' other deployments tracking upstream. Use [ifcb_download_dashboard_metadata()]
+#' instead, which retrieves the same per-bin information from the still-supported
+#' `api/export_metadata` endpoint.
+#'
 #' @param base_url Character. Base URL to the IFCB Dashboard
 #'   (e.g. "https://ifcb-data.whoi.edu/").
 #' @param dataset_name Optional character. Dataset slug (e.g. "mvco") to retrieve metadata for a specific dataset.
@@ -19,6 +29,13 @@
 #'
 #' @export
 ifcb_list_dashboard_bins <- function(base_url, dataset_name = NULL, quiet = FALSE) {
+  lifecycle::deprecate_warn(
+    when = "0.8.2",
+    what = "ifcb_list_dashboard_bins()",
+    with = "ifcb_download_dashboard_metadata()",
+    details = "The upstream IFCB Dashboard removed the `api/list_bins` endpoint on 2026-03-08."
+  )
+
   # Ensure base_url has no trailing slash
   base_url <- sub("/+$", "", base_url)
 

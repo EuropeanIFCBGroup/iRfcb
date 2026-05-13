@@ -19,7 +19,14 @@ If NULL, all available metadata are downloaded.}
 A data frame containing the bin list returned by the API.
 }
 \description{
-Download bin list from the IFCB Dashboard API
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+The \code{api/list_bins} endpoint was removed from the upstream IFCB Dashboard
+(\href{https://github.com/WHOIGit/ifcbdb/commit/8c5839f1}{WHOIGit/ifcbdb@8c5839f1},
+2026-03-08), so this function no longer works against the WHOI dashboard and
+other deployments tracking upstream. Use \code{\link[=ifcb_download_dashboard_metadata]{ifcb_download_dashboard_metadata()}}
+instead, which retrieves the same per-bin information from the still-supported
+\code{api/export_metadata} endpoint.
 }
 \examples{
 \donttest{

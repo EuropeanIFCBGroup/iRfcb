@@ -99,7 +99,7 @@ test_that("ifcb_summarize_png_counts handles invalid directories gracefully", {
                "No subdirectories found in the PNG folder")
 
   expect_error(ifcb_summarize_png_counts(png_folder, invalid_hdr_dir, sum_level = "sample", verbose = TRUE),
-               "HDR folder does not exist")
+               "`hdr_folder` does not exist")
 })
 
 test_that("ifcb_summarize_png_counts calculates n_images correctly for different classes", {

@@ -107,7 +107,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     overlap <- intersect(include_classes, skip_classes)
     if (length(overlap) > 0) {
       cli_warn(c(
-        "The following class{?es} {?is/are} in both {.arg include_classes} and {.arg skip_classes}:",
+        "The following {qty(length(overlap))}class{?es} {?is/are} in both {.arg include_classes} and {.arg skip_classes}:",
         "x" = "{.val {overlap}}",
         "i" = "They will be excluded."
       ))

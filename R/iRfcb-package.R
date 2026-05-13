@@ -3,7 +3,7 @@
 
 ## usethis namespace: start
 #' @importFrom cli cli_abort cli_alert_info cli_alert_success cli_alert_warning
-#'   cli_inform cli_progress_bar cli_progress_done cli_progress_update cli_warn
+#'   cli_inform cli_progress_bar cli_progress_done cli_progress_update cli_warn qty
 #' @importFrom curl curl_download new_handle curl_fetch_memory handle_setopt multi_download
 #' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
 #'   filter first full_join group_by if_any left_join mutate n n_distinct

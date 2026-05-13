@@ -116,7 +116,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   missing_params <- setdiff(parameters, colnames(ferrybox_data))
   if (length(missing_params) > 0) {
     cli_abort(c(
-      "The following parameter{?s} {?is/are} missing from the ferrybox data:",
+      "The following {qty(length(missing_params))}parameter{?s} {?is/are} missing from the ferrybox data:",
       "x" = "{.val {missing_params}}"
     ))
   }
@@ -202,7 +202,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
 
   if (nrow(duplicate_rows) > 0) {
     cli_warn(c(
-      "Multiple rows detected for the following minute timestamp{?s}:",
+      "Multiple rows detected for the following {qty(nrow(duplicate_rows))}minute timestamp{?s}:",
       "x" = "{.val {as.character(duplicate_rows$timestamp)}}"
     ))
   }

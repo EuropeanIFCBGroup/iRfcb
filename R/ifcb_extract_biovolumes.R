@@ -352,7 +352,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     matched <- is_diatom$class %in% diatom_include
     if (verbose && any(matched)) {
       cli_alert_info(
-        "The following class{?es} {?was/were} manually included as diatoms via {.arg diatom_include}:"
+        "The following {qty(sum(matched))}class{?es} {?was/were} manually included as diatoms via {.arg diatom_include}:"
       )
       cli_inform("{.val {sort(is_diatom$class[matched])}}")
     }
@@ -378,7 +378,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   # Print the classes that are non-Diatoms
   if (length(non_diatoms$class) > 0 & verbose) {
     cli_alert_info(
-      "The following class{?es} {?is/are} considered NOT diatoms for carbon calculations:"
+      "The following {qty(length(non_diatoms$class))}class{?es} {?is/are} considered NOT diatoms for carbon calculations:"
     )
     cli_inform("{.val {sort(non_diatoms$class)}}")
   }

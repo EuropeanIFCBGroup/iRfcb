@@ -4,6 +4,10 @@
 
 * Added a new `dataset_name` argument to `ifcb_list_dashboard_bins()` to only optionally only list bins from a specific dataset.
 
+## Deprecations
+
+* `ifcb_list_dashboard_bins()` is deprecated. The upstream IFCB Dashboard removed the `api/list_bins` endpoint on 2026-03-08 ([WHOIGit/ifcbdb@8c5839f1](https://github.com/WHOIGit/ifcbdb/commit/8c5839f1)), so the function no longer works against the WHOI dashboard and other deployments tracking upstream. Use `ifcb_download_dashboard_metadata()` instead, which retrieves the same per-bin information from the still-supported `api/export_metadata` endpoint.
+
 ## Minor improvements and fixes
 
 * Migrated all user-facing messaging from base R (`stop()`, `warning()`, `message()`) and `utils::txtProgressBar` to the `cli` package. Errors, warnings, and informational messages now use semantic inline markup (file paths, argument names, function names, values) and pluralization. Progress bars are rendered via `cli::cli_progress_bar()`. `cli` is now an `Imports` dependency.
