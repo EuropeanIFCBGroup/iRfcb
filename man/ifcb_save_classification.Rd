@@ -8,8 +8,8 @@ ifcb_save_classification(
   roi_file,
   output_folder,
   format = c("h5", "mat", "csv"),
-  gradio_url = "https://irfcb-classify.hf.space",
-  model_name = "SMHI NIVA ResNet50 V5",
+  gradio_url = "https://ifcb.serve.scilifelab.se",
+  model_name = "SMHI NIVA SYKE SAMS SZN ResNet 50 V6",
   verbose = TRUE,
   ...
 )
@@ -27,15 +27,16 @@ the sample name (e.g. \code{D20220522T003051_IFCB134_class.h5},
 \code{"h5"} (default), \code{"mat"}, or \code{"csv"}.}
 
 \item{gradio_url}{A character string specifying the base URL of the Gradio
-application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
-example Hugging Face Space with limited resources intended for testing and
-demonstration. For large-scale classification, deploy your own instance of
-the classification app (source code:
-\url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
-pass its URL here.}
+application. Default is \code{"https://ifcb.serve.scilifelab.se"}, an instance
+hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+is also available at \code{"https://irfcb-classify.hf.space"} (limited resources,
+intended for testing and demonstration). For large-scale or production
+classification, deploy your own instance of the classification app
+(source code: \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app})
+and pass its URL here.}
 
 \item{model_name}{A character string specifying the name of the CNN model
-to use for classification. Default is \code{"SMHI NIVA ResNet50 V5"}. Use
+to use for classification. Default is \code{"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"}. Use
 \code{\link[=ifcb_classify_models]{ifcb_classify_models()}} to list all available models.}
 
 \item{verbose}{A logical value indicating whether to print progress messages.

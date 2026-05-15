@@ -5,10 +5,12 @@
 #' `model_name` argument of [ifcb_classify_images()] and [ifcb_classify_sample()].
 #'
 #' @param gradio_url A character string specifying the base URL of the Gradio
-#'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
-#'   example Hugging Face Space with limited resources intended for testing and
-#'   demonstration. For large-scale classification, deploy your own instance of
-#'   the classification app with your own model (source code:
+#'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
+#'   hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+#'   is also available at `"https://irfcb-classify.hf.space"` (limited resources,
+#'   intended for testing and demonstration). For large-scale or production
+#'   classification, deploy your own instance of the classification app with
+#'   your own model (source code:
 #'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #'
@@ -28,7 +30,7 @@
 #'
 #' @export
 ifcb_classify_models <- function(
-    gradio_url = "https://irfcb-classify.hf.space") {
+    gradio_url = "https://ifcb.serve.scilifelab.se") {
 
   gradio_url <- sub("/+$", "", gradio_url)
   info_url <- paste0(gradio_url, "/gradio_api/info")

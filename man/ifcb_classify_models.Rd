@@ -4,14 +4,16 @@
 \alias{ifcb_classify_models}
 \title{List Available CNN Models from a Gradio Classification Server}
 \usage{
-ifcb_classify_models(gradio_url = "https://irfcb-classify.hf.space")
+ifcb_classify_models(gradio_url = "https://ifcb.serve.scilifelab.se")
 }
 \arguments{
 \item{gradio_url}{A character string specifying the base URL of the Gradio
-application. Default is \code{"https://irfcb-classify.hf.space"}, which is an
-example Hugging Face Space with limited resources intended for testing and
-demonstration. For large-scale classification, deploy your own instance of
-the classification app with your own model (source code:
+application. Default is \code{"https://ifcb.serve.scilifelab.se"}, an instance
+hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+is also available at \code{"https://irfcb-classify.hf.space"} (limited resources,
+intended for testing and demonstration). For large-scale or production
+classification, deploy your own instance of the classification app with
+your own model (source code:
 \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 pass its URL here.}
 }

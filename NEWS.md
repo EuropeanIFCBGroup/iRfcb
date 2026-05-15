@@ -10,6 +10,7 @@
 
 ## Minor improvements and fixes
 
+* The default `gradio_url` for `ifcb_classify_images()`, `ifcb_classify_sample()`, `ifcb_classify_models()`, and `ifcb_save_classification()` has changed from the Hugging Face example Space (`https://irfcb-classify.hf.space`) to a more stable instance hosted on SciLifeLab Serve (`https://ifcb.serve.scilifelab.se`). The default `model_name` has correspondingly been updated to `"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"`. The Hugging Face Space remains documented as a free alternative for testing and demonstration.
 * Migrated all user-facing messaging from base R (`stop()`, `warning()`, `message()`) and `utils::txtProgressBar` to the `cli` package. Errors, warnings, and informational messages now use semantic inline markup (file paths, argument names, function names, values) and pluralization. Progress bars are rendered via `cli::cli_progress_bar()`. `cli` is now an `Imports` dependency.
 
 # iRfcb 0.8.1
