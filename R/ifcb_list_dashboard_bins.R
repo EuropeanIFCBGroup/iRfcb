@@ -18,7 +18,8 @@
 #'
 #' @return A data frame containing the bin list returned by the API.
 #' @examples
-#' \donttest{
+#' \dontrun{
+#'   # Deprecated: the upstream IFCB Dashboard removed `api/list_bins` on 2026-03-08.
 #'   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/",
 #'                                    dataset_name = "mvco")
 #'   head(bins)
@@ -30,7 +31,7 @@
 #' @export
 ifcb_list_dashboard_bins <- function(base_url, dataset_name = NULL, quiet = FALSE) {
   lifecycle::deprecate_warn(
-    when = "0.8.2",
+    when = "0.9.0",
     what = "ifcb_list_dashboard_bins()",
     with = "ifcb_download_dashboard_metadata()",
     details = "The upstream IFCB Dashboard removed the `api/list_bins` endpoint on 2026-03-08."

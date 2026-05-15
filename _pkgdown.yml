@@ -39,7 +39,6 @@ reference:
   - '`ifcb_download_dashboard_metadata`'
   - '`ifcb_download_test_data`'
   - '`ifcb_download_whoi_plankton`'
-  - '`ifcb_list_dashboard_bins`'
 - subtitle: Data reading
   desc: Functions for reading raw IFCB files and extracting metadata.
   contents:
@@ -125,5 +124,6 @@ reference:
 - title: Deprecated functions
   contents:
   - '`ifcb_create_empty_manual_file`'
+  - '`ifcb_list_dashboard_bins`'
   - '`retrieve_worms_records`'
   - '`ifcb_run_image_gallery`'

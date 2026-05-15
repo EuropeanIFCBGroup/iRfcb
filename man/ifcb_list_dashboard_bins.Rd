@@ -29,7 +29,8 @@ instead, which retrieves the same per-bin information from the still-supported
 \code{api/export_metadata} endpoint.
 }
 \examples{
-\donttest{
+\dontrun{
+  # Deprecated: the upstream IFCB Dashboard removed `api/list_bins` on 2026-03-08.
   bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/",
                                    dataset_name = "mvco")
   head(bins)
