@@ -106,6 +106,7 @@ Uuid
 ValidatedByHuman
 Velhonoja
 WHOI
+WHOIGit
 WoRMS
 YYYY
 Ylöstalo
@@ -152,6 +153,7 @@ identificationReferences
 identificationVerificationStatus
 identifiedBy
 ifcb
+ifcbdb
 inhibittime
 institutionID
 interoperable
