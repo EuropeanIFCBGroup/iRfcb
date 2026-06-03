@@ -49,14 +49,14 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
 
   # Stop function if there are no subdirectories in the png folder
   if (length(subdirs) == 0) {
-    stop("No subdirectories found in the PNG folder: ", png_folder)
+    cli_abort("No subdirectories found in the PNG folder: {.file {png_folder}}")
   }
 
   # Initialize an empty list to store results
   results <- list()
 
   if (sum_level == "sample" && !is.null(hdr_folder) && !dir.exists(hdr_folder)) {
-    stop("HDR folder does not exist: ", hdr_folder)
+    cli_abort("{.arg hdr_folder} does not exist: {.file {hdr_folder}}")
   }
 
   # Check if sum_level is "class", then skip HDR extraction

@@ -16,7 +16,7 @@ test_that("ifcb_download_test_data downloads and unzips files correctly", {
                                        figshare_article = "Non-valid-article",
                                        max_retries = 1,
                                        sleep_time = 2),
-               "Download failed from all sources after 1 attempts each")
+               "Download failed from all sources")
 
   # Call the function to download and unzip test data
   ifcb_download_test_data(temp_dir)

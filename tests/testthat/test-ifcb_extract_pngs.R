@@ -61,7 +61,7 @@ test_that("ifcb_extract_pngs works correctly", {
 
   # Call the function to extract PNG with a too long scale bar
   expect_warning(ifcb_extract_pngs(roi_file, out_folder = out_folder, ROInumbers = c(1, 2), verbose = FALSE, scale_bar_um = 1000, scale_bar_position = "topleft"),
-                 "images were printed without a scale bar because the scale bar was too long for the image")
+                 "printed without a scale bar")
   expect_true(file.exists(file.path(out_folder, "D20220522T003051_IFCB134", "D20220522T003051_IFCB134_00002.png")))
 
   # Remove folder
@@ -86,9 +86,9 @@ test_that("ifcb_extract_pngs works correctly", {
 
   # Test errors
   expect_error(ifcb_extract_pngs(roi_file, scale_bar_position = "leftright"),
-               "Invalid scale_bar_position")
+               "scale_bar_position.*must be one of")
   expect_error(ifcb_extract_pngs(roi_file, scale_bar_color = "green"),
-               "Invalid scale_bar_color")
+               "scale_bar_color.*must be one of")
   expect_error(ifcb_extract_pngs("not_a_file"),
                "ROI file does not exist")
 

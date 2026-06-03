@@ -11,17 +11,18 @@
 #'
 #' @param png_file A character vector of paths to PNG files to classify.
 #' @param gradio_url A character string specifying the base URL of the Gradio
-#'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
-#'   example Hugging Face Space with limited resources intended for testing and
-#'   demonstration. For large-scale classification, deploy your own instance of
-#'   the classification app (source code:
-#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
-#'   pass its URL here.
+#'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
+#'   hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+#'   is also available at `"https://irfcb-classify.hf.space"` (limited resources,
+#'   intended for testing and demonstration). For large-scale or production
+#'   classification, deploy your own instance of the classification app
+#'   (source code: \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app})
+#'   and pass its URL here.
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
 #' @param model_name A character string specifying the name of the CNN model
-#'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
+#'   to use for classification. Default is `"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"`. Use
 #'   [ifcb_classify_models()] to list all available models.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
@@ -59,29 +60,33 @@
 #' @export
 ifcb_classify_images <- function(
     png_file,
-    gradio_url = "https://irfcb-classify.hf.space",
+    gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
-    model_name = "SMHI NIVA ResNet50 V5",
+    model_name = "SMHI NIVA SYKE SAMS SZN ResNet 50 V6",
     verbose = TRUE) {
 
   missing_files <- png_file[!file.exists(png_file)]
   if (length(missing_files) > 0) {
-    stop("PNG file(s) not found: ", paste(missing_files, collapse = ", "))
+    cli_abort(c(
+      "{length(missing_files)} PNG file{?s} not found:",
+      "x" = "{.file {missing_files}}"
+    ))
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
 
   # Fetch per-class thresholds
-  if (verbose) message("Fetching per-class thresholds...")
+  if (verbose) cli_inform("Fetching per-class thresholds...")
   thresholds <- gradio_get_thresholds(gradio_url, model_name)
 
-  if (verbose) message("Classifying ", length(png_file), " image(s)...")
+  if (verbose) cli_inform("Classifying {length(png_file)} image{?s}...")
+  if (verbose) cli_progress_bar("Classifying images", total = length(png_file))
 
   results_list <- lapply(seq_along(png_file), function(i) {
     png_path <- png_file[i]
     file_name <- basename(png_path)
 
-    if (verbose) print_progress(i, length(png_file))
+    if (verbose) cli_progress_update(.envir = parent.frame(2))
 
     tryCatch({
       predictions <- gradio_classify_png(png_path, gradio_url, top_n, model_name)
@@ -92,7 +97,10 @@ ifcb_classify_images <- function(
         model_name      = model_name
       )
     }, error = function(e) {
-      warning("Failed to classify image '", file_name, "': ", e$message)
+      cli_warn(c(
+        "Failed to classify image {.file {file_name}}",
+        "x" = "{e$message}"
+      ))
       data.frame(
         file_name       = file_name,
         class_name_auto = NA_character_,
@@ -102,7 +110,7 @@ ifcb_classify_images <- function(
     })
   })
 
-  if (verbose) cat("\n")
+  if (verbose) cli_progress_done()
 
   result <- do.call(rbind, results_list)
 
@@ -151,20 +159,19 @@ gradio_predict_scores <- function(gradio_url, image_data, model_name) {
 
   post_resp <- tryCatch(
     curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) stop("Connection to Gradio failed at '", call_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
   )
 
   if (post_resp$status_code != 200) {
-    stop("Gradio POST failed [", post_resp$status_code, "]: ", call_url)
+    cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
   }
 
   call_result <- tryCatch(
     jsonlite::fromJSON(rawToChar(post_resp$content), simplifyVector = FALSE),
-    error = function(e) stop("Failed to parse Gradio POST response: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio POST response: {e$message}")
   )
   event_id <- call_result$event_id
-  if (is.null(event_id)) stop("No event_id in Gradio POST response")
+  if (is.null(event_id)) cli_abort("No {.var event_id} in Gradio POST response.")
 
   result_url <- paste0(gradio_url, "/gradio_api/call/predict_scores/", event_id)
   h_get <- curl::new_handle()
@@ -174,12 +181,11 @@ gradio_predict_scores <- function(gradio_url, image_data, model_name) {
 
   get_resp <- tryCatch(
     curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) stop("Failed to fetch Gradio SSE from '", result_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
   )
 
   if (get_resp$status_code != 200) {
-    stop("Gradio SSE failed [", get_resp$status_code, "]: ", result_url)
+    cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
   }
 
   # Parse the SSE response as a JSON object (not simplified to data frame)
@@ -214,20 +220,19 @@ gradio_get_thresholds <- function(gradio_url, model_name) {
 
   post_resp <- tryCatch(
     curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) stop("Connection to Gradio failed at '", call_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
   )
 
   if (post_resp$status_code != 200) {
-    stop("Gradio POST failed [", post_resp$status_code, "]: ", call_url)
+    cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
   }
 
   call_result <- tryCatch(
     jsonlite::fromJSON(rawToChar(post_resp$content), simplifyVector = FALSE),
-    error = function(e) stop("Failed to parse Gradio POST response: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio POST response: {e$message}")
   )
   event_id <- call_result$event_id
-  if (is.null(event_id)) stop("No event_id in Gradio POST response")
+  if (is.null(event_id)) cli_abort("No {.var event_id} in Gradio POST response.")
 
   result_url <- paste0(gradio_url, "/gradio_api/call/get_thresholds/", event_id)
   h_get <- curl::new_handle()
@@ -237,12 +242,11 @@ gradio_get_thresholds <- function(gradio_url, model_name) {
 
   get_resp <- tryCatch(
     curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) stop("Failed to fetch Gradio SSE from '", result_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
   )
 
   if (get_resp$status_code != 200) {
-    stop("Gradio SSE failed [", get_resp$status_code, "]: ", result_url)
+    cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
   }
 
   sse_result <- gradio_parse_sse_json(rawToChar(get_resp$content))
@@ -299,17 +303,16 @@ gradio_upload_file <- function(png_path, gradio_url) {
 
   resp <- tryCatch(
     curl::curl_fetch_memory(upload_url, handle = h),
-    error = function(e) stop("File upload to Gradio failed at '", upload_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("File upload to Gradio failed at {.url {upload_url}}: {e$message}")
   )
 
   if (resp$status_code != 200) {
-    stop("Gradio file upload failed [", resp$status_code, "]: ", upload_url)
+    cli_abort("Gradio file upload failed [{resp$status_code}]: {.url {upload_url}}")
   }
 
   paths <- tryCatch(
     jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = TRUE),
-    error = function(e) stop("Failed to parse Gradio upload response: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio upload response: {e$message}")
   )
   paths[[1]]
 }
@@ -342,20 +345,19 @@ gradio_predict <- function(gradio_url, image_data, model_name) {
 
   post_resp <- tryCatch(
     curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) stop("Connection to Gradio failed at '", call_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
   )
 
   if (post_resp$status_code != 200) {
-    stop("Gradio POST failed [", post_resp$status_code, "]: ", call_url)
+    cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
   }
 
   call_result <- tryCatch(
     jsonlite::fromJSON(rawToChar(post_resp$content), simplifyVector = FALSE),
-    error = function(e) stop("Failed to parse Gradio POST response: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio POST response: {e$message}")
   )
   event_id <- call_result$event_id
-  if (is.null(event_id)) stop("No event_id in Gradio POST response")
+  if (is.null(event_id)) cli_abort("No {.var event_id} in Gradio POST response.")
 
   result_url <- paste0(gradio_url, "/gradio_api/call/predict_html/", event_id)
   h_get <- curl::new_handle()
@@ -365,12 +367,11 @@ gradio_predict <- function(gradio_url, image_data, model_name) {
 
   get_resp <- tryCatch(
     curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) stop("Failed to fetch Gradio SSE from '", result_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
   )
 
   if (get_resp$status_code != 200) {
-    stop("Gradio SSE failed [", get_resp$status_code, "]: ", result_url)
+    cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
   }
 
   gradio_parse_sse(rawToChar(get_resp$content))
@@ -406,8 +407,10 @@ gradio_parse_sse <- function(sse_text) {
     }
   }
 
-  stop("No completed prediction found in Gradio SSE response. ",
-       "First 300 chars of response: ", substr(sse_text, 1, 300))
+  cli_abort(c(
+    "No completed prediction found in Gradio SSE response.",
+    "i" = "First 300 chars of response: {substr(sse_text, 1, 300)}"
+  ))
 }
 
 # Extract a JSON object from a Gradio SSE response.
@@ -437,8 +440,10 @@ gradio_parse_sse_json <- function(sse_text) {
     }
   }
 
-  stop("No completed result found in Gradio SSE response. ",
-       "First 300 chars of response: ", substr(sse_text, 1, 300))
+  cli_abort(c(
+    "No completed result found in Gradio SSE response.",
+    "i" = "First 300 chars of response: {substr(sse_text, 1, 300)}"
+  ))
 }
 
 # Parse class names and confidence scores from Gradio prediction HTML.
@@ -468,8 +473,10 @@ gradio_parse_predictions <- function(html_content, top_n) {
                              gregexpr(pct_pat, html_clean, perl = TRUE))[[1]]
 
   if (length(name_matches) == 0 || length(pct_matches) == 0) {
-    stop("Could not parse predictions from Gradio HTML. ",
-         "First 500 chars of HTML: ", substr(html_content, 1, 500))
+    cli_abort(c(
+      "Could not parse predictions from Gradio HTML.",
+      "i" = "First 500 chars of HTML: {substr(html_content, 1, 500)}"
+    ))
   }
 
   class_names <- gsub(name_pat, "\\1", name_matches, perl = TRUE)

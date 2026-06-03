@@ -41,19 +41,22 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
   req_file <- system.file("python", "requirements.txt", package = "iRfcb")
 
   if (!file.exists(req_file)) {
-    stop("Requirements file not found: ", req_file)
+    cli_abort("Requirements file not found: {.file {req_file}}")
   }
 
   # If use_venv is FALSE, use system Python
   if (!use_venv) {
-    message("Using system Python instead of a virtual environment.")
+    cli_inform("Using system Python instead of a virtual environment.")
 
     # Dynamically discover system Python executable
     py_config <- reticulate::py_discover_config()
     python_path <- py_config$python
 
     if (is.null(python_path)) {
-      stop("Could not find a valid Python installation. Please ensure Python is installed.")
+      cli_abort(c(
+        "Could not find a valid Python installation.",
+        "i" = "Please ensure Python is installed."
+      ))
     }
 
     # Use the discovered Python path
@@ -73,7 +76,7 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
   } else {
     # Otherwise, create or use the virtual environment
     if (!reticulate::virtualenv_exists(envname)) {
-      message("Creating virtual environment: ", envname)
+      cli_inform("Creating virtual environment: {.file {envname}}")
       if (!is.null(packages)) {
         reticulate::virtualenv_create(envname, requirements = req_file, quiet = TRUE, packages = packages)
       } else {
@@ -83,7 +86,7 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
       # Activate virtual environment
       reticulate::use_virtualenv(envname, required = TRUE)
     } else {
-      message("Using existing virtual environment: ", envname)
+      cli_inform("Using existing virtual environment: {.file {envname}}")
 
       # Activate virtual environment
       reticulate::use_virtualenv(envname, required = TRUE)

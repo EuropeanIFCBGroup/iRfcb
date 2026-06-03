@@ -90,23 +90,27 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
   check_python_and_module(c("scipy", "numpy"))
 
   if (download_blobs & is.null(blobs_folder)) {
-    stop("`blobs_folder` must be specified when `download_blobs = TRUE`.
-       Please provide a valid directory path for `blobs_folder` to store the downloaded files.")
+    cli_abort(c(
+      "{.arg blobs_folder} must be specified when {.code download_blobs = TRUE}.",
+      "i" = "Provide a valid directory path for {.arg blobs_folder} to store the downloaded files."
+    ))
   }
 
   if (download_features & is.null(features_folder)) {
-    stop("`features_folder` must be specified when `download_features = TRUE`.
-       Please provide a valid directory path for `features_folder` to store the downloaded files.")
+    cli_abort(c(
+      "{.arg features_folder} must be specified when {.code download_features = TRUE}.",
+      "i" = "Provide a valid directory path for {.arg features_folder} to store the downloaded files."
+    ))
   }
 
   if (!is.null(include_classes) && !is.null(skip_classes)) {
     overlap <- intersect(include_classes, skip_classes)
     if (length(overlap) > 0) {
-      warning(
-        "The following classes are in both include_classes and skip_classes: ",
-        paste(overlap, collapse = ", "),
-        ". They will be excluded."
-      )
+      cli_warn(c(
+        "The following {qty(length(overlap))}class{?es} {?is/are} in both {.arg include_classes} and {.arg skip_classes}:",
+        "x" = "{.val {overlap}}",
+        "i" = "They will be excluded."
+      ))
     }
   }
 
@@ -118,9 +122,9 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
 
   # Check if all requested years are already available
   if (length(years) == 0) {
-    if (!quiet) message("All requested WHOI-Plankton data folders are already available in: ", png_folder)
+    if (!quiet) cli_inform("All requested WHOI-Plankton data folders are already available in {.file {png_folder}}")
   } else {
-    if (!quiet) message("Downloading and preparing WHOI-Plankton data for the following years: ", paste(years, collapse = ", "))
+    if (!quiet) cli_inform("Downloading and preparing WHOI-Plankton data for year{?s} {.val {years}}")
     # Download WHOI-Plankton png images
     whoi_images <- ifcb_download_whoi_plankton(years, png_folder, quiet = quiet, extract_images = extract_images)
   }
@@ -194,7 +198,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     # Get the sample names
     samples <- sample_df$sample
 
-    if (!quiet) message("Downloading IFCB Dashboard data for year ", year)
+    if (!quiet) cli_inform("Downloading IFCB Dashboard data for year {.val {year}}")
 
     # Download dashboard data
     ifcb_download_dashboard_data(dashboard_url, samples, file_types = c("roi", "adc", "hdr"),
@@ -280,8 +284,8 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     # List the adc files
     adcfiles <- list.files(data_path, pattern = "adc$", full.names = TRUE, recursive = TRUE)
 
-    if (!quiet) message("Creating ", length(unique(rename_df$sample)) , " manual .mat files from year ", year, "...")
-    if (!quiet) pb <- txtProgressBar(min = 0, max = length(unique(rename_df$sample)), style = 3)
+    if (!quiet) cli_inform("Creating {length(unique(rename_df$sample))} manual {.file .mat} file{?s} from year {.val {year}}...")
+    if (!quiet) cli_progress_bar(paste("Creating manual files", year), total = length(unique(rename_df$sample)))
 
     # Get unique sample names
     sample_names <- unique(rename_df$sample)
@@ -295,7 +299,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
 
       # Check if no ADC file was found
       if (length(adcfile) == 0) {
-        warning(paste("ADC file not found for sample:", sample_name))
+        cli_warn("ADC file not found for sample {.val {sample_name}}.")
         next
       }
 
@@ -303,7 +307,7 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
         # If multiple ADC files are found, use the first one
         adcfile <- adcfile[1]
 
-        warning("More than one .adc found for sample, will continue with: ", adcfile)
+        cli_warn("More than one {.file .adc} found for sample, will continue with {.file {adcfile}}.")
       }
 
       # Read the ADC data
@@ -334,10 +338,8 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
                               classlist = roi_vector,
                               do_compression = TRUE)
 
-      # Update progress bar
-      if (!quiet) setTxtProgressBar(pb, j)
+      if (!quiet) cli_progress_update()
     }
-    # Close the progress bar after the loop finishes
-    if (!quiet) close(pb)
+    if (!quiet) cli_progress_done()
   }
 }

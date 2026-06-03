@@ -129,7 +129,7 @@ test_that("ifcb_extract_classified_images handles missing classified file gracef
     out_folder = out_folder,
     taxa = "All",
     threshold = "opt"
-  ), "Classified file for sample not found")
+  ), "Classified file for sample")
 
   unlink(temp_dir, recursive = TRUE)
 })
@@ -163,7 +163,7 @@ test_that("ifcb_extract_classified_images handles multiple classified files grac
     out_folder = out_folder,
     taxa = "All",
     threshold = "opt"
-  ), "More than one matching class file in classified folder")
+  ), "More than one matching class file")
 
   unlink(temp_dir, recursive = TRUE)
 })
@@ -235,7 +235,7 @@ test_that("ifcb_extract_classified_images handles missing roi files gracefully",
     out_folder = out_folder,
     taxa = "All",
     threshold = "opt"
-  ), "ROI file for sample not found")
+  ), "ROI file for sample")
 
   unlink(temp_dir, recursive = TRUE)
 })

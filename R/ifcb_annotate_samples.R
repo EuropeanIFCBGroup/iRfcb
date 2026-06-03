@@ -85,15 +85,15 @@ ifcb_annotate_samples <- function(png_folder,
 
   # Input checks
   if (!dir.exists(png_folder)) {
-    stop("PNG directory does not exist: ", png_folder)
+    cli_abort("{.arg png_folder} does not exist: {.file {png_folder}}")
   }
 
   if (!dir.exists(adc_folder)) {
-    stop("ADC directory does not exist: ", adc_folder)
+    cli_abort("{.arg adc_folder} does not exist: {.file {adc_folder}}")
   }
 
   if (!file.exists(class2use_file)) {
-    stop("class2use file does not exist: ", class2use_file)
+    cli_abort("{.arg class2use_file} does not exist: {.file {class2use_file}}")
   }
 
   if (!dir.exists(output_folder)) {
@@ -109,7 +109,7 @@ ifcb_annotate_samples <- function(png_folder,
   )
 
   if (length(png_images) == 0) {
-    stop("No PNG images found in: ", png_folder)
+    cli_abort("No PNG images found in {.file {png_folder}}")
   }
 
   adc_files <- list.files(
@@ -120,7 +120,7 @@ ifcb_annotate_samples <- function(png_folder,
   )
 
   if (length(adc_files) == 0) {
-    stop("No ADC files found in: ", adc_folder)
+    cli_abort("No ADC files found in {.file {adc_folder}}")
   }
 
   # Build annotation table
@@ -152,18 +152,11 @@ ifcb_annotate_samples <- function(png_folder,
   na_classes <- classes$class[is.na(classes$class_id)]
 
   if (length(na_classes) > 0) {
-    warning(
-      sprintf(
-        paste(
-          "Some classes could not be matched to class_id values.",
-          "Unmatched classes: %s",
-          "Inspect available classes with: ifcb_get_mat_variable('%s')",
-          sep = "\n"
-        ),
-        paste(na_classes, collapse = ", "),
-        class2use_file
-      )
-    )
+    cli_warn(c(
+      "Some classes could not be matched to {.var class_id} values.",
+      "x" = "Unmatched class{?es}: {.val {na_classes}}",
+      "i" = "Inspect available classes with {.code ifcb_get_mat_variable('{class2use_file}')}"
+    ))
   }
 
   # Process samples
@@ -172,14 +165,14 @@ ifcb_annotate_samples <- function(png_folder,
     adc_file <- adc_files[grepl(smp, adc_files)]
 
     if (length(adc_file) == 0) {
-      stop("No ADC file found for sample: ", smp)
+      cli_abort("No ADC file found for sample {.val {smp}}.")
     }
 
     if (length(adc_file) > 1) {
-      warning(
-        "Multiple ADC files found for sample: ", smp,
-        ". Using the first match: ", basename(adc_file[1])
-      )
+      cli_warn(c(
+        "Multiple ADC files found for sample {.val {smp}}.",
+        "i" = "Using the first match: {.file {basename(adc_file[1])}}"
+      ))
       adc_file <- adc_file[1]
     }
 
@@ -193,7 +186,7 @@ ifcb_annotate_samples <- function(png_folder,
       dplyr::filter(sample == smp)
 
     if (nrow(annotation_sample) == 0) {
-      warning("No PNG annotations found for sample: ", smp)
+      cli_warn("No PNG annotations found for sample {.val {smp}}.")
     }
 
     classlist <- tibble(

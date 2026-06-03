@@ -1,7 +1,7 @@
 Type: Package
 Package: iRfcb
 Title: Tools for Managing Imaging FlowCytobot (IFCB) Data
-Version: 0.8.1
+Version: 0.8.1.9000
 Authors@R: c(
     person("Anders", "Torstensson", email = "anders.torstensson@smhi.se", role = c("aut", "cre"),
            comment = c("Swedish Meteorological and Hydrological Institute", ORCID = "0000-0002-8283-656X")),
@@ -37,6 +37,7 @@ URL: https://europeanifcbgroup.github.io/iRfcb/,
     https://github.com/EuropeanIFCBGroup/iRfcb
 Depends: R (>= 4.1)
 Imports:
+    cli,
     curl (>= 6.0.0),
     dplyr,
     ggplot2,

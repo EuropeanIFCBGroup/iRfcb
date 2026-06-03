@@ -81,11 +81,11 @@ ifcb_extract_classified_images <- function(sample,
   classifiedfilename <- classifiedfiles[grepl(sample, classifiedfiles)]
 
   if (length(classifiedfilename) == 0) {
-    stop("Classified file for sample not found")
+    cli_abort("Classified file for sample {.val {sample}} not found in {.file {classified_folder}}.")
   }
 
   if (length(classifiedfilename) > 1) {
-    stop("More than one matching class file in classified folder")
+    cli_abort("More than one matching class file in {.file {classified_folder}} for sample {.val {sample}}.")
   }
 
   # Read classified file
@@ -96,12 +96,15 @@ ifcb_extract_classified_images <- function(sample,
   roifilename <- roifiles[grepl(sample, roifiles)]
 
   if (length(roifilename) == 0) {
-    stop("ROI file for sample not found")
+    cli_abort("ROI file for sample {.val {sample}} not found in {.file {roi_folder}}.")
   }
 
   # Warn if adhoc threshold requested for .h5 file (not available)
   if (threshold == "adhoc" && tolower(tools::file_ext(classifiedfilename)) == "h5") {
-    stop("Adhoc threshold is not available for .h5 classification files. Use 'opt' or 'none' instead.")
+    cli_abort(c(
+      "Adhoc threshold is not available for {.file .h5} classification files.",
+      "i" = "Use {.val opt} or {.val none} instead."
+    ))
   }
 
   # Extract taxa list based on the specified threshold
@@ -109,7 +112,10 @@ ifcb_extract_classified_images <- function(sample,
                       "opt" = as.data.frame(classified.mat$TBclass_above_threshold),
                       "adhoc" = as.data.frame(classified.mat$TBclass_above_adhocthresh),
                       "none" = as.data.frame(classified.mat$TBclass),
-                      stop("Invalid threshold specified"))
+                      cli_abort(c(
+                        "{.arg threshold} must be one of {.val opt}, {.val adhoc}, or {.val none}.",
+                        "x" = "You supplied {.val {threshold}}."
+                      )))
 
   # Rename the column
   names(taxa.list) <- "V1"
@@ -143,11 +149,13 @@ ifcb_extract_classified_images <- function(sample,
           normalize = normalize
         )
       }, error = function(e) {
-        message("Error occurred while processing taxon ", taxon, ": ", conditionMessage(e))
+        cli_inform(c(
+          "x" = "Error processing taxon {.val {taxon}}: {conditionMessage(e)}"
+        ))
         Sys.sleep(10) # Pause for 10 seconds
       })
     }
   } else {
-    message("No taxa found to extract")
+    cli_inform("No taxa found to extract.")
   }
 }

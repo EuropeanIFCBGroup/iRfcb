@@ -30,15 +30,18 @@ ifcb_get_trophic_type <- function(taxa_list = NULL, print_complete_list = FALSE)
 
   # Input validation using base R
   if (!is.null(taxa_list) && !is.character(taxa_list)) {
-    stop("Error: taxa_list must be a character vector.")
+    cli_abort("{.arg taxa_list} must be a character vector, not {.cls {class(taxa_list)}}.")
   }
 
   if (!is.logical(print_complete_list)) {
-    stop("Error: print_complete_list must be a logical value.")
+    cli_abort("{.arg print_complete_list} must be a logical value, not {.cls {class(print_complete_list)}}.")
   }
 
   if (!is.null(taxa_list) && print_complete_list) {
-    warning("Both taxa_list and print_complete_list are provided. Only the taxa_list results will be returned.")
+    cli_warn(c(
+      "Both {.arg taxa_list} and {.arg print_complete_list} are provided.",
+      "i" = "Only the {.arg taxa_list} results will be returned."
+    ))
   }
 
   # Create a temp dir
@@ -73,7 +76,10 @@ ifcb_get_trophic_type <- function(taxa_list = NULL, print_complete_list = FALSE)
   } else if (print_complete_list) {
     output <- summarized_df
   } else {
-    stop("Error: No valid input provided. Please specify either taxa_list or set print_complete_list to TRUE.")
+    cli_abort(c(
+      "No valid input provided.",
+      "i" = "Specify {.arg taxa_list} or set {.arg print_complete_list} to {.code TRUE}."
+    ))
   }
 
   return(output)

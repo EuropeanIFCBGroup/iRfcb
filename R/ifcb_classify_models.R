@@ -5,10 +5,12 @@
 #' `model_name` argument of [ifcb_classify_images()] and [ifcb_classify_sample()].
 #'
 #' @param gradio_url A character string specifying the base URL of the Gradio
-#'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
-#'   example Hugging Face Space with limited resources intended for testing and
-#'   demonstration. For large-scale classification, deploy your own instance of
-#'   the classification app with your own model (source code:
+#'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
+#'   hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+#'   is also available at `"https://irfcb-classify.hf.space"` (limited resources,
+#'   intended for testing and demonstration). For large-scale or production
+#'   classification, deploy your own instance of the classification app with
+#'   your own model (source code:
 #'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
 #'   pass its URL here.
 #'
@@ -28,24 +30,23 @@
 #'
 #' @export
 ifcb_classify_models <- function(
-    gradio_url = "https://irfcb-classify.hf.space") {
+    gradio_url = "https://ifcb.serve.scilifelab.se") {
 
   gradio_url <- sub("/+$", "", gradio_url)
   info_url <- paste0(gradio_url, "/gradio_api/info")
 
   resp <- tryCatch(
     curl::curl_fetch_memory(info_url),
-    error = function(e) stop("Failed to connect to Gradio API at '", info_url,
-                             "': ", e$message)
+    error = function(e) cli_abort("Failed to connect to Gradio API at {.url {info_url}}: {e$message}")
   )
 
   if (resp$status_code != 200) {
-    stop("Gradio API info request failed [", resp$status_code, "]: ", info_url)
+    cli_abort("Gradio API info request failed [{resp$status_code}]: {.url {info_url}}")
   }
 
   api_info <- tryCatch(
     jsonlite::fromJSON(rawToChar(resp$content), simplifyVector = FALSE),
-    error = function(e) stop("Failed to parse Gradio API info: ", e$message)
+    error = function(e) cli_abort("Failed to parse Gradio API info: {e$message}")
   )
 
   # Navigate to the predict_html endpoint and find the model_name parameter
@@ -53,7 +54,7 @@ ifcb_classify_models <- function(
   predict_endpoint <- endpoints$`/predict_html`
 
   if (is.null(predict_endpoint)) {
-    stop("No /predict_html endpoint found in Gradio API info")
+    cli_abort("No {.path /predict_html} endpoint found in Gradio API info.")
   }
 
   params <- predict_endpoint$parameters
@@ -66,12 +67,12 @@ ifcb_classify_models <- function(
   }
 
   if (is.null(model_param)) {
-    stop("No model_name parameter found in Gradio /predict_html endpoint")
+    cli_abort("No {.var model_name} parameter found in Gradio {.path /predict_html} endpoint.")
   }
 
   model_names <- model_param$type$enum
   if (is.null(model_names) || length(model_names) == 0) {
-    stop("No models listed in Gradio API")
+    cli_abort("No models listed in Gradio API.")
   }
 
   unlist(model_names)

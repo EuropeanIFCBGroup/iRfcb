@@ -89,7 +89,7 @@ test_that("non-existent image_folder throws error", {
       output_dir = output_dir,
       n_images = NULL
     ),
-    regexp = "Image folder does not exist"
+    regexp = "does not exist"
   )
 })
 

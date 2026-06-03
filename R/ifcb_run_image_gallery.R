@@ -37,7 +37,10 @@ ifcb_run_image_gallery <- function() {
 
   appDir <- system.file("shiny", "ifcb_image_gallery", package = "iRfcb")
   if (appDir == "") {
-    stop("Could not find ifcb_image_gallery directory. Try re-installing `iRfcb`.", call. = FALSE)
+    cli_abort(c(
+      "Could not find {.file ifcb_image_gallery} directory.",
+      "i" = "Try re-installing {.pkg iRfcb}."
+    ))
   }
 
   shiny::runApp(appDir, display.mode = "normal")

@@ -1,7 +1,7 @@
 test_that("ifcb_classify_sample errors when roi_file does not exist", {
   expect_error(
     ifcb_classify_sample("nonexistent.roi"),
-    "roi_file not found"
+    "`roi_file` not found"
   )
 })
 
@@ -110,7 +110,7 @@ test_that("ifcb_classify_sample classifies a real ROI file and returns non-NA re
   skip_on_cran()
   skip_if_offline()
   skip_if_resource_unavailable(
-    "https://irfcb-classify.hf.space/gradio_api/call/predict_html"
+    "https://ifcb.serve.scilifelab.se/gradio_api/call/predict_html"
   )
 
   test_data_zip <- test_path("test_data/test_data.zip")

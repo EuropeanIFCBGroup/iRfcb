@@ -217,14 +217,14 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
                                        out_folder,
                                        correction = 999,
                                        correct_classid = correct_classid),
-               "Invalid input: `correction` should be a file path or a character vector")
+               "should be a file path or a character vector")
 
   # Run the function and expect error
   expect_error(ifcb_correct_annotation(manual_folder,
                                        out_folder,
                                        correction = NULL,
                                        correct_classid = correct_classid),
-               "argument `correction` is missing, with no default")
+               "is missing, with no default")
 
   # Clean up the temporary virtual environment
   unlink(out_folder, recursive = TRUE)

@@ -48,34 +48,36 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
 
   if (!all(file.exists(hdr_files))) {
     missing <- hdr_files[!file.exists(hdr_files)]
-    stop(
-      "The following hdr_files do not exist:\n",
-      paste(missing, collapse = "\n"),
-      call. = FALSE
-    )
+    cli_abort(c(
+      "{length(missing)} {.arg hdr_files} do{?es/} not exist:",
+      "x" = "{.file {missing}}"
+    ))
   }
 
-  if (verbose) message("Found ", length(hdr_files), " .hdr files.")
-  if (verbose) pb <- txtProgressBar(min = 0, max = length(hdr_files), style = 3)
+  if (verbose) cli_inform("Found {length(hdr_files)} {.file .hdr} file{?s}.")
+  env <- environment()
+  if (verbose) cli_progress_bar("Reading HDR files", total = length(hdr_files), .envir = env)
 
   # Read all files into a list of data frames using a helper function
   all_hdr_data_list <- lapply(seq_along(hdr_files), function(i) {
     # Update the progress bar
-    if (verbose) setTxtProgressBar(pb, i)
+    if (verbose) cli_progress_update(.envir = env)
 
     # Call the helper function
     read_hdr_file(hdr_files[[i]])
   })
 
-  # Close the progress bar
-  if (verbose) close(pb)
+  if (verbose) cli_progress_done(.envir = env)
 
   # Combine all data frames into one
   hdr_data <- bind_rows(all_hdr_data_list)
 
   # Check if there is any data to process
   if (nrow(hdr_data) == 0) {
-    stop("No HDR data found. Check the folder path or ensure the files contain the required data.")
+    cli_abort(c(
+      "No HDR data found.",
+      "i" = "Check the folder path or ensure the files contain the required data."
+    ))
   }
 
   # Fix unique names, e.g. runType from IFCBAquire 1.x.x.x
@@ -108,7 +110,7 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   hdr_data_pivot <- suppressMessages(type_convert(hdr_data_pivot,
                                                   col_types = cols(GPSFeed = col_character())))
 
-  if (verbose) message("Processing completed.")
+  if (verbose) cli_alert_success("Processing completed.")
 
   # Remove the 'file' column from the returned data frame
   dplyr::select(hdr_data_pivot, -file)

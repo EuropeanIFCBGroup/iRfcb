@@ -63,7 +63,7 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit, flags = NULL) {
   sample_data <- data %>% filter(sample == sample_name)
 
   if (nrow(sample_data) == 0) {
-    stop("No fit parameters found for the specified sample.")
+    cli_abort("No fit parameters found for sample {.val {sample_name}}.")
   }
 
   # parse x (sizes) from colnames and y from the first row of sample_data
@@ -78,14 +78,17 @@ ifcb_psd_plot <- function(sample_name, data, fits, start_fit, flags = NULL) {
     filter(x >= start_fit)
 
   if (nrow(plot_data) == 0) {
-    stop("No valid data points remain after filtering by start_fit and removing NA y.")
+    cli_abort(c(
+      "No valid data points remain after filtering.",
+      "x" = "All points were dropped by {.arg start_fit} = {.val {start_fit}} or had {.code NA} y values."
+    ))
   }
 
   # Extract fit parameters
   fit_params <- fits %>% filter(sample == sample_name)
 
   if (nrow(fit_params) == 0) {
-    stop("No fit parameters found for the specified sample.")
+    cli_abort("No fit parameters found for sample {.val {sample_name}}.")
   }
 
   a  <- fit_params$a

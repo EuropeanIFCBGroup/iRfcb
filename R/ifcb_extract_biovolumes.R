@@ -116,11 +116,17 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   }
 
   if (is.null(class_files) && (is.null(custom_images) || is.null(custom_classes))) {
-    stop("No classification information supplied. Provide either `class_files` or both `custom_images` and `custom_classes`.")
+    cli_abort(c(
+      "No classification information supplied.",
+      "i" = "Provide either {.arg class_files} or both {.arg custom_images} and {.arg custom_classes}."
+    ))
   }
 
   if (!is.null(class_files) && (!is.null(custom_images) || !is.null(custom_classes))) {
-    warning("Both `class_files` and `custom_images/custom_classes` were provided. The function will use `class_files` and ignore `custom_images` and `custom_classes`.")
+    cli_warn(c(
+      "Both {.arg class_files} and {.arg custom_images}/{.arg custom_classes} were provided.",
+      "i" = "Using {.arg class_files} and ignoring {.arg custom_images}/{.arg custom_classes}."
+    ))
   }
 
   if (is.character(feature_files)) {
@@ -130,16 +136,20 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       } else if (dir.exists(feature_files)) {
         # It's a directory
       } else {
-        stop("The specified file or directory does not exist: ", feature_files)
+        cli_abort("The specified file or directory does not exist: {.file {feature_files}}")
       }
     } else {
       # feature_files is a vector of files
       if (!all(file.exists(feature_files))) {
-        stop("One or more specified feature files do not exist.")
+        missing <- feature_files[!file.exists(feature_files)]
+        cli_abort(c(
+          "{length(missing)} of {length(feature_files)} {.arg feature_files} do{?es/} not exist:",
+          "x" = "{.file {missing}}"
+        ))
       }
     }
   } else {
-    stop("feature_files must be a character vector of filenames or a single directory path.")
+    cli_abort("{.arg feature_files} must be a character vector of filenames or a single directory path.")
   }
 
   # Check if feature_files is a single folder path or a vector of file paths
@@ -155,7 +165,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     }
 
     if (length(class_files) == 0) {
-      stop("No classification files found")
+      cli_abort("No classification files found.")
     }
 
     # Check if files are manually classified (.h5 and .csv files are never manual)
@@ -163,7 +173,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       "class2use_manual" %in% ifcb_get_mat_names(class_files[1])
 
     if (is_manual && is.null(class2use_file)) {
-      stop("class2use must be specified when extracting manual biovolume data")
+      cli_abort("{.arg class2use_file} must be specified when extracting manual biovolume data.")
     }
   }
 
@@ -182,7 +192,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   feature_files <- feature_files[extracted_dates %in% class_date_times]
 
   if (verbose) {
-    message("Reading feature files...")
+    cli_inform("Reading feature files...")
   }
 
   # Read feature files
@@ -193,7 +203,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
                                  verbose = verbose)
 
   if (length(features) == 0) {
-    stop("No feature data files found")
+    cli_abort("No feature data files found.")
   }
 
   data_list <- vector("list", length(features))
@@ -224,10 +234,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       idx <- idx + 1
 
     } else if (drop_zero_volume) {
-      warning(sprintf(
-        "All rows were dropped for file '%s' because Biovolume == 0.",
-        file_name
-      ))
+      cli_warn("All rows were dropped for file {.file {file_name}} because {.code Biovolume == 0}.")
     }
   }
 
@@ -235,13 +242,17 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
   # Stop if the combined data frame is empty
   if (is.null(biovolume_df)) {
-    stop("No biovolume data available in feature files.")
+    cli_abort("No biovolume data available in feature files.")
   }
 
   # If custom class list is supplied
   if (!is.null(custom_images) && !is.null(custom_classes)) {
     if (length(custom_images) != length(custom_classes)) {
-      stop("Error: The number of images does not match the number of class labels. Ensure both vectors have the same length.")
+      cli_abort(c(
+        "The number of images does not match the number of class labels.",
+        "x" = "{.arg custom_images} has length {length(custom_images)}",
+        "x" = "{.arg custom_classes} has length {length(custom_classes)}"
+      ))
     }
 
     image_df <- ifcb_convert_filenames(custom_images)
@@ -279,14 +290,14 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
       # Set up the progress bar
       if (verbose && n_files > 0) {
-        message("Reading classification files...")
-        pb <- txtProgressBar(min = 0, max = n_files, style = 3)
+        cli_inform("Reading classification files...")
+        cli_progress_bar("Reading classification files", total = n_files)
       }
 
       for (i in seq_along(matching_class_files)) {
 
         if (verbose && n_files > 0) {
-          setTxtProgressBar(pb, i)
+          cli_progress_update()
         }
 
         temp <- suppressWarnings({
@@ -309,7 +320,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       }
 
       # Close the progress bar
-      if (verbose && n_files > 0) close(pb)
+      if (verbose && n_files > 0) cli_progress_done()
     }
 
     if (!is_manual) {
@@ -328,7 +339,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   unique_classes <- unique(biovolume_df$class)
 
   if (verbose) {
-    message("Retrieving WoRMS records...")
+    cli_inform("Retrieving WoRMS records...")
   }
 
   is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
@@ -340,8 +351,10 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   if (!is.null(diatom_include)) {
     matched <- is_diatom$class %in% diatom_include
     if (verbose && any(matched)) {
-      message("INFO: The following classes were manually included as diatoms via diatom_include:")
-      message(paste(sort(is_diatom$class[matched]), collapse = "\n"))
+      cli_alert_info(
+        "The following {qty(sum(matched))}class{?es} {?was/were} manually included as diatoms via {.arg diatom_include}:"
+      )
+      cli_inform("{.val {sort(is_diatom$class[matched])}}")
     }
     is_diatom$is_diatom[matched] <- TRUE
   }
@@ -356,14 +369,18 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
   # Print the classes with NA values
   if (length(na_classes$class) > 0 & verbose) {
-    message("INFO: Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:")
-    message(paste(sort(na_classes$class), collapse = "\n"))
+    cli_alert_info(
+      "Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:"
+    )
+    cli_inform("{.val {sort(na_classes$class)}}")
   }
 
   # Print the classes that are non-Diatoms
   if (length(non_diatoms$class) > 0 & verbose) {
-    message("INFO: The following classes are considered NOT diatoms for carbon calculations:")
-    message(paste(sort(non_diatoms$class), collapse = "\n"))
+    cli_alert_info(
+      "The following {qty(length(non_diatoms$class))}class{?es} {?is/are} considered NOT diatoms for carbon calculations:"
+    )
+    cli_inform("{.val {sort(non_diatoms$class)}}")
   }
 
   # Calculate carbon content based on diatom classification

@@ -31,7 +31,7 @@ ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25
 
   for (count in seq_along(hdr_file)) {
     if (!file.exists(hdr_file[[count]])) {
-      stop(sprintf("Cannot open HDR file '%s': File not found.",hdr_file[[count]]))
+      cli_abort("Cannot open HDR file {.file {hdr_file[[count]]}}: File not found.")
     }
     hdr <- ifcb_get_runtime(hdr_file[[count]])
     runtime <- hdr$runtime
@@ -40,9 +40,10 @@ ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25
     if (!hdrOnly_flag) {
       adcfilename <- sub("\\.hdr$", ".adc", hdr_file[[count]])
       if (!file.exists(adcfilename)) {
-        stop(sprintf(
-            "Cannot open ADC file '%s': File not found. If you want to proceed without the ADC file for volume estimation, set `hdrOnly_flag = TRUE`.",
-            adcfilename))
+        cli_abort(c(
+          "Cannot open ADC file {.file {adcfilename}}: File not found.",
+          "i" = "To proceed without the ADC file for volume estimation, set {.code hdrOnly_flag = TRUE}."
+        ))
       }
       adc_info <- ifcb_volume_analyzed_from_adc(adcfilename)
 

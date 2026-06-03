@@ -40,7 +40,7 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   } else {
 
     if (!file.exists(summary)) {
-      stop("Summary file does not exist: ", summary)
+      cli_abort("Summary file does not exist: {.file {summary}}")
     }
 
     if (use_python && scipy_available()) {
@@ -77,11 +77,14 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
                          "opt" = mat$classcountTB_above_optthresh,
                          "adhoc" = mat$classcountTB_above_adhocthresh,
                          "none" = mat$classcountTB,
-                         stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
+                         cli_abort(c(
+                           "{.arg threshold} must be one of {.val opt}, {.val adhoc}, or {.val none}.",
+                           "x" = "You supplied {.val {threshold}}."
+                         )))
 
   # Check if classcountTB is NULL
   if (is.null(classcountTB)) {
-    stop(paste("Class count data for threshold", threshold, "does not exist in the file."))
+    cli_abort("Class count data for threshold {.val {threshold}} does not exist in the file.")
   }
 
   # Extract species names from class2useTB
@@ -109,11 +112,14 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
                             "opt" = mat$classbiovolTB_above_optthresh,
                             "adhoc" = mat$classbiovolTB_above_adhocthresh,
                             "none" = mat$classbiovolTB,
-                            stop("Invalid threshold option. Choose from 'opt', 'adhoc', or 'none'."))
+                            cli_abort(c(
+                              "{.arg threshold} must be one of {.val opt}, {.val adhoc}, or {.val none}.",
+                              "x" = "You supplied {.val {threshold}}."
+                            )))
 
     # Check if classbiovolTB is NULL
     if (is.null(classbiovolTB)) {
-      stop(paste("Biovolume data for threshold", threshold, "does not exist in the file."))
+      cli_abort("Biovolume data for threshold {.val {threshold}} does not exist in the file.")
     }
 
     # Assign column names for biovolume

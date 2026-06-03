@@ -131,7 +131,7 @@ test_that("ifcb_extract_biovolumes manual data correctly", {
   skip_on_cran()
   skip_if_resource_unavailable("https://marinespecies.org")
 
-  expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use must be specified when extracting manual biovolume data")
+  expect_error(ifcb_extract_biovolumes(feature_folder, manual_folder), "class2use_file.*must be specified")
 
   # Run the function with test data
   biovolume_df <- ifcb_extract_biovolumes(feature_folder, manual_folder, class2use_file = class2use_file, micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", threshold = "opt", multiblob = FALSE)
@@ -208,16 +208,16 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
   image <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
 
   expect_warning(ifcb_extract_biovolumes(feature_folder, class_folder, custom_images = image, verbose = FALSE),
-                 "Both `class_files` and `custom_images/custom_classes` were provided")
+                 "Both")
 
   expect_error(ifcb_extract_biovolumes(feature_folder, verbose = FALSE),
                "No classification information supplied")
 
   expect_error(ifcb_extract_biovolumes("not_a_dir", class_folder, verbose = FALSE),
-               "The specified file or directory does not exist")
+               "specified file or directory does not exist")
 
   expect_error(ifcb_extract_biovolumes(0, class_folder, verbose = FALSE),
-               "feature_files must be a character vector of filenames")
+               "must be a character vector")
 })
 
 unlink(temp_dir, recursive = TRUE)

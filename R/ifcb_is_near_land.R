@@ -90,7 +90,7 @@ ifcb_is_near_land <- function(latitudes,
   # If all positions are NA, return the result early
   if (all(na_positions)) {
     if (plot) {
-      stop("All positions are NA. No plot can be generated.")
+      cli_abort("All positions are NA. No plot can be generated.")
     }
     return(result)
   }
@@ -130,10 +130,9 @@ ifcb_is_near_land <- function(latitudes,
         chunks <- split(oids, ceiling(seq_along(oids) / chunk_size))
         n_chunks <- length(chunks)
 
-        # set up progress bar
         if (verbose && n_chunks > 0) {
-          message("Downloading EEA coastline data...")
-          pb <- txtProgressBar(min = 0, max = n_chunks, style = 3)
+          cli_inform("Downloading EEA coastline data...")
+          cli_progress_bar("Downloading EEA coastline", total = n_chunks)
         }
 
         coast_list <- vector("list", n_chunks)
@@ -141,7 +140,7 @@ ifcb_is_near_land <- function(latitudes,
         for (i in seq_along(chunks)) {
 
           if (verbose && n_chunks > 0) {
-            setTxtProgressBar(pb, i)
+            cli_progress_update()
           }
 
           query <- paste0(
@@ -155,9 +154,8 @@ ifcb_is_near_land <- function(latitudes,
           coast_list[[i]] <- st_read(query, quiet = TRUE)
         }
 
-        # close progress bar
         if (verbose && n_chunks > 0) {
-          close(pb)
+          cli_progress_done()
         }
 
         coast <- do.call(rbind, coast_list)

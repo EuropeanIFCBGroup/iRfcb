@@ -37,7 +37,7 @@
 #' @seealso \code{\link{ifcb_get_mat_names}} \url{https://github.com/hsosik/ifcb-analysis}
 ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_python = FALSE) {
   if (!file.exists(mat_file)) {
-    stop("MAT file does not exist: ", mat_file)
+    cli_abort("MAT file does not exist: {.file {mat_file}}")
   }
 
   if (use_python && scipy_available()) {
@@ -49,7 +49,10 @@ ifcb_get_mat_variable <- function(mat_file, variable_name = "class2use", use_pyt
 
   # Check if the specified variable name exists in the MAT file
   if (!variable_name %in% names(class_info)) {
-    stop("Variable name not found in MAT file")
+    cli_abort(c(
+      "Variable {.val {variable_name}} not found in MAT file.",
+      "i" = "Use {.fn ifcb_get_mat_names} to list available variables."
+    ))
   }
 
   # Extract and return the classes as a character vector

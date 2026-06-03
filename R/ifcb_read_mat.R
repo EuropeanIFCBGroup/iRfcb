@@ -33,7 +33,7 @@ ifcb_read_mat <- function(file_path) {
 
   # Check if the file exists
   if (!file.exists(file_path)) {
-    stop("File does not exist: ", file_path)
+    cli_abort("File does not exist: {.file {file_path}}")
   }
 
   # Load Python script

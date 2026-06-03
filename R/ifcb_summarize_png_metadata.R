@@ -26,7 +26,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
   image_paths <- list.files(png_folder, pattern = "D.*\\.png", recursive = TRUE)
 
   if (length(image_paths) == 0) {
-    stop("No PNG files found in ", png_folder)
+    cli_abort("No PNG files found in {.file {png_folder}}")
   }
 
   image <- basename(image_paths)
@@ -39,7 +39,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     hdr_files <- list.files(hdr_folder, pattern = "\\.hdr$", recursive = TRUE, full.names = TRUE)
 
     if (length(hdr_files) == 0) {
-      warning("No HDR files found in ", hdr_folder)
+      cli_warn("No HDR files found in {.file {hdr_folder}}")
 
       hdr_data <- tibble(sample = NA, timestamp = NA, date = NA, year = NA,
                          month = NA, day = NA, time = NA, ifcb_number = NA)
@@ -59,7 +59,7 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
     feature_files <- list.files(feature_folder, pattern = "\\.csv$", recursive = TRUE, full.names = TRUE)
 
     if (length(feature_files) == 0) {
-      warning("No feature files found in ", feature_folder)
+      cli_warn("No feature files found in {.file {feature_folder}}")
 
       features_df <- tibble(sample = NA, roi_number = NA)
 

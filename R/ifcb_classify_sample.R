@@ -11,17 +11,18 @@
 #'
 #' @param roi_file A character string specifying the path to the `.roi` file.
 #' @param gradio_url A character string specifying the base URL of the Gradio
-#'   application. Default is `"https://irfcb-classify.hf.space"`, which is an
-#'   example Hugging Face Space with limited resources intended for testing and
-#'   demonstration. For large-scale classification, deploy your own instance of
-#'   the classification app (source code:
-#'   \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app}) and
-#'   pass its URL here.
+#'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
+#'   hosted on the SciLifeLab Serve platform. A free example Hugging Face Space
+#'   is also available at `"https://irfcb-classify.hf.space"` (limited resources,
+#'   intended for testing and demonstration). For large-scale or production
+#'   classification, deploy your own instance of the classification app
+#'   (source code: \url{https://github.com/EuropeanIFCBGroup/ifcb-inference-app})
+#'   and pass its URL here.
 #' @param top_n An integer specifying the number of top predictions to return
 #'   per image. Default is `1` (top prediction only). Use `Inf` to return all
 #'   predictions.
 #' @param model_name A character string specifying the name of the CNN model
-#'   to use for classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
+#'   to use for classification. Default is `"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"`. Use
 #'   [ifcb_classify_models()] to list all available models.
 #' @param verbose A logical value indicating whether to print progress messages.
 #'   Default is `TRUE`.
@@ -68,14 +69,14 @@
 #' @export
 ifcb_classify_sample <- function(
     roi_file,
-    gradio_url = "https://irfcb-classify.hf.space",
+    gradio_url = "https://ifcb.serve.scilifelab.se",
     top_n = 1,
-    model_name = "SMHI NIVA ResNet50 V5",
+    model_name = "SMHI NIVA SYKE SAMS SZN ResNet 50 V6",
     verbose = TRUE,
     ...) {
 
   if (!file.exists(roi_file)) {
-    stop("roi_file not found: ", roi_file)
+    cli_abort("{.arg roi_file} not found: {.file {roi_file}}")
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
@@ -87,14 +88,14 @@ ifcb_classify_sample <- function(
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
 
   # Extract PNG images from the ROI file
-  if (verbose) message("Extracting images from: ", basename(roi_file))
+  if (verbose) cli_inform("Extracting images from {.file {basename(roi_file)}}")
   ifcb_extract_pngs(roi_file, out_folder = temp_dir, verbose = verbose, ...)
 
   png_files <- list.files(temp_dir, pattern = "\\.png$", full.names = TRUE,
                           recursive = TRUE)
 
   if (length(png_files) == 0) {
-    warning("No PNG images were extracted from: ", roi_file)
+    cli_warn("No PNG images were extracted from {.file {roi_file}}.")
     return(data.frame(file_name = character(), class_name = character(),
                       class_name_auto = character(),
                       score = numeric(), model_name = character()))

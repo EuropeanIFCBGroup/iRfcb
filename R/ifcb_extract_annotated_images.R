@@ -82,7 +82,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
   manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
 
   if (length(manualfiles) == 0) {
-    stop("No manual files found in the specified directory: ", manual_folder)
+    cli_abort("No manual files found in {.arg manual_folder}: {.file {manual_folder}}")
   }
 
   # Get the class names from the specified file
@@ -92,7 +92,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
   for (manual_file in manualfiles) {
 
     if (file.size(manual_file) == 0) {
-      warning(paste("Empty .mat file:", manual_file, "Skipping."))
+      cli_warn("Empty {.file .mat} file: {.file {manual_file}}. Skipping.")
       next
     }
 
@@ -113,7 +113,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
     roifilename <- roifiles[grepl(sample, roifiles)]
 
     if (length(roifilename) == 0) {
-      warning(paste("ROI file for sample", sample, "not found. Skipping this sample."))
+      cli_warn("ROI file for sample {.val {sample}} not found. Skipping this sample.")
       next
     }
 
@@ -131,7 +131,7 @@ ifcb_extract_annotated_images <- function(manual_folder, class2use_file, roi_fol
     if (is.character(skip_class)) {
       filtered_skip_class <- lookup_table %>% filter(name %in% skip_class)
       if (nrow(filtered_skip_class) == 0) {
-        stop("None of the class names provided in skip_class were found in class2use.")
+        cli_abort("None of the class names provided in {.arg skip_class} were found in {.arg class2use}.")
       }
       skip_class <- filtered_skip_class %>% pull(manual)
     }

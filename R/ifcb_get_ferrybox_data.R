@@ -40,18 +40,18 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
                                    timestamp_param = "38059", max_time_diff_min = 1) {
   # Validate inputs
   if (!inherits(timestamps, "POSIXct")) {
-    stop("The 'timestamps' argument must be a vector of POSIXct timestamps.")
+    cli_abort("{.arg timestamps} must be a vector of {.cls POSIXct} timestamps.")
   }
 
   if (!dir.exists(ferrybox_folder)) {
-    stop("The specified ferrybox folder does not exist.")
+    cli_abort("{.arg ferrybox_folder} does not exist: {.file {ferrybox_folder}}")
   }
 
   # List all .txt files in the specified folder (excluding subfolders)
   ferrybox_files <- list.files(ferrybox_folder, pattern = "\\.txt$", full.names = TRUE, recursive = FALSE)
 
   if (length(ferrybox_files) == 0) {
-    stop("No .txt files found in the specified ferrybox folder.")
+    cli_abort("No {.file .txt} files found in {.arg ferrybox_folder}: {.file {ferrybox_folder}}")
   }
 
   # Convert ferrybox file names to dataframe and extract timestamps
@@ -60,7 +60,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     dplyr::rowwise()
 
   if (nrow(ferrybox_files_df) == 0) {
-    stop("No ferrybox files matching the specified ship name were found.")
+    cli_abort("No ferrybox files matching ship {.val {ship}} were found.")
   }
 
   ferrybox_files_df <- ferrybox_files_df %>%
@@ -83,7 +83,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     dplyr::filter(in_range)
 
   if (nrow(filtered_ferrybox_files_df) == 0) {
-    stop("No ferrybox files contain data within the provided timestamps.")
+    cli_abort("No ferrybox files contain data within the provided timestamps.")
   }
 
   # Initialize an empty data frame to store ferrybox data
@@ -99,7 +99,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
                  colClasses = "character",
                  na.strings = "")
     }, error = function(e) {
-      warning(paste("Failed to read file:", file, "-", e$message))
+      cli_warn("Failed to read file {.file {file}}: {e$message}")
       NULL
     })
 
@@ -109,17 +109,20 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   }
 
   if (nrow(ferrybox_data) == 0) {
-    stop("No valid ferrybox data could be read from the filtered files.")
+    cli_abort("No valid ferrybox data could be read from the filtered files.")
   }
 
   # Ensure that the specified parameters exist in the data
   missing_params <- setdiff(parameters, colnames(ferrybox_data))
   if (length(missing_params) > 0) {
-    stop(paste("The following parameters are missing from the ferrybox data:", paste(missing_params, collapse = ", ")))
+    cli_abort(c(
+      "The following {qty(length(missing_params))}parameter{?s} {?is/are} missing from the ferrybox data:",
+      "x" = "{.val {missing_params}}"
+    ))
   }
 
   if (!timestamp_param %in% colnames(ferrybox_data)) {
-    stop(paste("Timestamp column", timestamp_param, "is missing from the ferrybox data."))
+    cli_abort("Timestamp column {.val {timestamp_param}} is missing from the ferrybox data.")
   }
 
   # Extract and clean ferrybox position data
@@ -128,7 +131,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
       timestamp_minute_temp = tryCatch({
         ymd_hms(as.numeric(.data[[timestamp_param]]), tz = "UTC")
       }, error = function(e) {
-        stop("Error parsing ferrybox timestamp data.")
+        cli_abort("Error parsing ferrybox timestamp data.")
       })
     ) %>%
     dplyr::mutate(
@@ -141,7 +144,7 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     dplyr::mutate(across(all_of(parameters), as.numeric, .names = "numeric_{col}"))
 
   if (nrow(ferrybox_position) == 0) {
-    stop("No valid position data could be extracted from the ferrybox data.")
+    cli_abort("No valid position data could be extracted from the ferrybox data.")
   }
 
   # Merge the ferrybox position data with the input timestamps
@@ -198,8 +201,10 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     dplyr::filter(n > 1)
 
   if (nrow(duplicate_rows) > 0) {
-    warning("Multiple rows detected for the following minute timestamps: ",
-            paste(duplicate_rows$timestamp, collapse = ", "))
+    cli_warn(c(
+      "Multiple rows detected for the following {qty(nrow(duplicate_rows))}minute timestamp{?s}:",
+      "x" = "{.val {as.character(duplicate_rows$timestamp)}}"
+    ))
   }
 
   # Check if latitude_param and longitude_param are in parameters and rename accordingly

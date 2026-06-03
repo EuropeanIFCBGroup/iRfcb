@@ -3,7 +3,7 @@
 test_that("ifcb_save_classification errors when roi_file does not exist", {
   expect_error(
     ifcb_save_classification("nonexistent.roi", output_folder = tempdir()),
-    "roi_file not found"
+    "`roi_file` not found"
   )
 })
 
@@ -427,7 +427,7 @@ test_that("ifcb_save_classification produces a valid HDF5 file", {
   skip_if_offline()
   skip_if_not_installed("hdf5r")
   skip_if_resource_unavailable(
-    "https://irfcb-classify.hf.space/gradio_api/call/predict_scores"
+    "https://ifcb.serve.scilifelab.se/gradio_api/call/predict_scores"
   )
 
   test_data_zip <- test_path("test_data/test_data.zip")

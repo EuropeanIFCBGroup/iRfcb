@@ -1,7 +1,7 @@
 test_that("ifcb_classify_images errors when a PNG file does not exist", {
   expect_error(
     ifcb_classify_images("nonexistent.png"),
-    "PNG file\\(s\\) not found"
+    "PNG file.*not found"
   )
 })
 
@@ -12,7 +12,7 @@ test_that("ifcb_classify_images errors when any path in a vector does not exist"
   on.exit(unlink(tmp))
   expect_error(
     ifcb_classify_images(c(tmp, "missing.png")),
-    "PNG file\\(s\\) not found"
+    "PNG file.*not found"
   )
 })
 
@@ -126,7 +126,7 @@ test_that("ifcb_classify_images classifies a real PNG and returns non-NA results
   skip_on_cran()
   skip_if_offline()
   skip_if_resource_unavailable(
-    "https://irfcb-classify.hf.space/gradio_api/call/predict_html"
+    "https://ifcb.serve.scilifelab.se/gradio_api/call/predict_html"
   )
 
   test_data_zip <- test_path("test_data/test_data.zip")
@@ -161,7 +161,7 @@ test_that("ifcb_classify_images applies thresholds: class_name may differ from c
   skip_on_cran()
   skip_if_offline()
   skip_if_resource_unavailable(
-    "https://irfcb-classify.hf.space/gradio_api/call/predict_html"
+    "https://ifcb.serve.scilifelab.se/gradio_api/call/predict_html"
   )
 
   test_data_zip <- test_path("test_data/test_data.zip")

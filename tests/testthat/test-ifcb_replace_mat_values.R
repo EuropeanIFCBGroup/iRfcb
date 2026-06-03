@@ -35,7 +35,7 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
                     file.path(manual_folder, "D20220124T144202_IFCB139.mat"))
 
   # Run the function
-  expect_warning(ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index), "Empty .mat file")
+  expect_warning(ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index), "Empty")
 
   # Clean up the temporary virtual environment
   unlink(manual_folder, recursive = TRUE)
@@ -49,7 +49,7 @@ test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
   out_folder <- file.path(tempdir(), "out")
 
   expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1),
-               paste("The manual folder does not exist:"))
+               "does not exist")
 
   unlink(manual_folder, recursive = TRUE)
 })
@@ -72,7 +72,7 @@ test_that("ifcb_replace_mat_values handles missing files in manual folder gracef
   }
 
   expect_error(ifcb_replace_mat_values(manual_folder, out_folder, 99, 1, 0),
-               paste("No files found in the manual folder:"))
+               "No .* files found")
 
   unlink(manual_folder, recursive = TRUE)
 })

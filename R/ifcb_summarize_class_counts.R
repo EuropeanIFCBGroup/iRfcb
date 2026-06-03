@@ -75,7 +75,10 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
     } else if (file.exists(file.path(hdr_folder, substr(filelist[1], 2, 5), substr(filelist[1], 1, 9), paste0(filelist[1], ".hdr")))) {
       hdrfiles <- file.path(hdr_folder, substr(filelist, 2, 5), substr(filelist, 1, 9), paste0(filelist, ".hdr"))
     } else {
-      stop("First hdr file not found. Check input directory.")
+      cli_abort(c(
+        "First hdr file not found.",
+        "i" = "Check input directory: {.file {hdr_folder}}"
+      ))
     }
   }
 
@@ -92,7 +95,7 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
 
   for (filecount in seq_along(classfiles)) {
     if (filecount %% 10 == 0) {
-      message("reading ", filecount, " of ", length(classfiles))
+      cli_inform("Reading {filecount} of {length(classfiles)}")
     }
     ml_analyzed[filecount] <- ifcb_volume_analyzed(hdrfiles[filecount])
     if (exists("adhocthresh")) {

@@ -37,7 +37,7 @@ test_that("ifcb_psd_plot handles missing sample in data", {
                   data = sample_data,
                   fits = fit_params,
                   start_fit = 1),
-    "No fit parameters found for the specified sample."
+    "No fit parameters found"
   )
 })
 
