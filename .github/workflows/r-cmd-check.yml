@@ -23,7 +23,7 @@ jobs:
           curl -L -A "Mozilla/5.0" https://raw.githubusercontent.com/EuropeanIFCBGroup/iRfcb/6bcd51cbf77dcb20dfacb19446a3692d93e13aba/data-raw/48158716.zip -o vignettes/data/48158716.zip
 
       - name: Upload vignette data artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vignette-data
           path: vignettes/data/48158716.zip
