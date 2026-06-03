@@ -34,6 +34,8 @@
 
 ## iRfcb 0.4.3
 
+CRAN release: 2025-03-15
+
 ### Minor improvements and fixes
 
 - [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)

@@ -2,6 +2,8 @@
 
 ## iRfcb 0.8.0
 
+CRAN release: 2026-02-27
+
 ### New features
 
 - New function
@@ -85,6 +87,8 @@
     (replaced by `class_recursive`).
 
 ## iRfcb 0.8.1
+
+CRAN release: 2026-03-01
 
 ### Bug fixes
 

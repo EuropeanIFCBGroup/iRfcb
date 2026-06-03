@@ -2,6 +2,8 @@
 
 ## iRfcb 0.6.0
 
+CRAN release: 2025-11-20
+
 ### New features
 
 - New functions for interacting with the IFCB Dashboard API:

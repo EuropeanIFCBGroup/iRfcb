@@ -27,6 +27,7 @@ IFCB data.
 You can install the package from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
@@ -42,6 +43,7 @@ environment variable. For more details, please refer to the package
 Load the `iRfcb` library:
 
 ``` r
+
 library(iRfcb)
 ```
 
@@ -52,6 +54,7 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 (Torstensson et al. 2024) with the following function:
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -72,6 +75,7 @@ running the PSD quality check, ensure the necessary Python environment
 is set up and activated:
 
 ``` r
+
 # Define path to virtual environment
 env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
 
@@ -101,6 +105,7 @@ psd <- ifcb_psd(
 The results can be printed and visualized through plots:
 
 ``` r
+
 # Print output from PSD
 head(psd$fits)
 ```
@@ -115,6 +120,7 @@ head(psd$fits)
     ## 5 D20230915T… 4.39e10 -6.03 0.981            3           0.961 FALSE        71.5
 
 ``` r
+
 head(psd$flags)
 ```
 
@@ -125,6 +131,7 @@ head(psd$flags)
     ## 2 D20230915T093804_IFCB134 High Humidity
 
 ``` r
+
 # Plot PSD of the first sample
 plot <- ifcb_psd_plot(
   sample_name = psd$data$sample[1],
@@ -148,6 +155,7 @@ position data in the `.hdr` files (or from vectors of latitudes and
 longitudes):
 
 ``` r
+
 # Read HDR data and extract GPS position (when available)
 gps_data <- ifcb_read_hdr_data(
   "data/data/", 
@@ -180,6 +188,7 @@ head(gps_data)
     ## #   near_land <lgl>
 
 ``` r
+
 # Alternatively, you can choose to plot the points on a map
 near_land_plot <- ifcb_is_near_land(
   gps_data$gpsLatitude,
@@ -208,6 +217,7 @@ shape-file) from which an IFCB sample was collected, analyze the
 position data:
 
 ``` r
+
 # Define example latitude and longitude vectors
 latitudes <- c(55.337, 54.729, 56.311, 57.975)
 longitudes <- c(12.674, 14.643, 12.237, 10.637)
@@ -222,6 +232,7 @@ print(points_in_the_baltic)
     ## [4] "17 - Skagerrak"
 
 ``` r
+
 # Plot the points and the basins
 ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 ```
@@ -239,6 +250,7 @@ This check is useful if you only want to apply a classifier specifically
 to phytoplankton from the Baltic Sea.
 
 ``` r
+
 # Define example latitude and longitude vectors
 latitudes <- c(55.337, 54.729, 56.311, 57.975)
 longitudes <- c(12.674, 14.643, 12.237, 10.637)
@@ -253,6 +265,7 @@ print(points_in_the_baltic)
     ## [1]  TRUE  TRUE FALSE FALSE
 
 ``` r
+
 # Plot the points and the basin
 ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
 ```
@@ -271,6 +284,7 @@ ferrybox data file is provided in `iRfcb` with data matching sample
 **D20220522T000439_IFCB134**.
 
 ``` r
+
 # Print available coordinates from .hdr files
 head(gps_data, 4)
 ```
@@ -286,6 +300,7 @@ head(gps_data, 4)
     ## #   near_land <lgl>
 
 ``` r
+
 # Define path where ferrybox data are located
 ferrybox_folder <- "data/ferrybox_data"
 
@@ -316,6 +331,7 @@ such as temperature (parameter number **8180**) and salinity (parameter
 number **8181**).
 
 ``` r
+
 # Get salinity and temperature from ferrybox data
 ferrybox_data <- ifcb_get_ferrybox_data(gps_data$timestamp,
                                         ferrybox_folder,

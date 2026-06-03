@@ -34,6 +34,7 @@ algorithms.
 You can install the package from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
@@ -49,6 +50,7 @@ environment variable. For more details, please refer to the package
 Load the `iRfcb` library:
 
 ``` r
+
 library(iRfcb)
 ```
 
@@ -59,6 +61,7 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 (Torstensson et al. 2024) with the following function:
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -75,6 +78,7 @@ Extract annotated ROIs as `.png` images in subfolders for each class,
 skipping the **unclassified** (class id 1) category:
 
 ``` r
+
 # Extract .png images
 ifcb_extract_annotated_images(
   manual_folder = "data/manual",
@@ -96,6 +100,7 @@ file into the zip archive. A template **README** file is included with
 the `iRfcb` package.
 
 ``` r
+
 # Create zip-archive
 ifcb_zip_pngs(
   png_folder = "data/extracted_images",
@@ -109,12 +114,9 @@ ifcb_zip_pngs(
 ```
 
     ## Creating README file...
-
     ## Creating MANIFEST.txt...
-
     ## Creating zip archive...
-
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip
+    ## ✔ Zip archive created: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_annotated_images_corrected.zip
 
 ## Package MATLAB Directory
 
@@ -123,6 +125,7 @@ to the files in the [SMHI IFCB Plankton Image Reference
 Library](https://doi.org/10.17044/scilifelab.25883455):
 
 ``` r
+
 # Create zip-archive
 ifcb_zip_matlab(
   manual_folder = "data/manual",
@@ -140,22 +143,14 @@ ifcb_zip_matlab(
 ```
 
     ## Listing all files...
-
     ## Copying manual files...
-
     ## Copying feature files...
-
     ## Copying data files...
-
     ## Copying class2use file...
-
     ## Creating README file...
-
     ## Creating MANIFEST.txt...
-
     ## Creating zip archive...
-
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip
+    ## ✔ Zip archive created: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/ifcb_matlab_files_corrected.zip
 
 ## Create MANIFEST.txt
 
@@ -163,11 +158,12 @@ Create a manifest file for the zip-archive (required for some data
 repositories):
 
 ``` r
+
 # Create MANIFEST.txt of the zip folder content
 ifcb_create_manifest("data/zip")
 ```
 
-    ## MANIFEST.txt has been created at data/zip/MANIFEST.txt
+    ## ✔ MANIFEST.txt has been created at data/zip/MANIFEST.txt
 
 ## Merge Manual Datasets
 
@@ -190,6 +186,7 @@ datasets are large, and the downloading and merging processes may take
 considerable time.
 
 ``` r
+
 # Define data directories
 skagerrak_kattegat_dir <- "data_skagerrak_kattegat"
 tangesund_dir <- "data_tangesund"

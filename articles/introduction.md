@@ -24,12 +24,14 @@ the project’s [webpage](https://europeanifcbgroup.github.io/iRfcb/).
 You can install the package from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
 Load the `iRfcb` and `dplyr` libraries:
 
 ``` r
+
 library(iRfcb)
 ```
 
@@ -40,6 +42,7 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 (Torstensson et al. 2024) with the following function:
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -57,6 +60,7 @@ available in `iRfcb`.
 Extract timestamps from sample names or filenames:
 
 ``` r
+
 # Example sample names
 filenames <- list.files("data/data/2023/D20230314", recursive = TRUE)
 
@@ -69,6 +73,7 @@ print(filenames)
     ## [5] "D20230314T003836_IFCB134.hdr" "D20230314T003836_IFCB134.roi"
 
 ``` r
+
 # Convert filenames to timestamps
 timestamps <- ifcb_convert_filenames(filenames)
 
@@ -90,6 +95,7 @@ If the filename includes ROI numbers (e.g., in an extracted `.png`
 image), a separate column, `roi`, will be added to the output.
 
 ``` r
+
 # Example sample names
 filenames <- list.files("data/png/Alexandrium_pseudogonyaulax_050")
 
@@ -101,6 +107,7 @@ print(filenames)
     ## [3] "D20220712T222710_IFCB134_00044.png"
 
 ``` r
+
 # Convert filenames to timestamps
 timestamps <- ifcb_convert_filenames(filenames)
 
@@ -122,6 +129,7 @@ The analyzed volume of a sample can be calculated using data from `.hdr`
 and `.adc` files.
 
 ``` r
+
 # Path to HDR file
 hdr_file <- "data/data/2023/D20230314/D20230314T001205_IFCB134.hdr"
 
@@ -139,6 +147,7 @@ print(volume_analyzed)
 Get the runtime from a `.hdr` file:
 
 ``` r
+
 # Get runtime from HDR-file
 run_time <- ifcb_get_runtime(hdr_file)
 
@@ -157,6 +166,7 @@ print(run_time)
 Read all feature files (`.csv`) from a folder:
 
 ``` r
+
 # Read feature files from a folder
 features <- ifcb_read_features("data/features/2023/",
                                verbose = FALSE) # Do not print progress bar
@@ -187,6 +197,7 @@ print(features[[1]])
     ## #   moment_invariant2 <dbl>, moment_invariant3 <dbl>, …
 
 ``` r
+
 # Read only multiblob feature files
 multiblob_features <- ifcb_read_features("data/features/2023", 
                                          multiblob = TRUE,
@@ -230,6 +241,7 @@ The `gamma` can be adjusted to enhance image contrast, and an optional
 scale bar can be added by specifying `scale_bar_um`.
 
 ``` r
+
 # All ROIs in sample
 ifcb_extract_pngs(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
@@ -238,17 +250,20 @@ ifcb_extract_pngs(
 ) 
 ```
 
-    ## Writing 1218 ROIs from D20230314T001205_IFCB134.roi to data/data/2023/D20230314/D20230314T001205_IFCB134
+    ## Writing 1218 ROIs from D20230314T001205_IFCB134.roi to
+    ## data/data/2023/D20230314/D20230314T001205_IFCB134
 
 Extract specific ROIs:
 
 ``` r
+
 # Only ROI number 2 and 5
 ifcb_extract_pngs("data/data/2023/D20230314/D20230314T003836_IFCB134.roi",
                   ROInumbers = c(2, 5))
 ```
 
-    ## Writing 2 ROIs from D20230314T003836_IFCB134.roi to data/data/2023/D20230314/D20230314T003836_IFCB134
+    ## Writing 2 ROIs from D20230314T003836_IFCB134.roi to
+    ## data/data/2023/D20230314/D20230314T003836_IFCB134
 
 To extract annotated images or classified results from MATLAB files,
 please see the `vignette("image-export-tutorial")` and
@@ -258,11 +273,12 @@ please see the `vignette("image-export-tutorial")` and
 
 IFCB images can be classified directly in R using a CNN model served by
 a [Gradio](https://www.gradio.app/) application. By default, the
-classification functions use a public example Space hosted on Hugging
-Face (`https://irfcb-classify.hf.space`). This Space has limited
-resources and is intended for testing and demonstration purposes. For
-large-scale or production classification, we recommend deploying your
-own instance of the [IFCB Classification
+classification functions use an instance hosted on the SciLifeLab Serve
+platform (`https://ifcb.serve.scilifelab.se`). A free example Space is
+also available on Hugging Face (`https://irfcb-classify.hf.space`); it
+has limited resources and is intended for testing and demonstration
+purposes. For large-scale or production classification, we recommend
+deploying your own instance of the [IFCB Classification
 App](https://github.com/EuropeanIFCBGroup/ifcb-inference-app) with your
 own model and passing its URL via the `gradio_url` argument.
 
@@ -273,6 +289,7 @@ Use
 to list the CNN models available on the Gradio server:
 
 ``` r
+
 ifcb_classify_models()
 ```
 
@@ -283,6 +300,7 @@ extracts images from a `.roi` file internally and returns predictions
 without requiring a separate extraction step:
 
 ``` r
+
 # Classify all images in a sample
 results <- ifcb_classify_sample(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
@@ -300,6 +318,7 @@ to
 [`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md):
 
 ``` r
+
 # List extracted PNG files
 png_files <- list.files(
   "data/data/2023/D20230314/D20230314T001205_IFCB134",
@@ -316,13 +335,13 @@ print(results)
 
 Both functions return a data frame with `file_name`, `class_name`,
 `class_name_auto`, `score`, and `model_name` columns, and query the
-Gradio API at `https://irfcb-classify.hf.space` by default. Per-class F2
-optimal thresholds are always applied: `class_name` contains the
+Gradio API at `https://ifcb.serve.scilifelab.se` by default. Per-class
+F2 optimal thresholds are always applied: `class_name` contains the
 threshold-applied classification (labeled `"unclassified"` when below
 threshold), while `class_name_auto` contains the winning class without
 any threshold. The `top_n` argument controls how many top predictions
 are returned per image, and `model_name` specifies which CNN model to
-use (default: `"SMHI NIVA ResNet50 V5"`).
+use (default: `"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"`).
 
 ### Save Classification Results
 
@@ -331,6 +350,7 @@ classifies all images in a `.roi` file and saves the full score matrix.
 Three output formats are supported via the `format` argument:
 
 ``` r
+
 # HDF5 (default) - IFCB Dashboard v3 format (requires hdf5r package)
 ifcb_save_classification(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
@@ -383,6 +403,7 @@ additional tools and functionality, the R package
 comprehensive suite of options for interacting with the WoRMS database.
 
 ``` r
+
 # Example taxa names
 taxa_names <- c("Alexandrium_pseudogonyaulax", "Guinardia_delicatula")
 
@@ -420,6 +441,7 @@ and
 for carbon calculations (not included in NAMESPACE).
 
 ``` r
+
 # Read class2use file and select five taxa
 class2use <- ifcb_get_mat_variable("data/config/class2use.mat")[10:15]
 
@@ -448,6 +470,7 @@ This function takes a list of taxa names and matches them with the
 **SMHI Trophic Type** list used in [SHARK](https://shark.smhi.se/en/).
 
 ``` r
+
 # Example taxa names
 taxa_list <- c(
   "Acanthoceras zachariasii",
@@ -473,6 +496,7 @@ This function is used by SMHI to map IFCB data into the
 format. An example submission is also provided in `iRfcb`.
 
 ``` r
+
 # Get column names from example
 shark_colnames <- ifcb_get_shark_colnames()
 
@@ -490,6 +514,7 @@ print(shark_colnames)
     ## #   LATNM_SFLAG <chr>, TRPHY <chr>, APHIA_ID <dbl>, IMAGE_VERIFICATION <chr>, …
 
 ``` r
+
 # Load example stored from `iRfcb`
 shark_example <- ifcb_get_shark_example()
 

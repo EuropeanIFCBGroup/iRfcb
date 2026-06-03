@@ -27,12 +27,14 @@ required, which can be generated using the `iRfcb` package.
 You can install the package from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
 Load the required libraries:
 
 ``` r
+
 library(iRfcb)
 library(dplyr) # For data wrangling
 library(readr) # For creating .tsv files
@@ -46,6 +48,7 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 (Torstensson et al. 2024) with the following function:
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -66,6 +69,7 @@ submission to EcoTaxa as a zip-archive.
 Extract all ROIs from a sample as `.png` images:
 
 ``` r
+
 # Define path to sample that you wish to prepare for a EcoTaxa submission
 sample_path <- "data/data/2023/D20230314/D20230314T003836_IFCB134"
 
@@ -73,7 +77,8 @@ sample_path <- "data/data/2023/D20230314/D20230314T003836_IFCB134"
 ifcb_extract_pngs(sample_path)
 ```
 
-    ## Writing 1122 ROIs from D20230314T003836_IFCB134.roi to data/data/2023/D20230314/D20230314T003836_IFCB134
+    ## Writing 1122 ROIs from D20230314T003836_IFCB134.roi to
+    ## data/data/2023/D20230314/D20230314T003836_IFCB134
 
 By default, images are extracted with raw pixel values preserved from
 the camera, matching the output of IFCB Dashboard and other standard
@@ -81,6 +86,7 @@ IFCB software. To stretch pixel values to the full 0-255 contrast range,
 set `normalize = TRUE`:
 
 ``` r
+
 ifcb_extract_pngs(sample_path, normalize = TRUE)
 ```
 
@@ -89,6 +95,7 @@ ifcb_extract_pngs(sample_path, normalize = TRUE)
 Extract image metadata from the `.png` directory:
 
 ``` r
+
 # Extract image metadata
 metadata_sample <- ifcb_summarize_png_metadata(sample_path)
 ```
@@ -102,6 +109,7 @@ headers can be specified through the arguments of
 [`ifcb_get_ecotaxa_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ecotaxa_example.md).
 
 ``` r
+
 # Get the minimal EcoTaxa metadata header names
 ecotaxa_minimal_headers <- ifcb_get_ecotaxa_example("minimal")[0, ]
 
@@ -122,6 +130,7 @@ The metadata for all images in the subfolder are stored in a `.tsv`
 file, and a zipped archive is prepared for submission to EcoTaxa.
 
 ``` r
+
 # Write metadata tsv file
 write_tsv(ecotaxa_minimal,
           file.path(
@@ -142,8 +151,7 @@ ifcb_zip_pngs(
 ```
 
     ## Creating zip archive...
-
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip
+    ## ✔ Zip archive created: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/D20230314T003836_IFCB134_ecotaxa.zip
 
 ## Annotated Images
 
@@ -159,6 +167,7 @@ Extract annotated ROIs as `.png` images in subfolders for each class,
 skipping the **unclassified** (class id 1) category:
 
 ``` r
+
 # Extract .png images
 ifcb_extract_annotated_images(
   manual_folder = "data/manual",
@@ -179,6 +188,7 @@ sample based on `.mat` file creation dates and appends this information
 to the summarized dataset.
 
 ``` r
+
 # Summarize image metadata from feature and hdr files
 metadata <- ifcb_summarize_png_metadata(
   png_folder = "data/extracted_images",
@@ -213,6 +223,7 @@ following code demonstrates how to clean class names and retrieve
 taxonomic details from WoRMS, such as **AphiaID**.
 
 ``` r
+
 # Get taxa names
 taxa_names <- unique(metadata$subfolder)
 
@@ -264,6 +275,7 @@ a simpler dataset, minimal fields can be retrieved using
 `ifcb_get_ecotaxa_example(example = "minimal")`.
 
 ``` r
+
 # Get EcoTaxa metadata header names
 ecotaxa_headers <- ifcb_get_ecotaxa_example()[0, ]
 
@@ -587,6 +599,7 @@ respective class subfolder and includes the relevant metadata for that
 class.
 
 ``` r
+
 # Loop .tsv creation for each class
 for (i in seq_along(unique(ecotaxa_metadata$object_annotation_hierarchy))) {
   # Define path to subfolder
@@ -633,6 +646,7 @@ limitation, the zip archive can be split into multiple files by setting
 megabytes.
 
 ``` r
+
 # Create zip-archive
 ifcb_zip_pngs(
   png_folder = "data/extracted_images",
@@ -650,12 +664,9 @@ ifcb_zip_pngs(
 ```
 
     ## Creating README file...
-
     ## Creating MANIFEST.txt...
-
     ## Creating zip archive...
-
-    ## Zip archive created successfully: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip
+    ## ✔ Zip archive created: /home/runner/work/iRfcb/iRfcb/vignettes/articles/data/zip/iRfcb_ecotaxa.zip
 
 This concludes this tutorial for the `iRfcb` package. For more detailed
 information, refer to the package documentation or the other

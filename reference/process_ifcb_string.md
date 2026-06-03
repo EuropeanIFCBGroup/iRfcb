@@ -45,6 +45,6 @@ process_ifcb_string("D20240101T120000_IFCB1")
 
 # Example 3: Process an unknown format
 process_ifcb_string("UnknownFormat_12345")
-#> Unknown format: UnknownFormat_12345
+#> Unknown format: "UnknownFormat_12345"
 #> [1] NA
 ```

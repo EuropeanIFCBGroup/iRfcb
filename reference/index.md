@@ -15,8 +15,6 @@ repositories.
   : Download Test IFCB Data
 - [`ifcb_download_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.md)
   : Download and Extract WHOI-Plankton Data
-- [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
-  : Download bin list from the IFCB Dashboard API
 
 ### Data reading
 
@@ -196,6 +194,8 @@ information, see the
 
 - [`ifcb_create_empty_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)
   **\[deprecated\]** : Create an Empty Manual Classification MAT File
+- [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
+  **\[deprecated\]** : Download bin list from the IFCB Dashboard API
 - [`retrieve_worms_records()`](https://europeanifcbgroup.github.io/iRfcb/reference/retrieve_worms_records.md)
   **\[deprecated\]** : Retrieve WoRMS Records with Retry Mechanism
 - [`ifcb_run_image_gallery()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_run_image_gallery.md)

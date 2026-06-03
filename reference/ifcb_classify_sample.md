@@ -12,9 +12,9 @@ removed when the function exits.
 ``` r
 ifcb_classify_sample(
   roi_file,
-  gradio_url = "https://irfcb-classify.hf.space",
+  gradio_url = "https://ifcb.serve.scilifelab.se",
   top_n = 1,
-  model_name = "SMHI NIVA ResNet50 V5",
+  model_name = "SMHI NIVA SYKE SAMS SZN ResNet 50 V6",
   verbose = TRUE,
   ...
 )
@@ -29,10 +29,12 @@ ifcb_classify_sample(
 - gradio_url:
 
   A character string specifying the base URL of the Gradio application.
-  Default is `"https://irfcb-classify.hf.space"`, which is an example
-  Hugging Face Space with limited resources intended for testing and
-  demonstration. For large-scale classification, deploy your own
-  instance of the classification app (source code:
+  Default is `"https://ifcb.serve.scilifelab.se"`, an instance hosted on
+  the SciLifeLab Serve platform. A free example Hugging Face Space is
+  also available at `"https://irfcb-classify.hf.space"` (limited
+  resources, intended for testing and demonstration). For large-scale or
+  production classification, deploy your own instance of the
+  classification app (source code:
   <https://github.com/EuropeanIFCBGroup/ifcb-inference-app>) and pass
   its URL here.
 
@@ -45,7 +47,8 @@ ifcb_classify_sample(
 - model_name:
 
   A character string specifying the name of the CNN model to use for
-  classification. Default is `"SMHI NIVA ResNet50 V5"`. Use
+  classification. Default is `"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"`.
+  Use
   [`ifcb_classify_models()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.md)
   to list all available models.
 

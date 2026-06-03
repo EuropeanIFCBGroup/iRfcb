@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="iRfcb Introduction">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -298,13 +298,15 @@ optional scale bar can be added by specifying
 <span>  gamma <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Default gamma value</span></span>
 <span>  scale_bar_um <span class="op">=</span> <span class="fl">5</span> <span class="co"># Add a 5 micrometer scale bar</span></span>
 <span><span class="op">)</span> </span></code></pre></div>
-<pre><code><span><span class="co">## Writing 1218 ROIs from D20230314T001205_IFCB134.roi to data/data/2023/D20230314/D20230314T001205_IFCB134</span></span></code></pre>
+<pre><code><span><span class="co">## Writing 1218 ROIs from <span style="color: #0000BB;">D20230314T001205_IFCB134.roi</span> to</span></span>
+<span><span class="co">## <span style="color: #0000BB;">data/data/2023/D20230314/D20230314T001205_IFCB134</span></span></span></code></pre>
 <p>Extract specific ROIs:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Only ROI number 2 and 5</span></span>
 <span><span class="fu"><a href="../reference/ifcb_extract_pngs.html">ifcb_extract_pngs</a></span><span class="op">(</span><span class="st">"data/data/2023/D20230314/D20230314T003836_IFCB134.roi"</span>,</span>
 <span>                  ROInumbers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Writing 2 ROIs from D20230314T003836_IFCB134.roi to data/data/2023/D20230314/D20230314T003836_IFCB134</span></span></code></pre>
+<pre><code><span><span class="co">## Writing 2 ROIs from <span style="color: #0000BB;">D20230314T003836_IFCB134.roi</span> to</span></span>
+<span><span class="co">## <span style="color: #0000BB;">data/data/2023/D20230314/D20230314T003836_IFCB134</span></span></span></code></pre>
 <p>To extract annotated images or classified results from MATLAB files,
 please see the <code>vignette("image-export-tutorial")</code> and
 <code>vignette("matlab-tutorial")</code> tutorials.</p>
@@ -314,11 +316,14 @@ please see the <code>vignette("image-export-tutorial")</code> and
 </h2>
 <p>IFCB images can be classified directly in R using a CNN model served
 by a <a href="https://www.gradio.app/" class="external-link">Gradio</a> application. By
-default, the classification functions use a public example Space hosted
-on Hugging Face (<code>https://irfcb-classify.hf.space</code>). This
-Space has limited resources and is intended for testing and
-demonstration purposes. For large-scale or production classification, we
-recommend deploying your own instance of the <a href="https://github.com/EuropeanIFCBGroup/ifcb-inference-app" class="external-link">IFCB
+default, the classification functions use an instance hosted on the
+SciLifeLab Serve platform
+(<code>https://ifcb.serve.scilifelab.se</code>). A free example Space is
+also available on Hugging Face
+(<code>https://irfcb-classify.hf.space</code>); it has limited resources
+and is intended for testing and demonstration purposes. For large-scale
+or production classification, we recommend deploying your own instance
+of the <a href="https://github.com/EuropeanIFCBGroup/ifcb-inference-app" class="external-link">IFCB
 Classification App</a> with your own model and passing its URL via the
 <code>gradio_url</code> argument.</p>
 <div class="section level3">
@@ -366,7 +371,7 @@ paths to <code><a href="../reference/ifcb_classify_images.html">ifcb_classify_im
 <p>Both functions return a data frame with <code>file_name</code>,
 <code>class_name</code>, <code>class_name_auto</code>,
 <code>score</code>, and <code>model_name</code> columns, and query the
-Gradio API at <code>https://irfcb-classify.hf.space</code> by default.
+Gradio API at <code>https://ifcb.serve.scilifelab.se</code> by default.
 Per-class F2 optimal thresholds are always applied:
 <code>class_name</code> contains the threshold-applied classification
 (labeled <code>"unclassified"</code> when below threshold), while
@@ -374,7 +379,7 @@ Per-class F2 optimal thresholds are always applied:
 threshold. The <code>top_n</code> argument controls how many top
 predictions are returned per image, and <code>model_name</code>
 specifies which CNN model to use (default:
-<code>"SMHI NIVA ResNet50 V5"</code>).</p>
+<code>"SMHI NIVA SYKE SAMS SZN ResNet 50 V6"</code>).</p>
 </div>
 <div class="section level3">
 <h3 id="save-classification-results">Save Classification Results<a class="anchor" aria-label="anchor" href="#save-classification-results"></a>

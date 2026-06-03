@@ -50,6 +50,7 @@ You can install the `iRfcb` package from CRAN, and the `LivingNorwayR`
 package from GitHub using the `remotes` package:
 
 ``` r
+
 install.packages("iRfcb")
 
 # install.packages("remotes")
@@ -59,6 +60,7 @@ remotes::install_github("LivingNorway/LivingNorwayR")
 Load the required libraries:
 
 ``` r
+
 library(iRfcb)
 library(LivingNorwayR) # For DwC-A creation
 library(dplyr) # For data wrangling
@@ -73,6 +75,7 @@ Reference Library](https://doi.org/10.17044/scilifelab.25883455.v3)
 (Torstensson et al. 2024) with the following function:
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -92,6 +95,7 @@ files and are extracted along with the corresponding timestamps in the
 following step:
 
 ``` r
+
 # Read HDR data and extract GPS position (when available) and timestamps
 gps_data <- ifcb_read_hdr_data("data/data/",
                                gps_only = TRUE,
@@ -105,6 +109,7 @@ setting the `mat_files` parameter to point to your `class` folder, and
 setting `class2use_file` to `NULL`.
 
 ``` r
+
 # Summarize biovolume data using IFCB data from manual data folder
 manual_biovolume_data <- ifcb_summarize_biovolumes(
   feature_folder = "data/features",
@@ -119,6 +124,7 @@ The coordinates and biovolume data are now combined into a single
 unified dataframe.
 
 ``` r
+
 # Summarize manually annotated biovolume data
 data_manual <- gps_data %>%
   left_join(manual_biovolume_data, by = "sample")
@@ -147,6 +153,7 @@ context for the data. Other project-specific terms can be defined here
 as well, such as **datasetName**.
 
 ``` r
+
 # Add a single parentEventID for all samples in the dataset
 data_event <- data_manual %>%
   mutate(parentEventID = uuid::UUIDgenerate(use.time = FALSE))
@@ -182,6 +189,7 @@ code that processes and structures the data into an event-focused
 format.
 
 ``` r
+
 # Add metadata columns to the data
 data_event <- data_event %>%
   mutate(
@@ -235,6 +243,7 @@ assign coordinates within the Skagerrak and Kattegat region and specify
 an uncertainty of 150 km, which encompasses most of these areas.
 
 ``` r
+
 # Add estimated coordinates and uncertainty for events with missing positions
 data_event <- data_event %>%
   mutate(
@@ -249,6 +258,7 @@ Next, we extract the relevant columns for the Event tables and combine
 the Event and Parent Event tables into a single data frame.
 
 ``` r
+
 # Create a clean data frame with selected columns
 event_df <- data_event %>%
   select(
@@ -298,16 +308,16 @@ tibble(event_df)
     ## # A tibble: 10 × 26
     ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
     ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
-    ##  1 NA               27d0cc… Project   iRfcb-DwC-A 2022-05-… NA                  
-    ##  2 27d0cc06-5fd3-4… 63a665… Sample    NA          2022-05-… SMHI                
-    ##  3 27d0cc06-5fd3-4… 040d64… Sample    NA          2022-05-… SMHI                
-    ##  4 27d0cc06-5fd3-4… a28f0f… Sample    NA          2022-07-… SMHI                
-    ##  5 27d0cc06-5fd3-4… 05c482… Sample    NA          2022-07-… SMHI                
-    ##  6 27d0cc06-5fd3-4… 1df146… Sample    NA          2023-03-… SMHI                
-    ##  7 27d0cc06-5fd3-4… 580c3b… Sample    NA          2023-03-… SMHI                
-    ##  8 27d0cc06-5fd3-4… 229d18… Sample    NA          2023-08-… SMHI                
-    ##  9 27d0cc06-5fd3-4… a0e00a… Sample    NA          2023-09-… SMHI                
-    ## 10 27d0cc06-5fd3-4… d77698… Sample    NA          2023-09-… SMHI                
+    ##  1 NA               efa5bc… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 efa5bc8d-eb13-4… 599897… Sample    NA          2022-05-… SMHI                
+    ##  3 efa5bc8d-eb13-4… 538b4f… Sample    NA          2022-05-… SMHI                
+    ##  4 efa5bc8d-eb13-4… 30170b… Sample    NA          2022-07-… SMHI                
+    ##  5 efa5bc8d-eb13-4… 5fa96e… Sample    NA          2022-07-… SMHI                
+    ##  6 efa5bc8d-eb13-4… 9fb0e4… Sample    NA          2023-03-… SMHI                
+    ##  7 efa5bc8d-eb13-4… f6de5d… Sample    NA          2023-03-… SMHI                
+    ##  8 efa5bc8d-eb13-4… 53bc9f… Sample    NA          2023-08-… SMHI                
+    ##  9 efa5bc8d-eb13-4… c84a11… Sample    NA          2023-09-… SMHI                
+    ## 10 efa5bc8d-eb13-4… 6c0770… Sample    NA          2023-09-… SMHI                
     ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
     ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
     ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
@@ -321,6 +331,7 @@ package - this will be used later to build the DwC compliant data
 package.
 
 ``` r
+
 GBIF_Event <- initializeGBIFEvent(event_df, 
                                   idColumnInfo = "eventID", 
                                   nameAutoMap = TRUE)
@@ -354,6 +365,7 @@ this `vignette("ecotaxa-tutorial")`, or how to export images to an image
 library in `vignette("image-export-tutorial")`.
 
 ``` r
+
 # Create an occurrence table by transforming event data and adding fields
 data_occurrences <- data_event %>%
   rowwise() %>%
@@ -385,6 +397,7 @@ levels using external sources like
 [WoRMS](https://www.marinespecies.org/), as demonstrated below.
 
 ``` r
+
 # Get taxa names
 taxa_names <- unique(data_occurrences$class)
 
@@ -445,6 +458,7 @@ populated using the cleaned taxonomic names and the original class
 names, respectively.
 
 ``` r
+
 data_occurrences <- data_occurrences %>%
   rename(class_name = class) %>%
   left_join(class_names, by = "class_name") %>%
@@ -462,6 +476,7 @@ The final Occurrence table includes all relevant fields for DwC-A
 formatting.
 
 ``` r
+
 # Select relevant fields
 occurrence_df <- data_occurrences %>%
   select(
@@ -496,16 +511,16 @@ tibble(occurrence_df)
     ## # A tibble: 101 × 22
     ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
     ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
-    ##  1 5189c225-763e-48b7-… 63a665… 2022-05-22 present          iRfcb          Stil…
-    ##  2 ca6699c0-1fba-4259-… 63a665… 2022-05-22 present          iRfcb          Stil…
-    ##  3 e56746b4-8e1d-4d03-… 63a665… 2022-05-22 present          iRfcb          Stil…
-    ##  4 f972473d-bb9f-4fba-… 63a665… 2022-05-22 present          iRfcb          Stil…
-    ##  5 84c6bf23-cd58-4f2c-… 040d64… 2022-05-22 present          iRfcb          Stil…
-    ##  6 8fb4e74a-0b18-415c-… a28f0f… 2022-07-12 present          iRfcb          Stil…
-    ##  7 8a2fea77-a76a-4a80-… a28f0f… 2022-07-12 present          iRfcb          Stil…
-    ##  8 d91d89e2-5783-4259-… a28f0f… 2022-07-12 present          iRfcb          Stil…
-    ##  9 c74a9f5b-567d-45cf-… 05c482… 2022-07-12 present          iRfcb          Stil…
-    ## 10 6c390688-b33e-4f3d-… 05c482… 2022-07-12 present          iRfcb          Stil…
+    ##  1 dcca72a2-b368-46e0-… 599897… 2022-05-22 present          iRfcb          Stil…
+    ##  2 63bc1f71-20fc-4a1f-… 599897… 2022-05-22 present          iRfcb          Stil…
+    ##  3 f730b9e4-a79f-4bc2-… 599897… 2022-05-22 present          iRfcb          Stil…
+    ##  4 e161ead6-cefd-46c3-… 599897… 2022-05-22 present          iRfcb          Stil…
+    ##  5 c4ad2a2a-05b0-4b9e-… 538b4f… 2022-05-22 present          iRfcb          Stil…
+    ##  6 21488464-16e6-4b10-… 30170b… 2022-07-12 present          iRfcb          Stil…
+    ##  7 f49143ec-065a-486f-… 30170b… 2022-07-12 present          iRfcb          Stil…
+    ##  8 e4257f38-9fe1-49a6-… 30170b… 2022-07-12 present          iRfcb          Stil…
+    ##  9 35cfd457-ae2e-4138-… 5fa96e… 2022-07-12 present          iRfcb          Stil…
+    ## 10 f043a210-5703-423c-… 5fa96e… 2022-07-12 present          iRfcb          Stil…
     ## # ℹ 91 more rows
     ## # ℹ 16 more variables: basisOfRecord <chr>,
     ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
@@ -519,6 +534,7 @@ The occurrence data is initialized for GBIF submission using the
 based on the specified column.
 
 ``` r
+
 GBIF_Occurrence <- initializeGBIFOccurrence(occurrence_df, 
                                             idColumnInfo = "occurrenceID", 
                                             nameAutoMap = TRUE)
@@ -535,6 +551,7 @@ essential context for understanding the ecological significance of the
 observations.
 
 ``` r
+
 # Create a dataset for occurrences (no modifications made here)
 data_occurrence_mof <- data_occurrences
 
@@ -553,6 +570,7 @@ event and occurrence IDs, and key IFCB-derived measurements such as
 counts, abundance, biovolume, and carbon concentration.
 
 ``` r
+
 # Convert biovolume units and select the relevant columns for occurrence MoF
 data_occurrence_mof <- data_occurrence_mof %>%
   mutate(biovolume_um3_per_liter = biovolume_mm3_per_liter * 10^9) %>%
@@ -586,6 +604,7 @@ vocabularies (e.g., *Abundance*, *Biovolume concentration*) for better
 compatibility with global biodiversity standards.
 
 ``` r
+
 # Pivot and standardize occurrence measurements
 data_occurrence_mof <- data_occurrence_mof %>%
   pivot_longer(
@@ -650,6 +669,7 @@ Server](https://vocab.nerc.ac.uk/). This includes assigning
 for each **measurementType**.
 
 ``` r
+
 # Create a lookup table for NERC vocabularies
 nerc_vocab <- data.frame(
   measurementValueID = c(
@@ -707,16 +727,16 @@ tibble(mof_df)
     ## # A tibble: 415 × 10
     ##    measurementID              eventID parentEventID occurrenceID measurementType
     ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
-    ##  1 f528d599-beef-467b-a6a3-1… 27d0cc… NA            NA           Imaging instru…
-    ##  2 3f3a6b1e-df10-4eb2-88d2-1… 27d0cc… NA            NA           Instrument ide…
-    ##  3 156d4bb1-ada5-4e70-84dd-e… 63a665… 27d0cc06-5fd… NA           Sample volume  
-    ##  4 15c22a0c-5814-4c97-a3f2-f… 040d64… 27d0cc06-5fd… NA           Sample volume  
-    ##  5 e31d63e9-82e8-434c-bda2-e… a28f0f… 27d0cc06-5fd… NA           Sample volume  
-    ##  6 081cc723-0181-423f-b9ac-e… 05c482… 27d0cc06-5fd… NA           Sample volume  
-    ##  7 058f37a7-a70d-40b0-859a-8… 1df146… 27d0cc06-5fd… NA           Sample volume  
-    ##  8 ddadf57f-d8a7-447b-b4c7-f… 580c3b… 27d0cc06-5fd… NA           Sample volume  
-    ##  9 025966a3-95a6-43fc-bcc5-0… 229d18… 27d0cc06-5fd… NA           Sample volume  
-    ## 10 8187628f-fefc-4fb1-bce6-e… a0e00a… 27d0cc06-5fd… NA           Sample volume  
+    ##  1 36c7ab53-d87b-45b6-858b-3… efa5bc… NA            NA           Imaging instru…
+    ##  2 284e3c05-742d-4245-bc30-2… efa5bc… NA            NA           Instrument ide…
+    ##  3 7f53f5db-5bd8-43c8-9cab-a… 599897… efa5bc8d-eb1… NA           Sample volume  
+    ##  4 3b2520f5-f706-4329-87a2-8… 538b4f… efa5bc8d-eb1… NA           Sample volume  
+    ##  5 e1a6618f-92db-43ed-8852-e… 30170b… efa5bc8d-eb1… NA           Sample volume  
+    ##  6 bec0458f-cdcc-42f2-8dd2-4… 5fa96e… efa5bc8d-eb1… NA           Sample volume  
+    ##  7 61d5489c-a717-44fd-807f-b… 9fb0e4… efa5bc8d-eb1… NA           Sample volume  
+    ##  8 9026ed49-03e5-4e83-bba0-b… f6de5d… efa5bc8d-eb1… NA           Sample volume  
+    ##  9 42541d9e-3322-42e4-b600-b… 53bc9f… efa5bc8d-eb1… NA           Sample volume  
+    ## 10 1f8e3c53-b1e0-469b-96cb-5… c84a11… efa5bc8d-eb1… NA           Sample volume  
     ## # ℹ 405 more rows
     ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
     ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>
@@ -727,6 +747,7 @@ initializing the dataset in a compatible format using the
 as unique identifiers, and columns are mapped automatically.
 
 ``` r
+
 GBIF_MoF <- initializeGBIFMeasurementOrFact(mof_df, 
                                             idColumnInfo = "measurementID", 
                                             nameAutoMap = TRUE)
@@ -754,6 +775,7 @@ Here, we create the metadata starting with a Markdown file
 EML-compliant XML file for GBIF submission:
 
 ``` r
+
 # Initialize DwC metadata using a R Markdown template
 GBIF_Metadata <- initializeDwCMetadata("metadata-template.rmd", 
                                        fileType = "rmarkdown")
@@ -770,6 +792,7 @@ IPT](https://ipt.vliz.be/eurobis/).
 Here is the code for initializing and exporting the DwC-A:
 
 ``` r
+
 # Initialize the DwC-A
 dwca_archive <- initializeDwCArchive(GBIF_Event, 
                                      list(GBIF_Occurrence, GBIF_MoF), 

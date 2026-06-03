@@ -1,11 +1,20 @@
 # Download bin list from the IFCB Dashboard API
 
-Download bin list from the IFCB Dashboard API
+**\[deprecated\]**
+
+The `api/list_bins` endpoint was removed from the upstream IFCB
+Dashboard
+([WHOIGit/ifcbdb@8c5839f1](https://github.com/WHOIGit/ifcbdb/commit/8c5839f1),
+2026-03-08), so this function no longer works against the WHOI dashboard
+and other deployments tracking upstream. Use
+[`ifcb_download_dashboard_metadata()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_metadata.md)
+instead, which retrieves the same per-bin information from the
+still-supported `api/export_metadata` endpoint.
 
 ## Usage
 
 ``` r
-ifcb_list_dashboard_bins(base_url, quiet = FALSE)
+ifcb_list_dashboard_bins(base_url, dataset_name = NULL, quiet = FALSE)
 ```
 
 ## Arguments
@@ -14,6 +23,12 @@ ifcb_list_dashboard_bins(base_url, quiet = FALSE)
 
   Character. Base URL to the IFCB Dashboard (e.g.
   "https://ifcb-data.whoi.edu/").
+
+- dataset_name:
+
+  Optional character. Dataset slug (e.g. "mvco") to retrieve metadata
+  for a specific dataset. If NULL, all available metadata are
+  downloaded.
 
 - quiet:
 
@@ -34,19 +49,10 @@ to retrieve metadata from the IFCB Dashboard API.
 ## Examples
 
 ``` r
-# \donttest{
-  bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/")
-#> Fetching bin list from: https://ifcb-data.whoi.edu/api/list_bins
-#> Successfully retrieved 794032 bins.
+if (FALSE) { # \dontrun{
+  # Deprecated: the upstream IFCB Dashboard removed `api/list_bins` on 2026-03-08.
+  bins <- ifcb_list_dashboard_bins("https://ifcb-data.whoi.edu/",
+                                   dataset_name = "mvco")
   head(bins)
-#> # A tibble: 6 × 3
-#>   pid                   sample_time          skip 
-#>   <chr>                 <chr>                <lgl>
-#> 1 IFCB1_2006_157_181359 2006-06-06T18:13:59Z TRUE 
-#> 2 IFCB1_2006_157_183432 2006-06-06T18:34:32Z TRUE 
-#> 3 IFCB1_2006_157_185616 2006-06-06T18:56:16Z TRUE 
-#> 4 IFCB1_2006_157_191801 2006-06-06T19:18:01Z TRUE 
-#> 5 IFCB1_2006_157_200140 2006-06-06T20:01:40Z TRUE 
-#> 6 IFCB1_2006_157_202314 2006-06-06T20:23:14Z TRUE 
-# }
+} # }
 ```

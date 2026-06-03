@@ -2,6 +2,8 @@
 
 ## iRfcb 0.5.0
 
+CRAN release: 2025-04-15
+
 ### New features
 
 - Added `NEWS.md` to track package changes.
@@ -75,6 +77,8 @@
 
 ## iRfcb 0.5.1
 
+CRAN release: 2025-04-22
+
 ### Minor improvements and fixes
 
 - Skipping certain internet-required tests on CRAN servers.
@@ -84,6 +88,8 @@
   [`ifcb_download_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.md).
 
 ## iRfcb 0.5.2
+
+CRAN release: 2025-09-03
 
 ### Minor improvements and fixes
 

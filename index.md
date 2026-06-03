@@ -42,6 +42,7 @@ researchers using, or partly using, the MATLAB
 You can install `iRfcb` from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
@@ -51,6 +52,7 @@ To access a feature from the development version of `iRfcb`, install the
 latest development version from GitHub using the `remotes` package:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("EuropeanIFCBGroup/iRfcb")
 ```
@@ -139,6 +141,7 @@ persistent across sessions:
     session before loading `iRfcb` using the following command:
 
     ``` r
+
     Sys.setenv(USE_IRFCB_PYTHON = "TRUE")
     ```
 
@@ -147,6 +150,7 @@ persistent across sessions:
     directory. You can easily edit the file using the following command:
 
     ``` r
+
     usethis::edit_r_environ("user")
     ```
 

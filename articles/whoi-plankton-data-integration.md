@@ -28,6 +28,7 @@ using MATLAB code from the
 You can install the package from CRAN using:
 
 ``` r
+
 install.packages("iRfcb")
 ```
 
@@ -43,6 +44,7 @@ environment variable. For more details, please refer to the package
 Load the `iRfcb` library:
 
 ``` r
+
 library(iRfcb)
 ```
 
@@ -55,6 +57,7 @@ dataset in this example, which we will expand by incorporating training
 images from the WHOI-Plankton dataset.
 
 ``` r
+
 # Define data directory
 data_dir <- "data"
 
@@ -75,6 +78,7 @@ using `iRfcb`.
 First we define the download directories:
 
 ``` r
+
 # Define paths to download destinations
 png_folder_whoi <- file.path(
   data_dir, 
@@ -134,6 +138,7 @@ information, ensuring compatibility with the MATLAB code in the
 In this example, we use data from the years 2013 and 2014.
 
 ``` r
+
 # Initialize the python session if not already set up
 env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
 
@@ -191,6 +196,7 @@ to merge images into the same class (e.g. “Coscinodiscus” and
 “Coscinodiscus_spp”).
 
 ``` r
+
 # Define paths to existing manual dataset
 class2use_file_smhi <- file.path(
   data_dir, 
