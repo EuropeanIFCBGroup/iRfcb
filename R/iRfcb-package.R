@@ -2,32 +2,19 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom cli cli_abort cli_alert_info cli_alert_success cli_alert_warning
-#'   cli_inform cli_progress_bar cli_progress_done cli_progress_update cli_warn qty
-#' @importFrom curl curl_download new_handle curl_fetch_memory handle_setopt multi_download
-#' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything
-#'   filter first full_join group_by if_any left_join mutate n n_distinct
-#'   pull relocate rename rename_with rowwise select slice_min summarise summarize
-#'   ungroup %>% as_tibble tibble all_of contains row_number
-#' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text
-#'   ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim
-#'   annotate coord_sf margin coord_cartesian
+#' @importFrom cli cli_abort cli_alert_info cli_alert_success cli_alert_warning cli_inform cli_progress_bar cli_progress_done cli_progress_update cli_warn qty
+#' @importFrom curl curl_download new_handle curl_fetch_memory handle_setopt handle_setheaders multi_download
+#' @importFrom dplyr across arrange bind_rows case_when coalesce count cur_column desc everything filter first full_join group_by if_any left_join mutate n n_distinct pull relocate rename rename_with rowwise select slice_min summarise summarize ungroup %>% as_tibble tibble all_of contains row_number
+#' @importFrom ggplot2 aes element_blank element_rect geom_line geom_sf geom_text ggsave ggplot labs scale_color_manual stat_function theme theme_minimal ylim xlim annotate coord_sf margin coord_cartesian
 #' @importFrom png writePNG
 #' @importFrom lifecycle deprecate_warn deprecated is_present deprecate_stop
-#' @importFrom lubridate ceiling_date date day floor_date month round_date
-#'   year ymd_hms as_datetime ymd days hours minutes seconds with_tz
+#' @importFrom lubridate ceiling_date date day floor_date month round_date year ymd_hms as_datetime ymd days hours minutes seconds with_tz
 #' @importFrom readr cols col_character read_delim type_convert read_csv read_tsv
-#' @importFrom reticulate import py_available py_module_available py_run_string
-#'   source_python use_virtualenv virtualenv_create virtualenv_list virtualenv_root
-#'   use_python py_discover_config py_require py_list_packages py_install py_config
-#'   virtualenv_exists
+#' @importFrom reticulate import py_available py_module_available py_run_string source_python use_virtualenv virtualenv_create virtualenv_list virtualenv_root use_python py_discover_config py_require py_list_packages py_install py_config virtualenv_exists
 #' @importFrom R.matlab readMat
-#' @importFrom sf st_area st_as_sf st_as_sfc st_bbox st_crs st_geometry_type
-#'   st_intersection st_intersects st_make_valid st_read st_transform
-#'   st_union st_within st_wrap_dateline st_buffer st_write
+#' @importFrom sf st_area st_as_sf st_as_sfc st_bbox st_crs st_geometry_type st_intersection st_intersects st_make_valid st_read st_transform st_union st_within st_wrap_dateline st_buffer st_write
 #' @importFrom stats aggregate median na.omit setNames
-#' @importFrom stringr str_extract str_remove str_remove_all str_replace
-#'   str_replace_all word str_match str_wrap
+#' @importFrom stringr str_extract str_remove str_remove_all str_replace str_replace_all word str_match str_wrap
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tools file_path_sans_ext
 #' @importFrom utils read.csv read.table write.table modifyList

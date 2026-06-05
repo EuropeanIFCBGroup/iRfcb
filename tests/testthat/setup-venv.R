@@ -18,4 +18,9 @@ if (not_cran) {
 
   # Activate the virtual environment
   reticulate::use_virtualenv(venv_dir, required = TRUE)
+
+  # Install ifcb-features so that ifcb_extract_features() tests can run.
+  # ifcb_py_install() skips the install if the module already imports successfully,
+  # so repeated test runs do not re-download from GitHub.
+  iRfcb::ifcb_py_install(envname = venv_dir, features = TRUE)
 }

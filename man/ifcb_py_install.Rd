@@ -7,7 +7,9 @@
 ifcb_py_install(
   envname = "~/.virtualenvs/iRfcb",
   use_venv = TRUE,
-  packages = NULL
+  packages = NULL,
+  features = FALSE,
+  features_ref = NULL
 )
 }
 \arguments{
@@ -16,6 +18,21 @@ ifcb_py_install(
 \item{use_venv}{Logical. If \code{TRUE} (default), a virtual environment is created. If \code{FALSE}, the system Python is used instead, and missing packages are installed globally for the user.}
 
 \item{packages}{A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.}
+
+\item{features}{Logical. If \code{TRUE}, additionally installs the WHOI \code{ifcb-features}
+package (\url{https://github.com/WHOIGit/ifcb-features}) from GitHub, together
+with its dependencies (\code{pyifcb}, \code{phasepack}, \code{scikit-image}, \code{scikit-learn}).
+This is required by \code{ifcb_extract_features()}. Default is \code{FALSE} to keep the
+default environment lightweight. When installing into an existing virtual
+environment, the (slow) install is skipped if \code{ifcb-features} already imports
+successfully, unless \code{features_ref} is given.}
+
+\item{features_ref}{A character string specifying which git reference (release
+tag, branch, or commit) of \code{ifcb-features} to install when \code{features = TRUE}.
+If \code{NULL} (default), the latest published GitHub release is installed, which
+is more stable than the actively developed default branch. Use
+\code{features_ref = "main"} to install the latest development commit, or a tag
+such as \code{"v1.0.0"} to pin a specific version.}
 }
 \value{
 No return value. This function is called for its side effect of configuring the Python environment.
@@ -46,6 +63,14 @@ ifcb_py_install(envname = envpath)
 
 # Install the iRfcb Python environment with additional packages
 ifcb_py_install(envname = envpath, packages = c("numpy", "plotly"))
+
+# Install the iRfcb Python venv including the WHOI ifcb-features package
+# (latest release by default)
+ifcb_py_install(envname = envpath, features = TRUE)
+
+# Install a specific ifcb-features version, or the development branch
+ifcb_py_install(envname = envpath, features = TRUE, features_ref = "v1.0.0")
+ifcb_py_install(envname = envpath, features = TRUE, features_ref = "main")
 
 # Use system Python instead of a virtual environment
 ifcb_py_install(envname = envpath, use_venv = FALSE)

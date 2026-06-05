@@ -21,6 +21,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Anders Torstensson \email{anders.torstensson@smhi.se} (\href{https://orcid.org/0000-0002-8283-656X}{ORCID}) (Swedish Meteorological and Hydrological Institute)
 
+Authors:
+\itemize{
+  \item Anders Torstensson \email{anders.torstensson@smhi.se} (\href{https://orcid.org/0000-0002-8283-656X}{ORCID}) (Swedish Meteorological and Hydrological Institute)
+}
+
 Other contributors:
 \itemize{
   \item Kendra Hayashi (\href{https://orcid.org/0000-0003-1600-9504}{ORCID}) [contributor]

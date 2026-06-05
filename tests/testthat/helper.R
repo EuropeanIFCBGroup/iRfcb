@@ -118,6 +118,21 @@ skip_if_no_pandas <- function() {
   .check_py_package("pandas")
 }
 
+skip_if_no_ifcb_features <- function() {
+  # ifcb-features is installed from GitHub (VCS), which py_list_packages() may
+  # not report, so check the importable module names instead.
+  if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
+    testthat::skip("ifcb-features not available for testing (CRAN)")
+  }
+  if (!reticulate::py_available(initialize = TRUE)) {
+    testthat::skip("Python not available for testing")
+  }
+  if (!reticulate::py_module_available("ifcb_features") ||
+      !reticulate::py_module_available("ifcb")) {
+    testthat::skip("ifcb-features not available for testing")
+  }
+}
+
 skip_if_no_python <- function() {
   if (!identical(Sys.getenv("NOT_CRAN"), "true")) {
     testthat::skip("Python not available for testing (CRAN)")

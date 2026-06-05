@@ -108,6 +108,34 @@ run_time <- ifcb_get_runtime(hdr_file)
 print(run_time)
 ```
 
+### Extract Feature Data
+
+Morphological features can be computed directly from raw IFCB data in R using the WHOI [`ifcb-features`](https://github.com/WHOIGit/ifcb-features) Python package, without running the MATLAB [`ifcb-analysis`](https://github.com/hsosik/ifcb-analysis) toolbox. The `ifcb_extract_features()` function computes the "slim" feature set (version 4) and binary blob masks for each bin, writing a `<bin>_features_v4.csv` table and a `<bin>_blobs_v4.zip` archive to separate, user-specified folders.
+
+This requires the optional `ifcb-features` package, which is installed alongside its dependencies (`pyifcb`, `phasepack`, `scikit-image`, `scikit-learn`) by passing `features = TRUE` to `ifcb_py_install()`:
+
+```{r, eval=FALSE}
+# Install the Python environment including ifcb-features
+ifcb_py_install(features = TRUE)
+```
+
+Extract features and blobs from all bins found in a data folder. Existing outputs are skipped unless `overwrite = TRUE`, so the call can be re-run to resume an interrupted extraction. Set `parallel = TRUE` to distribute bins across worker processes:
+
+```{r, eval=FALSE}
+# Extract features and blobs into separate folders
+results <- ifcb_extract_features(
+  data_folder = "data/data/2023",
+  features_folder = "data/features/2023",
+  blobs_folder = "data/blobs/2023",
+  parallel = TRUE # Process bins in parallel (default FALSE)
+)
+
+# A tibble summarizing the status of each bin is returned invisibly
+print(results)
+```
+
+The resulting `.csv` files can then be read back in with `ifcb_read_features()`, as shown below.
+
 ### Read Feature Data
 
 Read all feature files (`.csv`) from a folder:

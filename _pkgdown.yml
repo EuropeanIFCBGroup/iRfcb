@@ -106,6 +106,7 @@ reference:
   - '`ifcb_correct_annotation`'
   - '`ifcb_create_class2use`'
   - '`ifcb_create_manual_file`'
+  - '`ifcb_extract_features`'
   - '`ifcb_merge_manual`'
   - '`ifcb_prepare_whoi_plankton`'
   - '`ifcb_psd`'

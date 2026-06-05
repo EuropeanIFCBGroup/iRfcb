@@ -9,3 +9,4 @@ inst/doc
 iRfcb.Rcheck
 docs
 .virtualenvs/
+__pycache__
