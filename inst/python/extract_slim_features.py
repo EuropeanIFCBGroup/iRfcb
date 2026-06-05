@@ -28,6 +28,23 @@ from PIL import Image
 from ifcb import DataDirectory
 from ifcb_features.all import compute_features
 
+
+def _ensure_module_importable():
+    """Add this module's directory to PYTHONPATH if needed.
+
+    On Linux, multiprocessing uses fork and workers inherit sys.path, so
+    extract_slim_features is already importable. On Windows and macOS,
+    multiprocessing uses spawn: workers start as fresh Python processes and
+    only inherit environment variables, not sys.path. Setting PYTHONPATH here
+    (before Pool() starts the workers) ensures spawn workers can import this
+    module to unpickle _process_bin.
+    """
+    module_dir = os.path.dirname(os.path.abspath(__file__))
+    current = os.environ.get('PYTHONPATH', '')
+    parts = [p for p in current.split(os.pathsep) if p]
+    if module_dir not in parts:
+        os.environ['PYTHONPATH'] = os.pathsep.join([module_dir] + parts)
+
 # ifcb_features/blob_geometry.py hits divide-by-zero when computing the
 # orientation of a perfectly axis-aligned blob (x == 0). The result is still
 # finite (arctan(y/0) = ±inf → clipped), so the warning is noise.
@@ -211,6 +228,7 @@ class ParallelExtractor:
             bin_names, self.missing = _resolve_bins(data_directory, bins)
         self.total = len(bin_names)
 
+        _ensure_module_importable()
         self.pool = multiprocessing.Pool(processes=max(1, int(num_workers)))
         self._pending = [
             (bin_name, self.pool.apply_async(
