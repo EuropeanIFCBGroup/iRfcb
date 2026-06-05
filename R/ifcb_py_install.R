@@ -13,6 +13,10 @@
 #'   default environment lightweight. When installing into an existing virtual
 #'   environment, the (slow) install is skipped if `ifcb-features` already imports
 #'   successfully, unless `features_ref` is given.
+#'   Installation requires binary wheels for all of `pyifcb`'s dependencies
+#'   (notably `h5py`); if no wheel is available for your Python version,
+#'   installation will fail. See \url{https://github.com/WHOIGit/ifcb-features}
+#'   for current Python version requirements.
 #' @param features_ref A character string specifying which git reference (release
 #'   tag, branch, or commit) of `ifcb-features` to install when `features = TRUE`.
 #'   If `NULL` (default), the latest published GitHub release is installed, which
@@ -133,7 +137,24 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
 
     # Install additional packages if provided
     if (!is.null(packages)) {
-      install_missing_packages(packages, envname)
+      tryCatch(
+        install_missing_packages(packages, envname),
+        error = function(e) {
+          msg <- conditionMessage(e)
+          if (features && grepl("Cython|pyx|compil|build.*error|error.*build",
+                                msg, ignore.case = TRUE)) {
+            cli_abort(c(
+              "Failed to install {.pkg ifcb-features} dependencies from source.",
+              "x" = msg,
+              "i" = "A dependency (likely {.pkg h5py}) has no binary wheel for your Python version.",
+              "i" = "Check {.url https://github.com/WHOIGit/ifcb-features} for supported Python versions.",
+              "i" = "You can install a compatible Python version with {.code reticulate::install_python(\"3.12:latest\")}."
+            ))
+          } else {
+            cli_abort(c("Failed to install Python packages.", "x" = msg))
+          }
+        }
+      )
     }
     # Initialize python
     init <- reticulate::py_available(initialize = TRUE)

@@ -18,6 +18,14 @@ utils::globalVariables("bin")
 #' `ifcb_py_install(features = TRUE)`, which additionally installs `ifcb-features`
 #' and its dependencies (`pyifcb`, `phasepack`, `scikit-image`, `scikit-learn`).
 #'
+#' **Python version requirement:** `pyifcb` and its dependencies (notably
+#' `h5py`) must be available as binary wheels for your Python version;
+#' installation will fail if source compilation is required and the build
+#' environment is incompatible. See
+#' \url{https://github.com/WHOIGit/ifcb-features} for current Python version
+#' requirements, and use `ifcb_py_install(features = TRUE)` to install into a
+#' compatible environment.
+#'
 #' Bins are processed sequentially by default. When `parallel = TRUE`, bins are
 #' distributed across `n_cores` worker processes on the Python side, which can
 #' substantially reduce runtime for large datasets. Existing outputs are skipped
@@ -175,8 +183,8 @@ ifcb_extract_features <- function(data_folder,
       blobs_directory = as.character(blobs_folder),
       overwrite = overwrite,
       num_workers = num_workers,
-      found_bins = bin_info$found,
-      missing_bins = bin_info$missing
+      found_bins = as.list(bin_info$found),
+      missing_bins = as.list(bin_info$missing)
     )
     on.exit(try(extractor$terminate(), silent = TRUE), add = TRUE)
 

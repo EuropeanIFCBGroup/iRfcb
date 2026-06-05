@@ -69,6 +69,14 @@ The required Python packages can be installed in a virtual environment using
 \code{ifcb_py_install(features = TRUE)}, which additionally installs \code{ifcb-features}
 and its dependencies (\code{pyifcb}, \code{phasepack}, \code{scikit-image}, \code{scikit-learn}).
 
+\strong{Python version requirement:} \code{pyifcb} and its dependencies (notably
+\code{h5py}) must be available as binary wheels for your Python version;
+installation will fail if source compilation is required and the build
+environment is incompatible. See
+\url{https://github.com/WHOIGit/ifcb-features} for current Python version
+requirements, and use \code{ifcb_py_install(features = TRUE)} to install into a
+compatible environment.
+
 Bins are processed sequentially by default. When \code{parallel = TRUE}, bins are
 distributed across \code{n_cores} worker processes on the Python side, which can
 substantially reduce runtime for large datasets. Existing outputs are skipped

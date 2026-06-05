@@ -199,6 +199,12 @@ class ParallelExtractor:
         if found_bins is not None:
             # Accept a pre-resolved bin list to avoid a second DataDirectory
             # scan (the caller already paid for one in list_bins()).
+            # Guard against a bare string (reticulate converts a length-1 R
+            # character vector to a Python str, not a list).
+            if isinstance(found_bins, str):
+                found_bins = [found_bins]
+            if isinstance(missing_bins, str):
+                missing_bins = [missing_bins]
             bin_names = [str(b) for b in found_bins]
             self.missing = [str(b) for b in (missing_bins or [])]
         else:
