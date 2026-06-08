@@ -30,11 +30,13 @@
 #' This function requires Python to be available on the system. It uses the `reticulate` package to
 #' manage Python environments and packages.
 #'
-#' The `USE_IRFCB_PYTHON` environment variable can be set to automatically activate an
-#' installed Python venv named `iRfcb` when the `iRfcb` package is loaded.
-#' Ensure that the `iRfcb` venv is installed in `reticulate::virtualenv_root()`
-#' and available via `reticulate::virtualenv_list()` (see examples). You can set
-#' `USE_IRFCB_PYTHON` to `"TRUE"` in your `.Renviron` file to enable automatic setup.
+#' The `USE_IRFCB_PYTHON` environment variable can be set to `"TRUE"` to automatically
+#' activate an installed Python venv when the `iRfcb` package is loaded. By default this
+#' activates a venv named `iRfcb` found in `reticulate::virtualenv_root()` (available via
+#' `reticulate::virtualenv_list()`; see examples). To activate a specific environment
+#' instead, also set the `IRFCB_PYTHON_VENV` variable to either the name of a venv under
+#' `reticulate::virtualenv_root()` or a full path to a venv directory. Both variables can
+#' be set in your `.Renviron` file to enable automatic setup across sessions.
 #' For more details, see the package README
 #' at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 #'

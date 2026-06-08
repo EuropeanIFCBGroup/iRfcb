@@ -21,35 +21,48 @@
 
   # Get the path to the requirements file
   req_file <- system.file("python", "requirements.txt", package = "iRfcb")
-
-  # Check required packages
   reqs <- scan(req_file, what = character(), quiet = TRUE)
-
-  # List required packages
   reticulate::py_require(reqs)
 
-  # You can store info in a package env to retrieve later if needed
   .iRfcbEnv$venv <- NULL
 
-  # Only set up environment, no messages
   if (Sys.getenv("USE_IRFCB_PYTHON") == "TRUE") {
-    venv_list <- reticulate::virtualenv_list()
-    iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
+    py_exec <- if (.Platform$OS.type == "windows") "Scripts/python.exe" else "bin/python"
 
-    found <- FALSE
-    for (venv in iRfcb_venvs) {
-      if (reticulate::virtualenv_exists(venv)) {
-        .iRfcbEnv$venv <- venv
-        py_exec <- if (.Platform$OS.type == "windows") "Scripts/python.exe" else "bin/python"
-        Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), venv, py_exec))
-        reticulate::py_available(initialize = TRUE)
-        found <- TRUE
-        break
+    # Optional: user-specified venv (named virtualenv OR full path to a venv dir)
+    requested <- Sys.getenv("IRFCB_PYTHON_VENV", unset = "")
+
+    if (nzchar(requested)) {
+      python_path <- NULL
+
+      if (dir.exists(requested)) {
+        # Full path to a venv directory
+        candidate <- file.path(requested, py_exec)
+        if (file.exists(candidate)) python_path <- candidate
+      } else if (reticulate::virtualenv_exists(requested)) {
+        # Named virtualenv under reticulate's root
+        python_path <- reticulate::virtualenv_python(requested)
       }
-    }
 
-    if (!found) {
-      .iRfcbEnv$venv <- NULL
+      if (!is.null(python_path)) {
+        .iRfcbEnv$venv <- requested
+        Sys.setenv(RETICULATE_PYTHON = python_path)
+        reticulate::py_available(initialize = TRUE)
+      }
+      # If not resolvable, .iRfcbEnv$venv stays NULL (no fallback to auto-discovery)
+
+    } else {
+      # No explicit venv requested -> auto-discover an "iRfcb" venv (original behaviour)
+      venv_list <- reticulate::virtualenv_list()
+      iRfcb_venvs <- venv_list[grepl("iRfcb", venv_list)]
+      for (venv in iRfcb_venvs) {
+        if (reticulate::virtualenv_exists(venv)) {
+          .iRfcbEnv$venv <- venv
+          Sys.setenv(RETICULATE_PYTHON = file.path(reticulate::virtualenv_root(), venv, py_exec))
+          reticulate::py_available(initialize = TRUE)
+          break
+        }
+      }
     }
   }
 }
