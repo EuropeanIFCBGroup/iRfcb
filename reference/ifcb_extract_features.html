@@ -4,19 +4,7 @@ raw Imaging FlowCytobot (IFCB) data by calling the WHOI ifcb-features Python
 package. For each bin it writes a feature table
 (&amp;lt;bin&amp;gt;_features_v4.csv, 30 morphological features per region of interest)
 and an archive of binary blob masks (&amp;lt;bin&amp;gt;_blobs_v4.zip, one 1-bit PNG per
-ROI). Features and blobs are written to separate, user-specified directories.
-This function computes the "slim" feature set (version 4) and blob masks from
-raw Imaging FlowCytobot (IFCB) data by calling the WHOI ifcb-features Python
-package. For each bin it writes a feature table
-(&amp;lt;bin&amp;gt;_features_v4.csv, 30 morphological features per region of interest)
-and an archive of binary blob masks (&amp;lt;bin&amp;gt;_blobs_v4.zip, one 1-bit PNG per
 ROI). Features and blobs are written to separate, user-specified directories.'><meta property="og:description" content='This function computes the "slim" feature set (version 4) and blob masks from
-raw Imaging FlowCytobot (IFCB) data by calling the WHOI ifcb-features Python
-package. For each bin it writes a feature table
-(&amp;lt;bin&amp;gt;_features_v4.csv, 30 morphological features per region of interest)
-and an archive of binary blob masks (&amp;lt;bin&amp;gt;_blobs_v4.zip, one 1-bit PNG per
-ROI). Features and blobs are written to separate, user-specified directories.
-This function computes the "slim" feature set (version 4) and blob masks from
 raw Imaging FlowCytobot (IFCB) data by calling the WHOI ifcb-features Python
 package. For each bin it writes a feature table
 (&amp;lt;bin&amp;gt;_features_v4.csv, 30 morphological features per region of interest)
@@ -29,7 +17,7 @@ ROI). Features and blobs are written to separate, user-specified directories.'><
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +54,7 @@ ROI). Features and blobs are written to separate, user-specified directories.'><
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract Slim Features and Blobs from IFCB Data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/R/ifcb_extract_features.R" class="external-link"><code>R/ifcb_extract_features.R</code></a>, <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/R/ifcb_extract_features_old.R" class="external-link"><code>R/ifcb_extract_features_old.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/EuropeanIFCBGroup/iRfcb/blob/main/R/ifcb_extract_features.R" class="external-link"><code>R/ifcb_extract_features.R</code></a></small>
       <div class="d-none name"><code>ifcb_extract_features.Rd</code></div>
     </div>
 
@@ -77,28 +65,11 @@ package. For each bin it writes a feature table
 (<code>&lt;bin&gt;_features_v4.csv</code>, 30 morphological features per region of interest)
 and an archive of binary blob masks (<code>&lt;bin&gt;_blobs_v4.zip</code>, one 1-bit PNG per
 ROI). Features and blobs are written to separate, user-specified directories.</p>
-<p>This function computes the "slim" feature set (version 4) and blob masks from
-raw Imaging FlowCytobot (IFCB) data by calling the WHOI <code>ifcb-features</code> Python
-package. For each bin it writes a feature table
-(<code>&lt;bin&gt;_features_v4.csv</code>, 30 morphological features per region of interest)
-and an archive of binary blob masks (<code>&lt;bin&gt;_blobs_v4.zip</code>, one 1-bit PNG per
-ROI). Features and blobs are written to separate, user-specified directories.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_extract_features</span><span class="op">(</span></span>
-<span>  <span class="va">data_folder</span>,</span>
-<span>  <span class="va">features_folder</span>,</span>
-<span>  <span class="va">blobs_folder</span>,</span>
-<span>  bins <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  parallel <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  n_cores <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">ifcb_extract_features</span><span class="op">(</span></span>
 <span>  <span class="va">data_folder</span>,</span>
 <span>  <span class="va">features_folder</span>,</span>
 <span>  <span class="va">blobs_folder</span>,</span>
@@ -142,9 +113,10 @@ Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-n-cores">n_cores<a class="anchor" aria-label="anchor" href="#arg-n-cores"></a></dt>
-<dd><p>An integer specifying the number of worker processes to use
-when <code>parallel = TRUE</code>. If <code>NULL</code> (default), <code>parallel::detectCores() - 1</code>
-cores are used. Ignored when <code>parallel = FALSE</code>.</p></dd>
+<dd><p>An integer specifying the number of parallel workers to use
+when <code>parallel = TRUE</code> (worker processes on Linux, threads on Windows and
+macOS; see Details). If <code>NULL</code> (default), <code>parallel::detectCores() - 1</code>
+workers are used. Ignored when <code>parallel = FALSE</code>.</p></dd>
 
 
 <dt id="arg-overwrite">overwrite<a class="anchor" aria-label="anchor" href="#arg-overwrite"></a></dt>
@@ -162,10 +134,6 @@ Default is <code>TRUE</code>.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Invisibly returns a tibble with one row per bin and the columns
-<code>bin</code>, <code>status</code> (<code>"processed"</code>, <code>"skipped"</code> or <code>"error"</code>) and <code>message</code>.
-The function is primarily called for its side effect of writing feature and
-blob files to disk.</p>
-<p>Invisibly returns a tibble with one row per bin and the columns
 <code>bin</code>, <code>status</code> (<code>"processed"</code>, <code>"skipped"</code> or <code>"error"</code>) and <code>message</code>.
 The function is primarily called for its side effect of writing feature and
 blob files to disk.</p>
@@ -198,25 +166,6 @@ speedup there is smaller and depends on how much of the work runs in native
 (<code>numpy</code> / <code>scikit-image</code>) code. A further consequence of the thread backend
 is that interrupting a run (ESC / Stop) does not halt a bin already being
 processed: it finishes and writes its outputs before the run stops.</p>
-<p>This function wraps the <code>extract_slim_features</code> workflow from the
-<code>ifcb-features</code> Python repository, which can be found at
-<a href="https://github.com/WHOIGit/ifcb-features" class="external-link">https://github.com/WHOIGit/ifcb-features</a>.</p>
-<p>Python and the <code>ifcb-features</code> package must be installed to use this function.
-The required Python packages can be installed in a virtual environment using
-<code>ifcb_py_install(features = TRUE)</code>, which additionally installs <code>ifcb-features</code>
-and its dependencies (<code>pyifcb</code>, <code>phasepack</code>, <code>scikit-image</code>, <code>scikit-learn</code>).</p>
-<p><strong>Python version requirement:</strong> <code>pyifcb</code> and its dependencies (notably
-<code>h5py</code>) must be available as binary wheels for your Python version;
-installation will fail if source compilation is required and the build
-environment is incompatible. See
-<a href="https://github.com/WHOIGit/ifcb-features" class="external-link">https://github.com/WHOIGit/ifcb-features</a> for current Python version
-requirements, and use <code>ifcb_py_install(features = TRUE)</code> to install into a
-compatible environment.</p>
-<p>Bins are processed sequentially by default. When <code>parallel = TRUE</code>, bins are
-distributed across <code>n_cores</code> worker processes on the Python side, which can
-substantially reduce runtime for large datasets. Existing outputs are skipped
-unless <code>overwrite = TRUE</code>, so the function can be re-run to resume an
-interrupted extraction.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -227,28 +176,6 @@ interrupted extraction.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Install the Python environment including ifcb-features</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>features <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Extract features and blobs from all bins in a data folder</span></span></span>
-<span class="r-in"><span><span class="fu">ifcb_extract_features</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data_folder <span class="op">=</span> <span class="st">"path/to/data"</span>,</span></span>
-<span class="r-in"><span>  features_folder <span class="op">=</span> <span class="st">"path/to/features"</span>,</span></span>
-<span class="r-in"><span>  blobs_folder <span class="op">=</span> <span class="st">"path/to/blobs"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Process a subset of bins in parallel using 4 cores</span></span></span>
-<span class="r-in"><span><span class="fu">ifcb_extract_features</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  data_folder <span class="op">=</span> <span class="st">"path/to/data"</span>,</span></span>
-<span class="r-in"><span>  features_folder <span class="op">=</span> <span class="st">"path/to/features"</span>,</span></span>
-<span class="r-in"><span>  blobs_folder <span class="op">=</span> <span class="st">"path/to/blobs"</span>,</span></span>
-<span class="r-in"><span>  bins <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"D20220522T003051_IFCB134"</span>, <span class="st">"D20220522T000439_IFCB134"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>  n_cores <span class="op">=</span> <span class="fl">4</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Install the Python environment including ifcb-features</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>features <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
