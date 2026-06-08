@@ -583,11 +583,98 @@ install_missing_packages <- function(packages, envname = NULL) {
       # Install globally if system Python is used
       reticulate::py_install(missing_packages, pip = TRUE)
     } else {
-      # Install in virtual environment
-      reticulate::virtualenv_install(envname, missing_packages, ignore_installed = TRUE)
+      # Install in virtual environment. `ignore_installed` is left at its default
+      # (FALSE) so that pip resolves dependencies cleanly and replaces conflicting
+      # versions. Using `ignore_installed = TRUE` (pip `--ignore-installed`) would
+      # reinstall transitive dependencies (e.g. numpy/scipy) on top of existing
+      # ones rather than removing them first, which can layer incompatible builds
+      # and corrupt the environment (e.g. when installing `ifcb-features`, whose
+      # `pyifcb` dependency pins exact `scipy`/`numpy`/`pandas` versions).
+      reticulate::virtualenv_install(envname, missing_packages)
     }
   } else {
     cli_inform("All requested packages are already installed.")
+  }
+}
+#' Get the Latest Release Tag of a GitHub Repository
+#'
+#' A helper function that queries the GitHub REST API for the latest published
+#' release of a repository and returns its tag name (e.g. `"v1.0.0"`).
+#' If a `GITHUB_PAT` or `GITHUB_TOKEN` environment variable is set, it is used to
+#' authenticate the request and avoid the lower unauthenticated rate limit.
+#'
+#' @param repo Character. The repository in `"owner/name"` form
+#'   (e.g. `"WHOIGit/ifcb-features"`).
+#'
+#' @return Character. The latest release tag name, or `NULL` if it could not be
+#'   determined (e.g. no network, rate limited, or no releases published).
+#' @noRd
+get_latest_github_release <- function(repo) {
+  url <- paste0("https://api.github.com/repos/", repo, "/releases/latest")
+
+  handle <- curl::new_handle()
+  # GitHub requires a User-Agent header on API requests
+  curl::handle_setheaders(handle, "User-Agent" = "iRfcb R package")
+
+  # Use a token if available to avoid the unauthenticated rate limit
+  token <- Sys.getenv("GITHUB_PAT", unset = Sys.getenv("GITHUB_TOKEN"))
+  if (nzchar(token)) {
+    curl::handle_setheaders(handle, "Authorization" = paste("Bearer", token))
+  }
+
+  response <- tryCatch(
+    curl::curl_fetch_memory(url, handle = handle),
+    error = function(e) NULL
+  )
+
+  if (is.null(response) || response$status_code != 200) {
+    return(NULL)
+  }
+
+  content <- tryCatch(
+    jsonlite::fromJSON(rawToChar(response$content)),
+    error = function(e) NULL
+  )
+
+  tag <- content$tag_name
+  if (is.null(tag) || !nzchar(tag)) {
+    return(NULL)
+  }
+
+  tag
+}
+#' Build the pip Install Specifier for WHOI's ifcb-features Package
+#'
+#' A helper that returns the `git+...` pip install specifier for the
+#' `ifcb-features` package at a given git reference. When `features_ref` is
+#' `NULL`, the latest published GitHub release is resolved via
+#' `get_latest_github_release()`; if that cannot be determined, the default
+#' branch is used (with a warning).
+#'
+#' @param features_ref Character or `NULL`. A git reference (release tag, branch,
+#'   or commit) to install. If `NULL`, the latest release is used.
+#'
+#' @return Character. A pip install specifier such as
+#'   `"git+https://github.com/WHOIGit/ifcb-features.git@v1.0.0"`.
+#' @noRd
+resolve_ifcb_features_url <- function(features_ref = NULL) {
+  ref <- features_ref
+  if (is.null(ref)) {
+    ref <- get_latest_github_release("WHOIGit/ifcb-features")
+    if (is.null(ref)) {
+      cli_warn(c(
+        "Could not determine the latest {.pkg ifcb-features} release.",
+        "i" = "Installing from the default branch instead. Set {.arg features_ref} to pin a version."
+      ))
+    } else {
+      cli_inform("Installing {.pkg ifcb-features} release {.val {ref}}.")
+    }
+  }
+
+  if (is.null(ref)) {
+    "git+https://github.com/WHOIGit/ifcb-features.git"
+  } else {
+    paste0("git+https://github.com/WHOIGit/ifcb-features.git@", ref)
   }
 }
 #' Read MATLAB (.mat) Files

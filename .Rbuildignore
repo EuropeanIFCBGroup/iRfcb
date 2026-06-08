@@ -27,3 +27,6 @@ vignettes/data/
 ^vignettes/articles$
 ^\.httr-oauth$
 ^data-raw$
+__pycache__
+^\.claude$
+^\.positai$

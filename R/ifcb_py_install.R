@@ -6,6 +6,23 @@
 #' @param envname A character string specifying the name of the virtual environment to create. Default is "~/.virtualenvs/iRfcb".
 #' @param use_venv Logical. If `TRUE` (default), a virtual environment is created. If `FALSE`, the system Python is used instead, and missing packages are installed globally for the user.
 #' @param packages A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.
+#' @param features Logical. If `TRUE`, additionally installs the WHOI `ifcb-features`
+#'   package (\url{https://github.com/WHOIGit/ifcb-features}) from GitHub, together
+#'   with its dependencies (`pyifcb`, `phasepack`, `scikit-image`, `scikit-learn`).
+#'   This is required by `ifcb_extract_features()`. Default is `FALSE` to keep the
+#'   default environment lightweight. When installing into an existing virtual
+#'   environment, the (slow) install is skipped if `ifcb-features` already imports
+#'   successfully, unless `features_ref` is given.
+#'   Installation requires binary wheels for all of `pyifcb`'s dependencies
+#'   (notably `h5py`); if no wheel is available for your Python version,
+#'   installation will fail. See \url{https://github.com/WHOIGit/ifcb-features}
+#'   for current Python version requirements.
+#' @param features_ref A character string specifying which git reference (release
+#'   tag, branch, or commit) of `ifcb-features` to install when `features = TRUE`.
+#'   If `NULL` (default), the latest published GitHub release is installed, which
+#'   is more stable than the actively developed default branch. Use
+#'   `features_ref = "main"` to install the latest development commit, or a tag
+#'   such as `"v1.0.0"` to pin a specific version.
 #'
 #' @return No return value. This function is called for its side effect of configuring the Python environment.
 #'
@@ -13,11 +30,13 @@
 #' This function requires Python to be available on the system. It uses the `reticulate` package to
 #' manage Python environments and packages.
 #'
-#' The `USE_IRFCB_PYTHON` environment variable can be set to automatically activate an
-#' installed Python venv named `iRfcb` when the `iRfcb` package is loaded.
-#' Ensure that the `iRfcb` venv is installed in `reticulate::virtualenv_root()`
-#' and available via `reticulate::virtualenv_list()` (see examples). You can set
-#' `USE_IRFCB_PYTHON` to `"TRUE"` in your `.Renviron` file to enable automatic setup.
+#' The `USE_IRFCB_PYTHON` environment variable can be set to `"TRUE"` to automatically
+#' activate an installed Python venv when the `iRfcb` package is loaded. By default this
+#' activates a venv named `iRfcb` found in `reticulate::virtualenv_root()` (available via
+#' `reticulate::virtualenv_list()`; see examples). To activate a specific environment
+#' instead, also set the `IRFCB_PYTHON_VENV` variable to either the name of a venv under
+#' `reticulate::virtualenv_root()` or a full path to a venv directory. Both variables can
+#' be set in your `.Renviron` file to enable automatic setup across sessions.
 #' For more details, see the package README
 #' at \url{https://europeanifcbgroup.github.io/iRfcb/#python-dependency}.
 #'
@@ -32,11 +51,19 @@
 #' # Install the iRfcb Python environment with additional packages
 #' ifcb_py_install(envname = envpath, packages = c("numpy", "plotly"))
 #'
+#' # Install the iRfcb Python venv including the WHOI ifcb-features package
+#' # (latest release by default)
+#' ifcb_py_install(envname = envpath, features = TRUE)
+#'
+#' # Install a specific ifcb-features version, or the development branch
+#' ifcb_py_install(envname = envpath, features = TRUE, features_ref = "v1.0.0")
+#' ifcb_py_install(envname = envpath, features = TRUE, features_ref = "main")
+#'
 #' # Use system Python instead of a virtual environment
 #' ifcb_py_install(envname = envpath, use_venv = FALSE)
 #' }
 #' @export
-ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, packages = NULL) {
+ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, packages = NULL, features = FALSE, features_ref = NULL) {
   # Get the path to the requirements file
   req_file <- system.file("python", "requirements.txt", package = "iRfcb")
 
@@ -62,6 +89,11 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
     # Use the discovered Python path
     reticulate::use_python(python_path, required = TRUE)
 
+    # Optionally include WHOI's ifcb-features package (installed from GitHub)
+    if (features) {
+      packages <- unique(c(packages, resolve_ifcb_features_url(features_ref)))
+    }
+
     # Read required packages from requirements.txt
     required_packages <- scan(req_file, what = character(), quiet = TRUE)
 
@@ -69,7 +101,7 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
     all_packages <- unique(c(required_packages, packages))
 
     # Declare Python Requirements
-    reticulate::py_require(required_packages)
+    reticulate::py_require(all_packages)
 
     # Initialize python
     temp <- py_available(initialize = TRUE)
@@ -77,11 +109,7 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
     # Otherwise, create or use the virtual environment
     if (!reticulate::virtualenv_exists(envname)) {
       cli_inform("Creating virtual environment: {.file {envname}}")
-      if (!is.null(packages)) {
-        reticulate::virtualenv_create(envname, requirements = req_file, quiet = TRUE, packages = packages)
-      } else {
-        reticulate::virtualenv_create(envname, requirements = req_file, quiet = TRUE)
-      }
+      reticulate::virtualenv_create(envname, requirements = req_file, quiet = TRUE)
 
       # Activate virtual environment
       reticulate::use_virtualenv(envname, required = TRUE)
@@ -91,9 +119,44 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
       # Activate virtual environment
       reticulate::use_virtualenv(envname, required = TRUE)
     }
+
+    # Optionally include WHOI's ifcb-features package (installed from GitHub).
+    # If no specific reference is requested and the module already imports in the
+    # activated environment, skip the (slow) git install. An explicit
+    # `features_ref` always (re)installs, so a specific version can be forced.
+    if (features) {
+      if (is.null(features_ref) &&
+          isTRUE(tryCatch(reticulate::py_module_available("ifcb_features"),
+                          error = function(e) FALSE))) {
+        cli_inform(c(
+          "{.pkg ifcb-features} is already installed; skipping installation.",
+          "i" = "Set {.arg features_ref} to (re)install a specific version."
+        ))
+      } else {
+        packages <- unique(c(packages, resolve_ifcb_features_url(features_ref)))
+      }
+    }
+
     # Install additional packages if provided
     if (!is.null(packages)) {
-      install_missing_packages(packages, envname)
+      tryCatch(
+        install_missing_packages(packages, envname),
+        error = function(e) {
+          msg <- conditionMessage(e)
+          if (features && grepl("Cython|pyx|compil|build.*error|error.*build",
+                                msg, ignore.case = TRUE)) {
+            cli_abort(c(
+              "Failed to install {.pkg ifcb-features} dependencies from source.",
+              "x" = msg,
+              "i" = "A dependency (likely {.pkg h5py}) has no binary wheel for your Python version.",
+              "i" = "Check {.url https://github.com/WHOIGit/ifcb-features} for supported Python versions.",
+              "i" = "You can install a compatible Python version with {.code reticulate::install_python(\"3.12:latest\")}."
+            ))
+          } else {
+            cli_abort(c("Failed to install Python packages.", "x" = msg))
+          }
+        }
+      )
     }
     # Initialize python
     init <- reticulate::py_available(initialize = TRUE)

@@ -71,31 +71,33 @@ The `iRfcb` package can also be configured to automatically activate an installe
 
 ### USE_IRFCB_PYTHON
 
-- **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically activates a pre-installed Python venv named `iRfcb` when the package is loaded.
-- **Default**: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install()` function manually before using a Python feature.
-- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`. Ensure that a venv named `iRfcb` is installed (e.g. through `ifcb_py_install()`) in `reticulate::virtualenv_root()` and available via `reticulate::virtualenv_list()`.
+- **Description**: The `USE_IRFCB_PYTHON` environment variable controls whether the package automatically activates a pre-installed Python venv (e.g. using `ifcb_py_install()`) when the package is loaded. The optional `IRFCB_PYTHON_VENV` variable controls *which* venv is activated.
+- **Default**: By default, neither variable is set. This means that the Python environment will not be loaded automatically, and the user must call the `ifcb_py_install()` function manually before using a Python feature.
+- **Usage**: To enable automatic setup of the Python environment when `iRfcb` is loaded, set `USE_IRFCB_PYTHON` to `"TRUE"`. By default the package activates the first available venv named `iRfcb` found in `reticulate::virtualenv_root()` (as listed by `reticulate::virtualenv_list()`). To load a specific environment instead, also set `IRFCB_PYTHON_VENV` to either the **name** of a venv under `reticulate::virtualenv_root()` or a **full path** to a venv directory. If `IRFCB_PYTHON_VENV` is set but cannot be resolved, no environment is activated (auto-discovery is not attempted). Both variables must be set *before* `iRfcb` is loaded.
 
-#### How to Set the `USE_IRFCB_PYTHON` Variable
+#### How to Set These Variables
 
-You can set the `USE_IRFCB_PYTHON` variable in your R session or make it persistent across sessions:
+You can set the variables in your R session or make them persistent across sessions:
 
 1. **Temporary for the session**: 
-   You can set the variable in your R session before loading `iRfcb` using the following command:
+   Set the variables before loading `iRfcb`:
    ```r
    Sys.setenv(USE_IRFCB_PYTHON = "TRUE")
+   Sys.setenv(IRFCB_PYTHON_VENV = "/path/to/my/venv")   # optional; or a named venv, e.g. "iRfcb-3.11"
    ```
-
+   
 2. **Permanent across sessions**:
-   To ensure this setting persists across R sessions, add it to your `.Renviron` file in your R home directory. You can easily edit the file using the following command:
+   To ensure these settings persist across R sessions, add them to your `.Renviron` file in your R home directory. You can easily edit the file using:
    ```r
    usethis::edit_r_environ("user")
    ```
    
-   Then, add the following line to the file:
+   Then add the following lines (the second is optional):
    ```text
    USE_IRFCB_PYTHON=TRUE
+   IRFCB_PYTHON_VENV=/path/to/my/venv
    ```
-   This will automatically set the environment variable each time you start an R session.
+   This will automatically set the environment variables each time you start an R session.
 
 ## Getting help
 

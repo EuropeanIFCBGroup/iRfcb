@@ -99,7 +99,7 @@ if (!dir.exists(data_dir)) {
 
 ## Particle Size Distribution
 
-IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. 2025). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD), which is efficient in detecting samples with bubbles, beads, incomplete runs etc. Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
+IFCB data can be quality controlled by analyzing the particle size distribution (PSD) (Hayashi et al. 2025). `iRfcb` uses the code available at [https://github.com/kudelalab/PSD](https://github.com/kudelalab/PSD), which is efficient in detecting samples with bubbles, beads, incomplete runs etc. The PSD analysis operates on the feature files (`<bin>_features_v4.csv`) supplied via `feature_folder`. If you have not yet generated these features, they can be computed from raw data in R with `ifcb_extract_features()` (see `vignette("introduction")`). Before running the PSD quality check, ensure the necessary Python environment is set up and activated:
 
 ```{r, eval=FALSE}
 # Define path to virtual environment
