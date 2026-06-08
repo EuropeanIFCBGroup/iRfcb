@@ -10,3 +10,4 @@ iRfcb.Rcheck
 docs
 .virtualenvs/
 __pycache__
+.positai

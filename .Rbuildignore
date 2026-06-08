@@ -29,3 +29,4 @@ vignettes/data/
 ^data-raw$
 __pycache__
 ^\.claude$
+^\.positai$

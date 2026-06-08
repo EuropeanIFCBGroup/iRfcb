@@ -6,7 +6,9 @@ extract_slim_features.py from https://github.com/WHOIGit/ifcb-features so that:
 
   * features and blobs are written to separate, user-specified directories,
   * existing outputs are skipped unless overwrite is requested, and
-  * bins can be processed in parallel via a process pool.
+  * bins can be processed in parallel via a process pool (Linux) or a thread
+    pool (when ``use_threads`` is set, e.g. on Windows / macOS where an embedded
+    interpreter cannot spawn worker processes).
 
 It still produces the same per-bin outputs as upstream: a
 ``<lid>_features_v4.csv`` table (30 morphological features per ROI) and a
@@ -17,6 +19,7 @@ import argparse
 import io
 import multiprocessing
 import os
+import sys
 import time
 import warnings
 import zipfile
@@ -44,6 +47,31 @@ def _ensure_module_importable():
     parts = [p for p in current.split(os.pathsep) if p]
     if module_dir not in parts:
         os.environ['PYTHONPATH'] = os.pathsep.join([module_dir] + parts)
+
+
+def _ensure_spawn_executable(python_executable=None):
+    """Point multiprocessing at a real Python interpreter for spawn workers.
+
+    Companion to _ensure_module_importable(). On Windows and macOS,
+    multiprocessing uses spawn, which relaunches the interpreter named by
+    sys.executable to start each worker. When Python is embedded in another
+    program - as it is here, running inside R via reticulate - sys.executable
+    often points at the host process (e.g. Rterm.exe / the R binary), not a
+    usable Python. Spawn workers are then launched as the wrong process, never
+    run the bootstrap, and the apply_async results never become ready(): the
+    polling loop hangs forever with no error or warning.
+
+    Setting the multiprocessing executable to the actual interpreter fixes this.
+    The path is supplied by the R caller via reticulate::py_exe(); if it is not
+    given we fall back to sys.executable. Under fork (Linux) nothing is
+    relaunched, so this is a no-op there.
+    """
+    if multiprocessing.get_start_method(allow_none=False) == 'fork':
+        return
+    exe = python_executable or sys.executable
+    if exe and os.path.exists(exe):
+        multiprocessing.set_executable(exe)
+
 
 # ifcb_features/blob_geometry.py hits divide-by-zero when computing the
 # orientation of a perfectly axis-aligned blob (x == 0). The result is still
@@ -99,8 +127,10 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     """Extract features and blobs for a single bin.
 
     This is a module-level function so it can be pickled and dispatched to a
-    ``ProcessPoolExecutor`` worker. Each worker rebuilds its own
-    ``DataDirectory`` because the pyifcb sample objects are not picklable.
+    pool worker (a process under ``multiprocessing.Pool``, or a thread under
+    ``ThreadPool``). Each call rebuilds its own ``DataDirectory`` because the
+    pyifcb sample objects are not picklable and to avoid sharing state between
+    workers.
 
     Returns a dict with keys ``bin``, ``status`` ("processed", "skipped" or
     "error") and ``message``.
@@ -194,22 +224,37 @@ def list_bins(data_directory, bins=None):
 
 
 class ParallelExtractor:
-    """Process IFCB bins across worker processes, polled incrementally.
+    """Process IFCB bins across pool workers, polled incrementally.
 
-    Bins are submitted to a ``multiprocessing.Pool`` up front; completed results
-    are retrieved non-blockingly via :meth:`poll`. This design lets the *caller*
-    (the R wrapper) drive the loop and check for interrupts between polls, and
-    guarantees the workers can be stopped via :meth:`terminate`.
+    Bins are submitted to a pool up front; completed results are retrieved
+    non-blockingly via :meth:`poll`. This design lets the *caller* (the R
+    wrapper) drive the loop and check for interrupts between polls, and lets the
+    workers be stopped via :meth:`terminate`.
 
-    Worker processes are daemonic (a ``multiprocessing.Pool`` property), so they
-    are also killed automatically if the parent process exits. Combined with the
-    R-side ``on.exit(terminate())``, this ensures an interrupted run does not
-    leave workers writing files in the background.
+    The pool is a ``multiprocessing.Pool`` (separate worker processes, true
+    multi-core parallelism) by default, or a ``multiprocessing.pool.ThreadPool``
+    (worker threads in this interpreter) when ``use_threads`` is set. Threads are
+    the reliable choice when Python is embedded in another program (e.g. R via
+    reticulate) on Windows / macOS, where spawning worker processes from an
+    embedded interpreter hangs.
+
+    Stopping behaviour differs between the two:
+
+      * Process pool: workers are daemonic, so :meth:`terminate` kills them
+        immediately and they are also reaped if the parent process exits. An
+        interrupted run leaves no workers writing files in the background.
+      * Thread pool: a thread cannot be force-killed, so a bin already running
+        inside ``compute_features`` finishes (and writes its outputs) even after
+        :meth:`terminate`. The pool stops dispatching *new* bins promptly.
+
+    Note also that under a thread pool the GIL limits speedup to the parts of
+    the work that release it (most of the numpy / scikit-image computation does).
     """
 
     def __init__(self, data_directory, features_directory, blobs_directory,
                  bins=None, overwrite=False, num_workers=2,
-                 found_bins=None, missing_bins=None):
+                 found_bins=None, missing_bins=None, python_executable=None,
+                 use_threads=False):
         os.makedirs(features_directory, exist_ok=True)
         os.makedirs(blobs_directory, exist_ok=True)
 
@@ -228,8 +273,22 @@ class ParallelExtractor:
             bin_names, self.missing = _resolve_bins(data_directory, bins)
         self.total = len(bin_names)
 
-        _ensure_module_importable()
-        self.pool = multiprocessing.Pool(processes=max(1, int(num_workers)))
+        if use_threads:
+            # Thread-based pool: workers are threads in this interpreter, so
+            # there is no spawn, no pickling and no child-process bootstrap.
+            # This is the reliable choice when Python is embedded (reticulate)
+            # on Windows / macOS, where process spawn from an embedded
+            # interpreter hangs. compute_features spends most of its time in
+            # scikit-image / numpy, which release the GIL, so threads still
+            # parallelise the heavy work.
+            from multiprocessing.pool import ThreadPool
+            self.pool = ThreadPool(processes=max(1, int(num_workers)))
+        else:
+            # Process-based pool: true multi-core parallelism. Safe under fork
+            # (Linux). Avoid on Windows / macOS when embedded in R.
+            _ensure_module_importable()
+            _ensure_spawn_executable(python_executable)
+            self.pool = multiprocessing.Pool(processes=max(1, int(num_workers)))
         self._pending = [
             (bin_name, self.pool.apply_async(
                 _process_bin,
@@ -260,7 +319,12 @@ class ParallelExtractor:
         return len(self._pending)
 
     def terminate(self):
-        """Stop all worker processes immediately, discarding pending work."""
+        """Stop the pool immediately, discarding pending work.
+
+        For a process pool this kills the worker processes; for a thread pool it
+        stops dispatching new bins (a bin already in flight runs to completion,
+        see the class docstring).
+        """
         try:
             self.pool.terminate()
             self.pool.join()
@@ -269,7 +333,8 @@ class ParallelExtractor:
 
 
 def extract_features(data_directory, features_directory, blobs_directory,
-                     bins=None, overwrite=False, num_workers=1, progress=None):
+                     bins=None, overwrite=False, num_workers=1, progress=None,
+                     python_executable=None, use_threads=False):
     """Extract slim features and blobs for IFCB bins.
 
     Args:
@@ -283,11 +348,20 @@ def extract_features(data_directory, features_directory, blobs_directory,
             process. If None, all bins in ``data_directory`` are processed.
         overwrite (bool): If False (default), bins whose feature CSV and blob
             ZIP both already exist are skipped.
-        num_workers (int): Number of worker processes. 1 (default) runs
-            sequentially; values > 1 use a process pool.
+        num_workers (int): Number of pool workers. 1 (default) runs
+            sequentially; values > 1 use a pool (worker processes, or threads
+            when ``use_threads`` is True).
         progress (callable, optional): Called as ``progress(done, total)`` after
             each bin completes, where ``done`` is the number of bins finished and
             ``total`` is the number to process. Used to drive a progress bar.
+        python_executable (str, optional): Path to the real Python interpreter,
+            used to point a spawn-based process pool at a usable interpreter when
+            this module is run from an embedded interpreter (reticulate). Ignored
+            under fork and when ``use_threads`` is True. Typically supplied from
+            R via ``reticulate::py_exe()``.
+        use_threads (bool): If True, use a thread pool instead of a process pool
+            (see ParallelExtractor). Required when running embedded on
+            Windows / macOS; on Linux a process pool is preferred.
 
     Returns:
         list[dict]: One result dict per bin with keys ``bin``, ``status`` and
@@ -323,7 +397,9 @@ def extract_features(data_directory, features_directory, blobs_directory,
         # they stop immediately and do not keep writing files.
         extractor = ParallelExtractor(data_directory, features_directory,
                                       blobs_directory, bins, overwrite,
-                                      num_workers)
+                                      num_workers,
+                                      python_executable=python_executable,
+                                      use_threads=use_threads)
         try:
             while extractor.remaining() > 0:
                 for result in extractor.poll():
@@ -347,8 +423,6 @@ def _main(argv=None):
     the file with ``__name__ == "__main__"``); call this explicitly instead,
     e.g. ``python -c "import extract_slim_features as e; e._main()"``.
     """
-    import time
-
     parser = argparse.ArgumentParser(
         description="Extract slim ROI features and blobs from IFCB data.")
     parser.add_argument("data_directory",

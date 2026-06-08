@@ -27,10 +27,18 @@ utils::globalVariables("bin")
 #' compatible environment.
 #'
 #' Bins are processed sequentially by default. When `parallel = TRUE`, bins are
-#' distributed across `n_cores` worker processes on the Python side, which can
-#' substantially reduce runtime for large datasets. Existing outputs are skipped
-#' unless `overwrite = TRUE`, so the function can be re-run to resume an
-#' interrupted extraction.
+#' distributed across `n_cores` workers, which can substantially reduce runtime
+#' for large datasets. Existing outputs are skipped unless `overwrite = TRUE`,
+#' so the function can be re-run to resume an interrupted extraction.
+#'
+#' The parallel backend depends on the platform. On Linux, bins run in separate
+#' worker processes, giving true multi-core parallelism. On Windows and macOS,
+#' where the embedded Python interpreter cannot reliably spawn worker processes,
+#' a thread pool is used instead; because of Python's Global Interpreter Lock the
+#' speedup there is smaller and depends on how much of the work runs in native
+#' (`numpy` / `scikit-image`) code. A further consequence of the thread backend
+#' is that interrupting a run (ESC / Stop) does not halt a bin already being
+#' processed: it finishes and writes its outputs before the run stops.
 #'
 #' @param data_folder The path to a directory containing raw IFCB data
 #'   (`.roi`, `.adc` and `.hdr` files). The directory is searched recursively by
@@ -44,9 +52,10 @@ utils::globalVariables("bin")
 #'   If `NULL` (default), all bins found in `data_folder` are processed.
 #' @param parallel A logical indicating whether to process bins in parallel.
 #'   Default is `FALSE`.
-#' @param n_cores An integer specifying the number of worker processes to use
-#'   when `parallel = TRUE`. If `NULL` (default), `parallel::detectCores() - 1`
-#'   cores are used. Ignored when `parallel = FALSE`.
+#' @param n_cores An integer specifying the number of parallel workers to use
+#'   when `parallel = TRUE` (worker processes on Linux, threads on Windows and
+#'   macOS; see Details). If `NULL` (default), `parallel::detectCores() - 1`
+#'   workers are used. Ignored when `parallel = FALSE`.
 #' @param overwrite A logical indicating whether to overwrite existing feature
 #'   and blob files. If `FALSE` (default), bins whose outputs already exist are
 #'   skipped.
@@ -177,14 +186,22 @@ ifcb_extract_features <- function(data_folder,
       cli_progress_update(id = pb, set = 0L)  # force immediate render before workers start
     }
 
+    # Process pools spawned from an embedded interpreter (reticulate) hang on
+    # Windows and macOS, so fall back to a thread pool there. Linux uses fork and
+    # keeps the (faster) process pool. See ParallelExtractor in the Python module.
+    use_threads <- .Platform$OS.type == "windows" ||
+      identical(Sys.info()[["sysname"]], "Darwin")
+
     extractor <- py_mod$ParallelExtractor(
-      data_directory = as.character(data_folder),
+      data_directory     = as.character(data_folder),
       features_directory = as.character(features_folder),
-      blobs_directory = as.character(blobs_folder),
-      overwrite = overwrite,
-      num_workers = num_workers,
-      found_bins = as.list(bin_info$found),
-      missing_bins = as.list(bin_info$missing)
+      blobs_directory    = as.character(blobs_folder),
+      overwrite          = overwrite,
+      num_workers        = num_workers,
+      found_bins         = as.list(bin_info$found),
+      missing_bins       = as.list(bin_info$missing),
+      python_executable  = reticulate::py_exe(),
+      use_threads        = use_threads
     )
     on.exit(try(extractor$terminate(), silent = TRUE), add = TRUE)
 
