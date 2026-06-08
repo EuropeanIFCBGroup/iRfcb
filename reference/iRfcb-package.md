@@ -28,6 +28,12 @@ Useful links:
 ([ORCID](https://orcid.org/0000-0002-8283-656X)) (Swedish Meteorological
 and Hydrological Institute)
 
+Authors:
+
+- Anders Torstensson <anders.torstensson@smhi.se>
+  ([ORCID](https://orcid.org/0000-0002-8283-656X)) (Swedish
+  Meteorological and Hydrological Institute)
+
 Other contributors:
 
 - Kendra Hayashi ([ORCID](https://orcid.org/0000-0003-1600-9504))

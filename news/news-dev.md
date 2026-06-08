@@ -4,9 +4,40 @@
 
 ### New features
 
+- Added
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md),
+  which computes the slim feature set (version 4) and blob masks from
+  raw IFCB data by calling the WHOI
+  [`ifcb-features`](https://github.com/WHOIGit/ifcb-features) Python
+  package. Features (`<bin>_features_v4.csv`) and blobs
+  (`<bin>_blobs_v4.zip`) are written to separate, user-specified
+  folders, existing outputs are skipped unless `overwrite = TRUE`, and
+  bins can be processed in parallel via `parallel = TRUE` / `n_cores`. A
+  `cli` progress bar advances as each bin is processed (for both
+  sequential and parallel runs), and interrupting the function (e.g. ESC
+  / Stop) reliably terminates the parallel worker processes instead of
+  leaving them writing files in the background.
+- Added `features` and `features_ref` arguments to
+  [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
+  to optionally install the WHOI `ifcb-features` package (and its
+  dependencies) from GitHub, as required by
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md).
+  By default the latest published release is installed; `features_ref`
+  can pin a specific tag or install the development branch. When
+  installing into an existing virtual environment, the install is
+  skipped if `ifcb-features` already imports successfully (unless
+  `features_ref` is supplied), avoiding a slow repeated download.
 - Added a new `dataset_name` argument to
   [`ifcb_list_dashboard_bins()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_list_dashboard_bins.md)
-  to only optionally only list bins from a specific dataset.
+  to optionally restrict the listing to bins from a specific dataset.
+  This argument remains useful for self-hosted dashboard instances that
+  have not yet updated to remove the `api/list_bins` endpoint.
+- Added support for the `IRFCB_PYTHON_VENV` environment variable. When
+  `USE_IRFCB_PYTHON = "TRUE"`, you can now set `IRFCB_PYTHON_VENV` to
+  either a named virtualenv or a full path to a venv directory to
+  control which Python environment is activated on package load. If
+  unset, the previous behavior of auto-discovering a venv named `iRfcb`
+  is retained.
 
 ### Deprecations
 
@@ -22,6 +53,15 @@
 
 ### Minor improvements and fixes
 
+- Additional Python packages installed into an existing virtual
+  environment by
+  [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
+  are now installed with a clean dependency resolution (no longer using
+  pip `--ignore-installed`). Previously, installing packages with
+  pinned, compiled dependencies (such as `ifcb-features`/`pyifcb`, which
+  pin exact `numpy`/`scipy`/`pandas` versions) could layer incompatible
+  builds on top of existing ones and corrupt the environment
+  (e.g. `ImportError: cannot import name '_spropack'`).
 - The default `gradio_url` for
   [`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md),
   [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md),

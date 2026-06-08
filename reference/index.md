@@ -155,6 +155,9 @@ information, see the
 - [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
   : Create a Manual Classification MAT File
 
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  : Extract Slim Features and Blobs from IFCB Data
+
 - [`ifcb_merge_manual()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.md)
   : Merge IFCB Manual Classification Data
 

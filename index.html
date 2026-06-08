@@ -160,29 +160,31 @@
 </h3>
 <ul>
 <li>
-<strong>Description</strong>: The <code>USE_IRFCB_PYTHON</code> environment variable controls whether the package automatically activates a pre-installed Python venv named <code>iRfcb</code> when the package is loaded.</li>
+<strong>Description</strong>: The <code>USE_IRFCB_PYTHON</code> environment variable controls whether the package automatically activates a pre-installed Python venv (e.g. using <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code>) when the package is loaded. The optional <code>IRFCB_PYTHON_VENV</code> variable controls <em>which</em> venv is activated.</li>
 <li>
-<strong>Default</strong>: By default, this environment variable is not set. This means that the Python environment will not be loaded automatically, and the user must call the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function manually before using a Python feature.</li>
+<strong>Default</strong>: By default, neither variable is set. This means that the Python environment will not be loaded automatically, and the user must call the <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code> function manually before using a Python feature.</li>
 <li>
-<strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. Ensure that a venv named <code>iRfcb</code> is installed (e.g. through <code><a href="reference/ifcb_py_install.html">ifcb_py_install()</a></code>) in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>.</li>
+<strong>Usage</strong>: To enable automatic setup of the Python environment when <code>iRfcb</code> is loaded, set <code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code>. By default the package activates the first available venv named <code>iRfcb</code> found in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> (as listed by <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>). To load a specific environment instead, also set <code>IRFCB_PYTHON_VENV</code> to either the <strong>name</strong> of a venv under <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> or a <strong>full path</strong> to a venv directory. If <code>IRFCB_PYTHON_VENV</code> is set but cannot be resolved, no environment is activated (auto-discovery is not attempted). Both variables must be set <em>before</em> <code>iRfcb</code> is loaded.</li>
 </ul>
 <div class="section level4">
-<h4 id="how-to-set-the-use_irfcb_python-variable">How to Set the <code>USE_IRFCB_PYTHON</code> Variable<a class="anchor" aria-label="anchor" href="#how-to-set-the-use_irfcb_python-variable"></a>
+<h4 id="how-to-set-these-variables">How to Set These Variables<a class="anchor" aria-label="anchor" href="#how-to-set-these-variables"></a>
 </h4>
-<p>You can set the <code>USE_IRFCB_PYTHON</code> variable in your R session or make it persistent across sessions:</p>
+<p>You can set the variables in your R session or make them persistent across sessions:</p>
 <ol style="list-style-type: decimal">
 <li>
-<p><strong>Temporary for the session</strong>: You can set the variable in your R session before loading <code>iRfcb</code> using the following command:</p>
+<p><strong>Temporary for the session</strong>: Set the variables before loading <code>iRfcb</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>USE_IRFCB_PYTHON <span class="op">=</span> <span class="st">"TRUE"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>USE_IRFCB_PYTHON <span class="op">=</span> <span class="st">"TRUE"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>IRFCB_PYTHON_VENV <span class="op">=</span> <span class="st">"/path/to/my/venv"</span><span class="op">)</span>   <span class="co"># optional; or a named venv, e.g. "iRfcb-3.11"</span></span></code></pre></div>
 </li>
 <li>
-<p><strong>Permanent across sessions</strong>: To ensure this setting persists across R sessions, add it to your <code>.Renviron</code> file in your R home directory. You can easily edit the file using the following command:</p>
+<p><strong>Permanent across sessions</strong>: To ensure these settings persist across R sessions, add them to your <code>.Renviron</code> file in your R home directory. You can easily edit the file using:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">edit_r_environ</span><span class="op">(</span><span class="st">"user"</span><span class="op">)</span></span></code></pre></div>
-<p>Then, add the following line to the file:</p>
-<pre class="text"><code><span><span class="va">USE_IRFCB_PYTHON</span><span class="op">=</span><span class="cn">TRUE</span></span></code></pre>
-<p>This will automatically set the environment variable each time you start an R session.</p>
+<p>Then add the following lines (the second is optional):</p>
+<pre class="text"><code>USE_IRFCB_PYTHON=TRUE
+IRFCB_PYTHON_VENV=/path/to/my/venv</code></pre>
+<p>This will automatically set the environment variables each time you start an R session.</p>
 </li>
 </ol>
 </div>

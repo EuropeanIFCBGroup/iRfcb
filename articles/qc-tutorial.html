@@ -148,8 +148,14 @@ following function:</p>
 distribution (PSD) (Hayashi et al. 2025). <code>iRfcb</code> uses the
 code available at <a href="https://github.com/kudelalab/PSD" class="external-link">https://github.com/kudelalab/PSD</a>,
 which is efficient in detecting samples with bubbles, beads, incomplete
-runs etc. Before running the PSD quality check, ensure the necessary
-Python environment is set up and activated:</p>
+runs etc. The PSD analysis operates on the feature files
+(<code>&lt;bin&gt;_features_v4.csv</code>) supplied via
+<code>feature_folder</code>. If you have not yet generated these
+features, they can be computed from raw data in R with
+<code><a href="../reference/ifcb_extract_features.html">ifcb_extract_features()</a></code> (see
+<code><a href="../articles/introduction.html">vignette("introduction")</a></code>). Before running the PSD quality
+check, ensure the necessary Python environment is set up and
+activated:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path to virtual environment</span></span>
 <span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>

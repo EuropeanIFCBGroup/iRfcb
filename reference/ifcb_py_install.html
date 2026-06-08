@@ -60,7 +60,9 @@ Alternatively, users can opt to use the system Python instead of creating a virt
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ifcb_py_install</span><span class="op">(</span></span>
 <span>  envname <span class="op">=</span> <span class="st">"~/.virtualenvs/iRfcb"</span>,</span>
 <span>  use_venv <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  packages <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  packages <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  features <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  features_ref <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -79,6 +81,29 @@ Alternatively, users can opt to use the system Python instead of creating a virt
 <dt id="arg-packages">packages<a class="anchor" aria-label="anchor" href="#arg-packages"></a></dt>
 <dd><p>A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.</p></dd>
 
+
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, additionally installs the WHOI <code>ifcb-features</code>
+package (<a href="https://github.com/WHOIGit/ifcb-features" class="external-link">https://github.com/WHOIGit/ifcb-features</a>) from GitHub, together
+with its dependencies (<code>pyifcb</code>, <code>phasepack</code>, <code>scikit-image</code>, <code>scikit-learn</code>).
+This is required by <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code>. Default is <code>FALSE</code> to keep the
+default environment lightweight. When installing into an existing virtual
+environment, the (slow) install is skipped if <code>ifcb-features</code> already imports
+successfully, unless <code>features_ref</code> is given.
+Installation requires binary wheels for all of <code>pyifcb</code>'s dependencies
+(notably <code>h5py</code>); if no wheel is available for your Python version,
+installation will fail. See <a href="https://github.com/WHOIGit/ifcb-features" class="external-link">https://github.com/WHOIGit/ifcb-features</a>
+for current Python version requirements.</p></dd>
+
+
+<dt id="arg-features-ref">features_ref<a class="anchor" aria-label="anchor" href="#arg-features-ref"></a></dt>
+<dd><p>A character string specifying which git reference (release
+tag, branch, or commit) of <code>ifcb-features</code> to install when <code>features = TRUE</code>.
+If <code>NULL</code> (default), the latest published GitHub release is installed, which
+is more stable than the actively developed default branch. Use
+<code>features_ref = "main"</code> to install the latest development commit, or a tag
+such as <code>"v1.0.0"</code> to pin a specific version.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -88,11 +113,13 @@ Alternatively, users can opt to use the system Python instead of creating a virt
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function requires Python to be available on the system. It uses the <code>reticulate</code> package to
 manage Python environments and packages.</p>
-<p>The <code>USE_IRFCB_PYTHON</code> environment variable can be set to automatically activate an
-installed Python venv named <code>iRfcb</code> when the <code>iRfcb</code> package is loaded.
-Ensure that the <code>iRfcb</code> venv is installed in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code>
-and available via <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code> (see examples). You can set
-<code>USE_IRFCB_PYTHON</code> to <code>"TRUE"</code> in your <code>.Renviron</code> file to enable automatic setup.
+<p>The <code>USE_IRFCB_PYTHON</code> environment variable can be set to <code>"TRUE"</code> to automatically
+activate an installed Python venv when the <code>iRfcb</code> package is loaded. By default this
+activates a venv named <code>iRfcb</code> found in <code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> (available via
+<code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_list()</a></code>; see examples). To activate a specific environment
+instead, also set the <code>IRFCB_PYTHON_VENV</code> variable to either the name of a venv under
+<code><a href="https://rstudio.github.io/reticulate/reference/virtualenv-tools.html" class="external-link">reticulate::virtualenv_root()</a></code> or a full path to a venv directory. Both variables can
+be set in your <code>.Renviron</code> file to enable automatic setup across sessions.
 For more details, see the package README
 at <a href="https://europeanifcbgroup.github.io/iRfcb/#python-dependency">https://europeanifcbgroup.github.io/iRfcb/#python-dependency</a>.</p>
     </div>
@@ -108,6 +135,14 @@ at <a href="https://europeanifcbgroup.github.io/iRfcb/#python-dependency">https:
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Install the iRfcb Python environment with additional packages</span></span></span>
 <span class="r-in"><span><span class="fu">ifcb_py_install</span><span class="op">(</span>envname <span class="op">=</span> <span class="va">envpath</span>, packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"numpy"</span>, <span class="st">"plotly"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Install the iRfcb Python venv including the WHOI ifcb-features package</span></span></span>
+<span class="r-in"><span><span class="co"># (latest release by default)</span></span></span>
+<span class="r-in"><span><span class="fu">ifcb_py_install</span><span class="op">(</span>envname <span class="op">=</span> <span class="va">envpath</span>, features <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Install a specific ifcb-features version, or the development branch</span></span></span>
+<span class="r-in"><span><span class="fu">ifcb_py_install</span><span class="op">(</span>envname <span class="op">=</span> <span class="va">envpath</span>, features <span class="op">=</span> <span class="cn">TRUE</span>, features_ref <span class="op">=</span> <span class="st">"v1.0.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ifcb_py_install</span><span class="op">(</span>envname <span class="op">=</span> <span class="va">envpath</span>, features <span class="op">=</span> <span class="cn">TRUE</span>, features_ref <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use system Python instead of a virtual environment</span></span></span>
 <span class="r-in"><span><span class="fu">ifcb_py_install</span><span class="op">(</span>envname <span class="op">=</span> <span class="va">envpath</span>, use_venv <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
