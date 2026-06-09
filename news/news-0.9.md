@@ -2,6 +2,8 @@
 
 ## iRfcb 0.9.0
 
+CRAN release: 2026-06-08
+
 ### New features
 
 - Added
