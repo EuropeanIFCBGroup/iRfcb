@@ -59,6 +59,14 @@ utils::globalVariables("bin")
 #' @param overwrite A logical indicating whether to overwrite existing feature
 #'   and blob files. If `FALSE` (default), bins whose outputs already exist are
 #'   skipped.
+#' @param feature_tag A string controlling the token between the bin lid and the
+#'   version in the feature file name. `"features"` (default) writes
+#'   `<bin>_features_v4.csv` (the upstream `ifcb-features` convention);
+#'   `"fea"` writes `<bin>_fea_v4.csv`, the name the IFCB Dashboard
+#'   (`ifcbdb` / `pyifcb`'s `FeaturesDirectory`) searches for. Use `"fea"` when
+#'   the output is destined for an IFCB Dashboard instance; remember the dataset
+#'   directory there must be registered with product version 4 to match the
+#'   `_v4` suffix. The blob archive name (`<bin>_blobs_v4.zip`) is unaffected.
 #' @param verbose A logical indicating whether to print progress messages,
 #'   including a progress bar that advances as each bin is processed.
 #'   Default is `TRUE`.
@@ -92,6 +100,14 @@ utils::globalVariables("bin")
 #'   parallel = TRUE,
 #'   n_cores = 4
 #' )
+#'
+#' # Write IFCB Dashboard-compatible feature names (<bin>_fea_v4.csv)
+#' ifcb_extract_features(
+#'   data_folder = "path/to/data",
+#'   features_folder = "path/to/features",
+#'   blobs_folder = "path/to/blobs",
+#'   feature_tag = "fea"
+#' )
 #' }
 #'
 #' @export
@@ -102,7 +118,10 @@ ifcb_extract_features <- function(data_folder,
                                   parallel = FALSE,
                                   n_cores = NULL,
                                   overwrite = FALSE,
+                                  feature_tag = c("features", "fea"),
                                   verbose = TRUE) {
+
+  feature_tag <- match.arg(feature_tag)
 
   if (!dir.exists(data_folder)) {
     cli_abort("{.arg data_folder} does not exist: {.file {data_folder}}")
@@ -201,7 +220,8 @@ ifcb_extract_features <- function(data_folder,
       found_bins         = as.list(bin_info$found),
       missing_bins       = as.list(bin_info$missing),
       python_executable  = reticulate::py_exe(),
-      use_threads        = use_threads
+      use_threads        = use_threads,
+      feature_tag        = feature_tag
     )
     on.exit(try(extractor$terminate(), silent = TRUE), add = TRUE)
 
@@ -243,7 +263,8 @@ ifcb_extract_features <- function(data_folder,
       bins = py_bins,
       overwrite = overwrite,
       num_workers = 1L,
-      progress = progress_cb
+      progress = progress_cb,
+      feature_tag = feature_tag
     )
 
     if (!is.null(pb)) cli_progress_done(id = pb)
