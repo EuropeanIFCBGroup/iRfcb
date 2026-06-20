@@ -1,4 +1,3 @@
-utils::globalVariables("create_and_save_mat_structure")
 #' Create a Manual Classification MAT File
 #'
 #' Generates a `.mat` file for IFCB data with classification structure using a specified number of ROIs
@@ -15,16 +14,14 @@ utils::globalVariables("create_and_save_mat_structure")
 #' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The MAT file is written directly from R, producing output identical to the
+#' MATLAB `ifcb-analysis` format. No Python installation is required.
 #'
 #' @return No return value. This function is called for its side effects.
 #' The created MAT file is saved at the specified `output_file` location.
 #'
 #' @examples
 #' \dontrun{
-#' # Initialize a python session if not already set up
-#' ifcb_py_install()
-#'
 #' # Create a MAT file with 100 ROIs, using a vector of class names, and save it to "output.mat"
 #' ifcb_create_manual_file(roi_length = 100,
 #'                         class2use = c("unclassified", "Aphanizomenon_spp"),
@@ -41,21 +38,40 @@ utils::globalVariables("create_and_save_mat_structure")
 #' @export
 ifcb_create_manual_file <- function(roi_length, class2use, output_file, classlist = 1, do_compression = TRUE) {
 
-  # Initialize python check
-  check_python_and_module(c("scipy", "numpy"))
+  roi_length <- as.integer(roi_length)
 
-  # Import the Python function
-  source_python(system.file("python", "create_manual_mat.py", package = "iRfcb"))
+  # Build the second column (manual classification) of the classlist:
+  # a single value is broadcast, a vector must match roi_length
+  if (length(classlist) == 1) {
+    col2 <- rep(as.double(classlist), roi_length)
+  } else if (length(classlist) == roi_length) {
+    col2 <- as.double(classlist)
+  } else {
+    cli_abort("Length of {.arg classlist} ({length(classlist)}) must be 1 or equal to {.arg roi_length} ({roi_length}).")
+  }
+
+  # classlist columns: ROI number, manual classification, auto classification (NaN)
+  classlist_mat <- cbind(
+    as.double(seq_len(roi_length)),
+    col2,
+    rep(NaN, roi_length)
+  )
 
   # Check if the output directory exists, if not create it
-  if(!dir.exists(dirname(output_file))) {
+  if (!dir.exists(dirname(output_file))) {
     dir.create(dirname(output_file), recursive = TRUE)
   }
 
-  # Create the MAT file
-  create_and_save_mat_structure(as.integer(roi_length),
-                                as.character(class2use),
-                                output_file,
-                                classlist,
-                                do_compression)
+  # Assemble the structure expected by ifcb-analysis and write it
+  write_mat_v5(
+    output_file,
+    list(
+      class2use_manual = mat_var_cell(matrix(as.character(class2use), nrow = 1)),
+      class2use_auto = mat_var_double(matrix(numeric(0), 0, 0)),
+      classlist = mat_var_double(classlist_mat),
+      list_titles = mat_var_cell(matrix(c("roi number", "manual", "auto"), nrow = 1)),
+      default_class_original = mat_var_cell(matrix("unclassified", 1, 1))
+    ),
+    do_compression = do_compression
+  )
 }

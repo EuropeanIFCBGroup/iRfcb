@@ -22,13 +22,11 @@ A class2use file can be used for manual annotation using the code in the \code{i
 repository (Sosik and Olson 2007).
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The \code{.mat} file is written directly from R, producing output identical to
+the MATLAB \code{ifcb-analysis} format. No Python installation is required.
 }
 \examples{
 \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Example usage:
 classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
 
@@ -39,5 +37,5 @@ ifcb_create_class2use(classes, "class2use_output.mat", do_compression = TRUE)
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \code{\link{ifcb_adjust_classes}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_adjust_classes}} \url{https://github.com/hsosik/ifcb-analysis}
 }

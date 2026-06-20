@@ -50,7 +50,7 @@ based on input vector of IFCB image names.
 These \code{.mat} files can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The \code{.mat} files are created and edited with a native R implementation, no Python installation is required.
 
 If an image belongs to a sample that already has a corresponding manual \code{.mat} file,
 the function updates the class IDs for the specified regions of interest (ROIs) in that file.
@@ -65,9 +65,6 @@ The function assumes that the ADC files are organized in subfolders by year (YYY
 }
 \examples{
 \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Annotate two png images with class "Nodularia_spumigena" and update or create manual files
 ifcb_annotate_batch(
   png_images = c("D20230812T162908_IFCB134_01399.png",

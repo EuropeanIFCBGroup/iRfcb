@@ -1,4 +1,3 @@
-utils::globalVariables("save_class2use_to_mat")
 #' Create a class2use `.mat` File
 #'
 #' This function creates a `.mat` file containing a character vector of class names.
@@ -12,19 +11,17 @@ utils::globalVariables("save_class2use_to_mat")
 #' @export
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The `.mat` file is written directly from R, producing output identical to
+#' the MATLAB `ifcb-analysis` format. No Python installation is required.
 #'
 #' @return No return value. This function is called for its side effect of creating a `.mat` file.
 #'
-#' @seealso \code{\link{ifcb_py_install}} \code{\link{ifcb_adjust_classes}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_adjust_classes}} \url{https://github.com/hsosik/ifcb-analysis}
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @examples
 #' \dontrun{
-#' # Initialize a python session if not already set up
-#' ifcb_py_install()
-#'
 #' # Example usage:
 #' classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
 #'
@@ -32,17 +29,15 @@ utils::globalVariables("save_class2use_to_mat")
 #' }
 ifcb_create_class2use <- function(classes, filename, do_compression = TRUE) {
 
-  # Initialize python check
-  check_python_and_module(c("scipy", "numpy"))
-
-  # Source the Python function
-  source_python(system.file("python", "save_class2use_to_mat.py", package = "iRfcb"))
-
   # Check if the output directory exists, if not create it
-  if(!dir.exists(dirname(filename))) {
+  if (!dir.exists(dirname(filename))) {
     dir.create(dirname(filename), recursive = TRUE)
   }
 
-  # Call the function in R
-  save_class2use_to_mat(filename, classes, do_compression)
+  # Write the class2use variable as a 1 x N cell array of strings
+  write_mat_v5(
+    filename,
+    list(class2use = mat_var_cell(matrix(as.character(classes), nrow = 1))),
+    do_compression = do_compression
+  )
 }

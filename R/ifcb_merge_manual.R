@@ -23,7 +23,7 @@
 #'  and merged `.mat` files into the output folder.
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The `.mat` files are read, merged and written with a native R implementation, no Python installation is required.
 #'
 #' The **base** set consists of the original classifications that are used as a reference for the merging process.
 #' The **additions** set contains the additional classifications that need to be merged with the base set.
@@ -35,7 +35,7 @@
 #'
 #' Note that the maximum limit for `uint16` is 65,535, so ensure that `temp_index_offset` remains below this value.
 #'
-#' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @examples
@@ -52,9 +52,6 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
                               manual_folder_additions, manual_folder_output,
                               do_compression = TRUE, temp_index_offset = 50000,
                               skip_class = NULL, quiet = FALSE) {
-
-  # Initialize python check
-  check_python_and_module()
 
   # Check if base and additions files exist
   if (!file.exists(class2use_file_base) || !file.exists(class2use_file_additions)) {

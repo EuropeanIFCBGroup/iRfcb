@@ -1,6 +1,4 @@
 test_that("ifcb_correct_annotation updates class IDs correctly", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -24,24 +22,6 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 
   # Expected new class ID
   correct_classid <- 99
-
-  # Mock the Python function (edit_manual_file)
-  mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
-    # Read the input .mat file
-    mat_contents <- R.matlab::readMat(input_file)
-    classlist <- mat_contents$classlist
-
-    # Modify the classlist for each row number
-    for (row_number in row_numbers) {
-      classlist[row_number, 2] <- new_value
-    }
-
-    # Write the modified contents to the output .mat file
-    writeMat(output_file, classlist = classlist)
-  }
-
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_edit_manual_file
 
   # Run the function
   ifcb_correct_annotation(manual_folder, out_folder, correction_file, correct_classid)
@@ -63,8 +43,6 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 })
 
 test_that("ifcb_correct_annotation works with character vector input", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -83,24 +61,6 @@ test_that("ifcb_correct_annotation works with character vector input", {
   # Expected new class ID
   correct_classid <- 99
 
-  # Mock the Python function (edit_manual_file)
-  mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
-    # Read the input .mat file
-    mat_contents <- R.matlab::readMat(input_file)
-    classlist <- mat_contents$classlist
-
-    # Modify the classlist for each row number
-    for (row_number in row_numbers) {
-      classlist[row_number, 2] <- new_value
-    }
-
-    # Write the modified contents to the output .mat file
-    writeMat(output_file, classlist = classlist)
-  }
-
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_edit_manual_file
-
   # Run the function with the character vector input
   ifcb_correct_annotation(manual_folder, out_folder, correction_vector, correct_classid)
 
@@ -118,8 +78,6 @@ test_that("ifcb_correct_annotation works with character vector input", {
 })
 
 test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -144,24 +102,6 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
   # Expected new class ID
   correct_classid <- 99
 
-  # Mock the Python function (edit_manual_file)
-  mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
-    # Read the input .mat file
-    mat_contents <- R.matlab::readMat(input_file)
-    classlist <- mat_contents$classlist
-
-    # Modify the classlist for each row number
-    for (row_number in row_numbers) {
-      classlist[row_number, 2] <- new_value
-    }
-
-    # Write the modified contents to the output .mat file
-    writeMat(output_file, classlist = classlist)
-  }
-
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_edit_manual_file
-
   # Run the function
   lifecycle::expect_deprecated(ifcb_correct_annotation(manual_folder,
                                                        out_folder,
@@ -177,8 +117,6 @@ test_that("ifcb_correct_annotation handles deprecated arguments correctly", {
 })
 
 test_that("ifcb_correct_annotation handles errors gracefully", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -193,24 +131,6 @@ test_that("ifcb_correct_annotation handles errors gracefully", {
 
   # Expected new class ID
   correct_classid <- 99
-
-  # Mock the Python function (edit_manual_file)
-  mock_edit_manual_file <- function(input_file, output_file, row_numbers, new_value) {
-    # Read the input .mat file
-    mat_contents <- R.matlab::readMat(input_file)
-    classlist <- mat_contents$classlist
-
-    # Modify the classlist for each row number
-    for (row_number in row_numbers) {
-      classlist[row_number, 2] <- new_value
-    }
-
-    # Write the modified contents to the output .mat file
-    writeMat(output_file, classlist = classlist)
-  }
-
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_edit_manual_file
 
   # Run the function and expect error
   expect_error(ifcb_correct_annotation(manual_folder,

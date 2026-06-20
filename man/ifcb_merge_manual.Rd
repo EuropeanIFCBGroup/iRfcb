@@ -52,7 +52,7 @@ and aligning class labels from a base set and an additional set of classificatio
 The merged \code{.mat} data can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The \code{.mat} files are read, merged and written with a native R implementation, no Python installation is required.
 
 The \strong{base} set consists of the original classifications that are used as a reference for the merging process.
 The \strong{additions} set contains the additional classifications that need to be merged with the base set.
@@ -77,5 +77,5 @@ ifcb_merge_manual("path/to/class2use_base.mat", "path/to/class2use_additions.mat
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+\url{https://github.com/hsosik/ifcb-analysis}
 }

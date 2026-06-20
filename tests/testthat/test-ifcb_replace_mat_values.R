@@ -1,6 +1,4 @@
 test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -15,9 +13,6 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   target_id <- 99
   new_id <- 1
   column_index <- 0 # Python uses 0-based indexing
-
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_replace_value_in_classlist
 
   # Run the function
   ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index)
@@ -37,13 +32,12 @@ test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", 
   # Run the function
   expect_warning(ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index), "Empty")
 
-  # Clean up the temporary virtual environment
+  # Clean up the temporary directories
   unlink(manual_folder, recursive = TRUE)
+  unlink(out_folder, recursive = TRUE)
 })
 
 test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   manual_folder <- file.path(tempdir(), "nonexistent")
   out_folder <- file.path(tempdir(), "out")
@@ -55,8 +49,6 @@ test_that("ifcb_replace_mat_values handles missing manual folder gracefully", {
 })
 
 test_that("ifcb_replace_mat_values handles missing files in manual folder gracefully", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
@@ -78,8 +70,6 @@ test_that("ifcb_replace_mat_values handles missing files in manual folder gracef
 })
 
 test_that("ifcb_replace_mat_values creates output directory if it does not exist", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "new_output")
@@ -99,13 +89,11 @@ test_that("ifcb_replace_mat_values creates output directory if it does not exist
   expect_true(file.exists(output_file))
 
   # Clean up temporary directories
-  unlink(manual_folder)
+  unlink(manual_folder, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
 })
 
 test_that("ifcb_replace_mat_values handles different column indices correctly", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")
@@ -120,9 +108,6 @@ test_that("ifcb_replace_mat_values handles different column indices correctly", 
   new_id <- 1
   column_index <- 2 # Update the third column
 
-  # Use the mock function instead of the actual Python function
-  source_python <- function(file) mock_replace_value_in_classlist
-
   # Run the function
   ifcb_replace_mat_values(manual_folder, out_folder, target_id, new_id, column_index)
 
@@ -135,6 +120,6 @@ test_that("ifcb_replace_mat_values handles different column indices correctly", 
   expect_equal(output_classlist, expected_classlist)
 
   # Clean up temporary directories
-  unlink(manual_folder)
+  unlink(manual_folder, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
 })

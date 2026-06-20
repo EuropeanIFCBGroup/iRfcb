@@ -1,6 +1,4 @@
 test_that("ifcb_adjust_classes correctly updates the .mat classlist files", {
-  # Skip if scipy is not available
-  skip_if_no_scipy()
 
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
@@ -58,4 +56,7 @@ test_that("ifcb_adjust_classes fail gracefully if files or folders do not exist"
   # Expect error when folder does not exist
   expect_error(ifcb_adjust_classes(tmp_file, "not_a_dir"),
                "does not exist")
+
+  # Clean up
+  unlink(tmp_file)
 })

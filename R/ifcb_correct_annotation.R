@@ -1,4 +1,3 @@
-utils::globalVariables("edit_manual_file")
 #' Correct Annotations in MATLAB Classlist Files
 #'
 #' This function corrects annotations in MATLAB classlist files located in a specified manual folder,
@@ -19,7 +18,8 @@ utils::globalVariables("edit_manual_file")
 #' @return This function does not return any value; it updates the classlist files in the specified output directory.
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The MAT files are read and written directly from R, producing output
+#' identical to the MATLAB `ifcb-analysis` format. No Python installation is required.
 #'
 #' The correction file is expected to contain at least one column: `image_filename`, which includes the filenames of the images (with or without additional trailing information).
 #' The function processes each file, corrects the annotations, and saves the updated files in the output folder.
@@ -27,12 +27,9 @@ utils::globalVariables("edit_manual_file")
 #' If a character vector is provided as `correction`, it will be used directly as a list of filenames for correction.
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
-#' @seealso \code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \url{https://github.com/hsosik/ifcb-analysis}
 #' @examples
 #' \dontrun{
-#' # Initialize a python session if not already set up
-#' ifcb_py_install()
-#'
 #' # Correct class ID in .mat classlist files using a correction file
 #' ifcb_correct_annotation("input/manual",
 #'                         "output/manual",
@@ -67,12 +64,6 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     cli_abort("{.arg correction} is missing, with no default.")
   }
 
-  # Initialize python check
-  check_python_and_module()
-
-  # Import the Python function
-  source_python(system.file("python", "edit_manual_file.py", package = "iRfcb"))
-
   # Check if `correction` is a file path or a character vector
   if (is.character(correction) && length(correction) == 1 && file.exists(correction)) {
     # Read corrections from file
@@ -93,22 +84,32 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
   # Aggregate roi to correct per sample
   corrections_aggregated <- stats::aggregate(roi ~ sample_filename, data = corrections, FUN = list)
 
+  # Create the output folder if it does not exist
+  if (!dir.exists(out_folder)) {
+    dir.create(out_folder, recursive = TRUE)
+  }
+
   # Loop through all files and apply corrections
   for (i in seq_len(nrow(corrections_aggregated))) {
     # Extract filename and roi values from the current row
     filename <- as.character(corrections_aggregated$sample_filename[i])
     roi_list <- unlist(corrections_aggregated$roi[[i]], use.names = FALSE)
 
-    # Ensure roi_list is a list of integers
-    roi_list <- as.list(as.integer(roi_list))
+    # Ensure roi values are integers
+    roi_list <- as.integer(roi_list)
 
-    # Call the Python function with the extracted values
-    edit_manual_file(
-      file.path(manual_folder, paste0(filename, ".mat")),  # Ensure correct file path
-      file.path(out_folder, paste0(filename, ".mat")),  # Ensure correct output file path
-      roi_list,
-      correct_classid,
-      do_compression
+    # Read the manual file, set the manual classification (classlist column 2)
+    # of the targeted ROIs to correct_classid, and write the result back out.
+    # Each ROI maps to its classlist row (row index = ROI number).
+    mat_data <- read_mat_v5(file.path(manual_folder, paste0(filename, ".mat")))
+    classlist <- mat_data$classlist$data
+    classlist[roi_list, 2] <- as.integer(correct_classid)
+    mat_data$classlist$data <- classlist
+
+    write_mat_v5(
+      file.path(out_folder, paste0(filename, ".mat")),
+      mat_data,
+      do_compression = do_compression
     )
   }
 }

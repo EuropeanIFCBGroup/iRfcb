@@ -30,7 +30,7 @@ utils::globalVariables("class_id")
 #' @param do_compression A logical value indicating whether to compress the `.mat` file. Default is TRUE.
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The MAT files are written with a native R implementation, no Python installation is required.
 #'
 #' Each sample should have ADC files in `adc_folder` and corresponding PNG images
 #' stored in subfolders under `png_folder`, where each subfolder is named after
@@ -47,7 +47,7 @@ utils::globalVariables("class_id")
 #' - The function writes one MAT file per sample using
 #'   `ifcb_create_manual_file()`.
 #'
-#' @seealso \code{\link{ifcb_py_install}} \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #'
 #' @examples
@@ -79,9 +79,6 @@ ifcb_annotate_samples <- function(png_folder,
                                   unclassified_id = 1,
                                   remove_trailing_numbers = TRUE,
                                   do_compression = TRUE) {
-
-  # Initialize python check
-  check_python_and_module()
 
   # Input checks
   if (!dir.exists(png_folder)) {
