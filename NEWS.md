@@ -1,3 +1,8 @@
+# iRfcb (development version)
+
+## Minor improvements and fixes
+* `ifcb_extract_features()` gains a `feature_tag` argument to control the feature file naming. The default (`"features"`) writes `<bin>_features_v4.csv` as before; `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB Dashboard (pyifcb's `FeaturesDirectory`).
+
 # iRfcb 0.9.0
 
 ## New features
