@@ -1,3 +1,9 @@
+# iRfcb (development version)
+
+## New features
+
+* Added `ifcb_qc_sample()`, which validates the integrity and self-consistency of raw IFCB samples (the `.hdr`/`.adc`/`.roi` triplet) and returns a tidy tibble of QC metrics and flags, one row per sample. Checks cover triplet completeness, ROI count consistency (imaged ROIs in the ADC versus the header `roiCount`), ROI data completeness (detecting truncated/aborted `.roi` files by comparing the file size to the last image's end offset), header/ADC run time consistency, and flow/volume sanity via `ifcb_volume_analyzed()` (the volume ceiling is derived per sample from the header `SyringeSampleVolume`, reported as `syringe_ml`, rather than a fixed value; a constant ceiling can be forced with `max_ml`). Bead/calibration runs (`is_bead_run`), empty samples (`is_empty`), and, via the optional `max_roi_mb` argument, oversized `.roi` files (`roi_oversized`); and, via the optional `max_humidity` / `max_temperature` arguments, high recorded humidity or temperature (`humidity_high` / `temperature_high`) are flagged separately as advisory. The function accepts a directory, sample names with a `data_folder`, or explicit file paths, and builds entirely on existing native-R readers (no Python required).
+
 # iRfcb 0.9.0
 
 ## New features
