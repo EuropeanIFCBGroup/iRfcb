@@ -19,6 +19,7 @@ ifcb_extract_features(
   parallel = FALSE,
   n_cores = NULL,
   overwrite = FALSE,
+  feature_tag = c("features", "fea"),
   verbose = TRUE
 )
 ```
@@ -66,6 +67,18 @@ ifcb_extract_features(
   A logical indicating whether to overwrite existing feature and blob
   files. If `FALSE` (default), bins whose outputs already exist are
   skipped.
+
+- feature_tag:
+
+  A string controlling the token between the bin lid and the version in
+  the feature file name. `"features"` (default) writes
+  `<bin>_features_v4.csv` (the upstream `ifcb-features` convention);
+  `"fea"` writes `<bin>_fea_v4.csv`, the name the IFCB Dashboard
+  (`ifcbdb` / `pyifcb`'s `FeaturesDirectory`) searches for. Use `"fea"`
+  when the output is destined for an IFCB Dashboard instance; remember
+  the dataset directory there must be registered with product version 4
+  to match the `_v4` suffix. The blob archive name
+  (`<bin>_blobs_v4.zip`) is unaffected.
 
 - verbose:
 
@@ -144,6 +157,14 @@ ifcb_extract_features(
   bins = c("D20220522T003051_IFCB134", "D20220522T000439_IFCB134"),
   parallel = TRUE,
   n_cores = 4
+)
+
+# Write IFCB Dashboard-compatible feature names (<bin>_fea_v4.csv)
+ifcb_extract_features(
+  data_folder = "path/to/data",
+  features_folder = "path/to/features",
+  blobs_folder = "path/to/blobs",
+  feature_tag = "fea"
 )
 } # }
 ```
