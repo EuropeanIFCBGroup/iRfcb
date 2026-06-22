@@ -85,7 +85,9 @@ test_that("a truncated .roi is flagged as incomplete", {
 
   # Keep the real IFCB sample name (ifcb_read_hdr_data validates the format)
   nm <- "D20220522T003051_IFCB134"
-  work <- withr::local_tempdir()
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
   for (ext in c(".hdr", ".adc", ".roi")) {
     file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
   }
@@ -139,7 +141,9 @@ test_that("a header/ADC run time mismatch fails runtime_consistent and qc_pass",
   src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
 
   nm <- "D20220522T003051_IFCB134"
-  work <- withr::local_tempdir()
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
   for (ext in c(".hdr", ".adc", ".roi")) {
     file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
   }
@@ -228,7 +232,9 @@ test_that("bead runs are flagged via the header runBeads field", {
   src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
 
   nm <- "D20220522T003051_IFCB134"
-  work <- withr::local_tempdir()
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
   for (ext in c(".hdr", ".adc", ".roi")) {
     file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
   }

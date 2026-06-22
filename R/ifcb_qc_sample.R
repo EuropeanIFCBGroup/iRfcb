@@ -13,7 +13,7 @@ utils::globalVariables(c("has_hdr", "has_adc", "has_roi", "n_rois", "hdr_roi_cou
 #'
 #' @details
 #' The checks build directly on the package's existing readers
-#' ([ifcb_read_hdr_data()], [read_adc_columns()], [ifcb_volume_analyzed()]) and
+#' ([ifcb_read_hdr_data()], `read_adc_columns()`, [ifcb_volume_analyzed()])
 #' cover four areas:
 #'
 #' \describe{
@@ -309,7 +309,7 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
     if (!is.null(rt$runtime) && !is.null(rt$inhibittime)) rt$runtime - rt$inhibittime else NA_real_
   } else NA_real_
 
-  tibble::tibble(
+  dplyr::tibble(
     sample = basename(base_path),
     hdr_file = if (has_hdr) hdr_file else NA_character_,
     adc_file = if (has_adc) adc_file else NA_character_,
@@ -350,7 +350,7 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
 #' the header `ADCFileFormat`, with a positional fallback for the standard new
 #' format), or `NA` when the column is unavailable.
 #'
-#' @param adc A data frame from [read_adc_columns()].
+#' @param adc A data frame from `read_adc_columns()`.
 #' @return A single numeric run time in seconds, or `NA`.
 #' @keywords internal
 #' @noRd

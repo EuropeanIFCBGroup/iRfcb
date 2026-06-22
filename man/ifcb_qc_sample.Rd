@@ -71,7 +71,7 @@ base name: a header (\code{.hdr}), an ADC table (\code{.adc}), and the raw image
 }
 \details{
 The checks build directly on the package's existing readers
-(\code{\link[=ifcb_read_hdr_data]{ifcb_read_hdr_data()}}, \code{\link[=read_adc_columns]{read_adc_columns()}}, \code{\link[=ifcb_volume_analyzed]{ifcb_volume_analyzed()}}) and
+(\code{\link[=ifcb_read_hdr_data]{ifcb_read_hdr_data()}}, \code{read_adc_columns()}, \code{\link[=ifcb_volume_analyzed]{ifcb_volume_analyzed()}})
 cover four areas:
 
 \describe{
