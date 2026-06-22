@@ -1,5 +1,19 @@
-# Define server logic
+# Server logic for the IFCB image gallery app (launched by ifcb_run_image_gallery()).
+#
+# The app lets a user browse PNG images in a chosen folder, page through them,
+# click to (de)select images, and download the selection as a tab-separated file.
+# It is paired with ui.R in this directory.
+#
+# Reactive state:
+#   images          - character vector of full image paths currently shown
+#   current_page    - 1-based index of the visible page
+#   images_per_page - page size (from the UI control)
+#   clicked_images  - basenames of images the user has selected
+#   class_folder    - last folder in the browsed path, used to name the download
 server <- function(input, output, session) {
+  # Shiny can only serve files from registered resource paths. Images live in
+  # arbitrary user folders, so each visible image is copied into a temp directory
+  # that is exposed at the URL prefix "session/" (see renderUI below).
   shiny::addResourcePath("session", tempdir())
   images <- reactiveVal(NULL)
   current_page <- reactiveVal(1)

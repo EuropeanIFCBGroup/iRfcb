@@ -19,6 +19,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+"""Particle Size Distribution (PSD) analysis for IFCB data.
+
+This module is vendored, largely unchanged, from the upstream PSD repository
+(https://github.com/kudelalab/PSD, Hayashi et al. 2025) and bundled with the R
+package 'iRfcb'. It is sourced from R via reticulate by ifcb_psd() (see
+R/ifcb_psd.R), which constructs a ``Bin`` object, calls its plotting / data /
+flag methods, and converts the results back to R data frames.
+
+To keep this file diffable against upstream, please make only minimal local
+changes here and mark each one with a ``# Modified from the original by
+kudelalabs`` comment (as the existing edits to ``Target`` and ``Sample`` do).
+Larger or iRfcb-specific behaviour belongs in the R wrapper instead.
+
+Class overview:
+  * ``Target``  - one ROI, converting raw feature values to physical units
+                  using ``micron_factor`` (microns per pixel).
+  * ``Sample``  - one IFCB sample (bin): its targets and per-sample summary.
+  * ``Bin``     - a whole dataset of samples; fits the PSD curve, derives QC
+                  flags, and renders/saves plots and CSV output.
+"""
+
 import os
 import pandas as pd
 import numpy as np

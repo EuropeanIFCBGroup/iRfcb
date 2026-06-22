@@ -149,10 +149,13 @@ ifcb_extract_classified_images <- function(sample,
           normalize = normalize
         )
       }, error = function(e) {
+        # Report the failure but continue with the remaining taxa rather than
+        # aborting the whole sample. The pause gives any transient I/O issue
+        # (e.g. a slow or briefly unavailable ROI file) time to clear.
         cli_inform(c(
           "x" = "Error processing taxon {.val {taxon}}: {conditionMessage(e)}"
         ))
-        Sys.sleep(10) # Pause for 10 seconds
+        Sys.sleep(10)
       })
     }
   } else {

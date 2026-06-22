@@ -91,6 +91,9 @@ ifcb_zip_images_by_class <- function(
       class_name <- truncate_folder_name(subdir)
       zip_path <- file.path(output_dir, paste0(class_name, ".zip"))
 
+      # Copy the selected images into a clean temp directory named after the class
+      # before zipping, so the archive contains a single tidy <class>/ folder rather
+      # than the (possibly deep) original source path.
       temp_class_dir <- file.path(temp_root, class_name)
       if (!dir.exists(temp_class_dir)) {
         dir.create(temp_class_dir)
