@@ -3,6 +3,7 @@
 ## Minor improvements and fixes
 
 * Removed the Python dependency from all functions that create or edit MATLAB `ifcb-analysis` manual classification files. `ifcb_create_class2use()`, `ifcb_create_manual_file()` (and the deprecated `ifcb_create_empty_manual_file()`), `ifcb_adjust_classes()`, `ifcb_correct_annotation()`, `ifcb_replace_mat_values()`, and the `format = "mat"` output of `ifcb_save_classification()` now write `.mat` files with a native R implementation of the MATLAB Level 5 MAT-file format, producing output identical to the previous `scipy.io.savemat`-based approach (byte-for-byte identical when uncompressed, and identical in content when compressed). The wrapper functions `ifcb_annotate_batch()`, `ifcb_annotate_samples()`, `ifcb_merge_manual()`, and `ifcb_prepare_whoi_plankton()`, which delegate to the above, are therefore also Python-free. This removes the `scipy`/`numpy` requirement for creating and editing manual annotation files.
+* `ifcb_extract_features()` gains a `feature_tag` argument to control the feature file naming. The default (`"features"`) writes `<bin>_features_v4.csv` as before; `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB Dashboard (pyifcb's `FeaturesDirectory`).
 
 # iRfcb 0.9.0
 
