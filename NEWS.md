@@ -1,7 +1,11 @@
 # iRfcb (development version)
 
+## New features
+* `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` gain a `diatom_equation` argument selecting which Menden-Deuer and Lessard (2000) carbon-to-volume relationship to apply to diatoms. The default (`"large"`) uses the large-diatom (> 3000 micron^3) equation, matching the `ifcb-analysis` convention and preserving previous behavior; `"all"` uses the all-sizes diatom equation, which assigns more carbon to small cells. A new exported helper `vol2C_diatom()` implements the all-sizes relationship (log a = -0.541, b = 0.811). Note that biovolume is measured per region of interest (image), not per cell, so chains of small cells register a large ROI biovolume.
+
 ## Minor improvements and fixes
 * `ifcb_extract_features()` gains a `feature_tag` argument to control the feature file naming. The default (`"features"`) writes `<bin>_features_v4.csv` as before; `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB Dashboard (pyifcb's `FeaturesDirectory`).
+* Corrected the `vol2C_lgdiatom()` documentation, which incorrectly stated the relationship applied to diatoms > 2000 micron^3 (the Menden-Deuer and Lessard 2000 large-diatom equation is for cells > 3000 micron^3).
 
 # iRfcb 0.9.0
 

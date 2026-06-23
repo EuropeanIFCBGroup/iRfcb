@@ -22,6 +22,14 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If `TRUE`, restricts the WoRMS search to marine taxa only. Default: `FALSE`.
+#' @param diatom_equation A character string selecting which Menden-Deuer and Lessard (2000)
+#'   carbon-to-volume relationship to apply to diatoms. `"large"` (default) uses the
+#'   large-diatom (> 3000 micron^3) equation (`vol2C_lgdiatom`), matching the
+#'   `ifcb-analysis` convention. `"all"` uses the all-sizes diatom equation
+#'   (`vol2C_diatom`), which assigns more carbon to small cells. Note that
+#'   biovolume is measured per region of interest (ROI/image), so this is not a
+#'   per-cell volume: chains of small cells register a large ROI biovolume.
+#'   Non-diatom protists always use `vol2C_nondiatom` regardless of this setting.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
 #'   predictions below the per-class optimal threshold are labeled
@@ -92,10 +100,13 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_images = NULL, custom_classes = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
+                                    diatom_equation = c("large", "all"),
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
                                     class_recursive = TRUE, drop_zero_volume = FALSE,
                                     feature_version = NULL, use_python = FALSE, verbose = TRUE,
                                     mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
+
+  diatom_equation <- match.arg(diatom_equation)
 
   # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
@@ -383,10 +394,13 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     cli_inform("{.val {sort(non_diatoms$class)}}")
   }
 
+  # Select the diatom carbon conversion function
+  vol2C_diatom_fun <- if (diatom_equation == "all") vol2C_diatom else vol2C_lgdiatom
+
   # Calculate carbon content based on diatom classification
   biovolume_df <- biovolume_df %>%
     mutate(carbon_pg = case_when(
-      !is.na(is_diatom) & is_diatom ~ vol2C_lgdiatom(biovolume_um3),
+      !is.na(is_diatom) & is_diatom ~ vol2C_diatom_fun(biovolume_um3),
       !is.na(is_diatom) & !is_diatom ~ vol2C_nondiatom(biovolume_um3),
       is.na(is_diatom) ~ vol2C_nondiatom(biovolume_um3),
       TRUE ~ NA_real_

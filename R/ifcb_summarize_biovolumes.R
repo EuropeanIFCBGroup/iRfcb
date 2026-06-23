@@ -22,6 +22,13 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If TRUE, restricts the WoRMS search to marine taxa only. Default is FALSE.
+#' @param diatom_equation A character string selecting which Menden-Deuer and Lessard (2000)
+#'   carbon-to-volume relationship to apply to diatoms. `"large"` (default) uses the
+#'   large-diatom (> 3000 micron^3) equation, matching the `ifcb-analysis` convention.
+#'   `"all"` uses the all-sizes diatom equation, which assigns more carbon to small
+#'   cells. Note that biovolume is measured per region of interest (ROI/image), not
+#'   per cell, so chains of small cells register a large ROI biovolume. Passed to
+#'   \code{ifcb_extract_biovolumes}.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
 #'   predictions below the per-class optimal threshold are labeled
@@ -60,8 +67,9 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'
 #' Biovolumes are converted to carbon according to Menden-Deuer and Lessard 2000
 #' for individual regions of interest (ROI), applying different conversion factors to diatoms and
-#' non-diatom protists. If provided, the function also incorporates sample volume data from HDR files
-#' to compute biovolume and carbon content per liter of sample.
+#' non-diatom protists. The diatom relationship is selected with `diatom_equation`
+#' (`"large"`, the default, or `"all"`). If provided, the function also incorporates sample volume
+#' data from HDR files to compute biovolume and carbon content per liter of sample.
 #'
 #' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
 #' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
@@ -93,7 +101,8 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2use_file = NULL,
                                       hdr_folder = NULL, custom_images = NULL, custom_classes = NULL,
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", diatom_include = NULL,
-                                      marine_only = FALSE, threshold = "opt", feature_recursive = TRUE,
+                                      marine_only = FALSE, diatom_equation = c("large", "all"),
+                                      threshold = "opt", feature_recursive = TRUE,
                                       class_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
                                       feature_version = NULL, use_python = FALSE, verbose = TRUE,
                                       mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
@@ -126,6 +135,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
                                         diatom_class = diatom_class,
                                         diatom_include = diatom_include,
                                         marine_only = marine_only,
+                                        diatom_equation = diatom_equation,
                                         threshold = threshold,
                                         feature_recursive = feature_recursive,
                                         class_recursive = class_recursive,

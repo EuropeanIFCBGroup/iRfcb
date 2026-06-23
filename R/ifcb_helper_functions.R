@@ -249,13 +249,17 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL, use_python = FALSE)
 #' Convert Biovolume to Carbon for Large Diatoms
 #'
 #' This function converts biovolume in microns^3 to carbon in picograms
-#' for large diatoms (> 2000 micron^3) according to Menden-Deuer and Lessard 2000.
+#' for large diatoms (> 3000 micron^3) according to Menden-Deuer and Lessard 2000.
 #' The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
 #' with log a = -0.933 and b = 0.881 for diatoms > 3000 um^3.
 #'
 #' @param volume A numeric vector of biovolume measurements in microns^3.
 #'
 #' @return A numeric vector of carbon measurements in picograms.
+#'
+#' @seealso \code{\link{vol2C_diatom}} for the all-sizes diatom relationship.
+#'
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 #'
 #' @examples
 #' # Volumes in microns^3
@@ -267,6 +271,40 @@ summarize_TBclass <- function(classfile, adhocthresh = NULL, use_python = FALSE)
 vol2C_lgdiatom <- function(volume) {
   loga <- -0.933
   b <- 0.881
+  logC <- loga + b * log10(volume)
+  carbon <- 10^logC
+  carbon
+}
+#' Convert Biovolume to Carbon for Diatoms (All Sizes)
+#'
+#' This function converts biovolume in microns^3 to carbon in picograms for
+#' diatoms across the full size range according to Menden-Deuer and Lessard 2000.
+#' The formula used is: log pgC cell^-1 = log a + b * log V (um^3),
+#' with log a = -0.541 and b = 0.811.
+#'
+#' This relationship is fit to diatoms of all sizes and assigns a higher carbon
+#' density than \code{\link{vol2C_lgdiatom}} (which is specific to large diatoms
+#' larger than 3000 micron^3). The two curves cross near 3000 micron^3, so they
+#' are not continuous at that boundary.
+#'
+#' @param volume A numeric vector of biovolume measurements in microns^3.
+#'
+#' @return A numeric vector of carbon measurements in picograms.
+#'
+#' @seealso \code{\link{vol2C_lgdiatom}} for the large-diatom (> 3000 micron^3) relationship.
+#'
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
+#'
+#' @examples
+#' # Volumes in microns^3
+#' volume <- c(500, 1000, 2000)
+#'
+#' # Convert biovolume to carbon for diatoms (all sizes)
+#' vol2C_diatom(volume)
+#' @export
+vol2C_diatom <- function(volume) {
+  loga <- -0.541
+  b <- 0.811
   logC <- loga + b * log10(volume)
   carbon <- 10^logC
   carbon

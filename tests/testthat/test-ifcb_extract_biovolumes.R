@@ -125,6 +125,50 @@ test_that("ifcb_extract_biovolumes calculates carbon content correctly for diato
   expect_true(all(non_diatom_rows$carbon_pg > 0))
 })
 
+test_that("ifcb_extract_biovolumes diatom_equation switch raises diatom carbon only", {
+  # Check for internet connection and skip the test if offline
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  images <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  # Diatom genus (Chaetoceros) -> Bacillariophyceae in WoRMS
+  diatom_large <- ifcb_extract_biovolumes(feature_folder,
+                                          custom_images = images,
+                                          custom_classes = c("Chaetoceros_sp", "Chaetoceros_sp"),
+                                          verbose = FALSE)
+  diatom_all <- ifcb_extract_biovolumes(feature_folder,
+                                        custom_images = images,
+                                        custom_classes = c("Chaetoceros_sp", "Chaetoceros_sp"),
+                                        diatom_equation = "all",
+                                        verbose = FALSE)
+
+  # Biovolume is unchanged; the all-sizes equation assigns more carbon to diatoms
+  expect_identical(diatom_large$biovolume_um3, diatom_all$biovolume_um3)
+  expect_true(all(diatom_all$carbon_pg > diatom_large$carbon_pg))
+
+  # Non-diatom genus (Mesodinium) -> carbon must be identical regardless of the switch
+  nondiatom_large <- ifcb_extract_biovolumes(feature_folder,
+                                             custom_images = images,
+                                             custom_classes = c("Mesodinium_rubrum", "Mesodinium_rubrum"),
+                                             verbose = FALSE)
+  nondiatom_all <- ifcb_extract_biovolumes(feature_folder,
+                                           custom_images = images,
+                                           custom_classes = c("Mesodinium_rubrum", "Mesodinium_rubrum"),
+                                           diatom_equation = "all",
+                                           verbose = FALSE)
+  expect_equal(nondiatom_large$carbon_pg, nondiatom_all$carbon_pg)
+
+  # Invalid value is rejected by match.arg
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder,
+                            custom_images = images,
+                            custom_classes = c("Chaetoceros_sp", "Chaetoceros_sp"),
+                            diatom_equation = "medium")
+  )
+})
+
 test_that("ifcb_extract_biovolumes manual data correctly", {
   # Check for internet connection and skip the test if offline
   skip_if_offline()
