@@ -120,6 +120,7 @@ reference:
   - '`read_hdr_file`'
   - '`split_large_zip`'
   - '`summarize_TBclass`'
+  - '`vol2C_diatom`'
   - '`vol2C_lgdiatom`'
   - '`vol2C_nondiatom`'
 - title: Deprecated functions
