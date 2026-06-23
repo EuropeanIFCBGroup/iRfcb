@@ -284,8 +284,11 @@ vol2C_lgdiatom <- function(volume) {
 #'
 #' This relationship is fit to diatoms of all sizes and assigns a higher carbon
 #' density than \code{\link{vol2C_lgdiatom}} (which is specific to large diatoms
-#' larger than 3000 micron^3). The two curves cross near 3000 micron^3, so they
-#' are not continuous at that boundary.
+#' larger than 3000 micron^3). Because the large-diatom equation is intended only
+#' for cells > 3000 micron^3, switching equations at that threshold introduces a
+#' discontinuity: at 3000 micron^3 the all-sizes equation predicts ~190 pgC versus
+#' ~135 pgC for the large-diatom equation. (The two curves themselves only
+#' intersect near 4e5 micron^3.)
 #'
 #' @param volume A numeric vector of biovolume measurements in microns^3.
 #'
