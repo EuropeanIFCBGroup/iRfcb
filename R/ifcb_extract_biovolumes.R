@@ -218,10 +218,6 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   # List matching feature files
   feature_files <- feature_files[extracted_dates %in% class_date_times]
 
-  if (verbose) {
-    cli_inform("Reading feature files...")
-  }
-
   # Read feature files
   features <- ifcb_read_features(feature_files = feature_files,
                                  multiblob = multiblob,
@@ -318,7 +314,6 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
       # Set up the progress bar
       if (verbose && n_files > 0) {
-        cli_inform("Reading classification files...")
         cli_progress_bar("Reading classification files", total = n_files)
       }
 

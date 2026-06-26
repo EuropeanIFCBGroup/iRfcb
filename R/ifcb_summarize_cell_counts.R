@@ -125,7 +125,6 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
   has_chain <- logical(n_files)
 
   if (verbose) {
-    cli_inform("Reading classification files...")
     cli_progress_bar("Reading classification files", total = n_files)
   }
 
@@ -221,7 +220,6 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     volume_list <- vector("list", n_hdr)
 
     if (verbose && n_hdr > 0) {
-      cli_inform("Calculating sample volumes...")
       cli_progress_bar("Calculating sample volumes", total = n_hdr)
     }
 

@@ -205,7 +205,6 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
 
     # Set up the progress bar
     if (verbose && n_hdr > 0) {
-      cli_inform("Calculating sample volumes...")
       cli_progress_bar("Calculating sample volumes", total = n_hdr)
     }
 
