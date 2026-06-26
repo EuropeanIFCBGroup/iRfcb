@@ -5,6 +5,7 @@
   * New `ifcb_summarize_cell_counts()` summarizes cell abundance and user-selectable chain-length statistics (`mean`, `median`, `max`, `sd`, `n_chains`) per sample and class, with optional per-liter abundance via an `hdr_folder`.
   * `ifcb_summarize_biovolumes()` and `ifcb_extract_biovolumes()` gain a `use_cell_counts` argument. When `TRUE`, `ifcb_summarize_biovolumes()` adds `cell_counts` (and `cell_counts_per_liter` when an `hdr_folder` is supplied) to the output.
   * A `single_cell_values` argument (default `c(-1, 0)`) lets the user define which `cell_count` values are treated as a single cell. By default, ROIs that were not chain-counted (`-1`) and ROIs where no cells were detected (`0`) each count as one cell; any other value is used verbatim.
+  * The bundled SHARK column template (`ifcb_get_shark_colnames()`/`ifcb_get_shark_example()`) gains an `IMAGE_COUNT` column (number of ROIs/images), placed after `COUNT`. When `COUNT`/`ABUND` report cells, the mean chain length per taxon is `COUNT / IMAGE_COUNT`.
 
 ## Minor improvements and fixes
 * `ifcb_extract_features()` gains a `feature_tag` argument to control the feature file naming. The default (`"features"`) writes `<bin>_features_v4.csv` as before; `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB Dashboard (pyifcb's `FeaturesDirectory`).
