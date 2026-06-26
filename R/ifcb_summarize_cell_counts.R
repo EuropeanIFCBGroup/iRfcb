@@ -1,13 +1,13 @@
-utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sample",
+utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "class", "sample",
                          "roi_number"))
-#' Summarize Diatom Chain Counts and Cell Abundance from IFCB Data
+#' Summarize Diatom Cell Counts and Chain-Length Statistics from IFCB Data
 #'
-#' Summarizes the optional per-ROI chain-count data produced by the diatom chain
+#' Summarizes the optional per-ROI cell-count data produced by the diatom chain
 #' counter and stored in classification files (`.h5` or `.csv`). For each sample
 #' and class it computes the total cell abundance (number of cells, accounting
 #' for chains) together with a user-selectable set of chain-length statistics.
 #'
-#' The chain counter stores one integer `chain_count` per region of interest
+#' The chain counter stores one integer `cell_count` per region of interest
 #' (ROI). The value `-1` marks ROIs of classes that were not configured for chain
 #' counting, `0` marks ROIs that were counted but where no cells were detected,
 #' and a positive value is the number of cells in that ROI. Abundance is derived
@@ -16,7 +16,7 @@ utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sa
 #' shares this logic to report `cell_counts`).
 #'
 #' Chain-length statistics (`mean`, `median`, `max`, `sd`) are computed only over
-#' ROIs that were genuinely chain-counted (`chain_count >= 1`); ROIs with `-1`
+#' ROIs that were genuinely chain-counted (`cell_count >= 1`); ROIs with `-1`
 #' (not counted) or `0` (no cells detected) are excluded from the length
 #' statistics, although `0`-valued ROIs still contribute to abundance according
 #' to `single_cell_values`.
@@ -26,7 +26,7 @@ utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sa
 #'   `.h5` and `.csv` files can carry chain-count data; `.mat` files never do.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed
 #'   for calculating cell abundance per liter.
-#' @param single_cell_values Integer vector of `chain_count` values that should
+#' @param single_cell_values Integer vector of `cell_count` values that should
 #'   be treated as a single cell when computing abundance. Default is
 #'   `c(-1, 0)`, i.e. both ROIs that were not counted and ROIs where no cells
 #'   were detected count as one cell. Values not listed are used verbatim.
@@ -57,7 +57,7 @@ utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sa
 #' @details
 #' Chain counting was introduced by Groves et al. (2026), who trained a
 #' "You Only Look Once" (YOLO) object detection model to enumerate the cells in
-#' diatom chains imaged by the IFCB. The per-ROI `chain_count` data summarized
+#' diatom chains imaged by the IFCB. The per-ROI `cell_count` data summarized
 #' here is produced by the `ifcb-pytorch-classify` inference pipeline
 #' (\url{https://github.com/nodc-sweden/ifcb-pytorch-classify}), which writes it
 #' as an optional dataset in the `.h5` classification files alongside the class
@@ -71,10 +71,10 @@ utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sa
 #' @examples
 #' \dontrun{
 #' # Summarize chain counts and abundance from classification files
-#' chains <- ifcb_summarize_chain_counts("path/to/class")
+#' chains <- ifcb_summarize_cell_counts("path/to/class")
 #'
 #' # Include abundance per liter and only the mean chain length
-#' chains <- ifcb_summarize_chain_counts(
+#' chains <- ifcb_summarize_cell_counts(
 #'   "path/to/class",
 #'   hdr_folder = "path/to/hdr",
 #'   stats = "mean"
@@ -86,7 +86,7 @@ utils::globalVariables(c("chain_count", "cell_count", "classifier", "class", "sa
 #' @seealso \code{\link{ifcb_summarize_biovolumes}} \code{\link{ifcb_extract_biovolumes}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify}
 #'
 #' @export
-ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
+ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
                                         single_cell_values = c(-1, 0),
                                         stats = c("n_chains", "mean", "median", "max"),
                                         threshold = "opt", class_recursive = TRUE,
@@ -139,7 +139,7 @@ ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
       read_class_file(class_files[i], use_python = use_python)
     })
 
-    has_chain[i] <- !is.null(temp$chain_count)
+    has_chain[i] <- !is.null(temp$cell_count)
 
     sample_name <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(class_files[i]))
     sample_name <- sub("\\.csv$", "", sample_name)
@@ -153,7 +153,7 @@ ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
       } else {
         unlist(temp$TBclass)
       },
-      chain_count = if (is.null(temp$chain_count)) NA_integer_ else temp$chain_count
+      cell_count = if (is.null(temp$cell_count)) NA_integer_ else temp$cell_count
     )
   }
 
@@ -162,7 +162,7 @@ ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
   if (!any(has_chain)) {
     cli_abort(c(
       "None of the supplied classification files contain chain-count data.",
-      "i" = "Re-run classification with chain counting enabled to produce a {.code chain_count} dataset."
+      "i" = "Re-run classification with chain counting enabled to produce a {.code cell_count} dataset."
     ))
   }
 
@@ -176,9 +176,9 @@ ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
   chain_df <- bind_rows(tb_list)
 
   # Resolve per-ROI cell counts for abundance
-  chain_df$cell_count <- resolve_cell_counts(chain_df$chain_count, single_cell_values)
+  chain_df$cell_count_resolved <- resolve_cell_counts(chain_df$cell_count, single_cell_values)
 
-  # Helper computing a length statistic over genuinely counted ROIs (chain_count >= 1)
+  # Helper computing a length statistic over genuinely counted ROIs (cell_count >= 1)
   length_stat <- function(x, fun) {
     x <- x[!is.na(x) & x >= 1]
     if (length(x) == 0) return(NA_real_)
@@ -189,12 +189,12 @@ ifcb_summarize_chain_counts <- function(class_files, hdr_folder = NULL,
     group_by(sample, classifier, class) %>%
     summarise(
       counts = n(),
-      cell_counts = sum(cell_count, na.rm = TRUE),
-      n_chains = sum(chain_count >= 1, na.rm = TRUE),
-      mean_chain_length = length_stat(chain_count, mean),
-      median_chain_length = length_stat(chain_count, stats::median),
-      max_chain_length = length_stat(chain_count, max),
-      sd_chain_length = length_stat(chain_count, stats::sd),
+      cell_counts = sum(cell_count_resolved, na.rm = TRUE),
+      n_chains = sum(cell_count >= 1, na.rm = TRUE),
+      mean_chain_length = length_stat(cell_count, mean),
+      median_chain_length = length_stat(cell_count, stats::median),
+      max_chain_length = length_stat(cell_count, max),
+      sd_chain_length = length_stat(cell_count, stats::sd),
       .groups = "drop"
     )
 

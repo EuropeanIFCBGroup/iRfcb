@@ -21,7 +21,7 @@ ifcb_summarize_biovolumes(
   hdr_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
-  use_chain_counts = FALSE,
+  use_cell_counts = FALSE,
   single_cell_values = c(-1, 0),
   use_python = FALSE,
   verbose = TRUE,
@@ -73,21 +73,21 @@ class without any threshold applied.}
 
 \item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
-\item{use_chain_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{chain_count} data
+\item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count} data
 stored by the diatom chain counter in \code{.h5}/\code{.csv} classification files and adds
 \code{cell_counts} (and \code{cell_counts_per_liter} when \code{hdr_folder} is supplied) to the output,
 reporting cell abundance alongside ROI counts. Only supported with automated \code{class_files}.
 The function aborts if enabled but no classification file contains chain-count data. For
 chain-length statistics (mean, median, max chain length) use
-\code{\link{ifcb_summarize_chain_counts}}. Note that \code{cell_counts} here is summed only over
+\code{\link{ifcb_summarize_cell_counts}}. Note that \code{cell_counts} here is summed only over
 ROIs that also have matching feature (biovolume) data (the same ROI population as \code{counts});
-\code{\link{ifcb_summarize_chain_counts}} instead sums over all classified ROIs, so the two
+\code{\link{ifcb_summarize_cell_counts}} instead sums over all classified ROIs, so the two
 abundance totals can differ. Default is \code{FALSE}.}
 
-\item{single_cell_values}{Integer vector of \code{chain_count} values that should be treated as a
+\item{single_cell_values}{Integer vector of \code{cell_count} values that should be treated as a
 single cell when computing \code{cell_counts}. Default is \code{c(-1, 0)}, i.e. ROIs that were not
 counted (\code{-1}) and ROIs where no cells were detected (\code{0}) each count as one cell. Values
-not listed are used verbatim. Only used when \code{use_chain_counts = TRUE}.}
+not listed are used verbatim. Only used when \code{use_cell_counts = TRUE}.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
 
@@ -105,7 +105,7 @@ Use \code{class_recursive} instead.}
 \value{
 A data frame summarizing aggregated biovolume and carbon content per class per sample.
 Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
-'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When \code{use_chain_counts = TRUE}, the cell
+'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When \code{use_cell_counts = TRUE}, the cell
 abundance columns 'cell_counts' (and 'cell_counts_per_liter' when \code{hdr_folder} is provided) are
 also included.
 }
@@ -166,5 +166,5 @@ Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phyt
 Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and Davidson, K. (2026), Automatic enumeration of chains of marine diatoms using "You Only Look Once" - a machine learning approach. Journal of Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
 }
 \seealso{
-\code{\link{ifcb_summarize_chain_counts}} \code{\link{ifcb_extract_biovolumes}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify}
+\code{\link{ifcb_summarize_cell_counts}} \code{\link{ifcb_extract_biovolumes}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify}
 }

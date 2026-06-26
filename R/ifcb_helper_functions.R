@@ -703,17 +703,17 @@ read_mat <- function(file_path, fixNames = FALSE) {
   })
   mat_contents_converted
 }
-#' Resolve Per-ROI Cell Counts from Chain Counts
+#' Resolve Per-ROI Cell Counts for Abundance
 #'
-#' Translates the raw per-ROI `chain_count` values produced by the diatom chain
-#' counter into cell counts used for abundance calculations. Values listed in
+#' Translates the raw per-ROI `cell_count` values produced by the diatom chain
+#' counter into the cell counts used for abundance calculations. Values listed in
 #' `single_cell_values` are mapped to `1` (a single cell); any other value is
 #' used verbatim as the number of cells. A warning is emitted if negative cell
 #' counts remain after mapping (e.g. when `-1` is removed from
 #' `single_cell_values`), since these would corrupt abundance sums.
 #'
-#' @param chain_count Integer vector of raw per-ROI chain counts.
-#' @param single_cell_values Integer vector of `chain_count` values that should
+#' @param cell_count Integer vector of raw per-ROI cell counts.
+#' @param single_cell_values Integer vector of `cell_count` values that should
 #'   be treated as a single cell. Default is `c(-1, 0)`.
 #'
 #' @return Numeric vector of resolved per-ROI cell counts.
@@ -721,11 +721,11 @@ read_mat <- function(file_path, fixNames = FALSE) {
 #' @references Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and Davidson, K. (2026), Automatic enumeration of chains of marine diatoms using "You Only Look Once" - a machine learning approach. Journal of Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
 #'
 #' @noRd
-resolve_cell_counts <- function(chain_count, single_cell_values = c(-1, 0)) {
-  cells <- ifelse(chain_count %in% single_cell_values, 1L, chain_count)
+resolve_cell_counts <- function(cell_count, single_cell_values = c(-1, 0)) {
+  cells <- ifelse(cell_count %in% single_cell_values, 1L, cell_count)
   if (any(cells < 0, na.rm = TRUE)) {
     cli_warn(c(
-      "Negative cell counts remain after mapping {.arg chain_count}.",
+      "Negative cell counts remain after mapping {.arg cell_count}.",
       "i" = "Add the offending values to {.arg single_cell_values} (which defaults to {.code c(-1, 0)}) to treat them as a single cell."
     ))
   }
@@ -753,11 +753,11 @@ resolve_cell_counts <- function(chain_count, single_cell_values = c(-1, 0)) {
 #'   \item{TBclass}{Character vector. Winning class per ROI.}
 #'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
 #'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`/`.csv`).}
-#'   \item{chain_count}{Integer vector or NULL. Optional per-ROI cell (chain) counts
+#'   \item{cell_count}{Integer vector or NULL. Optional per-ROI cell counts
 #'     produced by the diatom chain counter (`.h5`/`.csv` only). `-1` marks ROIs that
 #'     were not counted, `0` marks ROIs that were counted but where no cells were
 #'     detected, and a positive value is the number of cells in the ROI. `NULL` when
-#'     the file does not contain chain-count data.}
+#'     the file does not contain cell-count data.}
 #'   Any names requested via `extra_datasets` that exist in the file are added as
 #'   further elements, read verbatim.
 #'
@@ -803,8 +803,8 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
       TBclass = tb_class,
       TBclass_above_threshold = csv_data$class_name,
       TBclass_above_adhocthresh = NULL,
-      chain_count = if ("chain_count" %in% colnames(csv_data)) {
-        as.integer(csv_data$chain_count)
+      cell_count = if ("cell_count" %in% colnames(csv_data)) {
+        as.integer(csv_data$cell_count)
       } else {
         NULL
       }
@@ -862,8 +862,8 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
       TBclass = class_auto,
       TBclass_above_threshold = class_threshold,
       TBclass_above_adhocthresh = NULL,
-      chain_count = if (h5file$exists("chain_count")) {
-        as.integer(h5file[["chain_count"]]$read())
+      cell_count = if (h5file$exists("cell_count")) {
+        as.integer(h5file[["cell_count"]]$read())
       } else {
         NULL
       }

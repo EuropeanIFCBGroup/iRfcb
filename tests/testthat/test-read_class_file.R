@@ -50,7 +50,7 @@ test_that("read_class_file reads .h5 and returns expected fields", {
   expect_type(result, "list")
   expect_named(result, c("classifierName", "class2useTB", "roinum", "TBscores",
                           "TBclass", "TBclass_above_threshold",
-                          "TBclass_above_adhocthresh", "chain_count"),
+                          "TBclass_above_adhocthresh", "cell_count"),
                ignore.order = TRUE)
 
   expect_true(is.character(result$classifierName))
@@ -60,7 +60,7 @@ test_that("read_class_file reads .h5 and returns expected fields", {
   expect_true(is.character(result$TBclass))
   expect_true(is.character(result$TBclass_above_threshold))
   expect_null(result$TBclass_above_adhocthresh)
-  expect_null(result$chain_count)
+  expect_null(result$cell_count)
 })
 
 test_that("read_class_file .h5 has consistent dimensions", {
@@ -93,7 +93,7 @@ test_that("read_class_file reads .csv and returns expected fields", {
   expect_type(result, "list")
   expect_named(result, c("classifierName", "class2useTB", "roinum", "TBscores",
                           "TBclass", "TBclass_above_threshold",
-                          "TBclass_above_adhocthresh", "chain_count"),
+                          "TBclass_above_adhocthresh", "cell_count"),
                ignore.order = TRUE)
 
   expect_true(is.character(result$class2useTB))
@@ -102,7 +102,7 @@ test_that("read_class_file reads .csv and returns expected fields", {
   expect_true(is.character(result$TBclass))
   expect_true(is.character(result$TBclass_above_threshold))
   expect_null(result$TBclass_above_adhocthresh)
-  expect_null(result$chain_count)
+  expect_null(result$cell_count)
   expect_true(is.na(result$classifierName))
 })
 

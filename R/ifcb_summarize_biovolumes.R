@@ -1,4 +1,4 @@
-utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "cell_count", "cell_counts", "."))
+utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "cell_count_resolved", "cell_counts", "."))
 #' Summarize Biovolumes and Carbon Content from IFCB Data
 #'
 #' This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
@@ -32,20 +32,20 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
-#' @param use_chain_counts Logical. If `TRUE`, reads the optional per-ROI `chain_count` data
+#' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
 #'   stored by the diatom chain counter in `.h5`/`.csv` classification files and adds
 #'   `cell_counts` (and `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,
 #'   reporting cell abundance alongside ROI counts. Only supported with automated `class_files`.
 #'   The function aborts if enabled but no classification file contains chain-count data. For
 #'   chain-length statistics (mean, median, max chain length) use
-#'   \code{\link{ifcb_summarize_chain_counts}}. Note that `cell_counts` here is summed only over
+#'   \code{\link{ifcb_summarize_cell_counts}}. Note that `cell_counts` here is summed only over
 #'   ROIs that also have matching feature (biovolume) data (the same ROI population as `counts`);
-#'   \code{\link{ifcb_summarize_chain_counts}} instead sums over all classified ROIs, so the two
+#'   \code{\link{ifcb_summarize_cell_counts}} instead sums over all classified ROIs, so the two
 #'   abundance totals can differ. Default is `FALSE`.
-#' @param single_cell_values Integer vector of `chain_count` values that should be treated as a
+#' @param single_cell_values Integer vector of `cell_count` values that should be treated as a
 #'   single cell when computing `cell_counts`. Default is `c(-1, 0)`, i.e. ROIs that were not
 #'   counted (`-1`) and ROIs where no cells were detected (`0`) each count as one cell. Values
-#'   not listed are used verbatim. Only used when `use_chain_counts = TRUE`.
+#'   not listed are used verbatim. Only used when `use_cell_counts = TRUE`.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
@@ -57,7 +57,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'
 #' @return A data frame summarizing aggregated biovolume and carbon content per class per sample.
 #'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
-#'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When `use_chain_counts = TRUE`, the cell
+#'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
 #'   abundance columns 'cell_counts' (and 'cell_counts_per_liter' when `hdr_folder` is provided) are
 #'   also included.
 #'
@@ -106,7 +106,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 #' @references Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and Davidson, K. (2026), Automatic enumeration of chains of marine diatoms using "You Only Look Once" - a machine learning approach. Journal of Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
 #'
-#' @seealso \code{\link{ifcb_summarize_chain_counts}} \code{\link{ifcb_extract_biovolumes}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify}
+#' @seealso \code{\link{ifcb_summarize_cell_counts}} \code{\link{ifcb_extract_biovolumes}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify}
 #'
 #' @export
 ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2use_file = NULL,
@@ -114,7 +114,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", diatom_include = NULL,
                                       marine_only = FALSE, threshold = "opt", feature_recursive = TRUE,
                                       class_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
-                                      feature_version = NULL, use_chain_counts = FALSE,
+                                      feature_version = NULL, use_cell_counts = FALSE,
                                       single_cell_values = c(-1, 0), use_python = FALSE, verbose = TRUE,
                                       mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
 
@@ -151,7 +151,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
                                         class_recursive = class_recursive,
                                         drop_zero_volume = drop_zero_volume,
                                         feature_version = feature_version,
-                                        use_chain_counts = use_chain_counts,
+                                        use_cell_counts = use_cell_counts,
                                         single_cell_values = single_cell_values,
                                         use_python = use_python,
                                         verbose = verbose)
@@ -160,13 +160,13 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
   biovolume_aggregated <- biovolumes %>%
     group_by(sample, classifier, class) %>%
     summarise(counts = n(),
-              cell_counts = if (use_chain_counts) sum(cell_count, na.rm = TRUE) else NA_real_,
+              cell_counts = if (use_cell_counts) sum(cell_count_resolved, na.rm = TRUE) else NA_real_,
               biovolume_mm3 = sum(biovolume_um3 * 10^-9, na.rm = TRUE),  # Convert from um3 to mm3
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug
               .groups = 'drop')
 
   # Drop the cell_counts placeholder column when chain counts are not used
-  if (!use_chain_counts) {
+  if (!use_cell_counts) {
     biovolume_aggregated$cell_counts <- NULL
   }
 
@@ -234,7 +234,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
 
     # Calculate biovolume and carbon content per liter of sample analyzed
     biovolume_aggregated$counts_per_liter <- biovolume_aggregated$counts / (biovolume_aggregated$ml_analyzed / 1000)
-    if (use_chain_counts) {
+    if (use_cell_counts) {
       biovolume_aggregated$cell_counts_per_liter <- biovolume_aggregated$cell_counts / (biovolume_aggregated$ml_analyzed / 1000)
     }
     biovolume_aggregated$biovolume_mm3_per_liter <- biovolume_aggregated$biovolume_mm3 / (biovolume_aggregated$ml_analyzed / 1000)

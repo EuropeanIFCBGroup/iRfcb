@@ -104,23 +104,23 @@ test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
   expect_equal(result$carbon_ug_per_liter, 0.52147962)
 })
 
-test_that("ifcb_summarize_biovolumes aborts with use_chain_counts on files without chain data", {
+test_that("ifcb_summarize_biovolumes aborts with use_cell_counts on files without chain data", {
   # The test .mat classification files do not contain chain-count data, so
   # requesting chain counts should abort before any WoRMS lookup (offline-safe).
   expect_error(
-    ifcb_summarize_biovolumes(feature_folder, class_folder, use_chain_counts = TRUE,
+    ifcb_summarize_biovolumes(feature_folder, class_folder, use_cell_counts = TRUE,
                               verbose = FALSE),
     "chain-count data"
   )
 })
 
-test_that("ifcb_summarize_biovolumes computes cell abundance with use_chain_counts", {
+test_that("ifcb_summarize_biovolumes computes cell abundance with use_cell_counts", {
   skip_if_offline()
   skip_on_cran()
   skip_if_not_installed("hdf5r")
   skip_if_resource_unavailable("https://marinespecies.org")
 
-  # Build a synthetic .h5 classification file (carrying chain_count) for the same
+  # Build a synthetic .h5 classification file (carrying cell_count) for the same
   # sample as the real feature file, so the feature join yields known ROIs. The
   # feature file holds ROIs 2 and 3.
   chain_class_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes_chain")
@@ -136,12 +136,12 @@ test_that("ifcb_summarize_biovolumes computes cell abundance with use_chain_coun
   f[["class_name_auto"]] <- rep(cl, 2)
   f[["class_name"]] <- rep(cl, 2)
   f[["thresholds"]] <- 0.5
-  f[["chain_count"]] <- c(2L, 3L)  # neither value is a single-cell marker
+  f[["cell_count"]] <- c(2L, 3L)  # neither value is a single-cell marker
   f$close_all()
 
   result <- ifcb_summarize_biovolumes(feature_folder, chain_class_dir,
                                       hdr_folder = hdr_folder,
-                                      use_chain_counts = TRUE, verbose = FALSE)
+                                      use_cell_counts = TRUE, verbose = FALSE)
 
   expect_s3_class(result, "data.frame")
   expect_true(all(c("cell_counts", "cell_counts_per_liter") %in% colnames(result)))
