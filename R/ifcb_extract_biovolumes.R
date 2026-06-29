@@ -353,10 +353,15 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     cli_inform("Retrieving WoRMS records...")
   }
 
-  is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
-                                                                         diatom_class = diatom_class,
-                                                                         marine_only = marine_only,
-                                                                         verbose = verbose))
+  diatom_details <- ifcb_is_diatom(unique_classes,
+                                   diatom_class = diatom_class,
+                                   marine_only = marine_only,
+                                   details = TRUE,
+                                   verbose = verbose)
+
+  is_diatom <- tibble(class = unique_classes,
+                      worms_class = diatom_details$worms_class,
+                      is_diatom = diatom_details$is_diatom)
 
   # Override diatom classification if diatom_include is provided
   if (!is.null(diatom_include)) {
@@ -370,28 +375,39 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     is_diatom$is_diatom[matched] <- TRUE
   }
 
-  biovolume_df <- left_join(biovolume_df, is_diatom, by = "class")
+  biovolume_df <- left_join(biovolume_df, is_diatom[, c("class", "is_diatom")], by = "class")
 
-  # Filter rows where is_diatom$is_diatom is NA
-  na_classes <- is_diatom[is.na(is_diatom$is_diatom), "class"]
+  if (verbose) {
+    # Classes treated as diatoms (short, verifiable list - shown in full)
+    diatoms <- sort(is_diatom$class[is_diatom$is_diatom])
 
-  # Filter rows where is_diatom$is_diatom is NA
-  non_diatoms <- is_diatom[!is_diatom$is_diatom, "class"]
+    # Classes that could not be found in WoRMS (the genuinely ambiguous bucket)
+    not_found <- sort(is_diatom$class[is.na(is_diatom$worms_class) & !is_diatom$is_diatom])
 
-  # Print the classes with NA values
-  if (length(na_classes$class) > 0 & verbose) {
-    cli_alert_info(
-      "Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:"
-    )
-    cli_inform("{.val {sort(na_classes$class)}}")
-  }
+    # Classes resolved by WoRMS to a non-diatom class
+    non_diatoms <- sort(is_diatom$class[!is_diatom$is_diatom & !is.na(is_diatom$worms_class)])
 
-  # Print the classes that are non-Diatoms
-  if (length(non_diatoms$class) > 0 & verbose) {
-    cli_alert_info(
-      "The following {qty(length(non_diatoms$class))}class{?es} {?is/are} considered NOT diatoms for carbon calculations:"
-    )
-    cli_inform("{.val {sort(non_diatoms$class)}}")
+    if (length(diatoms) > 0) {
+      cli_alert_info(
+        "{length(diatoms)} of {nrow(is_diatom)} {qty(length(diatoms))}class{?es} {?is/are} treated as diatoms:"
+      )
+      cli_inform("{.val {cli::cli_vec(diatoms, list('vec-trunc' = Inf))}}")
+    }
+
+    if (length(non_diatoms) > 0) {
+      cli_alert_info(
+        paste("{length(non_diatoms)} {qty(length(non_diatoms))}class{?es} {?is/are} treated as NOT diatoms.",
+              "To check for genus homonyms (e.g. Navicula, Actinocyclus, which share names with animals),",
+              "run {.code ifcb_is_diatom(details = TRUE)} and inspect the {.field worms_class} column.")
+      )
+    }
+
+    if (length(not_found) > 0) {
+      cli_alert_info(
+        "{length(not_found)} {qty(length(not_found))}class{?es} could not be found in WoRMS and {?was/were} assumed NOT diatoms:"
+      )
+      cli_inform("{.val {cli::cli_vec(not_found, list('vec-trunc' = Inf))}}")
+    }
   }
 
   # Select the diatom carbon conversion function
