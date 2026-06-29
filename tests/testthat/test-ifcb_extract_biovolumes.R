@@ -144,9 +144,12 @@ test_that("ifcb_extract_biovolumes diatom_equation switch raises diatom carbon o
                                         diatom_equation = "all",
                                         verbose = FALSE)
 
-  # Biovolume is unchanged; the all-sizes equation assigns more carbon to diatoms
+  # Biovolume is unchanged; the switch only selects which diatom equation is applied.
+  # Assert the deterministic contract per ROI rather than a direction of inequality,
+  # which only holds below the ~4e5 micron^3 crossover of the two diatom curves.
   expect_identical(diatom_large$biovolume_um3, diatom_all$biovolume_um3)
-  expect_true(all(diatom_all$carbon_pg > diatom_large$carbon_pg))
+  expect_equal(diatom_large$carbon_pg, vol2C_lgdiatom(diatom_large$biovolume_um3))
+  expect_equal(diatom_all$carbon_pg, vol2C_diatom(diatom_all$biovolume_um3))
 
   # Non-diatom genus (Mesodinium) -> carbon must be identical regardless of the switch
   nondiatom_large <- ifcb_extract_biovolumes(feature_folder,
@@ -159,6 +162,7 @@ test_that("ifcb_extract_biovolumes diatom_equation switch raises diatom carbon o
                                            diatom_equation = "all",
                                            verbose = FALSE)
   expect_equal(nondiatom_large$carbon_pg, nondiatom_all$carbon_pg)
+  expect_equal(nondiatom_large$carbon_pg, vol2C_nondiatom(nondiatom_large$biovolume_um3))
 
   # Invalid value is rejected by match.arg
   expect_error(
