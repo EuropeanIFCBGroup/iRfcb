@@ -1,6 +1,8 @@
-# Helper function to create a temporary .mat file with a named classlist object
+# Helper function to create a temporary .mat file with a named classlist object,
+# using the package's native MAT writer (no R.matlab dependency).
 create_temp_mat_file <- function(file_path, classlist) {
-  R.matlab::writeMat(file_path, classlist = classlist) # Ensure 'classlist' is named
+  dir.create(dirname(file_path), showWarnings = FALSE, recursive = TRUE)
+  write_mat_v5(file_path, list(classlist = mat_var_double(classlist)))
 }
 
 # Define the setup function

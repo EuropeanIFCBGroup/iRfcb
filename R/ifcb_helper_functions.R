@@ -679,29 +679,37 @@ resolve_ifcb_features_url <- function(features_ref = NULL) {
 }
 #' Read MATLAB (.mat) Files
 #'
-#' A helper function to read MATLAB `.mat` files using the `R.matlab::readMat()` package.
-#' Optionally, it can fix variable names during import.
+#' A helper function to read MATLAB v5 `.mat` files using the package's native
+#' pure-R reader (`read_mat_v5()`), with no dependency on Python or external
+#' MATLAB-reader packages. The variable specifications returned by the reader
+#' are flattened to plain R values so the output matches the shape previously
+#' produced by `R.matlab::readMat(fixNames = FALSE)`: numeric variables become
+#' matrices, cell arrays of strings become character vectors, and single char
+#' arrays become length-one character vectors. MATLAB variable names (which use
+#' underscores) are preserved verbatim.
 #'
 #' @param file_path Character. Path to the `.mat` file.
-#' @param fixNames Logical. If `TRUE`, fixes variable names to be valid R identifiers. Default is `FALSE`.
-#' @return A list containing the data from the `.mat` file, with any nested lists converted to character vectors.
+#' @param fixNames Logical. Retained for backward compatibility only; native
+#'   variable names are already valid R identifiers, so this argument is
+#'   ignored.
+#' @return A named list containing the data from the `.mat` file.
 #' @noRd
 read_mat <- function(file_path, fixNames = FALSE) {
-  # Read the contents of the MAT file
-  mat_contents <- suppressWarnings({R.matlab::readMat(file_path, fixNames = fixNames)})
+  specs <- read_mat_v5(file_path)
 
-  # Iterate through each element of mat_data2 and convert any list to a character vector
-  mat_contents_converted <- lapply(mat_contents, function(x) {
-    # Check if the element is a list
-    if (is.list(x)) {
-      # Flatten the list and convert it to a character vector
-      as.character(unlist(x))
-    } else {
-      # If it's not a list, leave it unchanged
-      x
-    }
+  lapply(specs, function(spec) {
+    switch(spec$type,
+      # Numeric matrices are returned as-is (matrix, dimensions preserved).
+      numeric = spec$data,
+      # Cell arrays of strings collapse to a character vector (column-major),
+      # mirroring the old `as.character(unlist(x))` conversion.
+      cell    = as.character(as.vector(spec$data)),
+      # Single char arrays become a length-one character vector.
+      char    = as.character(spec$data),
+      # Any other type: best-effort flatten to character.
+      as.character(unlist(spec$data))
+    )
   })
-  mat_contents_converted
 }
 #' Read Classification File (.mat, .h5, or .csv)
 #'

@@ -1,4 +1,5 @@
 test_that("ifcb_correct_annotation updates class IDs correctly", {
+  skip_if_not_installed("R.matlab") # used as an independent cross-check below
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -43,6 +44,7 @@ test_that("ifcb_correct_annotation updates class IDs correctly", {
 })
 
 test_that("ifcb_correct_annotation works with character vector input", {
+  skip_if_not_installed("R.matlab") # used as an independent cross-check below
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")

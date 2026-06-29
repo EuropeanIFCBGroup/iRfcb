@@ -1,4 +1,5 @@
 test_that("ifcb_replace_mat_values correctly updates the .mat classlist files", {
+  skip_if_not_installed("R.matlab") # used as an independent cross-check below
 
   # Create a temporary directory for the manual_folder
   manual_folder <- file.path(tempdir(), "manual")
@@ -94,6 +95,7 @@ test_that("ifcb_replace_mat_values creates output directory if it does not exist
 })
 
 test_that("ifcb_replace_mat_values handles different column indices correctly", {
+  skip_if_not_installed("R.matlab") # used as an independent cross-check below
 
   manual_folder <- file.path(tempdir(), "manual")
   out_folder <- file.path(tempdir(), "out")

@@ -76,6 +76,31 @@ test_that("scalar char arrays round-trip", {
   })
 })
 
+test_that("read_mat_v5 decodes miUTF16 char data from a real MATLAB class file", {
+  # MATLAB-generated .mat files store char arrays as miUTF16 (data type 17),
+  # unlike scipy's miUTF8/miUINT16. This regression guards that the reader
+  # decodes type 17 (so the package no longer needs R.matlab to read genuine
+  # ifcb-analysis output). The fixture is a real class result file.
+  temp_dir <- file.path(tempdir(), "mat_io_utf16")
+  utils::unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+  class_file <- file.path(temp_dir, "test_data", "class", "class2022_v1",
+                          "D20220522T003051_IFCB134_class_v1.mat")
+  skip_if(!file.exists(class_file), "class fixture not available")
+
+  vars <- read_mat_v5(class_file)
+
+  # Char scalar: the classifierName path embeds a non-ASCII character
+  # ("Tångesund"); a correct UTF-16 decode reproduces it intact.
+  expect_equal(vars$classifierName$type, "char")
+  expect_true(grepl("Tångesund", vars$classifierName$data, fixed = TRUE))
+
+  # Cell array of class label strings decodes to plain character values.
+  expect_equal(vars$class2useTB$type, "cell")
+  expect_true("Alexandrium_pseudogonyaulax" %in% as.vector(vars$class2useTB$data))
+
+  unlink(temp_dir, recursive = TRUE)
+})
+
 test_that("empty 0x0 double arrays round-trip (the class2use_auto case)", {
   empty <- matrix(numeric(0), 0, 0)
 

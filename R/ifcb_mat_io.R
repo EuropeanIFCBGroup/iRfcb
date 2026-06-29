@@ -328,10 +328,18 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     out <- rawToChar(data)
     Encoding(out) <- "UTF-8"
     out
-  } else if (type == 4L || type == 3L) {
-    # miUINT16 / miINT16 (UTF-16-ish; class names are ASCII so this suffices)
+  } else if (type == 17L || type == 4L || type == 3L) {
+    # miUTF16 / miUINT16 / miINT16. MATLAB-generated char arrays are stored as
+    # miUTF16; scipy round-trips them as miUINT16. Both are decoded as
+    # little-endian 16-bit code units (the BMP class/label strings iRfcb deals
+    # with are identical under UTF-16 and bare UCS-2).
     codes <- readBin(data, "integer", n = length(data) %/% 2L, size = 2L,
                      endian = "little", signed = FALSE)
+    intToUtf8(codes)
+  } else if (type == 18L) {
+    # miUTF32
+    codes <- readBin(data, "integer", n = length(data) %/% 4L, size = 4L,
+                     endian = "little")
     intToUtf8(codes)
   } else {
     cli::cli_abort("Unsupported char MAT data type: {.val {type}}")
