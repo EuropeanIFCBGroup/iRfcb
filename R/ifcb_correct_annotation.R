@@ -101,8 +101,28 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     # Read the manual file, set the manual classification (classlist column 2)
     # of the targeted ROIs to correct_classid, and write the result back out.
     # Each ROI maps to its classlist row (row index = ROI number).
-    mat_data <- read_mat_v5(file.path(manual_folder, paste0(filename, ".mat")))
+    file_path_in <- file.path(manual_folder, paste0(filename, ".mat"))
+    if (!file.exists(file_path_in)) {
+      cli_abort("Manual file not found: {.file {file_path_in}}")
+    }
+
+    mat_data <- read_mat_v5(file_path_in)
     classlist <- mat_data$classlist$data
+    if (is.null(classlist)) {
+      cli_abort("No {.field classlist} found in {.file {basename(file_path_in)}}.")
+    }
+
+    # Guard against a correction file that references an ROI beyond the end of
+    # the classlist; without this the assignment below fails with an opaque
+    # "subscript out of bounds" that names neither the file nor the ROI.
+    out_of_range <- roi_list[roi_list < 1 | roi_list > nrow(classlist)]
+    if (length(out_of_range) > 0) {
+      cli_abort(c(
+        "Correction references {cli::qty(length(out_of_range))}ROI{?s} outside {.file {basename(file_path_in)}}.",
+        "x" = "{cli::qty(length(out_of_range))}ROI{?s} {.val {out_of_range}} not in the classlist range 1:{nrow(classlist)}."
+      ))
+    }
+
     classlist[roi_list, 2] <- as.integer(correct_classid)
     mat_data$classlist$data <- classlist
 

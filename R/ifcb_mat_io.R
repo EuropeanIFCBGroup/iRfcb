@@ -222,8 +222,20 @@ mat_var_char   <- function(data) list(type = "char", data = data)
 #' @param do_compression Logical; compress each variable with zlib.
 #' @noRd
 write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
-  con <- file(filename, "wb")
-  on.exit(close(con))
+  # Serialise to a temporary file in the same directory and rename it into place
+  # only once the whole file has been written. This keeps the write atomic: if
+  # serialisation aborts part-way (e.g. an unsupported variable type), an
+  # existing `.mat` at `filename` is left untouched rather than truncated.
+  tmp <- tempfile(tmpdir = dirname(filename), fileext = ".mat.tmp")
+  con <- file(tmp, "wb")
+  con_open <- TRUE
+  # Clean up the temp file (and connection) unless we successfully renamed it
+  # away below. `isOpen()` errors once a connection has been closed/destroyed,
+  # so track the open state ourselves.
+  on.exit({
+    if (con_open) try(close(con), silent = TRUE)
+    if (file.exists(tmp)) unlink(tmp)
+  })
 
   writeBin(.mat_header(), con)
 
@@ -237,6 +249,16 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     )
     if (do_compression) element <- .mat_compress_element(element)
     writeBin(element, con)
+  }
+
+  close(con)
+  con_open <- FALSE
+  if (!file.rename(tmp, filename)) {
+    # rename can fail across devices or if the destination is locked; fall back
+    # to copy + remove so the result still lands at `filename`.
+    if (!file.copy(tmp, filename, overwrite = TRUE)) {
+      cli::cli_abort("Failed to write MAT file: {.file {filename}}")
+    }
   }
 
   invisible(filename)
@@ -339,7 +361,16 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
       for (k in seq_len(nel)) {
         child <- .read_element(body, off); off <- child$next_off
         child_spec <- .parse_matrix_body(child$data)$spec
-        strs[k] <- if (is.null(child_spec$data)) "" else as.character(child_spec$data)
+        # iRfcb only writes/reads cell arrays of strings. A non-char child
+        # (e.g. a nested struct or numeric cell) is unsupported; fail clearly
+        # rather than coercing a multi-element value and dying on assignment.
+        if (!identical(child_spec$type, "char")) {
+          cli::cli_abort(c(
+            "Unsupported cell array element of type {.val {child_spec$type}}.",
+            "i" = "Only cell arrays of character strings are supported."
+          ))
+        }
+        strs[k] <- if (is.null(child_spec$data)) "" else child_spec$data
       }
     }
     cm <- matrix(strs, nrow = dims[1], ncol = if (length(dims) > 1) dims[2] else 1L)

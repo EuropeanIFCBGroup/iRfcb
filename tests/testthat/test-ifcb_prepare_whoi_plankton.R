@@ -1,6 +1,4 @@
 test_that("ifcb_prepare_whoi_plankton works", {
-  # Skip if Python is not available
-
   # Skip if offline
   skip_if_offline()
   skip_if_resource_unavailable("https://ifcb-data.whoi.edu")
@@ -119,8 +117,6 @@ test_that("ifcb_prepare_whoi_plankton works", {
 })
 
 test_that("ifcb_prepare_whoi_plankton throws errors", {
-  # Skip if Python is not available
-
   # Check error
   expect_error(ifcb_prepare_whoi_plankton(2,
                                           "not_a_dir",

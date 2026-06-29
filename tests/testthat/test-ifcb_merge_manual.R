@@ -1,5 +1,4 @@
 test_that("ifcb_merge_manual correctly updates the .mat classlist files", {
-  # Skip if Python is not available
   skip_on_cran()
 
   # Define the path to the test data zip file

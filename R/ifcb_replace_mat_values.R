@@ -58,7 +58,18 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
     # and write the result back out
     mat_data <- read_mat_v5(file_path_in)
     classlist <- mat_data$classlist$data
+    if (is.null(classlist)) {
+      cli_abort("No {.field classlist} found in {.file {basename(file_path_in)}}.")
+    }
+
     r_col <- as.integer(column_index) + 1L
+    if (r_col < 1L || r_col > ncol(classlist)) {
+      cli_abort(c(
+        "{.arg column_index} ({column_index}) is out of range for {.file {basename(file_path_in)}}.",
+        "i" = "The classlist has {ncol(classlist)} column{?s} (valid 0-based {.arg column_index}: 0:{ncol(classlist) - 1L})."
+      ))
+    }
+
     mask <- classlist[, r_col] == as.integer(target_id)
     mask[is.na(mask)] <- FALSE
     classlist[mask, r_col] <- as.integer(new_id)

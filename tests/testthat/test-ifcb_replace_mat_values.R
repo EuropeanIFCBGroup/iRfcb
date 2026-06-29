@@ -123,3 +123,23 @@ test_that("ifcb_replace_mat_values handles different column indices correctly", 
   unlink(manual_folder, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
 })
+
+test_that("ifcb_replace_mat_values errors clearly on an out-of-range column_index", {
+
+  manual_folder <- file.path(tempdir(), "manual_oor")
+  out_folder <- file.path(tempdir(), "out_oor")
+  dir.create(manual_folder, showWarnings = FALSE, recursive = TRUE)
+
+  # A single-column classlist; column_index 5 (0-based) has no matching column
+  test_classlist <- matrix(c(1, 99, 3, 99, 5), ncol = 1)
+  create_temp_mat_file(file.path(manual_folder, "test.mat"), test_classlist)
+
+  expect_error(
+    ifcb_replace_mat_values(manual_folder, out_folder, target_id = 99, new_id = 1,
+                            column_index = 5),
+    "out of range"
+  )
+
+  unlink(manual_folder, recursive = TRUE)
+  unlink(out_folder, recursive = TRUE)
+})
