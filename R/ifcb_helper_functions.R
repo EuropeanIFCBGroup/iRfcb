@@ -692,7 +692,10 @@ resolve_ifcb_features_url <- function(features_ref = NULL) {
 #' @param fixNames Logical. Retained for backward compatibility only; native
 #'   variable names are already valid R identifiers, so this argument is
 #'   ignored.
-#' @return A named list containing the data from the `.mat` file.
+#' @return A named list containing the data from the `.mat` file. Scalar char
+#'   arrays are returned as 1x1 character matrices, matching both the historical
+#'   `R.matlab::readMat()` output and the Python reader `ifcb_read_mat()`, so the
+#'   two backends are interchangeable.
 #' @noRd
 read_mat <- function(file_path, fixNames = FALSE) {
   specs <- read_mat_v5(file_path)
@@ -704,8 +707,9 @@ read_mat <- function(file_path, fixNames = FALSE) {
       # Cell arrays of strings collapse to a character vector (column-major),
       # mirroring the old `as.character(unlist(x))` conversion.
       cell    = as.character(as.vector(spec$data)),
-      # Single char arrays become a length-one character vector.
-      char    = as.character(spec$data),
+      # Single char arrays become a 1x1 character matrix, the shape produced by
+      # R.matlab::readMat() and ifcb_read_mat() (so use_python = TRUE/FALSE agree).
+      char    = matrix(as.character(spec$data), nrow = 1L, ncol = 1L),
       # Any other type: best-effort flatten to character.
       as.character(unlist(spec$data))
     )
