@@ -56,6 +56,38 @@ test_that("ROI count consistency holds (n_rois == hdr roiCount)", {
   expect_true(all(with_counts$roi_count_match))
 })
 
+test_that("an un-evaluable check (NA) is treated as not applicable, not a failure", {
+  # Legacy IFCB headers omit the post-run `roiCount` field, so `roi_count_match`
+  # cannot be evaluated (NA). Such a sample must still pass on the checks that
+  # do apply rather than being failed for a check that cannot run.
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+
+  # Drop the roiCount line to emulate the legacy header format
+  hf <- file.path(work, paste0(nm, ".hdr"))
+  lines <- readLines(hf)
+  writeLines(lines[!grepl("^roiCount", lines, ignore.case = TRUE)], hf)
+
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_true(is.na(qc$hdr_roi_count))
+  expect_true(is.na(qc$roi_count_match))
+  # The applicable checks still hold, so the sample passes
+  expect_true(qc$files_complete)
+  expect_true(qc$roi_data_complete)
+  expect_true(qc$runtime_consistent)
+  expect_true(qc$volume_ok)
+  expect_true(qc$qc_pass)
+})
+
 test_that("a complete, consistent triplet passes QC", {
   temp_dir <- setup_mock_directory()
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
@@ -76,6 +108,55 @@ test_that("a sample missing its .roi fails QC as incomplete", {
   expect_false(qc$has_roi)
   expect_false(qc$files_complete)
   expect_false(qc$qc_pass)
+})
+
+test_that("a directory exposes a sample missing its .adc as incomplete", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  # Copy only the .hdr and .roi (no .adc): discovery keyed solely on .adc would
+  # silently drop this sample instead of reporting it as incomplete.
+  for (ext in c(".hdr", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+
+  qc <- ifcb_qc_sample(work)
+  expect_equal(nrow(qc), 1)
+  expect_false(qc$has_adc)
+  expect_false(qc$files_complete)
+  expect_false(qc$qc_pass)
+})
+
+test_that("a zero-trigger sample is flagged is_empty rather than failing as unreadable", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+  # A sample that never triggered: empty .adc (and .roi), and a header with no
+  # imaged ROIs.
+  file.create(file.path(work, paste0(nm, ".adc")))
+  file.create(file.path(work, paste0(nm, ".roi")))
+  hf <- file.path(work, paste0(nm, ".hdr"))
+  lines <- readLines(hf, warn = FALSE)
+  lines <- sub("^roiCount:.*$", "roiCount: 0", lines)
+  writeLines(lines, hf)
+
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_equal(qc$n_rois, 0)
+  expect_true(qc$is_empty)            # advisory flag actually fires
+  expect_true(qc$roi_count_match)     # 0 imaged == header roiCount 0
 })
 
 test_that("a truncated .roi is flagged as incomplete", {
@@ -135,7 +216,7 @@ test_that("runtime_consistent passes when header and ADC agree", {
   expect_true(qc$qc_pass)
 })
 
-test_that("a header/ADC run time mismatch fails runtime_consistent and qc_pass", {
+test_that("a header run time shorter than the ADC fails runtime_consistent and qc_pass", {
   temp_dir <- setup_mock_directory()
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
   src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
@@ -147,15 +228,41 @@ test_that("a header/ADC run time mismatch fails runtime_consistent and qc_pass",
   for (ext in c(".hdr", ".adc", ".roi")) {
     file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
   }
-  # Corrupt the header runTime so it disagrees with the ADC
+  # Truncate/corrupt the header runTime so it is shorter than the run time the
+  # ADC recorded at its last trigger (physically impossible -> inconsistent).
   hf <- file.path(work, paste0(nm, ".hdr"))
   lines <- readLines(hf, warn = FALSE)
-  lines <- sub("^runTime:.*$", "runTime: 99999", lines)
+  lines <- sub("^runTime:.*$", "runTime: 10", lines)
   writeLines(lines, hf)
 
   qc <- ifcb_qc_sample(file.path(work, nm))
   expect_false(qc$runtime_consistent)
   expect_false(qc$qc_pass)
+})
+
+test_that("a run continuing past the last trigger is not flagged inconsistent", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+  # A sparse sample: the last imaged trigger fires well before the run ends.
+  # The header (total) run time legitimately exceeds the ADC's last trigger,
+  # which must NOT be treated as a corruption.
+  af <- file.path(work, paste0(nm, ".adc"))
+  adc <- utils::read.csv(af, header = FALSE)
+  adc[nrow(adc), 23] <- adc[nrow(adc), 23] / 2   # last trigger at ~half the run
+  utils::write.table(adc, af, sep = ",", row.names = FALSE, col.names = FALSE)
+
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_true(qc$runtime_consistent)
+  expect_true(qc$qc_pass)
 })
 
 test_that("runtime_tolerance is validated", {

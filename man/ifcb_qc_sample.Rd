@@ -36,9 +36,9 @@ value.}
 volume ceiling (default \code{0.05}, i.e. 5\%) to absorb estimation noise in the
 analyzed volume. Ignored when \code{max_ml} is supplied.}
 
-\item{runtime_tolerance}{Maximum allowed fractional difference between the
-header and ADC run times before \code{runtime_consistent} is set to \code{FALSE}
-(default \code{0.02}, i.e. 2\%).}
+\item{runtime_tolerance}{Fractional slack by which the ADC's last-trigger run
+time may exceed the header's total run time before \code{runtime_consistent} is
+set to \code{FALSE} (default \code{0.02}, i.e. 2\%).}
 
 \item{max_roi_mb}{Optional numeric upper bound (in megabytes, where
 1 MB = 1024^2 bytes) for the \code{.roi} file size. When supplied, samples whose
@@ -87,9 +87,13 @@ check.}
 the last image's end offset (\code{max(StartByte + width * height)}) computed
 from the ADC. A smaller file indicates a truncated or aborted transfer
 (\code{roi_data_complete}).}
-\item{Run time consistency}{The run time recorded in the header must agree
-(within \code{runtime_tolerance}) with the run time in the ADC. A mismatch
-points to corrupted or mismatched metadata (\code{runtime_consistent}).}
+\item{Run time consistency}{The run time recorded at the ADC's last trigger
+must not exceed the header's total run time (within \code{runtime_tolerance}),
+since a trigger cannot fire after acquisition has stopped
+(\code{runtime_consistent}). A header run time materially shorter than the
+ADC's last trigger points to corrupted or truncated header metadata; a
+run that legitimately continued past the last trigger (header run time
+longer than the ADC's) is normal for sparse samples and is not flagged.}
 \item{Flow / volume sanity}{The analyzed volume from
 \code{\link[=ifcb_volume_analyzed]{ifcb_volume_analyzed()}} must be positive and not exceed the syringe
 sample volume (\code{volume_ok}). The ceiling is taken from the header's
@@ -112,7 +116,13 @@ three are only evaluated when their threshold is supplied; otherwise they are
 
 \code{qc_pass} is the conjunction of the integrity checks above
 (\code{files_complete}, \code{roi_count_match}, \code{roi_data_complete},
-\code{runtime_consistent}, \code{volume_ok}).
+\code{runtime_consistent}, \code{volume_ok}). A check that cannot be evaluated for a
+given sample is reported as \code{NA} and treated as \emph{not applicable}: it does not
+fail \code{qc_pass}. This matters for legacy IFCB headers, which omit the
+post-run \code{roiCount} summary field (so \code{roi_count_match} is \code{NA}); such samples
+can still pass on the checks that do apply. Only a check that actually
+evaluates to \code{FALSE} fails the sample. \code{files_complete} and \code{volume_ok} are
+always \code{TRUE}/\code{FALSE} (never \code{NA}) and so always count.
 }
 \examples{
 \dontrun{

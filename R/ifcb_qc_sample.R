@@ -1,6 +1,10 @@
-utils::globalVariables(c("has_hdr", "has_adc", "has_roi", "n_rois", "hdr_roi_count",
-                         "roi_bytes", "roi_bytes_expected", "ml_analyzed",
-                         "files_complete", "roi_count_match", "roi_data_complete",
+# Default syringe sample volume (mL) for a standard IFCB. Used only as a last
+# resort when a header reports neither `SyringeSampleVolume` nor `syringeSize`.
+IFCB_DEFAULT_SYRINGE_ML <- 5
+
+# Only the columns referenced unquoted in the `with(out, ...)` summary below
+# need declaring; everything else is an ordinary local variable.
+utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete",
                          "runtime_consistent", "volume_ok"))
 
 #' Quality-control a raw IFCB sample (hdr/adc/roi triplet)
@@ -29,9 +33,13 @@ utils::globalVariables(c("has_hdr", "has_adc", "has_roi", "n_rois", "hdr_roi_cou
 #'     the last image's end offset (`max(StartByte + width * height)`) computed
 #'     from the ADC. A smaller file indicates a truncated or aborted transfer
 #'     (`roi_data_complete`).}
-#'   \item{Run time consistency}{The run time recorded in the header must agree
-#'     (within `runtime_tolerance`) with the run time in the ADC. A mismatch
-#'     points to corrupted or mismatched metadata (`runtime_consistent`).}
+#'   \item{Run time consistency}{The run time recorded at the ADC's last trigger
+#'     must not exceed the header's total run time (within `runtime_tolerance`),
+#'     since a trigger cannot fire after acquisition has stopped
+#'     (`runtime_consistent`). A header run time materially shorter than the
+#'     ADC's last trigger points to corrupted or truncated header metadata; a
+#'     run that legitimately continued past the last trigger (header run time
+#'     longer than the ADC's) is normal for sparse samples and is not flagged.}
 #'     \item{Flow / volume sanity}{The analyzed volume from
 #'     [ifcb_volume_analyzed()] must be positive and not exceed the syringe
 #'     sample volume (`volume_ok`). The ceiling is taken from the header's
@@ -54,7 +62,13 @@ utils::globalVariables(c("has_hdr", "has_adc", "has_roi", "n_rois", "hdr_roi_cou
 #'
 #' `qc_pass` is the conjunction of the integrity checks above
 #' (`files_complete`, `roi_count_match`, `roi_data_complete`,
-#' `runtime_consistent`, `volume_ok`).
+#' `runtime_consistent`, `volume_ok`). A check that cannot be evaluated for a
+#' given sample is reported as `NA` and treated as *not applicable*: it does not
+#' fail `qc_pass`. This matters for legacy IFCB headers, which omit the
+#' post-run `roiCount` summary field (so `roi_count_match` is `NA`); such samples
+#' can still pass on the checks that do apply. Only a check that actually
+#' evaluates to `FALSE` fails the sample. `files_complete` and `volume_ok` are
+#' always `TRUE`/`FALSE` (never `NA`) and so always count.
 #'
 #' @param sample Sample(s) to check. Either a single directory (all `.adc`
 #'   files within are discovered recursively), or a character vector of sample
@@ -71,9 +85,9 @@ utils::globalVariables(c("has_hdr", "has_adc", "has_roi", "n_rois", "hdr_roi_cou
 #' @param volume_tolerance Fractional tolerance added to the derived syringe
 #'   volume ceiling (default `0.05`, i.e. 5%) to absorb estimation noise in the
 #'   analyzed volume. Ignored when `max_ml` is supplied.
-#' @param runtime_tolerance Maximum allowed fractional difference between the
-#'   header and ADC run times before `runtime_consistent` is set to `FALSE`
-#'   (default `0.02`, i.e. 2%).
+#' @param runtime_tolerance Fractional slack by which the ADC's last-trigger run
+#'   time may exceed the header's total run time before `runtime_consistent` is
+#'   set to `FALSE` (default `0.02`, i.e. 2%).
 #' @param max_roi_mb Optional numeric upper bound (in megabytes, where
 #'   1 MB = 1024^2 bytes) for the `.roi` file size. When supplied, samples whose
 #'   `.roi` exceeds this size are flagged in the advisory `roi_oversized` column
@@ -162,13 +176,17 @@ ifcb_qc_sample <- function(sample,
 
   out <- dplyr::bind_rows(rows)
 
-  # Integrity summary: the conjunction of the four hard checks. NA-safe
-  # (a failed/missing check counts as a failure).
+  # Integrity summary: the conjunction of the hard checks. A check that could
+  # not be evaluated (NA) is treated as "not applicable" and does not fail the
+  # sample, so e.g. legacy headers lacking `roiCount` (giving `roi_count_match`
+  # = NA) are not penalised for a check that cannot run. Only checks that
+  # actually evaluated to FALSE fail `qc_pass`. `files_complete` and `volume_ok`
+  # are never NA and therefore always count.
   out$qc_pass <- with(out, {
     ok <- files_complete &
-      dplyr::coalesce(roi_count_match, FALSE) &
-      dplyr::coalesce(roi_data_complete, FALSE) &
-      dplyr::coalesce(runtime_consistent, FALSE) &
+      dplyr::coalesce(roi_count_match, TRUE) &
+      dplyr::coalesce(roi_data_complete, TRUE) &
+      dplyr::coalesce(runtime_consistent, TRUE) &
       dplyr::coalesce(volume_ok, FALSE)
     ok
   })
@@ -181,10 +199,13 @@ ifcb_qc_sample <- function(sample,
 #' @keywords internal
 #' @noRd
 resolve_sample_paths <- function(sample, data_folder = NULL) {
-  # A single directory: discover all samples from their .adc files.
+  # A single directory: discover samples from any member of the triplet, so a
+  # sample missing one extension (e.g. no .adc) still surfaces and is reported
+  # as incomplete rather than silently dropped.
   if (length(sample) == 1 && dir.exists(sample)) {
-    adc <- list.files(sample, pattern = "\\.adc$", recursive = TRUE, full.names = TRUE)
-    return(unique(sub("\\.adc$", "", adc)))
+    triplet <- list.files(sample, pattern = "\\.(hdr|adc|roi)$",
+                          recursive = TRUE, full.names = TRUE, ignore.case = TRUE)
+    return(unique(sub("\\.(hdr|adc|roi)$", "", triplet, ignore.case = TRUE)))
   }
 
   # Strip any triplet extension to obtain base names.
@@ -198,6 +219,12 @@ resolve_sample_paths <- function(sample, data_folder = NULL) {
     adc_base <- sub("\\.adc$", "", adc)
     bases <- vapply(basename(bases), function(nm) {
       hit <- adc_base[basename(adc_base) == nm]
+      if (length(hit) > 1) {
+        cli_warn(c(
+          "Sample {.val {nm}} matches multiple files under {.arg data_folder}; using the first.",
+          "i" = "{.file {hit}}"
+        ))
+      }
       if (length(hit) >= 1) hit[1] else NA_character_
     }, character(1))
     bases <- bases[!is.na(bases)]
@@ -249,6 +276,14 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
       if (is.na(syringe_ml)) syringe_ml <- hdr_num(hdr, "syringeSize")
       humidity <- hdr_num(hdr, "humidity")
       temperature <- hdr_num(hdr, "temperature")
+    } else {
+      # The .hdr exists but could not be parsed (e.g. a non-standard sample
+      # name that the reader rejects). Warn rather than silently emit a row of
+      # NA header checks that the user cannot explain.
+      cli_warn(c(
+        "Could not read header {.file {hdr_file}}.",
+        "i" = "Header-based checks will be reported as {.code NA} for this sample."
+      ))
     }
     # Volume needs the ADC too unless we fall back to header-only.
     ml_analyzed <- tryCatch(
@@ -264,14 +299,23 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   adc_runtime <- NA_real_
 
   if (has_adc) {
-    adc <- tryCatch(read_adc_columns(adc_file), error = function(e) NULL)
-    if (!is.null(adc)) {
-      n_targets <- nrow(adc)
-      rc <- adc_get_roi_columns(adc)
-      imaged <- rc$x > 0
-      n_rois <- sum(imaged)
-      roi_bytes_expected <- if (n_rois > 0) max(rc$startbyte[imaged] + rc$x[imaged] * rc$y[imaged]) else 0
-      adc_runtime <- adc_get_runtime(adc)
+    if (file.size(adc_file) == 0) {
+      # A sample that never triggered has an empty .adc, which `read.csv()`
+      # cannot parse. Treat it as a valid, empty sample (so `is_empty` fires)
+      # rather than an unreadable one (which would leave the counts NA).
+      n_targets <- 0L
+      n_rois <- 0L
+      roi_bytes_expected <- 0
+    } else {
+      adc <- tryCatch(read_adc_columns(adc_file), error = function(e) NULL)
+      if (!is.null(adc)) {
+        n_targets <- nrow(adc)
+        rc <- adc_get_roi_columns(adc)
+        imaged <- rc$x > 0
+        n_rois <- sum(imaged)
+        roi_bytes_expected <- if (n_rois > 0) max(rc$startbyte[imaged] + rc$x[imaged] * rc$y[imaged]) else 0
+        adc_runtime <- adc_get_runtime(adc)
+      }
     }
   }
 
@@ -287,16 +331,20 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   volume_ceiling <- if (!is.null(max_ml)) {
     max_ml
   } else {
-    base_ml <- if (!is.na(syringe_ml)) syringe_ml else 5
+    base_ml <- if (!is.na(syringe_ml)) syringe_ml else IFCB_DEFAULT_SYRINGE_ML
     base_ml * (1 + volume_tolerance)
   }
   volume_ok <- !is.na(ml_analyzed) && ml_analyzed > 0 && ml_analyzed <= volume_ceiling
 
-  # Header and ADC must report the same run time (within tolerance); a mismatch
-  # indicates corrupted or mismatched metadata.
+  # The header's total run time must be at least the run time the ADC recorded
+  # at its last trigger: a trigger cannot fire after acquisition has stopped, so
+  # `max(ADC RunTime) <= header runTime` (within tolerance). A header run time
+  # materially *shorter* than the ADC's last trigger signals corrupted or
+  # truncated header metadata. The reverse, a run continuing past the last
+  # trigger, is normal for sparse samples and is deliberately not penalised.
   runtime_consistent <- if (!is.na(runtime_s) && !is.na(adc_runtime) &&
                             runtime_s > 0 && adc_runtime > 0) {
-    abs(runtime_s - adc_runtime) / runtime_s <= runtime_tolerance
+    adc_runtime <= runtime_s * (1 + runtime_tolerance)
   } else NA
   is_empty <- if (!is.na(n_rois)) n_rois == 0 else NA
   is_bead_run <- isTRUE(run_beads) || (!is.na(sample_type) && grepl("bead", sample_type, ignore.case = TRUE))
