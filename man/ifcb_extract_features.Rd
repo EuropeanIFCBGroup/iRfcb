@@ -12,6 +12,7 @@ ifcb_extract_features(
   parallel = FALSE,
   n_cores = NULL,
   overwrite = FALSE,
+  feature_tag = c("features", "fea"),
   verbose = TRUE
 )
 }
@@ -41,6 +42,15 @@ workers are used. Ignored when \code{parallel = FALSE}.}
 \item{overwrite}{A logical indicating whether to overwrite existing feature
 and blob files. If \code{FALSE} (default), bins whose outputs already exist are
 skipped.}
+
+\item{feature_tag}{A string controlling the token between the bin lid and the
+version in the feature file name. \code{"features"} (default) writes
+\verb{<bin>_features_v4.csv} (the upstream \code{ifcb-features} convention);
+\code{"fea"} writes \verb{<bin>_fea_v4.csv}, the name the IFCB Dashboard
+(\code{ifcbdb} / \code{pyifcb}'s \code{FeaturesDirectory}) searches for. Use \code{"fea"} when
+the output is destined for an IFCB Dashboard instance; remember the dataset
+directory there must be registered with product version 4 to match the
+\verb{_v4} suffix. The blob archive name (\verb{<bin>_blobs_v4.zip}) is unaffected.}
 
 \item{verbose}{A logical indicating whether to print progress messages,
 including a progress bar that advances as each bin is processed.
@@ -112,6 +122,14 @@ ifcb_extract_features(
   bins = c("D20220522T003051_IFCB134", "D20220522T000439_IFCB134"),
   parallel = TRUE,
   n_cores = 4
+)
+
+# Write IFCB Dashboard-compatible feature names (<bin>_fea_v4.csv)
+ifcb_extract_features(
+  data_folder = "path/to/data",
+  features_folder = "path/to/features",
+  blobs_folder = "path/to/blobs",
+  feature_tag = "fea"
 )
 }
 

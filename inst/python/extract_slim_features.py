@@ -115,15 +115,24 @@ FEATURE_COLUMNS = [
 ]
 
 
-def _output_paths(lid, features_directory, blobs_directory):
-    """Return the (features_csv, blobs_zip) output paths for a bin lid."""
-    features_path = os.path.join(features_directory, f"{lid}_features_v4.csv")
+def _output_paths(lid, features_directory, blobs_directory,
+                  feature_tag="features"):
+    """Return the (features_csv, blobs_zip) output paths for a bin lid.
+
+    ``feature_tag`` controls the token between the bin lid and the version in
+    the feature CSV name: ``"features"`` (default) yields the upstream
+    ``<lid>_features_v4.csv``; ``"fea"`` yields ``<lid>_fea_v4.csv``, which is
+    the name the IFCB Dashboard (pyifcb's FeaturesDirectory) looks for. The
+    blob archive name is unaffected.
+    """
+    features_path = os.path.join(features_directory,
+                                 f"{lid}_{feature_tag}_v4.csv")
     blobs_path = os.path.join(blobs_directory, f"{lid}_blobs_v4.zip")
     return features_path, blobs_path
 
 
 def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
-                 overwrite):
+                 overwrite, feature_tag="features"):
     """Extract features and blobs for a single bin.
 
     This is a module-level function so it can be pickled and dispatched to a
@@ -132,11 +141,14 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     pyifcb sample objects are not picklable and to avoid sharing state between
     workers.
 
+    ``feature_tag`` is forwarded to :func:`_output_paths` to control the
+    feature CSV name (e.g. ``"features"`` or ``"fea"``).
+
     Returns a dict with keys ``bin``, ``status`` ("processed", "skipped" or
     "error") and ``message``.
     """
     features_path, blobs_path = _output_paths(bin_name, features_directory,
-                                              blobs_directory)
+                                              blobs_directory, feature_tag)
 
     # Skip when both outputs already exist (unless overwrite is requested).
     if not overwrite and os.path.exists(features_path) and os.path.exists(blobs_path):
@@ -254,7 +266,7 @@ class ParallelExtractor:
     def __init__(self, data_directory, features_directory, blobs_directory,
                  bins=None, overwrite=False, num_workers=2,
                  found_bins=None, missing_bins=None, python_executable=None,
-                 use_threads=False):
+                 use_threads=False, feature_tag="features"):
         os.makedirs(features_directory, exist_ok=True)
         os.makedirs(blobs_directory, exist_ok=True)
 
@@ -293,7 +305,7 @@ class ParallelExtractor:
             (bin_name, self.pool.apply_async(
                 _process_bin,
                 (data_directory, features_directory, blobs_directory,
-                 bin_name, overwrite)))
+                 bin_name, overwrite, feature_tag)))
             for bin_name in bin_names
         ]
 
@@ -334,7 +346,8 @@ class ParallelExtractor:
 
 def extract_features(data_directory, features_directory, blobs_directory,
                      bins=None, overwrite=False, num_workers=1, progress=None,
-                     python_executable=None, use_threads=False):
+                     python_executable=None, use_threads=False,
+                     feature_tag="features"):
     """Extract slim features and blobs for IFCB bins.
 
     Args:
@@ -362,6 +375,11 @@ def extract_features(data_directory, features_directory, blobs_directory,
         use_threads (bool): If True, use a thread pool instead of a process pool
             (see ParallelExtractor). Required when running embedded on
             Windows / macOS; on Linux a process pool is preferred.
+        feature_tag (str): Token placed between the bin lid and the version in
+            the feature CSV name. ``"features"`` (default) writes
+            ``<lid>_features_v4.csv``; ``"fea"`` writes ``<lid>_fea_v4.csv``,
+            the name served by the IFCB Dashboard. Blob archive names are
+            unaffected.
 
     Returns:
         list[dict]: One result dict per bin with keys ``bin``, ``status`` and
@@ -389,7 +407,8 @@ def extract_features(data_directory, features_directory, blobs_directory,
     if num_workers <= 1 or len(bin_names) <= 1:
         for bin_name in bin_names:
             results.append(_process_bin(data_directory, features_directory,
-                                        blobs_directory, bin_name, overwrite))
+                                        blobs_directory, bin_name, overwrite,
+                                        feature_tag))
             _report()
     else:
         # Delegate to ParallelExtractor and poll it to completion. On any
@@ -399,7 +418,8 @@ def extract_features(data_directory, features_directory, blobs_directory,
                                       blobs_directory, bins, overwrite,
                                       num_workers,
                                       python_executable=python_executable,
-                                      use_threads=use_threads)
+                                      use_threads=use_threads,
+                                      feature_tag=feature_tag)
         try:
             while extractor.remaining() > 0:
                 for result in extractor.poll():
@@ -437,13 +457,18 @@ def _main(argv=None):
                         help="Overwrite existing outputs instead of skipping.")
     parser.add_argument("--workers", type=int, default=1,
                         help="Number of worker processes (default: 1).")
+    parser.add_argument("--feature-tag", default="features",
+                        choices=["features", "fea"],
+                        help="Token in the feature CSV name: 'features' -> "
+                             "<lid>_features_v4.csv (default), 'fea' -> "
+                             "<lid>_fea_v4.csv (IFCB Dashboard naming).")
 
     args = parser.parse_args(argv)
 
     beginning = time.time()
     out = extract_features(args.data_directory, args.features_directory,
                            args.blobs_directory, args.bins, args.overwrite,
-                           args.workers)
+                           args.workers, feature_tag=args.feature_tag)
     elapsed = time.time() - beginning
 
     processed = sum(1 for r in out if r["status"] == "processed")
