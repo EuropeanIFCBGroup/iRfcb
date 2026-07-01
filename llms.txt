@@ -266,9 +266,11 @@ Functions for extracting images from raw IFCB `.roi` files.
 
 ### Quality control
 
-Functions for geospatial quality control and particle size distribution
-analysis.
+Functions for raw sample integrity checks, geospatial quality control,
+and particle size distribution analysis.
 
+- [`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md)
+  : Quality-control a raw IFCB sample (hdr/adc/roi triplet)
 - [`ifcb_get_ferrybox_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_ferrybox_data.md)
   : Retrieve Ferrybox Data for Specified Timestamps
 - [`ifcb_is_in_basin()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_in_basin.md)

@@ -13,6 +13,8 @@ monitoring in marine ecosystems.
 You’ll learn how to:
 
 - Set up the `iRfcb` package and `Python` environment.
+- Run native-R integrity checks on raw sample files (the
+  `.hdr`/`.adc`/`.roi` triplet).
 - Analyze particle size distributions for data quality.
 - Check spatial metadata for proximity to land, basin classification,
   and missing positions.
@@ -64,6 +66,67 @@ ifcb_download_test_data(
   verbose = FALSE
 )
 ```
+
+## Sample Integrity Checks
+
+Before any feature-based analysis, the raw sample files themselves can
+be checked for completeness and consistency.
+[`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md)
+validates the IFCB file triplet (`.hdr`, `.adc`, and `.roi`) directly
+and returns a tidy tibble with one row per sample. Unlike the particle
+size distribution check below, it runs in native R and requires **no
+Python** and **no pre-computed features**, which makes it a quick
+first-pass screen for missing files, truncated or aborted runs, and
+metadata anomalies.
+
+``` r
+
+# Run sample-level QC on the raw data folder
+qc <- ifcb_qc_sample("data/data/2023")
+
+# Inspect the integrity flags
+qc[, c("sample", "n_rois", "hdr_roi_count", "ml_analyzed", "syringe_ml", "qc_pass")]
+```
+
+    ## # A tibble: 5 × 6
+    ##   sample                   n_rois hdr_roi_count ml_analyzed syringe_ml qc_pass
+    ##   <chr>                     <int>         <int>       <dbl>      <dbl> <lgl>  
+    ## 1 D20230314T001205_IFCB134   1218          1218        4.57          5 TRUE   
+    ## 2 D20230314T003836_IFCB134   1122          1122        4.60          5 TRUE   
+    ## 3 D20230810T113059_IFCB134   4802          4802        3.17          5 TRUE   
+    ## 4 D20230915T091133_IFCB134   1998          1998        4.30          5 TRUE   
+    ## 5 D20230915T093804_IFCB134   2227          2227        4.21          5 TRUE
+
+The overall `qc_pass` column summarizes five integrity checks: the
+triplet is complete, the number of imaged ROIs matches the header
+`roiCount`, the `.roi` file is not truncated, the header and ADC agree
+on the run time, and the analyzed volume is sane (by default bounded by
+the header `SyringeSampleVolume`, reported as `syringe_ml`). To keep
+only the samples that pass:
+
+``` r
+
+# Keep clean, non-bead samples for downstream analysis
+dplyr::filter(qc, qc_pass, !is_bead_run)
+```
+
+Several optional, advisory flags can be enabled by supplying thresholds.
+These do not affect `qc_pass`, but let you screen for overloaded or
+environmentally compromised runs:
+
+``` r
+
+# Flag oversized .roi files (MB), high humidity (%), and high temperature
+ifcb_qc_sample(
+  "data/data/2023",
+  max_roi_mb = 5,
+  max_humidity = 70,
+  max_temperature = 35
+)
+```
+
+For a deeper, statistical quality check based on the particle size
+distribution, continue with the section below.
 
 ## Particle Size Distribution
 
@@ -150,7 +213,7 @@ plot <- ifcb_psd_plot(
 print(plot)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-9-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-12-1.png)
 
 ## Geographical QC/QA
 
@@ -207,7 +270,7 @@ near_land_plot <- ifcb_is_near_land(
 print(near_land_plot)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-10-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-13-1.png)
 
 For more accurate determination, a detailed coastline `.shp` file may be
 required (e.g. the [EEA Coastline
@@ -243,7 +306,7 @@ print(points_in_the_baltic)
 ifcb_which_basin(latitudes, longitudes, plot = TRUE, shape_file = NULL)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-11-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-14-1.png)
 
 This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a
@@ -276,7 +339,7 @@ print(points_in_the_baltic)
 ifcb_is_in_basin(latitudes, longitudes, plot = TRUE)
 ```
 
-![](qc-tutorial_files/figure-html/unnamed-chunk-12-1.png)
+![](qc-tutorial_files/figure-html/unnamed-chunk-15-1.png)
 
 This function reads a land-buffered shapefile of the Baltic Sea Basin
 from the `iRfcb` package by default, or a user-supplied shapefile if

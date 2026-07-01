@@ -97,6 +97,8 @@ microzooplankton monitoring in marine ecosystems.</p>
 <ul>
 <li>Set up the <code>iRfcb</code> package and <code>Python</code>
 environment.</li>
+<li>Run native-R integrity checks on raw sample files (the
+<code>.hdr</code>/<code>.adc</code>/<code>.roi</code> triplet).</li>
 <li>Analyze particle size distributions for data quality.</li>
 <li>Check spatial metadata for proximity to land, basin classification,
 and missing positions.</li>
@@ -142,6 +144,56 @@ following function:</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="sample-integrity-checks">Sample Integrity Checks<a class="anchor" aria-label="anchor" href="#sample-integrity-checks"></a>
+</h2>
+<p>Before any feature-based analysis, the raw sample files themselves
+can be checked for completeness and consistency.
+<code><a href="../reference/ifcb_qc_sample.html">ifcb_qc_sample()</a></code> validates the IFCB file triplet
+(<code>.hdr</code>, <code>.adc</code>, and <code>.roi</code>) directly
+and returns a tidy tibble with one row per sample. Unlike the particle
+size distribution check below, it runs in native R and requires
+<strong>no Python</strong> and <strong>no pre-computed
+features</strong>, which makes it a quick first-pass screen for missing
+files, truncated or aborted runs, and metadata anomalies.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Run sample-level QC on the raw data folder</span></span>
+<span><span class="va">qc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_qc_sample.html">ifcb_qc_sample</a></span><span class="op">(</span><span class="st">"data/data/2023"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Inspect the integrity flags</span></span>
+<span><span class="va">qc</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sample"</span>, <span class="st">"n_rois"</span>, <span class="st">"hdr_roi_count"</span>, <span class="st">"ml_analyzed"</span>, <span class="st">"syringe_ml"</span>, <span class="st">"qc_pass"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 6</span></span></span>
+<span><span class="co">##   sample                   n_rois hdr_roi_count ml_analyzed syringe_ml qc_pass</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230314T001205_IFCB134   <span style="text-decoration: underline;">1</span>218          <span style="text-decoration: underline;">1</span>218        4.57          5 TRUE   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230314T003836_IFCB134   <span style="text-decoration: underline;">1</span>122          <span style="text-decoration: underline;">1</span>122        4.60          5 TRUE   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T113059_IFCB134   <span style="text-decoration: underline;">4</span>802          <span style="text-decoration: underline;">4</span>802        3.17          5 TRUE   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230915T091133_IFCB134   <span style="text-decoration: underline;">1</span>998          <span style="text-decoration: underline;">1</span>998        4.30          5 TRUE   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230915T093804_IFCB134   <span style="text-decoration: underline;">2</span>227          <span style="text-decoration: underline;">2</span>227        4.21          5 TRUE</span></span></code></pre>
+<p>The overall <code>qc_pass</code> column summarizes five integrity
+checks: the triplet is complete, the number of imaged ROIs matches the
+header <code>roiCount</code>, the <code>.roi</code> file is not
+truncated, the header and ADC agree on the run time, and the analyzed
+volume is sane (by default bounded by the header
+<code>SyringeSampleVolume</code>, reported as <code>syringe_ml</code>).
+To keep only the samples that pass:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Keep clean, non-bead samples for downstream analysis</span></span>
+<span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qc</span>, <span class="va">qc_pass</span>, <span class="op">!</span><span class="va">is_bead_run</span><span class="op">)</span></span></code></pre></div>
+<p>Several optional, advisory flags can be enabled by supplying
+thresholds. These do not affect <code>qc_pass</code>, but let you screen
+for overloaded or environmentally compromised runs:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Flag oversized .roi files (MB), high humidity (%), and high temperature</span></span>
+<span><span class="fu"><a href="../reference/ifcb_qc_sample.html">ifcb_qc_sample</a></span><span class="op">(</span></span>
+<span>  <span class="st">"data/data/2023"</span>,</span>
+<span>  max_roi_mb <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  max_humidity <span class="op">=</span> <span class="fl">70</span>,</span>
+<span>  max_temperature <span class="op">=</span> <span class="fl">35</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>For a deeper, statistical quality check based on the particle size
+distribution, continue with the section below.</p>
+</div>
+<div class="section level2">
 <h2 id="particle-size-distribution">Particle Size Distribution<a class="anchor" aria-label="anchor" href="#particle-size-distribution"></a>
 </h2>
 <p>IFCB data can be quality controlled by analyzing the particle size
@@ -156,7 +208,7 @@ features, they can be computed from raw data in R with
 <code><a href="../articles/introduction.html">vignette("introduction")</a></code>). Before running the PSD quality
 check, ensure the necessary Python environment is set up and
 activated:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path to virtual environment</span></span>
 <span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
 <span></span>
@@ -182,7 +234,7 @@ activated:</p>
 <span>  humidity <span class="op">=</span> <span class="fl">70</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The results can be printed and visualized through plots:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print output from PSD</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">fits</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 8</span></span></span>
@@ -193,14 +245,14 @@ activated:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> D20230810T… 3.36<span style="color: #949494;">e</span> 7 -<span style="color: #BB0000;">2.73</span> 0.955            4           0.919 FALSE        65.4</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> D20230915T… 1.32<span style="color: #949494;">e</span>10 -<span style="color: #BB0000;">5.54</span> 0.989            2           0.967 FALSE        71.5</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> D20230915T… 4.39<span style="color: #949494;">e</span>10 -<span style="color: #BB0000;">6.03</span> 0.981            3           0.961 FALSE        71.5</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">psd</span><span class="op">$</span><span class="va">flags</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
 <span><span class="co">##   sample                   flag         </span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> D20230915T091133_IFCB134 High Humidity</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> D20230915T093804_IFCB134 High Humidity</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot PSD of the first sample</span></span>
 <span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_psd_plot.html">ifcb_psd_plot</a></span><span class="op">(</span></span>
 <span>  sample_name <span class="op">=</span> <span class="va">psd</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">sample</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
@@ -211,7 +263,7 @@ activated:</p>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="geographical-qcqa">Geographical QC/QA<a class="anchor" aria-label="anchor" href="#geographical-qcqa"></a>
@@ -222,7 +274,7 @@ activated:</p>
 <p>To determine if the IFCB is near land (i.e. ship in harbor), examine
 the position data in the <code>.hdr</code> files (or from vectors of
 latitudes and longitudes):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read HDR data and extract GPS position (when available)</span></span>
 <span><span class="va">gps_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_read_hdr_data.html">ifcb_read_hdr_data</a></span><span class="op">(</span></span>
 <span>  <span class="st">"data/data/"</span>, </span>
@@ -251,7 +303,7 @@ latitudes and longitudes):</p>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> D20230314…        56.7         12.1 2023-03-14 <span style="color: #949494;">00:38:36</span> 2023-03-14  <span style="text-decoration: underline;">2</span>023     3</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: day &lt;int&gt;, time &lt;time&gt;, ifcb_number &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   near_land &lt;lgl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Alternatively, you can choose to plot the points on a map</span></span>
 <span><span class="va">near_land_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_is_near_land.html">ifcb_is_near_land</a></span><span class="op">(</span></span>
 <span>  <span class="va">gps_data</span><span class="op">$</span><span class="va">gpsLatitude</span>,</span>
@@ -262,7 +314,7 @@ latitudes and longitudes):</p>
 <span></span>
 <span><span class="co"># Print the plot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">near_land_plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
 <p>For more accurate determination, a detailed coastline
 <code>.shp</code> file may be required (e.g. the <a href="https://www.eea.europa.eu/data-and-maps/data/eea-coastline-for-analysis-2/gis-data/eea-coastline-polygon" class="external-link">EEA
 Coastline Polygon</a>). Refer to the help pages of
@@ -274,7 +326,7 @@ Coastline Polygon</a>). Refer to the help pages of
 <p>To identify the specific sub-basin of the Baltic Sea (or using a
 custom shape-file) from which an IFCB sample was collected, analyze the
 position data:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define example latitude and longitude vectors</span></span>
 <span><span class="va">latitudes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55.337</span>, <span class="fl">54.729</span>, <span class="fl">56.311</span>, <span class="fl">57.975</span><span class="op">)</span></span>
 <span><span class="va">longitudes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12.674</span>, <span class="fl">14.643</span>, <span class="fl">12.237</span>, <span class="fl">10.637</span><span class="op">)</span></span>
@@ -285,10 +337,10 @@ position data:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">points_in_the_baltic</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "13 - Arkona Basin"   "12 - Bornholm Basin" "16 - Kattegat"      </span></span>
 <span><span class="co">## [4] "17 - Skagerrak"</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basins</span></span>
 <span><span class="fu"><a href="../reference/ifcb_which_basin.html">ifcb_which_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, shape_file <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
 <p>This function reads a pre-packaged shapefile of the Baltic Sea,
 Kattegat, and Skagerrak basins from the <code>iRfcb</code> package by
 default, or a user-supplied shapefile if provided. The shapefiles
@@ -299,7 +351,7 @@ provided in <code>iRfcb</code> originate from <a href="https://shark.smhi.se/en/
 </h3>
 <p>This check is useful if you only want to apply a classifier
 specifically to phytoplankton from the Baltic Sea.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define example latitude and longitude vectors</span></span>
 <span><span class="va">latitudes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55.337</span>, <span class="fl">54.729</span>, <span class="fl">56.311</span>, <span class="fl">57.975</span><span class="op">)</span></span>
 <span><span class="va">longitudes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12.674</span>, <span class="fl">14.643</span>, <span class="fl">12.237</span>, <span class="fl">10.637</span><span class="op">)</span></span>
@@ -310,10 +362,10 @@ specifically to phytoplankton from the Baltic Sea.</p>
 <span><span class="co"># Print results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">points_in_the_baltic</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1]  TRUE  TRUE FALSE FALSE</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot the points and the basin</span></span>
 <span><span class="fu"><a href="../reference/ifcb_is_in_basin.html">ifcb_is_in_basin</a></span><span class="op">(</span><span class="va">latitudes</span>, <span class="va">longitudes</span>, plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="qc-tutorial_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="700"></p>
 <p>This function reads a land-buffered shapefile of the Baltic Sea Basin
 from the <code>iRfcb</code> package by default, or a user-supplied
 shapefile if provided.</p>
@@ -325,7 +377,7 @@ shapefile if provided.</p>
 positions when they are not available in the <code>.hdr</code> files. An
 example ferrybox data file is provided in <code>iRfcb</code> with data
 matching sample <strong>D20220522T000439_IFCB134</strong>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Print available coordinates from .hdr files</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gps_data</span>, <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 11</span></span></span>
@@ -337,7 +389,7 @@ matching sample <strong>D20220522T000439_IFCB134</strong>.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> D20220712…          <span style="color: #BB0000;">NA</span>           <span style="color: #BB0000;">NA</span> 2022-07-12 <span style="color: #949494;">22:27:10</span> 2022-07-12  <span style="text-decoration: underline;">2</span>022     7</span></span>
 <span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: day &lt;int&gt;, time &lt;time&gt;, ifcb_number &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   near_land &lt;lgl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Define path where ferrybox data are located</span></span>
 <span><span class="va">ferrybox_folder</span> <span class="op">&lt;-</span> <span class="st">"data/ferrybox_data"</span></span>
 <span></span>
@@ -364,7 +416,7 @@ matching sample <strong>D20220522T000439_IFCB134</strong>.</p>
 to extract additional ferrybox parameters, such as temperature
 (parameter number <strong>8180</strong>) and salinity (parameter number
 <strong>8181</strong>).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get salinity and temperature from ferrybox data</span></span>
 <span><span class="va">ferrybox_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_ferrybox_data.html">ifcb_get_ferrybox_data</a></span><span class="op">(</span><span class="va">gps_data</span><span class="op">$</span><span class="va">timestamp</span>,</span>
 <span>                                        <span class="va">ferrybox_folder</span>,</span>
