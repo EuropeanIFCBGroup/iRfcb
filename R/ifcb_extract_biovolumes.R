@@ -22,6 +22,14 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
 #'        overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.
 #' @param marine_only Logical. If `TRUE`, restricts the WoRMS search to marine taxa only. Default: `FALSE`.
+#' @param diatom_equation A character string selecting which Menden-Deuer and Lessard (2000)
+#'   carbon-to-volume relationship to apply to diatoms. `"large"` (default) uses the
+#'   large-diatom (> 3000 micron^3) equation (`vol2C_lgdiatom`), matching the
+#'   `ifcb-analysis` convention. `"all"` uses the all-sizes diatom equation
+#'   (`vol2C_diatom`), which assigns more carbon to small cells. Note that
+#'   biovolume is measured per region of interest (ROI/image), so this is not a
+#'   per-cell volume: chains of small cells register a large ROI biovolume.
+#'   Non-diatom protists always use `vol2C_nondiatom` regardless of this setting.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
 #'   predictions below the per-class optimal threshold are labeled
@@ -92,10 +100,13 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_images = NULL, custom_classes = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
+                                    diatom_equation = c("large", "all"),
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
                                     class_recursive = TRUE, drop_zero_volume = FALSE,
                                     feature_version = NULL, use_python = FALSE, verbose = TRUE,
                                     mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
+
+  diatom_equation <- match.arg(diatom_equation)
 
   # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
@@ -342,10 +353,15 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     cli_inform("Retrieving WoRMS records...")
   }
 
-  is_diatom <- tibble(class = unique_classes, is_diatom = ifcb_is_diatom(unique_classes,
-                                                                         diatom_class = diatom_class,
-                                                                         marine_only = marine_only,
-                                                                         verbose = verbose))
+  diatom_details <- ifcb_is_diatom(unique_classes,
+                                   diatom_class = diatom_class,
+                                   marine_only = marine_only,
+                                   details = TRUE,
+                                   verbose = verbose)
+
+  is_diatom <- tibble(class = unique_classes,
+                      worms_class = diatom_details$worms_class,
+                      is_diatom = diatom_details$is_diatom)
 
   # Override diatom classification if diatom_include is provided
   if (!is.null(diatom_include)) {
@@ -359,34 +375,48 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     is_diatom$is_diatom[matched] <- TRUE
   }
 
-  biovolume_df <- left_join(biovolume_df, is_diatom, by = "class")
+  biovolume_df <- left_join(biovolume_df, is_diatom[, c("class", "is_diatom")], by = "class")
 
-  # Filter rows where is_diatom$is_diatom is NA
-  na_classes <- is_diatom[is.na(is_diatom$is_diatom), "class"]
+  if (verbose) {
+    # Classes treated as diatoms (short, verifiable list - shown in full)
+    diatoms <- sort(is_diatom$class[is_diatom$is_diatom])
 
-  # Filter rows where is_diatom$is_diatom is NA
-  non_diatoms <- is_diatom[!is_diatom$is_diatom, "class"]
+    # Classes that could not be found in WoRMS (the genuinely ambiguous bucket)
+    not_found <- sort(is_diatom$class[is.na(is_diatom$worms_class) & !is_diatom$is_diatom])
 
-  # Print the classes with NA values
-  if (length(na_classes$class) > 0 & verbose) {
-    cli_alert_info(
-      "Some classes could not be found in WoRMS. They will be assumed as NOT diatoms for carbon calculations:"
-    )
-    cli_inform("{.val {sort(na_classes$class)}}")
+    # Classes resolved by WoRMS to a non-diatom class
+    non_diatoms <- sort(is_diatom$class[!is_diatom$is_diatom & !is.na(is_diatom$worms_class)])
+
+    if (length(diatoms) > 0) {
+      cli_alert_info(
+        "{length(diatoms)} of {nrow(is_diatom)} {qty(length(diatoms))}class{?es} {?is/are} treated as diatoms:"
+      )
+      cli_inform("{.val {cli::cli_vec(diatoms, list('vec-trunc' = Inf))}}")
+    }
+
+    if (length(non_diatoms) > 0) {
+      cli_alert_info(
+        paste("{length(non_diatoms)} {qty(length(non_diatoms))}class{?es} {?is/are} treated as NOT diatoms.",
+              "To check for genus homonyms (e.g. Navicula, Actinocyclus, which share names with animals),",
+              "run {.code ifcb_is_diatom(details = TRUE)} and inspect the {.field worms_class} column.")
+      )
+    }
+
+    if (length(not_found) > 0) {
+      cli_alert_info(
+        "{length(not_found)} {qty(length(not_found))}class{?es} could not be found in WoRMS and {?was/were} assumed NOT diatoms:"
+      )
+      cli_inform("{.val {cli::cli_vec(not_found, list('vec-trunc' = Inf))}}")
+    }
   }
 
-  # Print the classes that are non-Diatoms
-  if (length(non_diatoms$class) > 0 & verbose) {
-    cli_alert_info(
-      "The following {qty(length(non_diatoms$class))}class{?es} {?is/are} considered NOT diatoms for carbon calculations:"
-    )
-    cli_inform("{.val {sort(non_diatoms$class)}}")
-  }
+  # Select the diatom carbon conversion function
+  vol2C_diatom_fun <- if (diatom_equation == "all") vol2C_diatom else vol2C_lgdiatom
 
   # Calculate carbon content based on diatom classification
   biovolume_df <- biovolume_df %>%
     mutate(carbon_pg = case_when(
-      !is.na(is_diatom) & is_diatom ~ vol2C_lgdiatom(biovolume_um3),
+      !is.na(is_diatom) & is_diatom ~ vol2C_diatom_fun(biovolume_um3),
       !is.na(is_diatom) & !is_diatom ~ vol2C_nondiatom(biovolume_um3),
       is.na(is_diatom) ~ vol2C_nondiatom(biovolume_um3),
       TRUE ~ NA_real_

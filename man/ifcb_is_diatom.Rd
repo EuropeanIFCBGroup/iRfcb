@@ -11,6 +11,7 @@ ifcb_is_diatom(
   max_retries = 3,
   sleep_time = 10,
   marine_only = FALSE,
+  details = FALSE,
   fuzzy = deprecated(),
   verbose = TRUE
 )
@@ -33,13 +34,26 @@ Default is 10 seconds.}
 
 \item{marine_only}{Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.}
 
+\item{details}{Logical. If \code{TRUE}, return a data frame with the resolved WoRMS
+class for each taxon instead of a logical vector. This is useful for
+auditing genus homonyms, i.e. diatom genera (such as \code{Navicula} or
+\code{Actinocyclus}) whose names are shared with animals and may therefore
+resolve to a non-diatom class in WoRMS. Inspect the \code{worms_class} column
+to spot such cases and add the affected taxa to \code{diatom_include}.
+Default is FALSE.}
+
 \item{fuzzy}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 The fuzzy argument is no longer available}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
-A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
+If \code{details = FALSE} (the default), a logical vector indicating whether
+each cleaned taxa name belongs to the specified diatom class. If \code{details = TRUE},
+a \link[tibble:tibble]{tibble} with one row per input taxon and the columns \code{taxa}
+(the original input), \code{genus} (the genus name used for matching), \code{worms_class}
+(the class resolved from WoRMS, or \code{NA} if no record was found) and \code{is_diatom}
+(the logical classification, including any \code{diatom_include} override).
 }
 \description{
 This function takes a list of taxa names, cleans them, retrieves their
