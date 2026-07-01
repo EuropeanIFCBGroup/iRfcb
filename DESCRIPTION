@@ -44,7 +44,6 @@ Imports:
     lifecycle,
     lubridate,
     png,
-    R.matlab,
     readr,
     reticulate (>= 1.41.0),
     sf,
@@ -58,6 +57,7 @@ Suggests:
     hdf5r,
     knitr,
     mockery,
+    R.matlab,
     rmarkdown,
     spelling,
     testthat (>= 3.0.0)

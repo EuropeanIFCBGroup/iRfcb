@@ -18,7 +18,7 @@
 #'    Use \code{adc_files} instead.
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The `.mat` files are created and edited directly from R.
 #'
 #' If an image belongs to a sample that already has a corresponding manual `.mat` file,
 #' the function updates the class IDs for the specified regions of interest (ROIs) in that file.
@@ -40,9 +40,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Initialize a python session if not already set up
-#' ifcb_py_install()
-#'
 #' # Annotate two png images with class "Nodularia_spumigena" and update or create manual files
 #' ifcb_annotate_batch(
 #'   png_images = c("D20230812T162908_IFCB134_01399.png",
@@ -58,9 +55,6 @@
 ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, class2use_file,
                                 manual_output = NULL, manual_recursive = FALSE, unclassified_id = 1,
                                 do_compression = TRUE, adc_folder = deprecated()) {
-
-  # Initialize python check
-  check_python_and_module()
 
   # Ensure that manual folder exists
   if (!dir.exists(manual_folder)) {

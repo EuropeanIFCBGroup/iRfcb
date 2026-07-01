@@ -62,7 +62,7 @@ Three output formats are supported:
 Requires the \pkg{hdf5r} package.}
 \item{\code{"mat"}}{IFCB Dashboard class_scores v1 MATLAB format. Contains \code{class2useTB},
 \code{TBscores}, \code{roinum}, \code{TBclass}, \code{TBclass_above_threshold}, and
-\code{classifierName}. Requires Python with \pkg{scipy} and \pkg{numpy}.}
+\code{classifierName}. Written directly from R.}
 \item{\code{"csv"}}{\code{ClassiPyR}-compatible CSV format with columns \code{file_name},
 \code{class_name} (threshold-applied), \code{class_name_auto} (winning class
 without threshold), and \code{score} (winning class confidence). See

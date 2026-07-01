@@ -63,7 +63,7 @@ Explore the key features and capabilities of `iRfcb` through the tutorials:
 
 ## Python Dependency
 
-Some functions in `iRfcb` require Python, and you will be notified when you call one of these functions. You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For details on which functions require Python, please visit the project's [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html#python-dependency-python-powered-python-powered-w-x-png-).
+A few functions in `iRfcb` require Python, and you will be notified when you call one of these functions. Python is needed for morphological feature extraction (`ifcb_extract_features()`), particle size distribution analysis (`ifcb_psd()`), and the optional Python-based `.mat` reader (`ifcb_read_mat()`). You can download Python from the official website: [python.org/downloads](https://www.python.org/downloads/). For the authoritative list of functions that require Python, please visit the project's [Function Reference](https://europeanifcbgroup.github.io/iRfcb/reference/index.html#python-dependency-python-powered-python-powered-w-x-png-).
 
 A Python virtual environment (venv) can be created using the `ifcb_py_install()` function before calling functions that require Python. 
 

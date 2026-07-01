@@ -67,8 +67,9 @@ reference:
   - '`ifcb_extract_classified_images`'
   - '`ifcb_extract_pngs`'
 - subtitle: Quality control
-  desc: Functions for geospatial quality control and particle size distribution analysis.
+  desc: Functions for raw sample integrity checks, geospatial quality control, and particle size distribution analysis.
   contents:
+  - '`ifcb_qc_sample`'
   - '`ifcb_get_ferrybox_data`'
   - '`ifcb_is_in_basin`'
   - '`ifcb_is_near_land`'
@@ -97,21 +98,24 @@ reference:
   - '`ifcb_classify_models`'
   - '`ifcb_classify_sample`'
   - '`ifcb_save_classification`'
+- subtitle: Manual annotation files
+  desc: Functions for creating and editing MATLAB `ifcb-analysis` manual classification files.
+  contents:
+  - '`ifcb_create_class2use`'
+  - '`ifcb_create_manual_file`'
+  - '`ifcb_annotate_batch`'
+  - '`ifcb_annotate_samples`'
+  - '`ifcb_adjust_classes`'
+  - '`ifcb_correct_annotation`'
+  - '`ifcb_replace_mat_values`'
+  - '`ifcb_merge_manual`'
+  - '`ifcb_prepare_whoi_plankton`'
 - subtitle: Python dependency ![Python Powered](../python-powered-w-70x28.png)
   desc: These functions depend on a working Python installation. For more information, see the [README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
   contents:
-  - '`ifcb_adjust_classes`'
-  - '`ifcb_annotate_batch`'
-  - '`ifcb_annotate_samples`'
-  - '`ifcb_correct_annotation`'
-  - '`ifcb_create_class2use`'
-  - '`ifcb_create_manual_file`'
   - '`ifcb_extract_features`'
-  - '`ifcb_merge_manual`'
-  - '`ifcb_prepare_whoi_plankton`'
   - '`ifcb_psd`'
   - '`ifcb_py_install`'
-  - '`ifcb_replace_mat_values`'
   - '`ifcb_read_mat`'
 - title: Helper functions
   contents:

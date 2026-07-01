@@ -31,11 +31,11 @@
 #'
 #' @details
 #' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
-#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
+#' This approach may be faster than the default R reader, especially for large `.mat` files.
 #' To enable this functionality, ensure Python is properly configured with the required dependencies.
 #' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
 #'
-#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
+#' Otherwise, the function reads the `.mat` file with the default R reader.
 #'
 #' @examples
 #' \dontrun{
@@ -149,10 +149,13 @@ ifcb_extract_classified_images <- function(sample,
           normalize = normalize
         )
       }, error = function(e) {
+        # Report the failure but continue with the remaining taxa rather than
+        # aborting the whole sample. The pause gives any transient I/O issue
+        # (e.g. a slow or briefly unavailable ROI file) time to clear.
         cli_inform(c(
           "x" = "Error processing taxon {.val {taxon}}: {conditionMessage(e)}"
         ))
-        Sys.sleep(10) # Pause for 10 seconds
+        Sys.sleep(10)
       })
     }
   } else {

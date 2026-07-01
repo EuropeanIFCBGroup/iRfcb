@@ -1,6 +1,4 @@
 test_that("ifcb_create_empty_manual_file creates MAT file with correct parameters", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   output_file <- tempfile()
 
@@ -16,8 +14,6 @@ test_that("ifcb_create_empty_manual_file creates MAT file with correct parameter
 })
 
 test_that("ifcb_create_empty_manual_file handles deprecated arguments correctly", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   output_file <- tempfile()
 
