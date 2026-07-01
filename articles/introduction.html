@@ -506,9 +506,12 @@ their corresponding classification records from WoRMS, and checks if
 they belong to the specified diatom class. The function only uses the
 first name (genus name) of each taxa for classification. This function
 can be useful for converting biovolumes to carbon according to
-Menden-Deuer and Lessard (2000). See <code><a href="../reference/vol2C_nondiatom.html">vol2C_nondiatom()</a></code> and
-<code><a href="../reference/vol2C_lgdiatom.html">vol2C_lgdiatom()</a></code> for carbon calculations (not included in
-NAMESPACE).</p>
+Menden-Deuer and Lessard (2000). See <code><a href="../reference/vol2C_diatom.html">vol2C_diatom()</a></code>,
+<code><a href="../reference/vol2C_lgdiatom.html">vol2C_lgdiatom()</a></code>, and <code><a href="../reference/vol2C_nondiatom.html">vol2C_nondiatom()</a></code> for
+the carbon conversions; <code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and
+<code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> use these internally and let
+you choose the diatom relationship via the <code>diatom_equation</code>
+argument.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Read class2use file and select five taxa</span></span>
 <span><span class="va">class2use</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ifcb_get_mat_variable.html">ifcb_get_mat_variable</a></span><span class="op">(</span><span class="st">"data/config/class2use.mat"</span><span class="op">)</span><span class="op">[</span><span class="fl">10</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>

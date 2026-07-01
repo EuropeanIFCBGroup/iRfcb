@@ -481,10 +481,16 @@ belong to the specified diatom class. The function only uses the first
 name (genus name) of each taxa for classification. This function can be
 useful for converting biovolumes to carbon according to Menden-Deuer and
 Lessard (2000). See
-[`vol2C_nondiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_nondiatom.md)
+[`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md),
+[`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md),
 and
-[`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
-for carbon calculations (not included in NAMESPACE).
+[`vol2C_nondiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_nondiatom.md)
+for the carbon conversions;
+[`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+and
+[`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+use these internally and let you choose the diatom relationship via the
+`diatom_equation` argument.
 
 ``` r
 

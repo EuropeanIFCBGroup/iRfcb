@@ -22,6 +22,7 @@ ifcb_extract_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
+  diatom_equation = c("large", "all"),
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
@@ -87,6 +88,18 @@ ifcb_extract_biovolumes(
 
   Logical. If `TRUE`, restricts the WoRMS search to marine taxa only.
   Default: `FALSE`.
+
+- diatom_equation:
+
+  A character string selecting which Menden-Deuer and Lessard (2000)
+  carbon-to-volume relationship to apply to diatoms. `"large"` (default)
+  uses the large-diatom (\> 3000 micron^3) equation (`vol2C_lgdiatom`),
+  matching the `ifcb-analysis` convention. `"all"` uses the all-sizes
+  diatom equation (`vol2C_diatom`), which assigns more carbon to small
+  cells. Note that biovolume is measured per region of interest
+  (ROI/image), so this is not a per-cell volume: chains of small cells
+  register a large ROI biovolume. Non-diatom protists always use
+  `vol2C_nondiatom` regardless of this setting.
 
 - threshold:
 

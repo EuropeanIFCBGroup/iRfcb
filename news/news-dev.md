@@ -4,6 +4,19 @@
 
 ### New features
 
+- [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+  and
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+  gain a `diatom_equation` argument selecting which Menden-Deuer and
+  Lessard (2000) carbon-to-volume relationship to apply to diatoms. The
+  default (`"large"`) uses the large-diatom (\> 3000 micron^3) equation,
+  matching the `ifcb-analysis` convention and preserving previous
+  behavior; `"all"` uses the all-sizes diatom equation, which assigns
+  more carbon to small cells. A new exported helper
+  [`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md)
+  implements the all-sizes relationship (log a = -0.541, b = 0.811).
+  Note that biovolume is measured per region of interest (image), not
+  per cell, so chains of small cells register a large ROI biovolume.
 - Added
   [`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md),
   which validates the integrity and self-consistency of raw IFCB samples
@@ -28,6 +41,25 @@
 
 ### Minor improvements and fixes
 
+- [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
+  gains a `details` argument. When `TRUE`, it returns a data frame with
+  the resolved WoRMS class (`worms_class`) for each taxon instead of a
+  logical vector, making it possible to audit genus homonyms,
+  i.e. diatom genera such as `Navicula` or `Actinocyclus` whose names
+  are shared with animals and therefore resolve to a non-diatom class in
+  WoRMS. Inspect the `worms_class` column to identify such cases and add
+  the affected taxa to `diatom_include`.
+- [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+  and
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+  now report the diatom classification more usefully when
+  `verbose = TRUE`: the (typically short) list of classes treated as
+  diatoms is printed in full, classes that could not be found in WoRMS
+  are listed separately, and the (typically long) list of non-diatom
+  classes is summarized as a count with a pointer to
+  `ifcb_is_diatom(details = TRUE)` for auditing homonyms. Previously the
+  full non-diatom list was printed and truncated with an ellipsis,
+  making it hard to tell whether a diatom class had been
 - Removed the Python dependency from all functions that create or edit
   MATLAB `ifcb-analysis` manual classification files.
   [`ifcb_create_class2use()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.md),
@@ -74,3 +106,8 @@
   default (`"features"`) writes `<bin>_features_v4.csv` as before;
   `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB
   Dashboard (pyifcb’s `FeaturesDirectory`).
+- Corrected the
+  [`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
+  documentation, which incorrectly stated the relationship applied to
+  diatoms \> 2000 micron^3 (the Menden-Deuer and Lessard 2000
+  large-diatom equation is for cells \> 3000 micron^3).

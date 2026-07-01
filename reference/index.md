@@ -192,6 +192,8 @@ information, see the
   : Split Large Zip File into Smaller Parts
 - [`summarize_TBclass()`](https://europeanifcbgroup.github.io/iRfcb/reference/summarize_TBclass.md)
   : Summarize TreeBagger Classifier Results
+- [`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md)
+  : Convert Biovolume to Carbon for Diatoms (All Sizes)
 - [`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
   : Convert Biovolume to Carbon for Large Diatoms
 - [`vol2C_nondiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_nondiatom.md)

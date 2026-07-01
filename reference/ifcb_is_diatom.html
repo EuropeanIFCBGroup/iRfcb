@@ -70,6 +70,7 @@ first name (genus name) of each taxa for classification.</p>
 <span>  max_retries <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  sleep_time <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fuzzy <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -108,6 +109,16 @@ Default is 10 seconds.</p></dd>
 <dd><p>Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.</p></dd>
 
 
+<dt id="arg-details">details<a class="anchor" aria-label="anchor" href="#arg-details"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, return a data frame with the resolved WoRMS
+class for each taxon instead of a logical vector. This is useful for
+auditing genus homonyms, i.e. diatom genera (such as <code>Navicula</code> or
+<code>Actinocyclus</code>) whose names are shared with animals and may therefore
+resolve to a non-diatom class in WoRMS. Inspect the <code>worms_class</code> column
+to spot such cases and add the affected taxa to <code>diatom_include</code>.
+Default is FALSE.</p></dd>
+
+
 <dt id="arg-fuzzy">fuzzy<a class="anchor" aria-label="anchor" href="#arg-fuzzy"></a></dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a>
 The fuzzy argument is no longer available</p></dd>
@@ -119,7 +130,12 @@ The fuzzy argument is no longer available</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.</p>
+    <p>If <code>details = FALSE</code> (the default), a logical vector indicating whether
+each cleaned taxa name belongs to the specified diatom class. If <code>details = TRUE</code>,
+a <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a> with one row per input taxon and the columns <code>taxa</code>
+(the original input), <code>genus</code> (the genus name used for matching), <code>worms_class</code>
+(the class resolved from WoRMS, or <code>NA</code> if no record was found) and <code>is_diatom</code>
+(the logical classification, including any <code>diatom_include</code> override).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -21,6 +21,7 @@ ifcb_summarize_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
+  diatom_equation = c("large", "all"),
   threshold = "opt",
   feature_recursive = TRUE,
   class_recursive = TRUE,
@@ -90,6 +91,17 @@ ifcb_summarize_biovolumes(
 
   Logical. If TRUE, restricts the WoRMS search to marine taxa only.
   Default is FALSE.
+
+- diatom_equation:
+
+  A character string selecting which Menden-Deuer and Lessard (2000)
+  carbon-to-volume relationship to apply to diatoms. `"large"` (default)
+  uses the large-diatom (\> 3000 micron^3) equation, matching the
+  `ifcb-analysis` convention. `"all"` uses the all-sizes diatom
+  equation, which assigns more carbon to small cells. Note that
+  biovolume is measured per region of interest (ROI/image), not per
+  cell, so chains of small cells register a large ROI biovolume. Passed
+  to `ifcb_extract_biovolumes`.
 
 - threshold:
 
@@ -176,9 +188,11 @@ content without requiring classification or manual annotation files
 
 Biovolumes are converted to carbon according to Menden-Deuer and Lessard
 2000 for individual regions of interest (ROI), applying different
-conversion factors to diatoms and non-diatom protists. If provided, the
-function also incorporates sample volume data from HDR files to compute
-biovolume and carbon content per liter of sample.
+conversion factors to diatoms and non-diatom protists. The diatom
+relationship is selected with `diatom_equation` (`"large"`, the default,
+or `"all"`). If provided, the function also incorporates sample volume
+data from HDR files to compute biovolume and carbon content per liter of
+sample.
 
 If `use_python = TRUE`, the function tries to read the `.mat` file using
 [`ifcb_read_mat()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_mat.md),

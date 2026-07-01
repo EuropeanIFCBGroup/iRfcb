@@ -16,6 +16,7 @@ ifcb_is_diatom(
   max_retries = 3,
   sleep_time = 10,
   marine_only = FALSE,
+  details = FALSE,
   fuzzy = deprecated(),
   verbose = TRUE
 )
@@ -54,6 +55,16 @@ ifcb_is_diatom(
   Logical. If TRUE, restricts the search to marine taxa only. Default is
   FALSE.
 
+- details:
+
+  Logical. If `TRUE`, return a data frame with the resolved WoRMS class
+  for each taxon instead of a logical vector. This is useful for
+  auditing genus homonyms, i.e. diatom genera (such as `Navicula` or
+  `Actinocyclus`) whose names are shared with animals and may therefore
+  resolve to a non-diatom class in WoRMS. Inspect the `worms_class`
+  column to spot such cases and add the affected taxa to
+  `diatom_include`. Default is FALSE.
+
 - fuzzy:
 
   **\[deprecated\]** The fuzzy argument is no longer available
@@ -65,8 +76,14 @@ ifcb_is_diatom(
 
 ## Value
 
-A logical vector indicating whether each cleaned taxa name belongs to
-the specified diatom class.
+If `details = FALSE` (the default), a logical vector indicating whether
+each cleaned taxa name belongs to the specified diatom class. If
+`details = TRUE`, a
+[tibble](https://tibble.tidyverse.org/reference/tibble.html) with one
+row per input taxon and the columns `taxa` (the original input), `genus`
+(the genus name used for matching), `worms_class` (the class resolved
+from WoRMS, or `NA` if no record was found) and `is_diatom` (the logical
+classification, including any `diatom_include` override).
 
 ## See also
 
