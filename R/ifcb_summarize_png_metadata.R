@@ -65,6 +65,9 @@ ifcb_summarize_png_metadata <- function(png_folder, feature_folder = NULL, featu
 
     } else {
       feature_file_names <- tools::file_path_sans_ext(basename(feature_files))
+      # Reduce a feature filename to its sample prefix (first two underscore-
+      # separated fields, e.g. "D20220712T210855_IFCB134") so it can be matched
+      # against sample names, dropping any "_fea_v2" style suffix.
       feature_file_names <- sub("(^[^_]+_[^_]+)_.*", "\\1", feature_file_names)
       feature_files_selected <- feature_files[sapply(feature_file_names, function(file_name) any(grepl(file_name, samples)))]
       features <- ifcb_read_features(feature_files_selected, multiblob = FALSE, feature_version = feature_version, verbose = FALSE)

@@ -22,9 +22,6 @@ You can install the package from CRAN using:
 ```{r, eval=FALSE}
 install.packages("iRfcb")
 ```
-Some functions from the `iRfcb` package used in this tutorial require `Python` to be installed. You can download `Python` from the official website: [python.org/downloads](https://www.python.org/downloads/).
-
-The `iRfcb` package can be configured to automatically activate an installed Python virtual environment (venv) upon loading by setting an environment variable. For more details, please refer to the package [README](https://europeanifcbgroup.github.io/iRfcb/).
 
 Load the `iRfcb` library:
 ```{r}
@@ -194,39 +191,6 @@ Individual images can be selected and a list of selected images can be downloade
 
 ### Correct .mat Files After Checking Images in the App
 
-```{r, include=FALSE}
-library(reticulate)
-
-# Define path to virtual environment
-env_path <- file.path(tempdir(), "iRfcb") # Or your preferred venv path
-
-# Install python virtual environment
-tryCatch({
-  ifcb_py_install(envname = env_path)
-}, error = function(e) {
-  warning("Python environment could not be installed.")
-})
-```
-
-```{r, echo=FALSE}
-# Check if Python is available
-if (!py_available(initialize = TRUE)) {
-  knitr::opts_chunk$set(eval = FALSE)
-  warning("Python is not available. Skipping the rest of the vignette evaluation.")
-} else {
-  # List available packages
-  available_packages <- py_list_packages(python = reticulate::py_discover_config()$python)
-  
-  # Check if scipy is available
-  if (!"scipy" %in% available_packages$package) {
-    knitr::opts_chunk$set(eval = FALSE)
-    warning(
-      "Required python modules are not available. Skipping the rest of the vignette evaluation."
-    )
-  }
-}
-```
-
 After reviewing images in the gallery, correct the `.mat` files using the `correction` file with selected images:
 ```{r, eval=FALSE}
 # Get class2use
@@ -235,10 +199,6 @@ class2use <- ifcb_get_mat_variable("data/config/class2use.mat", variable_name = 
 
 # Find the class id of unclassified
 unclassified_id <- which(grepl("unclassified", class2use))
-
-# Initialize the python session if not already set up
-env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
-ifcb_py_install(envname = env_path)
 
 # Correct the annotation with the correction file from ClassiPyR
 ifcb_correct_annotation(

@@ -28,11 +28,11 @@ It can be used, for example, to extract lists of classes from the file.
 }
 \details{
 If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
-This approach may be faster than the default approach using \code{R.matlab::readMat()}, especially for large \code{.mat} files.
+This approach may be faster than the default R reader, especially for large \code{.mat} files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
 
-If \code{use_python = FALSE} or if \code{SciPy} is not available, the function falls back to using \code{R.matlab::readMat()}.
+Otherwise, the function reads the \code{.mat} file with the default R reader.
 }
 \examples{
 \donttest{

@@ -36,5 +36,35 @@ test_that("ifcb_volume_analyzed_from_adc handles non-existent file gracefully", 
 
   # Call the function and expect an error
   expect_error(ifcb_volume_analyzed_from_adc(non_existent_file),
-               "ADC file does not exist")
+               "ADC file not found")
+})
+
+test_that("ifcb_volume_analyzed_from_adc processes multiple files", {
+  # Directory to extract files
+  exdir <- file.path(tempdir(), "ifcb_volume_analyzed_from_adc_multi")
+
+  # Extract the files
+  unzip(test_path("test_data/test_data.zip"),
+        files = "test_data/data/D20220522T003051_IFCB134.adc",
+        exdir = exdir,
+        junkpaths = TRUE)
+
+  adc_file_path <- file.path(exdir, "D20220522T003051_IFCB134.adc")
+
+  # Passing a vector of paths should return one result per file (previously this
+  # errored at the existence check with "the condition has length > 1")
+  adc_info <- ifcb_volume_analyzed_from_adc(c(adc_file_path, adc_file_path))
+
+  expect_length(adc_info$ml_analyzed, 2)
+  expect_equal(adc_info$ml_analyzed, rep(2.9812723, 2))
+
+  unlink(exdir)
+})
+
+test_that("ifcb_volume_analyzed_from_adc reports all missing files in a vector", {
+  # A vector containing a missing path should error and name the missing file
+  expect_error(
+    ifcb_volume_analyzed_from_adc(c("missing_one.adc", "missing_two.adc")),
+    "ADC file"
+  )
 })

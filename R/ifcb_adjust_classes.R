@@ -1,4 +1,3 @@
-utils::globalVariables("start_mc_adjust_classes_user_training")
 #' Adjust Classifications in Manual Annotations
 #'
 #' This function adjusts the classifications in manual annotation files based on a class2use file.
@@ -16,20 +15,18 @@ utils::globalVariables("start_mc_adjust_classes_user_training")
 #' @return None
 #'
 #' @details
-#' Python must be installed to use this function. The required python packages can be installed in a virtual environment using `ifcb_py_install()`.
+#' The MAT files are read and written directly from R, producing output
+#' identical to the MATLAB `ifcb-analysis` format.
 #'
 #' @examples
 #' \dontrun{
-#' # Initialize a python session if not already set up
-#' ifcb_py_install()
-#'
 #' ifcb_adjust_classes("data/config/class2use.mat",
 #'                     "data/manual/2014/")
 #' }
 #'
 #' @export
 #'
-#' @seealso \code{\link{ifcb_py_install}} \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
+#' @seealso \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
 #'
 #' @references Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = TRUE) {
@@ -44,15 +41,37 @@ ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = 
     cli_abort("{.arg manual_folder} does not exist: {.file {manual_folder}}")
   }
 
-  # Initialize python check
-  check_python_and_module()
+  # Ensure the class2use file has a .mat extension
+  if (!grepl("\\.mat$", class2use_file)) {
+    class2use_file <- paste0(class2use_file, ".mat")
+  }
 
-  # Source the Python function
-  source_python(system.file("python", "start_mc_adjust_classes_user_training.py", package = "iRfcb"))
+  # Read the class2use cell array (1 x N) from the config file
+  class2use <- read_mat_v5(class2use_file)$class2use$data
 
-  # Remove .mat extension
-  class2use_file <- gsub(".mat", "", class2use_file)
+  # Process every manual file (those starting with 'D') in the folder, in place
+  files <- list.files(manual_folder, pattern = "^D", full.names = TRUE)
 
-  # Call the function in R
-  start_mc_adjust_classes_user_training(class2use_file, manual_folder, do_compression=do_compression)
+  for (file_path in files) {
+    # Skip empty files
+    if (file.size(file_path) == 0) {
+      cli_warn("The manual file {.file {basename(file_path)}} is empty or corrupted.")
+      next
+    }
+
+    manual_data <- tryCatch(read_mat_v5(file_path), error = function(e) NULL)
+    if (is.null(manual_data)) {
+      cli_warn("The manual file {.file {basename(file_path)}} is empty or corrupted.")
+      next
+    }
+
+    # Replace the manual class list; mirror it (transposed) into the auto list
+    # when that field is present, matching the ifcb-analysis behaviour
+    manual_data$class2use_manual <- mat_var_cell(class2use)
+    if ("class2use_auto" %in% names(manual_data)) {
+      manual_data$class2use_auto <- mat_var_cell(t(class2use))
+    }
+
+    write_mat_v5(file_path, manual_data, do_compression = do_compression)
+  }
 }

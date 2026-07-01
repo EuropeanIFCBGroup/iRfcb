@@ -1,6 +1,8 @@
-# Helper function to create a temporary .mat file with a named classlist object
+# Helper function to create a temporary .mat file with a named classlist object,
+# using the package's native MAT writer (no R.matlab dependency).
 create_temp_mat_file <- function(file_path, classlist) {
-  R.matlab::writeMat(file_path, classlist = classlist) # Ensure 'classlist' is named
+  dir.create(dirname(file_path), showWarnings = FALSE, recursive = TRUE)
+  write_mat_v5(file_path, list(classlist = mat_var_double(classlist)))
 }
 
 # Define the setup function
@@ -66,20 +68,6 @@ create_temp_hdr_from_example <- function(exdir, hdr_file_path) {
   }
   file.copy(hdr_file_path, file.path(hdr_folder, "D20230314T001205_IFCB134.hdr"))
   hdr_folder
-}
-
-# Mock the Python function (replace_value_in_classlist)
-mock_replace_value_in_classlist <- function(input_file, output_file, target_value, new_value, column_index) {
-  # Read the input .mat file
-  mat_contents <- R.matlab::readMat(input_file)
-  classlist <- mat_contents$classlist
-
-  # Replace target_value with new_value in the specified column
-  mask <- classlist[, column_index + 1] == target_value # Adjust for 1-based indexing in R
-  classlist[mask, column_index + 1] <- new_value
-
-  # Write the modified contents to the output .mat file
-  R.matlab::writeMat(output_file, classlist = classlist)
 }
 
 # Cache for Python package availability (avoids repeated slow py_list_packages calls)

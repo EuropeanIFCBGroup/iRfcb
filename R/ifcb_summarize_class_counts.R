@@ -23,11 +23,11 @@
 #'
 #' @details
 #' If `use_python = TRUE`, the function tries to read the `.mat` file using `ifcb_read_mat()`, which relies on `SciPy`.
-#' This approach may be faster than the default approach using `R.matlab::readMat()`, especially for large `.mat` files.
+#' This approach may be faster than the default R reader, especially for large `.mat` files.
 #' To enable this functionality, ensure Python is properly configured with the required dependencies.
 #' You can initialize the Python environment and install necessary packages using `ifcb_py_install()`.
 #'
-#' If `use_python = FALSE` or if `SciPy` is not available, the function falls back to using `R.matlab::readMat()`.
+#' Otherwise, the function reads the `.mat` file with the default R reader.
 #'
 #' @examples
 #' \dontrun{
@@ -68,6 +68,11 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
   if (urlflag) {
     hdrfiles <- paste0(hdr_folder, filelist, ".hdr")
   } else {
+    # HDR files may be stored flat or in a date-based directory tree. Probe the
+    # first sample to detect which layout is in use, then build all paths to match:
+    #   1. flat:            <hdr_folder>/<sample>.hdr
+    #   2. by year:         <hdr_folder>/<YYYY>/<sample>.hdr        (chars 2-5 = year)
+    #   3. by year + day:   <hdr_folder>/<YYYY>/<DYYYYMMDD>/<sample>.hdr (chars 1-9)
     if (file.exists(file.path(hdr_folder, paste0(filelist[1], ".hdr")))) {
       hdrfiles <- file.path(hdr_folder, paste0(filelist, ".hdr"))
     } else if (file.exists(file.path(hdr_folder, substr(filelist[1], 2, 5), paste0(filelist[1], ".hdr")))) {
@@ -82,6 +87,8 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
     }
   }
 
+  # Parse the sample timestamp from the filename (chars 2-16, e.g. "20140101T120000")
+  # into a numeric POSIXct, stored as the sample date for each file.
   mdate <- sapply(filelist, function(f) { ymd_hms(gsub("T", "", substr(f, 2, 16)), tz = "UTC") })
 
   # Load the first class file to get class2useTB
@@ -91,6 +98,9 @@ ifcb_summarize_class_counts <- function(classpath_generic, hdr_folder, year_rang
   classcount_above_optthresh <- classcount
   classcount_above_adhocthresh <- classcount
   ml_analyzed <- rep(NA, length(classfiles))
+  # Default adhoc score threshold of 0.5 applied to every class. Because this is
+  # always defined here, the `exists("adhocthresh")` guards below are always TRUE;
+  # they are retained from the MATLAB reference, where the threshold was optional.
   adhocthresh <- rep(0.5, length(class2use))
 
   for (filecount in seq_along(classfiles)) {
