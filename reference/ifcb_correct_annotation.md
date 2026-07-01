@@ -59,9 +59,8 @@ in the specified output directory.
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The MAT files are read and written directly from R, producing output
+identical to the MATLAB `ifcb-analysis` format.
 
 The correction file is expected to contain at least one column:
 `image_filename`, which includes the filenames of the images (with or
@@ -80,16 +79,12 @@ Oceanogr: Methods 5, 204–216.
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
 <https://github.com/hsosik/ifcb-analysis>
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Correct class ID in .mat classlist files using a correction file
 ifcb_correct_annotation("input/manual",
                         "output/manual",

@@ -204,7 +204,7 @@ Use <code>class_recursive</code> instead.</p></dd>
 <li><p>If both <code>class_files</code> and <code>custom_images/custom_classes</code> are given, <code>class_files</code> takes precedence.</p></li>
 </ul></li>
 <li><p><strong>MAT File Processing:</strong></p><ul><li><p>If <code>use_python = TRUE</code>, the function reads <code>.mat</code> files using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code> (requires Python + <code>SciPy</code>).</p></li>
-<li><p>Otherwise, it falls back to <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p></li>
+<li><p>Otherwise, it reads <code>.mat</code> files with the default R reader.</p></li>
 </ul></li>
 </ul></div>
     <div class="section level2">

@@ -88,7 +88,7 @@ Three output formats are supported:
 
   IFCB Dashboard class_scores v1 MATLAB format. Contains `class2useTB`,
   `TBscores`, `roinum`, `TBclass`, `TBclass_above_threshold`, and
-  `classifierName`. Requires Python with scipy and numpy.
+  `classifierName`. Written directly from R.
 
 - `"csv"`:
 

@@ -404,7 +404,7 @@ ifcb_save_classification(
 )
 # Creates: output/D20230314T001205_IFCB134_class.h5
 
-# MAT - IFCB Dashboard v1 format (requires Python with scipy)
+# MAT - IFCB Dashboard v1 format
 ifcb_save_classification(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
   output_folder = "output",

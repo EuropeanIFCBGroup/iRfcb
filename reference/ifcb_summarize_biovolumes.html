@@ -210,7 +210,7 @@ for individual regions of interest (ROI), applying different conversion factors 
 non-diatom protists. If provided, the function also incorporates sample volume data from HDR files
 to compute biovolume and carbon content per liter of sample.</p>
 <p>If <code>use_python = TRUE</code>, the function tries to read the <code>.mat</code> file using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code>, which relies on <code>SciPy</code>.
-This approach may be faster than the default approach using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>, especially for large <code>.mat</code> files.
+This approach may be faster than the default R reader, especially for large <code>.mat</code> files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
     </div>

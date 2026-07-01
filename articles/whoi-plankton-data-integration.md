@@ -32,15 +32,6 @@ You can install the package from CRAN using:
 install.packages("iRfcb")
 ```
 
-Some functions from the `iRfcb` package used in this tutorial require
-`Python` to be installed. You can download `Python` from the official
-website: [python.org/downloads](https://www.python.org/downloads/).
-
-The `iRfcb` package can be configured to automatically activate an
-installed Python virtual environment (venv) upon loading by setting an
-environment variable. For more details, please refer to the package
-[README](https://europeanifcbgroup.github.io/iRfcb/).
-
 Load the `iRfcb` library:
 
 ``` r
@@ -138,12 +129,6 @@ information, ensuring compatibility with the MATLAB code in the
 In this example, we use data from the years 2013 and 2014.
 
 ``` r
-
-# Initialize the python session if not already set up
-env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
-
-# Initialize python environment
-ifcb_py_install(envname = env_path)
 
 # Download and prepare the WHOI-Plankton dataset
 ifcb_prepare_whoi_plankton(

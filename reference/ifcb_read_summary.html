@@ -103,10 +103,10 @@ It returns a data frame with species counts and optionally biovolume information
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If <code>use_python = TRUE</code>, the function tries to read the <code>.mat</code> file using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code>, which relies on <code>SciPy</code>.
-This approach may be faster than the default approach using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>, especially for large <code>.mat</code> files.
+This approach may be faster than the default R reader, especially for large <code>.mat</code> files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
-<p>If <code>use_python = FALSE</code> or if <code>SciPy</code> is not available, the function falls back to using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p>
+<p>Otherwise, the function reads the <code>.mat</code> file with the default R reader.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -137,7 +137,7 @@ You can initialize the Python environment and install necessary packages using <
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> D20230… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> D20230… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 13 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;int&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   counts_per_liter &lt;dbl&gt;</span></span>
 </code></pre></div>
     </div>

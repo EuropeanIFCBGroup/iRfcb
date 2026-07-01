@@ -29,17 +29,14 @@ A character vector of variable names.
 
 If `use_python = TRUE`, the function tries to read the `.mat` file using
 [`ifcb_read_mat()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_mat.md),
-which relies on `SciPy`. This approach may be faster than the default
-approach using
-[`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html),
-especially for large `.mat` files. To enable this functionality, ensure
-Python is properly configured with the required dependencies. You can
-initialize the Python environment and install necessary packages using
+which relies on `SciPy`. This approach may be faster than the default R
+reader, especially for large `.mat` files. To enable this functionality,
+ensure Python is properly configured with the required dependencies. You
+can initialize the Python environment and install necessary packages
+using
 [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
 
-If `use_python = FALSE` or if `SciPy` is not available, the function
-falls back to using
-[`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html).
+Otherwise, the function reads the `.mat` file with the default R reader.
 
 ## References
 

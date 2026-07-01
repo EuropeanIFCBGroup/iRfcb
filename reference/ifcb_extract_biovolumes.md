@@ -177,8 +177,7 @@ A data frame containing:
     [`ifcb_read_mat()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_mat.md)
     (requires Python + `SciPy`).
 
-  - Otherwise, it falls back to
-    [`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html).
+  - Otherwise, it reads `.mat` files with the default R reader.
 
 ## References
 

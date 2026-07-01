@@ -32,9 +32,8 @@ a `.mat` file.
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The `.mat` file is written directly from R, producing output identical
+to the MATLAB `ifcb-analysis` format.
 
 ## References
 
@@ -44,7 +43,6 @@ Oceanogr: Methods 5, 204–216.
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
 [`ifcb_adjust_classes`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
 <https://github.com/hsosik/ifcb-analysis>
 
@@ -52,9 +50,6 @@ Oceanogr: Methods 5, 204–216.
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Example usage:
 classes <- c("unclassified", "Dinobryon_spp", "Helicostomella_spp")
 

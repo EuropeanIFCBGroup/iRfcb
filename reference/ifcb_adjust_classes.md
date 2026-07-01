@@ -38,9 +38,8 @@ None
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The MAT files are read and written directly from R, producing output
+identical to the MATLAB `ifcb-analysis` format.
 
 ## References
 
@@ -50,7 +49,6 @@ Oceanogr: Methods 5, 204–216.
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
 [`ifcb_create_class2use`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.md)
 <https://github.com/hsosik/ifcb-analysis>
 
@@ -58,9 +56,6 @@ Oceanogr: Methods 5, 204–216.
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 ifcb_adjust_classes("data/config/class2use.mat",
                     "data/manual/2014/")
 } # }

@@ -114,13 +114,6 @@ their random forest algorithms.</p>
 <p>You can install the package from CRAN using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"iRfcb"</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions from the <code>iRfcb</code> package used in this
-tutorial require <code>Python</code> to be installed. You can download
-<code>Python</code> from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>.</p>
-<p>The <code>iRfcb</code> package can be configured to automatically
-activate an installed Python virtual environment (venv) upon loading by
-setting an environment variable. For more details, please refer to the
-package <a href="https://europeanifcbgroup.github.io/iRfcb/">README</a>.</p>
 <p>Load the <code>iRfcb</code> library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span></code></pre></div>
@@ -254,10 +247,6 @@ considerable time.</p>
 <span><span class="co"># Download and extract Tångesund data in the data folder</span></span>
 <span><span class="fu"><a href="../reference/ifcb_download_test_data.html">ifcb_download_test_data</a></span><span class="op">(</span>dest_dir <span class="op">=</span> <span class="va">tangesund_dir</span>,</span>
 <span>                        figshare_article <span class="op">=</span> <span class="st">"48158731"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
-<span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Merge Skagerrak-Kattegat and Tångesund to a single dataset</span></span>
 <span><span class="fu"><a href="../reference/ifcb_merge_manual.html">ifcb_merge_manual</a></span><span class="op">(</span></span>

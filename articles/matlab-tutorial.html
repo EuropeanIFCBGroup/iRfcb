@@ -106,13 +106,6 @@ annotations.</p>
 <p>You can install the package from CRAN using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"iRfcb"</span><span class="op">)</span></span></code></pre></div>
-<p>Some functions from the <code>iRfcb</code> package used in this
-tutorial require <code>Python</code> to be installed. You can download
-<code>Python</code> from the official website: <a href="https://www.python.org/downloads/" class="external-link">python.org/downloads</a>.</p>
-<p>The <code>iRfcb</code> package can be configured to automatically
-activate an installed Python virtual environment (venv) upon loading by
-setting an environment variable. For more details, please refer to the
-package <a href="https://europeanifcbgroup.github.io/iRfcb/">README</a>.</p>
 <p>Load the <code>iRfcb</code> library:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://europeanifcbgroup.github.io/iRfcb/">iRfcb</a></span><span class="op">)</span></span></code></pre></div>
@@ -192,7 +185,7 @@ files.</p>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">6</span> D202308… 2023-08-10 <span style="color: #949494;">11:30:59</span> 2023-08-10  <span style="text-decoration: underline;">2</span>023     8    10 11<span style="color: #949494;">:</span>30<span style="color: #949494;">:</span>59 IFCB134    </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 4 more variables: ml_analyzed &lt;dbl&gt;, species &lt;chr&gt;, counts &lt;int&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   counts_per_liter &lt;dbl&gt;</span></span></span></code></pre>
 <p>Alternatively, <code>iRfcb</code> can directly aggregate data and
 compute carbon content from classification files using the
@@ -381,10 +374,6 @@ files using the <code>correction</code> file with selected images:</p>
 <span></span>
 <span><span class="co"># Find the class id of unclassified</span></span>
 <span><span class="va">unclassified_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"unclassified"</span>, <span class="va">class2use</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Initialize the python session if not already set up</span></span>
-<span><span class="va">env_path</span> <span class="op">&lt;-</span> <span class="st">"~/.virtualenvs/iRfcb"</span> <span class="co"># Or your preferred venv path</span></span>
-<span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>envname <span class="op">=</span> <span class="va">env_path</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Correct the annotation with the correction file from ClassiPyR</span></span>
 <span><span class="fu"><a href="../reference/ifcb_correct_annotation.html">ifcb_correct_annotation</a></span><span class="op">(</span></span>

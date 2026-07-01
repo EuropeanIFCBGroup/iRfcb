@@ -24,15 +24,6 @@ You can install the package from CRAN using:
 install.packages("iRfcb")
 ```
 
-Some functions from the `iRfcb` package used in this tutorial require
-`Python` to be installed. You can download `Python` from the official
-website: [python.org/downloads](https://www.python.org/downloads/).
-
-The `iRfcb` package can be configured to automatically activate an
-installed Python virtual environment (venv) upon loading by setting an
-environment variable. For more details, please refer to the package
-[README](https://europeanifcbgroup.github.io/iRfcb/).
-
 Load the `iRfcb` library:
 
 ``` r
@@ -122,7 +113,7 @@ head(summary_data)
     ## 4 D202308… 2023-08-10 11:30:59 2023-08-10  2023     8    10 11:30:59 IFCB134    
     ## 5 D202308… 2023-08-10 11:30:59 2023-08-10  2023     8    10 11:30:59 IFCB134    
     ## 6 D202308… 2023-08-10 11:30:59 2023-08-10  2023     8    10 11:30:59 IFCB134    
-    ## # ℹ 4 more variables: ml_analyzed <dbl>, species <chr>, counts <dbl>,
+    ## # ℹ 4 more variables: ml_analyzed <dbl>, species <chr>, counts <int>,
     ## #   counts_per_liter <dbl>
 
 Alternatively, `iRfcb` can directly aggregate data and compute carbon
@@ -334,10 +325,6 @@ class2use <- ifcb_get_mat_variable("data/config/class2use.mat", variable_name = 
 
 # Find the class id of unclassified
 unclassified_id <- which(grepl("unclassified", class2use))
-
-# Initialize the python session if not already set up
-env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
-ifcb_py_install(envname = env_path)
 
 # Correct the annotation with the correction file from ClassiPyR
 ifcb_correct_annotation(

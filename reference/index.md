@@ -129,23 +129,10 @@ Functions for classifying IFCB images through a Gradio application.
 - [`ifcb_save_classification()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.md)
   : Classify an IFCB Sample and Save Results
 
-### Python dependency ![Python Powered](../python-powered-w-70x28.png)
+### Manual annotation files
 
-These functions depend on a working Python installation. For more
-information, see the
-[README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
-
-- [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
-  : Adjust Classifications in Manual Annotations
-
-- [`ifcb_annotate_batch()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.md)
-  : Annotate IFCB Images with Specified Class
-
-- [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md)
-  : Create Manual Classification MAT Files from PNG Subfolders
-
-- [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
-  : Correct Annotations in MATLAB Classlist Files
+Functions for creating and editing MATLAB `ifcb-analysis` manual
+classification files.
 
 - [`ifcb_create_class2use()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.md)
   :
@@ -155,8 +142,20 @@ information, see the
 - [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
   : Create a Manual Classification MAT File
 
-- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  : Extract Slim Features and Blobs from IFCB Data
+- [`ifcb_annotate_batch()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.md)
+  : Annotate IFCB Images with Specified Class
+
+- [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md)
+  : Create Manual Classification MAT Files from PNG Subfolders
+
+- [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
+  : Adjust Classifications in Manual Annotations
+
+- [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
+  : Correct Annotations in MATLAB Classlist Files
+
+- [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
+  : Replace Values in MATLAB Classlist
 
 - [`ifcb_merge_manual()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.md)
   : Merge IFCB Manual Classification Data
@@ -164,15 +163,18 @@ information, see the
 - [`ifcb_prepare_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_prepare_whoi_plankton.md)
   : Download and Prepare WHOI-Plankton Data
 
+### Python dependency ![Python Powered](../python-powered-w-70x28.png)
+
+These functions depend on a working Python installation. For more
+information, see the
+[README](https://europeanifcbgroup.github.io/iRfcb/#python-dependency).
+
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  : Extract Slim Features and Blobs from IFCB Data
 - [`ifcb_psd()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.md)
   : Plot and Save IFCB PSD Data
-
 - [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
   : Install iRfcb Python Environment
-
-- [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
-  : Replace Values in MATLAB Classlist
-
 - [`ifcb_read_mat()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_mat.md)
   : Read a MATLAB .mat File in R
 

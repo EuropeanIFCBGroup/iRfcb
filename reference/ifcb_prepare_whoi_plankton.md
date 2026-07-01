@@ -134,9 +134,7 @@ stores IFCB data.
 
 ## Details
 
-This function requires a python interpreter to be installed. The
-required python packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The `.mat` classification files are written directly from R.
 
 This is a wrapper function for the
 [`ifcb_download_whoi_plankton`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_whoi_plankton.md),

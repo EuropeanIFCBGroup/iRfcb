@@ -88,9 +88,7 @@ location, and merged `.mat` files into the output folder.
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The `.mat` files are read, merged and written directly from R.
 
 The **base** set consists of the original classifications that are used
 as a reference for the merging process. The **additions** set contains
@@ -115,7 +113,6 @@ Oceanogr: Methods 5, 204–216.
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
 <https://github.com/hsosik/ifcb-analysis>
 
 ## Examples

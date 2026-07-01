@@ -121,10 +121,10 @@ This can be a URL for web services or a full path for local files.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If <code>use_python = TRUE</code>, the function tries to read the <code>.mat</code> file using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code>, which relies on <code>SciPy</code>.
-This approach may be faster than the default approach using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>, especially for large <code>.mat</code> files.
+This approach may be faster than the default R reader, especially for large <code>.mat</code> files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
-<p>If <code>use_python = FALSE</code> or if <code>SciPy</code> is not available, the function falls back to using <code><a href="https://rdrr.io/pkg/R.matlab/man/readMat.html" class="external-link">R.matlab::readMat()</a></code>.</p>
+<p>Otherwise, the function reads the <code>.mat</code> file with the default R reader.</p>
     </div>
 
     <div class="section level2">

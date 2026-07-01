@@ -88,9 +88,7 @@ in the `manual_folder` to reflect the specified annotations.
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The `.mat` files are created and edited directly from R.
 
 If an image belongs to a sample that already has a corresponding manual
 `.mat` file, the function updates the class IDs for the specified
@@ -122,9 +120,6 @@ Oceanogr: Methods 5, 204–216.
 
 ``` r
 if (FALSE) { # \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Annotate two png images with class "Nodularia_spumigena" and update or create manual files
 ifcb_annotate_batch(
   png_images = c("D20230812T162908_IFCB134_01399.png",

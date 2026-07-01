@@ -38,15 +38,6 @@ You can install the package from CRAN using:
 install.packages("iRfcb")
 ```
 
-Some functions from the `iRfcb` package used in this tutorial require
-`Python` to be installed. You can download `Python` from the official
-website: [python.org/downloads](https://www.python.org/downloads/).
-
-The `iRfcb` package can be configured to automatically activate an
-installed Python virtual environment (venv) upon loading by setting an
-environment variable. For more details, please refer to the package
-[README](https://europeanifcbgroup.github.io/iRfcb/).
-
 Load the `iRfcb` library:
 
 ``` r
@@ -199,10 +190,6 @@ ifcb_download_test_data(dest_dir = skagerrak_kattegat_dir,
 # Download and extract Tångesund data in the data folder
 ifcb_download_test_data(dest_dir = tangesund_dir,
                         figshare_article = "48158731")
-
-# Initialize the python session if not already set up
-env_path <- "~/.virtualenvs/iRfcb" # Or your preferred venv path
-ifcb_py_install(envname = env_path)
 
 # Merge Skagerrak-Kattegat and Tångesund to a single dataset
 ifcb_merge_manual(

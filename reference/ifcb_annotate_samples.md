@@ -76,9 +76,7 @@ Invisibly returns `TRUE` on successful completion.
 
 ## Details
 
-Python must be installed to use this function. The required python
-packages can be installed in a virtual environment using
-[`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+The MAT files are written directly from R.
 
 Each sample should have ADC files in `adc_folder` and corresponding PNG
 images stored in subfolders under `png_folder`, where each subfolder is
@@ -110,7 +108,6 @@ Oceanogr: Methods 5, 204–216.
 
 ## See also
 
-[`ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md)
 [`ifcb_create_class2use`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.md)
 <https://github.com/hsosik/ifcb-analysis>
 
