@@ -194,7 +194,6 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
     file_df <- data.frame(filename, destfile, file_url)
 
-    if (!quiet) cli_inform("Downloading {nrow(file_df)} {ext} file{?s}")
     if (!quiet) cli_progress_bar(paste("Downloading", ext), total = nrow(file_df))
 
     # Process in chunks

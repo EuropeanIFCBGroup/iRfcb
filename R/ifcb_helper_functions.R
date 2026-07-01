@@ -756,6 +756,34 @@ read_mat <- function(file_path, fixNames = FALSE) {
     )
   })
 }
+#' Resolve Per-ROI Cell Counts for Abundance
+#'
+#' Translates the raw per-ROI `cell_count` values produced by the diatom chain
+#' counter into the cell counts used for abundance calculations. Values listed in
+#' `single_cell_values` are mapped to `1` (a single cell); any other value is
+#' used verbatim as the number of cells. A warning is emitted if negative cell
+#' counts remain after mapping (e.g. when `-1` is removed from
+#' `single_cell_values`), since these would corrupt abundance sums.
+#'
+#' @param cell_count Integer vector of raw per-ROI cell counts.
+#' @param single_cell_values Integer vector of `cell_count` values that should
+#'   be treated as a single cell. Default is `c(-1, 0)`.
+#'
+#' @return Numeric vector of resolved per-ROI cell counts.
+#'
+#' @references Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and Davidson, K. (2026), Automatic enumeration of chains of marine diatoms using "You Only Look Once" - a machine learning approach. Journal of Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
+#'
+#' @noRd
+resolve_cell_counts <- function(cell_count, single_cell_values = c(-1, 0)) {
+  cells <- ifelse(cell_count %in% single_cell_values, 1L, cell_count)
+  if (any(cells < 0, na.rm = TRUE)) {
+    cli_warn(c(
+      "Negative cell counts remain after mapping {.arg cell_count}.",
+      "i" = "Add the offending values to {.arg single_cell_values} (which defaults to {.code c(-1, 0)}) to treat them as a single cell."
+    ))
+  }
+  cells
+}
 #' Read Classification File (.mat, .h5, or .csv)
 #'
 #' Reads a `.mat`, `.h5`, or `.csv` classification file and returns a standardized
@@ -763,6 +791,12 @@ read_mat <- function(file_path, fixNames = FALSE) {
 #'
 #' @param filepath Character. Path to the classification file (`.mat`, `.h5`, or `.csv`).
 #' @param use_python Logical. If `TRUE`, uses Python-based reading for `.mat` files. Default is `FALSE`.
+#' @param extra_datasets Character vector of additional `.h5` dataset names (or
+#'   `.csv` column names) to read if present, returned verbatim as named elements
+#'   of the result. Intended as a forward-compatible hook for optional per-ROI or
+#'   per-cell data added by classification pipelines (e.g. future individual cell
+#'   measurements); variable-length datasets are returned as list-columns. Missing
+#'   datasets are silently skipped. Ignored for `.mat` files. Default is `NULL`.
 #'
 #' @return A named list with elements:
 #'   \item{classifierName}{Character. The classifier name.}
@@ -772,9 +806,16 @@ read_mat <- function(file_path, fixNames = FALSE) {
 #'   \item{TBclass}{Character vector. Winning class per ROI.}
 #'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
 #'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`/`.csv`).}
+#'   \item{cell_count}{Integer vector or NULL. Optional per-ROI cell counts
+#'     produced by the diatom chain counter (`.h5`/`.csv` only). `-1` marks ROIs that
+#'     were not counted, `0` marks ROIs that were counted but where no cells were
+#'     detected, and a positive value is the number of cells in the ROI. `NULL` when
+#'     the file does not contain cell-count data.}
+#'   Any names requested via `extra_datasets` that exist in the file are added as
+#'   further elements, read verbatim.
 #'
 #' @noRd
-read_class_file <- function(filepath, use_python = FALSE) {
+read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL) {
   ext <- tolower(tools::file_ext(filepath))
 
   if (ext == "csv") {
@@ -814,8 +855,20 @@ read_class_file <- function(filepath, use_python = FALSE) {
       TBscores = score_matrix,
       TBclass = tb_class,
       TBclass_above_threshold = csv_data$class_name,
-      TBclass_above_adhocthresh = NULL
+      TBclass_above_adhocthresh = NULL,
+      cell_count = if ("cell_count" %in% colnames(csv_data)) {
+        as.integer(csv_data$cell_count)
+      } else {
+        NULL
+      }
     )
+
+    # Optionally surface any additional requested columns verbatim
+    for (name in extra_datasets) {
+      if (name %in% colnames(csv_data) && is.null(result[[name]])) {
+        result[[name]] <- csv_data[[name]]
+      }
+    }
 
     return(result)
   }
@@ -861,8 +914,20 @@ read_class_file <- function(filepath, use_python = FALSE) {
       TBscores = t(h5file[["output_scores"]]$read()),
       TBclass = class_auto,
       TBclass_above_threshold = class_threshold,
-      TBclass_above_adhocthresh = NULL
+      TBclass_above_adhocthresh = NULL,
+      cell_count = if (h5file$exists("cell_count")) {
+        as.integer(h5file[["cell_count"]]$read())
+      } else {
+        NULL
+      }
     )
+
+    # Optionally surface any additional requested datasets verbatim
+    for (name in extra_datasets) {
+      if (h5file$exists(name) && is.null(result[[name]])) {
+        result[[name]] <- h5file[[name]]$read()
+      }
+    }
 
     return(result)
   }

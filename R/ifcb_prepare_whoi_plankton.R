@@ -281,7 +281,6 @@ ifcb_prepare_whoi_plankton <- function(years, png_folder, raw_folder, manual_fol
     # List the adc files
     adcfiles <- list.files(data_path, pattern = "adc$", full.names = TRUE, recursive = TRUE)
 
-    if (!quiet) cli_inform("Creating {length(unique(rename_df$sample))} manual {.file .mat} file{?s} from year {.val {year}}...")
     if (!quiet) cli_progress_bar(paste("Creating manual files", year), total = length(unique(rename_df$sample)))
 
     # Get unique sample names

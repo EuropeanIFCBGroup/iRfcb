@@ -57,6 +57,7 @@ reference:
   - '`ifcb_count_mat_annotations`'
   - '`ifcb_extract_biovolumes`'
   - '`ifcb_summarize_biovolumes`'
+  - '`ifcb_summarize_cell_counts`'
   - '`ifcb_summarize_class_counts`'
   - '`ifcb_summarize_png_counts`'
   - '`ifcb_summarize_png_metadata`'

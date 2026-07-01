@@ -131,7 +131,6 @@ ifcb_is_near_land <- function(latitudes,
         n_chunks <- length(chunks)
 
         if (verbose && n_chunks > 0) {
-          cli_inform("Downloading EEA coastline data...")
           cli_progress_bar("Downloading EEA coastline", total = n_chunks)
         }
 

@@ -126,7 +126,6 @@ ifcb_save_classification <- function(
 
   # Classify each image via predict_scores endpoint
   n_images <- length(png_files)
-  if (verbose) cli_inform("Classifying {n_images} image{?s} via {.code predict_scores}...")
   if (verbose) cli_progress_bar("Classifying images", total = n_images)
 
   scores_list <- vector("list", n_images)

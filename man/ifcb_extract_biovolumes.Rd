@@ -21,6 +21,8 @@ ifcb_extract_biovolumes(
   class_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
+  use_cell_counts = FALSE,
+  single_cell_values = c(-1, 0),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -78,6 +80,17 @@ class without any threshold applied.}
 
 \item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
+\item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count}
+data stored by the diatom chain counter in \code{.h5}/\code{.csv} classification files and
+adds \code{cell_count} (raw) and \code{cell_count_resolved} (resolved abundance) columns to the
+output. Only supported with automated \code{class_files}; not with manual files,
+\code{.mat} files, or \code{custom_images}. Default: \code{FALSE}.}
+
+\item{single_cell_values}{Integer vector of \code{cell_count} values that should be treated
+as a single cell when resolving \code{cell_count_resolved}. Default is \code{c(-1, 0)}, i.e. ROIs that
+were not counted (\code{-1}) and ROIs where no cells were detected (\code{0}) each count as one
+cell. Values not listed are used verbatim. Only used when \code{use_cell_counts = TRUE}.}
+
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a Python-based method (\code{SciPy}). Default: \code{FALSE}.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints progress messages. Default: \code{TRUE}.}
@@ -100,6 +113,8 @@ A data frame containing:
 \item \code{class}: The identified taxonomic class.
 \item \code{biovolume_um3}: Computed biovolume in cubic micrometers.
 \item \code{carbon_pg}: Estimated carbon content in picograms.
+\item \code{cell_count}, \code{cell_count_resolved} (only when \code{use_cell_counts = TRUE}): the raw per-ROI
+cell count and the resolved number of cells used for abundance.
 }
 }
 \description{
@@ -153,7 +168,9 @@ print(biovolume_df_custom)
 Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
+
+Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and Davidson, K. (2026), Automatic enumeration of chains of marine diatoms using "You Only Look Once" - a machine learning approach. Journal of Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
 }
 \seealso{
-\code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \url{https://www.marinespecies.org/}
+\code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \code{\link{ifcb_summarize_cell_counts}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify} \url{https://www.marinespecies.org/}
 }

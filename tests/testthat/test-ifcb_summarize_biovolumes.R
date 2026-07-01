@@ -104,6 +104,56 @@ test_that("ifcb_summarize_biovolumes works correctly with custom class data", {
   expect_equal(result$carbon_ug_per_liter, 0.52147962)
 })
 
+test_that("ifcb_summarize_biovolumes aborts with use_cell_counts on files without chain data", {
+  # The test .mat classification files do not contain chain-count data, so
+  # requesting chain counts should abort before any WoRMS lookup (offline-safe).
+  expect_error(
+    ifcb_summarize_biovolumes(feature_folder, class_folder, use_cell_counts = TRUE,
+                              verbose = FALSE),
+    "chain-count data"
+  )
+})
+
+test_that("ifcb_summarize_biovolumes computes cell abundance with use_cell_counts", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_not_installed("hdf5r")
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # Build a synthetic .h5 classification file (carrying cell_count) for the same
+  # sample as the real feature file, so the feature join yields known ROIs. The
+  # feature file holds ROIs 2 and 3.
+  chain_class_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes_chain")
+  dir.create(chain_class_dir, showWarnings = FALSE)
+  h5_path <- file.path(chain_class_dir, "D20220522T003051_IFCB134_class.h5")
+
+  f <- hdf5r::H5File$new(h5_path, mode = "w")
+  cl <- "Mesodinium_rubrum"
+  f[["class_labels"]] <- cl
+  f[["roi_numbers"]] <- c(2L, 3L)
+  f[["output_scores"]] <- matrix(0.9, nrow = 1, ncol = 2)
+  f[["classifier_name"]] <- "test_clf"
+  f[["class_name_auto"]] <- rep(cl, 2)
+  f[["class_name"]] <- rep(cl, 2)
+  f[["thresholds"]] <- 0.5
+  f[["cell_count"]] <- c(2L, 3L)  # neither value is a single-cell marker
+  f$close_all()
+
+  result <- ifcb_summarize_biovolumes(feature_folder, chain_class_dir,
+                                      hdr_folder = hdr_folder,
+                                      use_cell_counts = TRUE, verbose = FALSE)
+
+  expect_s3_class(result, "data.frame")
+  expect_true(all(c("cell_counts", "cell_counts_per_liter") %in% colnames(result)))
+
+  # Two ROIs of the same class; chain counts 2 and 3 -> 5 cells from 2 ROIs
+  expect_equal(nrow(result), 1)
+  expect_equal(result$counts, 2)
+  expect_equal(result$cell_counts, 5)
+  expect_equal(result$ml_analyzed, 2.9812723)
+  expect_equal(result$cell_counts_per_liter, 5 / (2.9812723 / 1000))
+})
+
 test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, manual_folder, hdr_folder = hdr_folder),

@@ -79,7 +79,6 @@ ifcb_classify_images <- function(
   if (verbose) cli_inform("Fetching per-class thresholds...")
   thresholds <- gradio_get_thresholds(gradio_url, model_name)
 
-  if (verbose) cli_inform("Classifying {length(png_file)} image{?s}...")
   if (verbose) cli_progress_bar("Classifying images", total = length(png_file))
 
   results_list <- lapply(seq_along(png_file), function(i) {
