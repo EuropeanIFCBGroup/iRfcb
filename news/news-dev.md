@@ -4,6 +4,36 @@
 
 ### New features
 
+- Added support for the optional per-ROI `cell_count` data produced by
+  the diatom chain counter (Groves et al. 2026,
+  [doi:10.1093/plankt/fbaf064](https://doi.org/10.1093/plankt/fbaf064))
+  via the
+  [`ifcb-pytorch-classify`](https://github.com/nodc-sweden/ifcb-pytorch-classify)
+  inference pipeline, and stored in `.h5`/`.csv` classification files.
+  This enables reporting cell abundance (accounting for chains) in
+  addition to ROI counts.
+  - New
+    [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+    summarizes cell abundance and user-selectable chain-length
+    statistics (`mean`, `median`, `max`, `sd`, `n_chains`) per sample
+    and class, with optional per-liter abundance via an `hdr_folder`.
+  - [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+    and
+    [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+    gain a `use_cell_counts` argument. When `TRUE`,
+    [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+    adds `cell_counts` (and `cell_counts_per_liter` when an `hdr_folder`
+    is supplied) to the output.
+  - A `single_cell_values` argument (default `c(-1, 0)`) lets the user
+    define which `cell_count` values are treated as a single cell. By
+    default, ROIs that were not chain-counted (`-1`) and ROIs where no
+    cells were detected (`0`) each count as one cell; any other value is
+    used verbatim.
+  - The bundled SHARK column template
+    ([`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)/[`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md))
+    gains an `IMAGE_COUNT` column (number of ROIs/images), placed after
+    `COUNT`. When `COUNT`/`ABUND` report cells, the mean chain length
+    per taxon is `COUNT / IMAGE_COUNT`.
 - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
   and
   [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)

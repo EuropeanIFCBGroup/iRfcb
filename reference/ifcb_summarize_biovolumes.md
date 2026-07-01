@@ -28,6 +28,8 @@ ifcb_summarize_biovolumes(
   hdr_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
+  use_cell_counts = FALSE,
+  single_cell_values = c(-1, 0),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -137,6 +139,32 @@ ifcb_summarize_biovolumes(
   Optional numeric or character version to filter feature files by (e.g.
   2 for "\_v2"). Default is NULL (no filtering).
 
+- use_cell_counts:
+
+  Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
+  stored by the diatom chain counter in `.h5`/`.csv` classification
+  files and adds `cell_counts` (and `cell_counts_per_liter` when
+  `hdr_folder` is supplied) to the output, reporting cell abundance
+  alongside ROI counts. Only supported with automated `class_files`. The
+  function aborts if enabled but no classification file contains
+  chain-count data. For chain-length statistics (mean, median, max chain
+  length) use
+  [`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md).
+  Note that `cell_counts` here is summed only over ROIs that also have
+  matching feature (biovolume) data (the same ROI population as
+  `counts`);
+  [`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+  instead sums over all classified ROIs, so the two abundance totals can
+  differ. Default is `FALSE`.
+
+- single_cell_values:
+
+  Integer vector of `cell_count` values that should be treated as a
+  single cell when computing `cell_counts`. Default is `c(-1, 0)`, i.e.
+  ROIs that were not counted (`-1`) and ROIs where no cells were
+  detected (`0`) each count as one cell. Values not listed are used
+  verbatim. Only used when `use_cell_counts = TRUE`.
+
 - use_python:
 
   Logical. If `TRUE`, attempts to read the `.mat` file using a
@@ -164,7 +192,9 @@ ifcb_summarize_biovolumes(
 A data frame summarizing aggregated biovolume and carbon content per
 class per sample. Columns include 'sample', 'classifier', 'class',
 'biovolume_mm3', 'carbon_ug', 'ml_analyzed', 'biovolume_mm3_per_liter',
-and 'carbon_ug_per_liter'.
+and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
+abundance columns 'cell_counts' (and 'cell_counts_per_liter' when
+`hdr_folder` is provided) are also included.
 
 ## Details
 
@@ -213,6 +243,17 @@ Limnology and Oceanography, 45(3), 569-579, doi:
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification
 of phytoplankton sampled with imaging-in-flow cytometry. Limnol.
 Oceanogr: Methods 5, 204–216.
+
+Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and
+Davidson, K. (2026), Automatic enumeration of chains of marine diatoms
+using "You Only Look Once" - a machine learning approach. Journal of
+Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
+
+## See also
+
+[`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+[`ifcb_extract_biovolumes`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+<https://github.com/nodc-sweden/ifcb-pytorch-classify>
 
 ## Examples
 

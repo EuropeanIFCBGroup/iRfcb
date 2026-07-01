@@ -50,6 +50,9 @@ biovolumes, and carbon content.
   : Extract Biovolumes from IFCB Data and Compute Carbon Content
 - [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
   : Summarize Biovolumes and Carbon Content from IFCB Data
+- [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+  : Summarize Diatom Cell Counts and Chain-Length Statistics from IFCB
+  Data
 - [`ifcb_summarize_class_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_class_counts.md)
   : Count Cells from TreeBagger Classifier Output
 - [`ifcb_summarize_png_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_png_counts.md)

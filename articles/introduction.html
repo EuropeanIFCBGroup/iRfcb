@@ -567,8 +567,8 @@ delivery format. An example submission is also provided in
 <span></span>
 <span><span class="co"># Print column names</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shark_colnames</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 0 × 67</span></span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 67 variables: MYEAR &lt;dbl&gt;, STATN &lt;chr&gt;, SAMPLING_PLATFORM &lt;chr&gt;,</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 0 × 68</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 68 variables: MYEAR &lt;dbl&gt;, STATN &lt;chr&gt;, SAMPLING_PLATFORM &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   PROJ &lt;chr&gt;, ORDERER &lt;chr&gt;, SHIPC &lt;chr&gt;, CRUISE_NO &lt;dbl&gt;, DATE_TIME &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   SDATE &lt;date&gt;, STIME &lt;time&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;, LONGI &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   POSYS &lt;chr&gt;, WADEP &lt;lgl&gt;, MPROG &lt;chr&gt;, MNDEP &lt;dbl&gt;, MXDEP &lt;dbl&gt;,</span></span></span>
@@ -581,7 +581,7 @@ delivery format. An example submission is also provided in
 <span></span>
 <span><span class="co"># Print the SHARK data submission example</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shark_example</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 67</span></span></span>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 5 × 68</span></span></span>
 <span><span class="co">##   MYEAR STATN          SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME</span></span>
 <span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span></span>
@@ -589,13 +589,13 @@ delivery format. An example submission is also provided in
 <span><span class="co">## <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 </span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>022 RV_FB_D202207… SveaFB            IFCB… SMHI    77SE         12 2.02e+15 </span></span>
-<span><span class="co">## <span style="color: #949494;"># ℹ 59 more variables: SDATE &lt;date&gt;, STIME &lt;time&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;"># ℹ 60 more variables: SDATE &lt;date&gt;, STIME &lt;time&gt;, TIMEZONE &lt;chr&gt;, LATIT &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   LONGI &lt;dbl&gt;, POSYS &lt;chr&gt;, WADEP &lt;lgl&gt;, MPROG &lt;chr&gt;, MNDEP &lt;dbl&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   MXDEP &lt;dbl&gt;, SLABO &lt;chr&gt;, ACKR_SMP &lt;chr&gt;, SMTYP &lt;chr&gt;, PDMET &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   SMVOL &lt;dbl&gt;, METFP &lt;chr&gt;, IFCBNO &lt;chr&gt;, SMPNO &lt;chr&gt;, LATNM &lt;chr&gt;,</span></span></span>
 <span><span class="co">## <span style="color: #949494;">#   SFLAG &lt;chr&gt;, LATNM_SFLAG &lt;chr&gt;, TRPHY &lt;chr&gt;, APHIA_ID &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   IMAGE_VERIFICATION &lt;chr&gt;, VERIFIED_BY &lt;lgl&gt;, COUNT &lt;dbl&gt;, ABUND &lt;dbl&gt;,</span></span></span>
-<span><span class="co">## <span style="color: #949494;">#   BIOVOL &lt;dbl&gt;, C_CONC &lt;dbl&gt;, QFLAG &lt;lgl&gt;, COEFF &lt;dbl&gt;, CLASS_NAME &lt;chr&gt;, …</span></span></span></code></pre>
+<span><span class="co">## <span style="color: #949494;">#   IMAGE_VERIFICATION &lt;chr&gt;, VERIFIED_BY &lt;lgl&gt;, COUNT &lt;dbl&gt;,</span></span></span>
+<span><span class="co">## <span style="color: #949494;">#   IMAGE_COUNT &lt;dbl&gt;, ABUND &lt;dbl&gt;, BIOVOL &lt;dbl&gt;, C_CONC &lt;dbl&gt;, QFLAG &lt;lgl&gt;, …</span></span></span></code></pre>
 <p>This concludes this tutorial for the <code>iRfcb</code> package. For
 additional guides—such as quality control of IFCB data, data sharing,
 and integration with MATLAB—please refer to the other tutorials

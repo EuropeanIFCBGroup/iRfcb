@@ -35,8 +35,8 @@ For a detailed example of a data submission, see
 ``` r
 shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
-#> # A tibble: 0 × 67
-#> # ℹ 67 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
+#> # A tibble: 0 × 68
+#> # ℹ 68 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
 #> #   PROJ <chr>, ORDERER <chr>, SHIPC <chr>, CRUISE_NO <dbl>, DATE_TIME <dbl>,
 #> #   SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>, LONGI <dbl>,
 #> #   POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>, MXDEP <dbl>,

@@ -26,7 +26,7 @@ shark_example <- ifcb_get_shark_example()
 
 # Print example as tibble
 print(shark_example)
-#> # A tibble: 5 × 67
+#> # A tibble: 5 × 68
 #>   MYEAR STATN          SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME
 #>   <dbl> <chr>          <chr>             <chr> <chr>   <chr>     <dbl> <chr>    
 #> 1  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
@@ -34,11 +34,11 @@ print(shark_example)
 #> 3  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
 #> 4  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
 #> 5  2022 RV_FB_D202207… SveaFB            IFCB… SMHI    77SE         12 2.02e+15 
-#> # ℹ 59 more variables: SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>,
+#> # ℹ 60 more variables: SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>,
 #> #   LONGI <dbl>, POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>,
 #> #   MXDEP <dbl>, SLABO <chr>, ACKR_SMP <chr>, SMTYP <chr>, PDMET <chr>,
 #> #   SMVOL <dbl>, METFP <chr>, IFCBNO <chr>, SMPNO <chr>, LATNM <chr>,
 #> #   SFLAG <chr>, LATNM_SFLAG <chr>, TRPHY <chr>, APHIA_ID <dbl>,
-#> #   IMAGE_VERIFICATION <chr>, VERIFIED_BY <lgl>, COUNT <dbl>, ABUND <dbl>,
-#> #   BIOVOL <dbl>, C_CONC <dbl>, QFLAG <lgl>, COEFF <dbl>, CLASS_NAME <chr>, …
+#> #   IMAGE_VERIFICATION <chr>, VERIFIED_BY <lgl>, COUNT <dbl>,
+#> #   IMAGE_COUNT <dbl>, ABUND <dbl>, BIOVOL <dbl>, C_CONC <dbl>, QFLAG <lgl>, …
 ```

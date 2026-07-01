@@ -29,6 +29,8 @@ ifcb_extract_biovolumes(
   class_recursive = TRUE,
   drop_zero_volume = FALSE,
   feature_version = NULL,
+  use_cell_counts = FALSE,
+  single_cell_values = c(-1, 0),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -134,6 +136,23 @@ ifcb_extract_biovolumes(
   Optional numeric or character version to filter feature files by (e.g.
   2 for "\_v2"). Default is NULL (no filtering).
 
+- use_cell_counts:
+
+  Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
+  stored by the diatom chain counter in `.h5`/`.csv` classification
+  files and adds `cell_count` (raw) and `cell_count_resolved` (resolved
+  abundance) columns to the output. Only supported with automated
+  `class_files`; not with manual files, `.mat` files, or
+  `custom_images`. Default: `FALSE`.
+
+- single_cell_values:
+
+  Integer vector of `cell_count` values that should be treated as a
+  single cell when resolving `cell_count_resolved`. Default is
+  `c(-1, 0)`, i.e. ROIs that were not counted (`-1`) and ROIs where no
+  cells were detected (`0`) each count as one cell. Values not listed
+  are used verbatim. Only used when `use_cell_counts = TRUE`.
+
 - use_python:
 
   Logical. If `TRUE`, attempts to read `.mat` files using a Python-based
@@ -171,6 +190,10 @@ A data frame containing:
 
 - `carbon_pg`: Estimated carbon content in picograms.
 
+- `cell_count`, `cell_count_resolved` (only when
+  `use_cell_counts = TRUE`): the raw per-ROI cell count and the resolved
+  number of cells used for abundance.
+
 ## Details
 
 - **Classification Data Handling:**
@@ -203,10 +226,17 @@ Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification
 of phytoplankton sampled with imaging-in-flow cytometry. Limnol.
 Oceanogr: Methods 5, 204–216.
 
+Groves, G. J. J., Arthur, G., Bresnan, E., Whyte, C., Arce, P. and
+Davidson, K. (2026), Automatic enumeration of chains of marine diatoms
+using "You Only Look Once" - a machine learning approach. Journal of
+Plankton Research, 48(2), fbaf064, doi: 10.1093/plankt/fbaf064.
+
 ## See also
 
 [`ifcb_read_features`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_features.md)
 [`ifcb_is_diatom`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
+[`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+<https://github.com/nodc-sweden/ifcb-pytorch-classify>
 <https://www.marinespecies.org/>
 
 ## Examples
