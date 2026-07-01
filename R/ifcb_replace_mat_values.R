@@ -5,7 +5,7 @@
 #'
 #' @details
 #' The MAT files are read and written directly from R, producing output
-#' identical to the MATLAB `ifcb-analysis` format. No Python installation is required.
+#' identical to the MATLAB `ifcb-analysis` format.
 #'
 #' @param manual_folder A character string specifying the path to the folder containing MAT classlist files to be updated.
 #' @param out_folder A character string specifying the path to the folder where updated MAT classlist files will be saved.

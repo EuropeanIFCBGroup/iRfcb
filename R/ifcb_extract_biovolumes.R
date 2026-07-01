@@ -57,7 +57,7 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume"))
 #'
 #' - **MAT File Processing:**
 #'   - If `use_python = TRUE`, the function reads `.mat` files using `ifcb_read_mat()` (requires Python + `SciPy`).
-#'   - Otherwise, it reads `.mat` files with a native R implementation (no Python required).
+#'   - Otherwise, it reads `.mat` files with the default R reader.
 #'
 #' @examples
 #' \dontrun{

@@ -39,7 +39,7 @@ compatible with the code in the \code{ifcb-analysis} repository (Sosik and Olson
 }
 \details{
 The MAT file is written directly from R, producing output identical to the
-MATLAB \code{ifcb-analysis} format. No Python installation is required.
+MATLAB \code{ifcb-analysis} format.
 }
 \examples{
 \dontrun{

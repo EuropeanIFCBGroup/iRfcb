@@ -5,7 +5,7 @@ utils::globalVariables(c("folder", "formatted_roi"))
 #' classification files in `.mat` format that can be used to train an image classifier using the `ifcb-analysis` MATLAB package (Sosik and Olson 2007).
 #'
 #' @details
-#' The `.mat` classification files are written with a native R implementation, no Python installation is required.
+#' The `.mat` classification files are written directly from R.
 #'
 #' This is a wrapper function for the \code{\link{ifcb_download_whoi_plankton}}, \code{\link{ifcb_download_dashboard_data}} and \code{\link{ifcb_create_manual_file}} functions and used for downloading, processing, and converting IFCB data.
 #' Please note that this function downloads and extracts large amounts of data, which can take considerable time.

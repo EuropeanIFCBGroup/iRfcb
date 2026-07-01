@@ -18,7 +18,7 @@
 #'    Use \code{adc_files} instead.
 #'
 #' @details
-#' The `.mat` files are created and edited with a native R implementation, no Python installation is required.
+#' The `.mat` files are created and edited directly from R.
 #'
 #' If an image belongs to a sample that already has a corresponding manual `.mat` file,
 #' the function updates the class IDs for the specified regions of interest (ROIs) in that file.

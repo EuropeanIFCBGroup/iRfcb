@@ -16,7 +16,7 @@
 #'
 #' @details
 #' The MAT files are read and written directly from R, producing output
-#' identical to the MATLAB `ifcb-analysis` format. No Python installation is required.
+#' identical to the MATLAB `ifcb-analysis` format.
 #'
 #' @examples
 #' \dontrun{

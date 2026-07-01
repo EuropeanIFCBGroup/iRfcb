@@ -15,7 +15,7 @@
 #'
 #' @details
 #' The MAT file is written directly from R, producing output identical to the
-#' MATLAB `ifcb-analysis` format. No Python installation is required.
+#' MATLAB `ifcb-analysis` format.
 #'
 #' @return No return value. This function is called for its side effects.
 #' The created MAT file is saved at the specified `output_file` location.

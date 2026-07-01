@@ -50,7 +50,7 @@ based on input vector of IFCB image names.
 These \code{.mat} files can be used with the code in the \code{ifcb-analysis} repository (Sosik and Olson 2007).
 }
 \details{
-The \code{.mat} files are created and edited with a native R implementation, no Python installation is required.
+The \code{.mat} files are created and edited directly from R.
 
 If an image belongs to a sample that already has a corresponding manual \code{.mat} file,
 the function updates the class IDs for the specified regions of interest (ROIs) in that file.

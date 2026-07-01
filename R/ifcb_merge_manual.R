@@ -23,7 +23,7 @@
 #'  and merged `.mat` files into the output folder.
 #'
 #' @details
-#' The `.mat` files are read, merged and written with a native R implementation, no Python installation is required.
+#' The `.mat` files are read, merged and written directly from R.
 #'
 #' The **base** set consists of the original classifications that are used as a reference for the merging process.
 #' The **additions** set contains the additional classifications that need to be merged with the base set.

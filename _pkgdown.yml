@@ -98,7 +98,7 @@ reference:
   - '`ifcb_classify_sample`'
   - '`ifcb_save_classification`'
 - subtitle: Manual annotation files
-  desc: Functions for creating and editing MATLAB `ifcb-analysis` manual classification files. Written in native R, no Python required.
+  desc: Functions for creating and editing MATLAB `ifcb-analysis` manual classification files.
   contents:
   - '`ifcb_create_class2use`'
   - '`ifcb_create_manual_file`'

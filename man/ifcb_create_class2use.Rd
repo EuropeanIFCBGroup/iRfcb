@@ -23,7 +23,7 @@ repository (Sosik and Olson 2007).
 }
 \details{
 The \code{.mat} file is written directly from R, producing output identical to
-the MATLAB \code{ifcb-analysis} format. No Python installation is required.
+the MATLAB \code{ifcb-analysis} format.
 }
 \examples{
 \dontrun{

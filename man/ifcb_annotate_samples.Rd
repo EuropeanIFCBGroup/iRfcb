@@ -56,7 +56,7 @@ mapping ROIs to class IDs based on user-provided PNG images (organized into
 subfolders named after classes) and a \code{class2use} MAT file.
 }
 \details{
-The MAT files are written with a native R implementation, no Python installation is required.
+The MAT files are written directly from R.
 
 Each sample should have ADC files in \code{adc_folder} and corresponding PNG images
 stored in subfolders under \code{png_folder}, where each subfolder is named after

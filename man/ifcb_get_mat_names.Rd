@@ -20,11 +20,11 @@ names of all variables stored within it.
 }
 \details{
 If \code{use_python = TRUE}, the function tries to read the \code{.mat} file using \code{ifcb_read_mat()}, which relies on \code{SciPy}.
-This approach may be faster than the default native R reader, especially for large \code{.mat} files.
+This approach may be faster than the default R reader, especially for large \code{.mat} files.
 To enable this functionality, ensure Python is properly configured with the required dependencies.
 You can initialize the Python environment and install necessary packages using \code{ifcb_py_install()}.
 
-If \code{use_python = FALSE} or if \code{SciPy} is not available, the function reads the \code{.mat} file with a native R implementation (no Python required).
+Otherwise, the function reads the \code{.mat} file with the default R reader.
 }
 \examples{
 # Example .mat file included in the package

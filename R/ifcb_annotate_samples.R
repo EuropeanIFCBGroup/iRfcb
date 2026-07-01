@@ -30,7 +30,7 @@ utils::globalVariables("class_id")
 #' @param do_compression A logical value indicating whether to compress the `.mat` file. Default is TRUE.
 #'
 #' @details
-#' The MAT files are written with a native R implementation, no Python installation is required.
+#' The MAT files are written directly from R.
 #'
 #' Each sample should have ADC files in `adc_folder` and corresponding PNG images
 #' stored in subfolders under `png_folder`, where each subfolder is named after

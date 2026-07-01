@@ -28,7 +28,7 @@ This is the R equivalent function of \code{start_mc_adjust_classes_user_training
 }
 \details{
 The MAT files are read and written directly from R, producing output
-identical to the MATLAB \code{ifcb-analysis} format. No Python installation is required.
+identical to the MATLAB \code{ifcb-analysis} format.
 }
 \examples{
 \dontrun{

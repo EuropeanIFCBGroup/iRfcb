@@ -12,7 +12,7 @@
 #'     Requires the \pkg{hdf5r} package.}
 #'   \item{`"mat"`}{IFCB Dashboard class_scores v1 MATLAB format. Contains `class2useTB`,
 #'     `TBscores`, `roinum`, `TBclass`, `TBclass_above_threshold`, and
-#'     `classifierName`. Written directly from R, no Python required.}
+#'     `classifierName`. Written directly from R.}
 #'   \item{`"csv"`}{`ClassiPyR`-compatible CSV format with columns `file_name`,
 #'     `class_name` (threshold-applied), `class_name_auto` (winning class
 #'     without threshold), and `score` (winning class confidence). See

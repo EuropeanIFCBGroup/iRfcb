@@ -19,7 +19,7 @@
 #'
 #' @details
 #' The MAT files are read and written directly from R, producing output
-#' identical to the MATLAB `ifcb-analysis` format. No Python installation is required.
+#' identical to the MATLAB `ifcb-analysis` format.
 #'
 #' The correction file is expected to contain at least one column: `image_filename`, which includes the filenames of the images (with or without additional trailing information).
 #' The function processes each file, corrects the annotations, and saves the updated files in the output folder.

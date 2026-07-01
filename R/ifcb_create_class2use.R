@@ -12,7 +12,7 @@
 #'
 #' @details
 #' The `.mat` file is written directly from R, producing output identical to
-#' the MATLAB `ifcb-analysis` format. No Python installation is required.
+#' the MATLAB `ifcb-analysis` format.
 #'
 #' @return No return value. This function is called for its side effect of creating a `.mat` file.
 #'

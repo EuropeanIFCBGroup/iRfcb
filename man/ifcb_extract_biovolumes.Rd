@@ -110,7 +110,7 @@ depending on whether the class is identified as a diatom.
 \item \strong{MAT File Processing:}
 \itemize{
 \item If \code{use_python = TRUE}, the function reads \code{.mat} files using \code{ifcb_read_mat()} (requires Python + \code{SciPy}).
-\item Otherwise, it reads \code{.mat} files with a native R implementation (no Python required).
+\item Otherwise, it reads \code{.mat} files with the default R reader.
 }
 }
 }
