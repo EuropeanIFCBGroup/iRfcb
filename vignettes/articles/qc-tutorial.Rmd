@@ -15,6 +15,7 @@ This vignette provides an overview of quality control (QC) methods for Imaging F
 You'll learn how to:
 
 - Set up the `iRfcb` package and `Python` environment.
+- Run native-R integrity checks on raw sample files (the `.hdr`/`.adc`/`.roi` triplet).
 - Analyze particle size distributions for data quality.
 - Check spatial metadata for proximity to land, basin classification, and missing positions.
 
@@ -96,6 +97,39 @@ if (!dir.exists(data_dir)) {
   )
 }
 ```
+
+## Sample Integrity Checks
+
+Before any feature-based analysis, the raw sample files themselves can be checked for completeness and consistency. `ifcb_qc_sample()` validates the IFCB file triplet (`.hdr`, `.adc`, and `.roi`) directly and returns a tidy tibble with one row per sample. Unlike the particle size distribution check below, it runs in native R and requires **no Python** and **no pre-computed features**, which makes it a quick first-pass screen for missing files, truncated or aborted runs, and metadata anomalies.
+
+```{r}
+# Run sample-level QC on the raw data folder
+qc <- ifcb_qc_sample("data/data/2023")
+
+# Inspect the integrity flags
+qc[, c("sample", "n_rois", "hdr_roi_count", "ml_analyzed", "syringe_ml", "qc_pass")]
+```
+
+The overall `qc_pass` column summarizes five integrity checks: the triplet is complete, the number of imaged ROIs matches the header `roiCount`, the `.roi` file is not truncated, the header and ADC agree on the run time, and the analyzed volume is sane (by default bounded by the header `SyringeSampleVolume`, reported as `syringe_ml`). To keep only the samples that pass:
+
+```{r, eval=FALSE}
+# Keep clean, non-bead samples for downstream analysis
+dplyr::filter(qc, qc_pass, !is_bead_run)
+```
+
+Several optional, advisory flags can be enabled by supplying thresholds. These do not affect `qc_pass`, but let you screen for overloaded or environmentally compromised runs:
+
+```{r, eval=FALSE}
+# Flag oversized .roi files (MB), high humidity (%), and high temperature
+ifcb_qc_sample(
+  "data/data/2023",
+  max_roi_mb = 5,
+  max_humidity = 70,
+  max_temperature = 35
+)
+```
+
+For a deeper, statistical quality check based on the particle size distribution, continue with the section below.
 
 ## Particle Size Distribution
 

@@ -67,8 +67,9 @@ reference:
   - '`ifcb_extract_classified_images`'
   - '`ifcb_extract_pngs`'
 - subtitle: Quality control
-  desc: Functions for geospatial quality control and particle size distribution analysis.
+  desc: Functions for raw sample integrity checks, geospatial quality control, and particle size distribution analysis.
   contents:
+  - '`ifcb_qc_sample`'
   - '`ifcb_get_ferrybox_data`'
   - '`ifcb_is_in_basin`'
   - '`ifcb_is_near_land`'

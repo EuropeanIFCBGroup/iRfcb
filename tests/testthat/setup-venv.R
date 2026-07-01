@@ -1,5 +1,9 @@
 library(reticulate)
 
+if (.Platform$OS.type == "windows") {
+  Sys.setenv(PIP_NO_CACHE_DIR = "1")
+}
+
 # Check if we are on CRAN
 not_cran <- identical(Sys.getenv("NOT_CRAN"), "true")
 
