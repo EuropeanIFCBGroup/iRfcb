@@ -290,8 +290,7 @@ test_that("ifcb_save_classification writes valid HDF5 with mocked API", {
 
 test_that("ifcb_save_classification writes valid MAT file with mocked API", {
   skip_on_cran()
-  skip_if_no_python()
-  skip_if_no_scipy()
+  skip_if_not_installed("R.matlab") # R.matlab readMat used as an independent cross-check below
 
   fake_roi <- tempfile(fileext = ".roi")
   file.create(fake_roi)

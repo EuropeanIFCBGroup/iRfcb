@@ -1,4 +1,3 @@
-utils::globalVariables("save_classification_mat")
 #' Classify an IFCB Sample and Save Results
 #'
 #' Extracts PNG images from an IFCB `.roi` file, classifies each image via the
@@ -13,7 +12,7 @@ utils::globalVariables("save_classification_mat")
 #'     Requires the \pkg{hdf5r} package.}
 #'   \item{`"mat"`}{IFCB Dashboard class_scores v1 MATLAB format. Contains `class2useTB`,
 #'     `TBscores`, `roinum`, `TBclass`, `TBclass_above_threshold`, and
-#'     `classifierName`. Requires Python with \pkg{scipy} and \pkg{numpy}.}
+#'     `classifierName`. Written directly from R.}
 #'   \item{`"csv"`}{`ClassiPyR`-compatible CSV format with columns `file_name`,
 #'     `class_name` (threshold-applied), `class_name_auto` (winning class
 #'     without threshold), and `score` (winning class confidence). See
@@ -89,10 +88,6 @@ ifcb_save_classification <- function(
       "Package {.pkg hdf5r} is required for {.code format = \"h5\"}.",
       "i" = "Install it with {.run install.packages(\"hdf5r\")}"
     ))
-  }
-
-  if (format == "mat") {
-    check_python_and_module(c("scipy", "numpy"))
   }
 
   if (!file.exists(roi_file)) {
@@ -202,16 +197,25 @@ ifcb_save_classification <- function(
   } else if (format == "mat") {
     if (verbose) cli_inform("Writing MAT file: {.file {output_path}}")
 
-    source_python(system.file("python", "save_class_mat.py", package = "iRfcb"))
-
-    save_classification_mat(
-      score_matrix = score_matrix,
-      class_labels = class_labels,
-      roi_numbers = roi_numbers,
-      winning_class = winning_class,
-      class_above_threshold = class_above_threshold,
-      model_name = model_name,
-      output_path = output_path
+    # IFCB Dashboard class_scores v1 format, matching the TreeBagger field
+    # names expected by pyifcb's _class_scores_v1
+    write_mat_v5(
+      output_path,
+      list(
+        # class labels with "unclassified" appended, as a 1 x (C+1) cell row
+        class2useTB = mat_var_cell(matrix(c(class_labels, "unclassified"), nrow = 1)),
+        # score matrix (N x C), double
+        TBscores = mat_var_double(score_matrix),
+        # ROI numbers as a uint16 column vector
+        roinum = mat_var_uint16(matrix(as.integer(roi_numbers), ncol = 1)),
+        # winning class per ROI (N x 1 cell)
+        TBclass = mat_var_cell(matrix(winning_class, ncol = 1)),
+        # threshold-applied class per ROI (N x 1 cell)
+        TBclass_above_threshold = mat_var_cell(matrix(class_above_threshold, ncol = 1)),
+        # classifier name as a 1 x 1 cell
+        classifierName = mat_var_cell(matrix(model_name, 1, 1))
+      ),
+      do_compression = TRUE
     )
 
   } else if (format == "csv") {

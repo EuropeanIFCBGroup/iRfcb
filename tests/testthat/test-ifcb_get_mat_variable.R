@@ -40,8 +40,9 @@ test_that("ifcb_get_mat_variable handles empty MAT file gracefully", {
   temp_dir <- file.path(tempdir(), "ifcb_get_mat_variable")
   empty_mat_file <- file.path(temp_dir, "empty_test_file.mat")
 
-  # Create an empty .mat file
-  R.matlab::writeMat(empty_mat_file, x = list())
+  # Create an empty .mat file (header only, no variables) with the native writer
+  dir.create(temp_dir, showWarnings = FALSE, recursive = TRUE)
+  write_mat_v5(empty_mat_file, list())
 
   # Ensure the empty .mat file is created
   expect_true(file.exists(empty_mat_file), info = "Empty .mat file should be created")

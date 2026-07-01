@@ -56,7 +56,7 @@ mapping ROIs to class IDs based on user-provided PNG images (organized into
 subfolders named after classes) and a \code{class2use} MAT file.
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The MAT files are written directly from R.
 
 Each sample should have ADC files in \code{adc_folder} and corresponding PNG images
 stored in subfolders under \code{png_folder}, where each subfolder is named after
@@ -98,5 +98,5 @@ ifcb_annotate_samples(
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
+\code{\link{ifcb_create_class2use}} \url{https://github.com/hsosik/ifcb-analysis}
 }
