@@ -38,7 +38,8 @@ It replaces the class ID of specified regions of interest (ROIs) in the classlis
 a correction file or a character vector.
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The MAT files are read and written directly from R, producing output
+identical to the MATLAB \code{ifcb-analysis} format.
 
 The correction file is expected to contain at least one column: \code{image_filename}, which includes the filenames of the images (with or without additional trailing information).
 The function processes each file, corrects the annotations, and saves the updated files in the output folder.
@@ -47,9 +48,6 @@ If a character vector is provided as \code{correction}, it will be used directly
 }
 \examples{
 \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Correct class ID in .mat classlist files using a correction file
 ifcb_correct_annotation("input/manual",
                         "output/manual",
@@ -69,5 +67,5 @@ ifcb_correct_annotation("input/manual",
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.
 }
 \seealso{
-\code{\link{ifcb_py_install}} \url{https://github.com/hsosik/ifcb-analysis}
+\url{https://github.com/hsosik/ifcb-analysis}
 }

@@ -240,7 +240,7 @@ ifcb_save_classification(
 )
 # Creates: output/D20230314T001205_IFCB134_class.h5
 
-# MAT - IFCB Dashboard v1 format (requires Python with scipy)
+# MAT - IFCB Dashboard v1 format
 ifcb_save_classification(
   "data/data/2023/D20230314/D20230314T001205_IFCB134.roi",
   output_folder = "output",
@@ -283,7 +283,7 @@ print(worms_records)
 
 ### Check whether a class name is a diatom
 
-This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See `vol2C_nondiatom()` and `vol2C_lgdiatom()` for carbon calculations (not included in NAMESPACE).
+This function takes a list of taxa names, cleans them, retrieves their corresponding classification records from WoRMS, and checks if they belong to the specified diatom class. The function only uses the first name (genus name) of each taxa for classification. This function can be useful for converting biovolumes to carbon according to Menden-Deuer and Lessard (2000). See `vol2C_diatom()`, `vol2C_lgdiatom()`, and `vol2C_nondiatom()` for the carbon conversions; `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` use these internally and let you choose the diatom relationship via the `diatom_equation` argument.
 
 ```{r}
 # Read class2use file and select five taxa

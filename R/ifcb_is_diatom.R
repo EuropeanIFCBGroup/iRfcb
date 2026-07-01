@@ -16,12 +16,24 @@
 #' @param sleep_time A numeric value indicating the number of seconds to wait between retry attempts.
 #'        Default is 10 seconds.
 #' @param marine_only Logical. If TRUE, restricts the search to marine taxa only. Default is FALSE.
+#' @param details Logical. If `TRUE`, return a data frame with the resolved WoRMS
+#'        class for each taxon instead of a logical vector. This is useful for
+#'        auditing genus homonyms, i.e. diatom genera (such as `Navicula` or
+#'        `Actinocyclus`) whose names are shared with animals and may therefore
+#'        resolve to a non-diatom class in WoRMS. Inspect the `worms_class` column
+#'        to spot such cases and add the affected taxa to `diatom_include`.
+#'        Default is FALSE.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param fuzzy
 #'    `r lifecycle::badge("deprecated")`
 #'    The fuzzy argument is no longer available
 #'
-#' @return A logical vector indicating whether each cleaned taxa name belongs to the specified diatom class.
+#' @return If `details = FALSE` (the default), a logical vector indicating whether
+#'   each cleaned taxa name belongs to the specified diatom class. If `details = TRUE`,
+#'   a [tibble][tibble::tibble] with one row per input taxon and the columns `taxa`
+#'   (the original input), `genus` (the genus name used for matching), `worms_class`
+#'   (the class resolved from WoRMS, or `NA` if no record was found) and `is_diatom`
+#'   (the logical classification, including any `diatom_include` override).
 #'
 #' @examples
 #' \donttest{
@@ -36,7 +48,7 @@
 #' @seealso \url{https://www.marinespecies.org/}
 ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom_include = NULL,
                            max_retries = 3, sleep_time = 10, marine_only = FALSE,
-                           fuzzy = deprecated(), verbose = TRUE) {
+                           details = FALSE, fuzzy = deprecated(), verbose = TRUE) {
 
   # Warn the user if fuzzy is used
   if (lifecycle::is_present(fuzzy)) {
@@ -72,6 +84,13 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom
     matched <- taxa_genus %in% diatom_include
 
     is_diatom[matched] <- TRUE
+  }
+
+  if (details) {
+    return(tibble(taxa = taxa_list,
+                  genus = word(taxa_list_clean, 1),
+                  worms_class = worms_data$class,
+                  is_diatom = is_diatom))
   }
 
   return(is_diatom)

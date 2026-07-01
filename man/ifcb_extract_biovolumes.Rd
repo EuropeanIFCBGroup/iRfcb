@@ -14,6 +14,7 @@ ifcb_extract_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
+  diatom_equation = c("large", "all"),
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
@@ -53,6 +54,15 @@ used as a substitute for classification files.}
 overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 
 \item{marine_only}{Logical. If \code{TRUE}, restricts the WoRMS search to marine taxa only. Default: \code{FALSE}.}
+
+\item{diatom_equation}{A character string selecting which Menden-Deuer and Lessard (2000)
+carbon-to-volume relationship to apply to diatoms. \code{"large"} (default) uses the
+large-diatom (> 3000 micron^3) equation (\code{vol2C_lgdiatom}), matching the
+\code{ifcb-analysis} convention. \code{"all"} uses the all-sizes diatom equation
+(\code{vol2C_diatom}), which assigns more carbon to small cells. Note that
+biovolume is measured per region of interest (ROI/image), so this is not a
+per-cell volume: chains of small cells register a large ROI biovolume.
+Non-diatom protists always use \code{vol2C_nondiatom} regardless of this setting.}
 
 \item{threshold}{A character string controlling which classification to use.
 \code{"opt"} (default) uses the threshold-applied classification, where
@@ -125,7 +135,7 @@ depending on whether the class is identified as a diatom.
 \item \strong{MAT File Processing:}
 \itemize{
 \item If \code{use_python = TRUE}, the function reads \code{.mat} files using \code{ifcb_read_mat()} (requires Python + \code{SciPy}).
-\item Otherwise, it falls back to \code{R.matlab::readMat()}.
+\item Otherwise, it reads \code{.mat} files with the default R reader.
 }
 }
 }

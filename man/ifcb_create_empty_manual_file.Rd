@@ -45,13 +45,11 @@ Generates a MAT file for IFCB data with an empty manual classification structure
 class names, and saves it to a specified output file. This function utilizes a Python script for creating the structure.
 }
 \details{
-Python must be installed to use this function. The required python packages can be installed in a virtual environment using \code{ifcb_py_install()}.
+The MAT file is written directly from R, producing output identical to the
+MATLAB \code{ifcb-analysis} format. No Python installation is required.
 }
 \examples{
 \dontrun{
-# Initialize a python session if not already set up
-ifcb_py_install()
-
 # Create a MAT file with 100 ROIs, using a vector of class names, and save it to "output.mat"
 ifcb_create_empty_manual_file(roi_length = 100,
                               class2use = c("unclassified", "Aphanizomenon_spp"),

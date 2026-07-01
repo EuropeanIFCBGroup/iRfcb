@@ -1,8 +1,6 @@
 output_folder <- file.path(tempdir(), "ifcb_create_manual_file")
 
 test_that("ifcb_create_manual_file creates MAT file with correct parameters", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   output_file <- file.path(output_folder, "ifcb_create_manual_file.mat")
 
@@ -23,8 +21,6 @@ test_that("ifcb_create_manual_file creates MAT file with correct parameters", {
 })
 
 test_that("ifcb_create_manual_file handles a custom classlist correctly", {
-  # Skip if Python is not available
-  skip_if_no_scipy()
 
   output_file <- tempfile()
 

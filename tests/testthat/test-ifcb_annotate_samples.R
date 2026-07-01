@@ -1,7 +1,4 @@
 test_that("ifcb_annotate_samples correctly updates the .mat classlist files", {
-  # Skip if scipy is not available
-  skip_if_no_scipy()
-
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
 
@@ -46,9 +43,6 @@ test_that("ifcb_annotate_samples correctly updates the .mat classlist files", {
 })
 
 test_that("ifcb_annotate_samples correctly updates the .mat classlist files if classes are unmatches", {
-  # Skip if scipy is not available
-  skip_if_no_scipy()
-
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
 
@@ -104,9 +98,6 @@ test_that("ifcb_annotate_samples correctly updates the .mat classlist files if c
 })
 
 test_that("ifcb_annotate_samples handles missing directories and files gracefully", {
-  # Skip if scipy is not available
-  skip_if_no_scipy()
-
   # Define the path to the test data zip file
   zip_path <- test_path("test_data/test_data.zip") # Path to the test data zip file containing .mat files and config
 

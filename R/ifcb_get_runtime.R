@@ -34,6 +34,7 @@ ifcb_get_runtime <- function(hdr_file) {
 
   hdr <- list()
 
+  # Modern header format stores values as "runtime: <seconds>" (colon-delimited).
   ii <- grep('runtime:', t, ignore.case = TRUE)
   if (length(ii) > 0) {
     linestr <- t[ii]
@@ -54,6 +55,9 @@ ifcb_get_runtime <- function(hdr_file) {
       # hdr$PMTtriggerSelection_DAQ_MCConly <- as.numeric(trimws(substr(linestr, colonpos + 1, nchar(linestr))))
     }
   } else {
+    # Legacy header format stores the value as "run time = <seconds> s"; parse the
+    # number between the "=" and the trailing "s" unit. (Mirrors the MATLAB
+    # reference, which reads runtime and inhibittime from the same line.)
     ii <- grep('run time', t, ignore.case = TRUE)
     if (length(ii) > 0) {
       linestr <- t[ii]
