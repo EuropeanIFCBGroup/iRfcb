@@ -15,7 +15,7 @@ jobs:
   download-data:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Download vignette data
         run: |
@@ -52,7 +52,7 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Download vignette data artifact
         uses: actions/download-artifact@v8
