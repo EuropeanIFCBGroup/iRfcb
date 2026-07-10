@@ -41,10 +41,10 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count`
-#'        data stored by the diatom chain counter in `.h5`/`.csv` classification files and
+#'        data stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and
 #'        adds `cell_count` (raw) and `cell_count_resolved` (resolved abundance) columns to the
-#'        output. Only supported with automated `class_files`; not with manual files,
-#'        `.mat` files, or `custom_images`. Default: `FALSE`.
+#'        output. Only supported with automated `class_files`; not with manual files
+#'        or `custom_images`. Default: `FALSE`.
 #' @param single_cell_values Integer vector of `cell_count` values that should be treated
 #'        as a single cell when resolving `cell_count_resolved`. Default is `c(-1, 0)`, i.e. ROIs that
 #'        were not counted (`-1`) and ROIs where no cells were detected (`0`) each count as one
@@ -186,6 +186,10 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     # Check if class_files is a single folder path or a vector of file paths
     if (length(class_files) == 1 && file.info(class_files)$isdir) {
       class_files <- list.files(class_files, pattern = "\\.(mat|h5|csv)$", recursive = class_recursive, full.names = TRUE)
+      # A directory may hold non-class .csv files (e.g. dashboard class_scores
+      # exports); drop them with a warning before any file is read or its sample
+      # name and date are parsed.
+      class_files <- drop_invalid_class_csv(class_files)
     }
 
     if (length(class_files) == 0) {
@@ -203,7 +207,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     if (use_cell_counts && is_manual) {
       cli_abort(c(
         "{.arg use_cell_counts = TRUE} is not supported for manually annotated files.",
-        "i" = "Chain-count data is only stored in automated {.file .h5} and {.file .csv} classification files."
+        "i" = "Chain-count data is only stored in automated {.file .mat}, {.file .h5} and {.file .csv} classification files."
       ))
     }
   }

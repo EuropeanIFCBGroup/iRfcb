@@ -154,6 +154,44 @@ test_that("ifcb_summarize_biovolumes computes cell abundance with use_cell_count
   expect_equal(result$cell_counts_per_liter, 5 / (2.9812723 / 1000))
 })
 
+test_that("ifcb_summarize_biovolumes skips a dashboard scores .csv in a mixed class folder", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # The feature file holds ROIs 2 and 3 for this sample.
+  sample <- "D20220522T003051_IFCB134"
+  label <- data.frame(
+    file_name = sprintf("%s_%05d.png", sample, c(2, 3)),
+    class_name = "Mesodinium_rubrum",
+    class_name_auto = "Mesodinium_rubrum",
+    score = 0.9
+  )
+  # IFCB-Dashboard class_scores export for the same sample: pid + per-class
+  # score columns, no file_name/class_name. Must be ignored, not read.
+  scores <- data.frame(pid = sprintf("%s_%05d", sample, c(2, 3)),
+                       Mesodinium_rubrum = 0.9, Skeletonema_marinoi = 0.1)
+
+  mixed_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes_mixedcsv")
+  label_dir <- file.path(tempdir(), "ifcb_summarize_biovolumes_labelcsv")
+  dir.create(mixed_dir, showWarnings = FALSE)
+  dir.create(label_dir, showWarnings = FALSE)
+  utils::write.csv(label, file.path(mixed_dir, paste0(sample, ".csv")), row.names = FALSE)
+  utils::write.csv(scores, file.path(mixed_dir, paste0(sample, "_class.csv")), row.names = FALSE)
+  utils::write.csv(label, file.path(label_dir, paste0(sample, ".csv")), row.names = FALSE)
+
+  expect_warning(
+    res_mixed <- ifcb_summarize_biovolumes(feature_folder, mixed_dir, hdr_folder = hdr_folder,
+                                           verbose = FALSE),
+    "not a ClassiPyR class file"
+  )
+  res_label <- ifcb_summarize_biovolumes(feature_folder, label_dir, hdr_folder = hdr_folder,
+                                         verbose = FALSE)
+
+  # The scores CSV is ignored, so the mixed folder matches the label-only folder
+  expect_equal(res_mixed, res_label)
+})
+
 test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
 
   expect_error(ifcb_summarize_biovolumes(feature_folder, manual_folder, hdr_folder = hdr_folder),
