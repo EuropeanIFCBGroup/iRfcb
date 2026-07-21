@@ -19,7 +19,7 @@ ifcb_extract_features(
 \arguments{
 \item{data_folder}{The path to a directory containing raw IFCB data
 (\code{.roi}, \code{.adc} and \code{.hdr} files). The directory is searched recursively by
-\code{pyifcb}, so nested data structures are supported.}
+the raw-data reader, so nested data structures are supported.}
 
 \item{features_folder}{The path to the directory where the
 \verb{<bin>_features_v4.csv} files will be written. Created if it does not exist.}
@@ -78,15 +78,24 @@ This function wraps the \code{extract_slim_features} workflow from the
 Python and the \code{ifcb-features} package must be installed to use this function.
 The required Python packages can be installed in a virtual environment using
 \code{ifcb_py_install(features = TRUE)}, which additionally installs \code{ifcb-features}
-and its dependencies (\code{pyifcb}, \code{phasepack}, \code{scikit-image}, \code{scikit-learn}).
+and its dependencies (a raw-data reader, \code{phasepack}, \code{scikit-image},
+\code{scikit-learn}).
 
-\strong{Python version requirement:} \code{pyifcb} and its dependencies (notably
-\code{h5py}) must be available as binary wheels for your Python version;
-installation will fail if source compilation is required and the build
-environment is incompatible. See
-\url{https://github.com/WHOIGit/ifcb-features} for current Python version
-requirements, and use \code{ifcb_py_install(features = TRUE)} to install into a
-compatible environment.
+\strong{Supported \code{ifcb-features} versions:} raw data is read through whichever
+reader the installed \code{ifcb-features} release provides - \code{ifcbkit} for v1.1.0
+and later, \code{pyifcb} for v1.0.0 and earlier. Both are supported and may be
+installed side by side; set the \code{IRFCB_IFCB_BACKEND} environment variable to
+\code{"ifcbkit"} or \code{"pyifcb"} to force one when both are present. The computed
+features are identical either way, since the feature code is unchanged
+between these releases and the two readers agree on ROI numbering, skipping
+of zero-sized ROIs and pixel data.
+
+\strong{Python version requirement:} \code{ifcb-features} requires Python >= 3.10.
+Installing v1.0.0 or earlier additionally pulls in \code{pyifcb}, which needs a
+binary \code{h5py} wheel (available for Python 3.10-3.13). See
+\url{https://github.com/WHOIGit/ifcb-features} for current requirements, and
+use \code{ifcb_py_install(features = TRUE)} to install into a compatible
+environment.
 
 Bins are processed sequentially by default. When \code{parallel = TRUE}, bins are
 distributed across \code{n_cores} workers, which can substantially reduce runtime

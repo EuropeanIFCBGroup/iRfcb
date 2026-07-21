@@ -21,22 +21,31 @@ ifcb_py_install(
 
 \item{features}{Logical. If \code{TRUE}, additionally installs the WHOI \code{ifcb-features}
 package (\url{https://github.com/WHOIGit/ifcb-features}) from GitHub, together
-with its dependencies (\code{pyifcb}, \code{phasepack}, \code{scikit-image}, \code{scikit-learn}).
+with its dependencies (a raw-data reader, \code{phasepack}, \code{scikit-image},
+\code{scikit-learn}).
 This is required by \code{ifcb_extract_features()}. Default is \code{FALSE} to keep the
 default environment lightweight. When installing into an existing virtual
 environment, the (slow) install is skipped if \code{ifcb-features} already imports
-successfully, unless \code{features_ref} is given.
-Installation requires binary wheels for all of \code{pyifcb}'s dependencies
-(notably \code{h5py}); if no wheel is available for your Python version,
-installation will fail. See \url{https://github.com/WHOIGit/ifcb-features}
-for current Python version requirements.}
+successfully, unless \code{features_ref} is given.}
 
 \item{features_ref}{A character string specifying which git reference (release
 tag, branch, or commit) of \code{ifcb-features} to install when \code{features = TRUE}.
 If \code{NULL} (default), the latest published GitHub release is installed, which
 is more stable than the actively developed default branch. Use
 \code{features_ref = "main"} to install the latest development commit, or a tag
-such as \code{"v1.0.0"} to pin a specific version.}
+such as \code{"v1.0.0"} to pin a specific version.
+
+The choice of reference determines which raw-data reader is installed:
+\code{ifcb-features} v1.1.0 and later depend on \code{ifcbkit}, while v1.0.0 and
+earlier depend on \code{pyifcb}. \code{iRfcb} supports both, so either reference
+works and the two readers may coexist in one environment. The computed
+feature values are identical either way, because the feature code itself is
+unchanged between these releases; only the reader differs.
+
+Note that installing v1.0.0 or earlier pulls in \code{pyifcb}, which requires
+binary wheels for \code{h5py} (available for Python 3.10-3.13). Installation
+fails on Python versions without such a wheel. The \code{ifcbkit}-based
+releases have no such constraint and require only Python >= 3.10.}
 }
 \value{
 No return value. This function is called for its side effect of configuring the Python environment.

@@ -158,3 +158,75 @@ test_that("ifcb_extract_features runs in parallel with n_cores = NULL", {
 
   expect_equal(result$status[result$bin == bin], "processed")
 })
+
+test_that("feature columns are numeric (complex eigenvalues are not written to CSV)", {
+  # ifcb_features derives the ellipse properties from numpy.linalg.eig, which
+  # returns complex eigenvalues from numpy 2.3 onwards. Without the real-part
+  # coercion in extract_slim_features.py, Eccentricity, MajorAxisLength and
+  # MinorAxisLength are written as "(0.79+0j)" strings, silently turning
+  # numeric columns into text.
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  temp_dir <- file.path(tempdir(), "ifcb_extract_features_numeric")
+  unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+
+  bin <- "D20220522T003051_IFCB134"
+  features_folder <- file.path(temp_dir, "features_out")
+
+  ifcb_extract_features(
+    data_folder = file.path(temp_dir, "test_data/data"),
+    features_folder = features_folder,
+    blobs_folder = file.path(temp_dir, "blobs_out"),
+    bins = bin,
+    verbose = FALSE
+  )
+
+  features <- utils::read.csv(
+    file.path(features_folder, paste0(bin, "_features_v4.csv")))
+
+  affected <- c("Eccentricity", "MajorAxisLength", "MinorAxisLength")
+  expect_true(all(affected %in% names(features)))
+  expect_true(all(vapply(features[affected], is.numeric, logical(1))))
+  expect_true(all(vapply(features, is.numeric, logical(1))))
+})
+
+test_that("the raw-data reader supports both ifcb-features backends", {
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  reader <- reticulate::import_from_path(
+    "ifcb_reader",
+    path = system.file("python", package = "iRfcb"),
+    delay_load = FALSE
+  )
+
+  # At least one backend must be present for the other feature tests to run.
+  backends <- reader$available_backends()
+  expect_true(length(backends) > 0)
+  expect_true(all(backends %in% c("ifcbkit", "pyifcb")))
+
+  # An unknown backend is rejected rather than silently ignored.
+  expect_error(reader$open_data_directory(tempdir(), backend = "nonesuch"),
+               "Unknown IFCB raw-data backend")
+
+  temp_dir <- file.path(tempdir(), "ifcb_reader_backends")
+  unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+  data_folder <- file.path(temp_dir, "test_data/data")
+  bin <- "D20220522T003051_IFCB134"
+
+  # Every available backend must find the test bin and agree on its lid.
+  for (backend in backends) {
+    dd <- reader$open_data_directory(data_folder, backend = backend)
+    expect_equal(dd$backend, backend)
+    expect_true(bin %in% dd$list_lids())
+  }
+})

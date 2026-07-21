@@ -16,15 +16,24 @@ utils::globalVariables("bin")
 #' Python and the `ifcb-features` package must be installed to use this function.
 #' The required Python packages can be installed in a virtual environment using
 #' `ifcb_py_install(features = TRUE)`, which additionally installs `ifcb-features`
-#' and its dependencies (`pyifcb`, `phasepack`, `scikit-image`, `scikit-learn`).
+#' and its dependencies (a raw-data reader, `phasepack`, `scikit-image`,
+#' `scikit-learn`).
 #'
-#' **Python version requirement:** `pyifcb` and its dependencies (notably
-#' `h5py`) must be available as binary wheels for your Python version;
-#' installation will fail if source compilation is required and the build
-#' environment is incompatible. See
-#' \url{https://github.com/WHOIGit/ifcb-features} for current Python version
-#' requirements, and use `ifcb_py_install(features = TRUE)` to install into a
-#' compatible environment.
+#' **Supported `ifcb-features` versions:** raw data is read through whichever
+#' reader the installed `ifcb-features` release provides - `ifcbkit` for v1.1.0
+#' and later, `pyifcb` for v1.0.0 and earlier. Both are supported and may be
+#' installed side by side; set the `IRFCB_IFCB_BACKEND` environment variable to
+#' `"ifcbkit"` or `"pyifcb"` to force one when both are present. The computed
+#' features are identical either way, since the feature code is unchanged
+#' between these releases and the two readers agree on ROI numbering, skipping
+#' of zero-sized ROIs and pixel data.
+#'
+#' **Python version requirement:** `ifcb-features` requires Python >= 3.10.
+#' Installing v1.0.0 or earlier additionally pulls in `pyifcb`, which needs a
+#' binary `h5py` wheel (available for Python 3.10-3.13). See
+#' \url{https://github.com/WHOIGit/ifcb-features} for current requirements, and
+#' use `ifcb_py_install(features = TRUE)` to install into a compatible
+#' environment.
 #'
 #' Bins are processed sequentially by default. When `parallel = TRUE`, bins are
 #' distributed across `n_cores` workers, which can substantially reduce runtime
@@ -42,7 +51,7 @@ utils::globalVariables("bin")
 #'
 #' @param data_folder The path to a directory containing raw IFCB data
 #'   (`.roi`, `.adc` and `.hdr` files). The directory is searched recursively by
-#'   `pyifcb`, so nested data structures are supported.
+#'   the raw-data reader, so nested data structures are supported.
 #' @param features_folder The path to the directory where the
 #'   `<bin>_features_v4.csv` files will be written. Created if it does not exist.
 #' @param blobs_folder The path to the directory where the `<bin>_blobs_v4.zip`
@@ -136,24 +145,40 @@ ifcb_extract_features <- function(data_folder,
 
   # Check that the ifcb-features Python packages can be imported. These are
   # installed from GitHub (a VCS install), which `reticulate::py_list_packages()`
-  # does not always report, so we import the module names ('ifcb' from pyifcb and
-  # 'ifcb_features') directly rather than checking the pip distribution names.
-  # Importing also surfaces broken installations (e.g. a numpy/scipy ABI
-  # mismatch), which a simple availability check would silently report as
-  # "missing".
-  for (mod in c("ifcb", "ifcb_features")) {
-    import_error <- tryCatch({
-      reticulate::import(mod, delay_load = FALSE)
-      NULL
-    }, error = function(e) conditionMessage(e))
+  # does not always report, so we import the module names directly rather than
+  # checking the pip distribution names. Importing also surfaces broken
+  # installations (e.g. a numpy/scipy ABI mismatch), which a simple availability
+  # check would silently report as "missing".
+  import_error <- tryCatch({
+    reticulate::import("ifcb_features", delay_load = FALSE)
+    NULL
+  }, error = function(e) conditionMessage(e))
 
-    if (!is.null(import_error)) {
-      cli_abort(c(
-        "The required Python module {.val {mod}} could not be loaded.",
-        "x" = import_error,
-        "i" = "Install or repair the WHOI {.pkg ifcb-features} package with {.code ifcb_py_install(features = TRUE)}."
-      ))
-    }
+  if (!is.null(import_error)) {
+    cli_abort(c(
+      "The required Python module {.val ifcb_features} could not be loaded.",
+      "x" = import_error,
+      "i" = "Install or repair the WHOI {.pkg ifcb-features} package with {.code ifcb_py_install(features = TRUE)}."
+    ))
+  }
+
+  # The raw-data reader depends on the ifcb-features version: releases >= 1.1.0
+  # depend on 'ifcbkit', earlier ones on 'pyifcb' (imported as 'ifcb'). Either
+  # is accepted, so one iRfcb installation works with both.
+  reader_errors <- vapply(c("ifcbkit", "ifcb"), function(mod) {
+    tryCatch({
+      reticulate::import(mod, delay_load = FALSE)
+      NA_character_
+    }, error = function(e) conditionMessage(e))
+  }, character(1))
+
+  if (all(!is.na(reader_errors))) {
+    cli_abort(c(
+      "No IFCB raw-data reader could be loaded.",
+      "x" = "{.val ifcbkit}: {reader_errors[['ifcbkit']]}",
+      "x" = "{.val ifcb}: {reader_errors[['ifcb']]}",
+      "i" = "Install or repair the WHOI {.pkg ifcb-features} package with {.code ifcb_py_install(features = TRUE)}."
+    ))
   }
 
   # Create output directories if needed

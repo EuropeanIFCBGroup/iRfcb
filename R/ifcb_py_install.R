@@ -8,21 +8,30 @@
 #' @param packages A character vector of additional Python packages to install. If NULL (default), only the packages from "requirements.txt" are installed.
 #' @param features Logical. If `TRUE`, additionally installs the WHOI `ifcb-features`
 #'   package (\url{https://github.com/WHOIGit/ifcb-features}) from GitHub, together
-#'   with its dependencies (`pyifcb`, `phasepack`, `scikit-image`, `scikit-learn`).
+#'   with its dependencies (a raw-data reader, `phasepack`, `scikit-image`,
+#'   `scikit-learn`).
 #'   This is required by `ifcb_extract_features()`. Default is `FALSE` to keep the
 #'   default environment lightweight. When installing into an existing virtual
 #'   environment, the (slow) install is skipped if `ifcb-features` already imports
 #'   successfully, unless `features_ref` is given.
-#'   Installation requires binary wheels for all of `pyifcb`'s dependencies
-#'   (notably `h5py`); if no wheel is available for your Python version,
-#'   installation will fail. See \url{https://github.com/WHOIGit/ifcb-features}
-#'   for current Python version requirements.
 #' @param features_ref A character string specifying which git reference (release
 #'   tag, branch, or commit) of `ifcb-features` to install when `features = TRUE`.
 #'   If `NULL` (default), the latest published GitHub release is installed, which
 #'   is more stable than the actively developed default branch. Use
 #'   `features_ref = "main"` to install the latest development commit, or a tag
 #'   such as `"v1.0.0"` to pin a specific version.
+#'
+#'   The choice of reference determines which raw-data reader is installed:
+#'   `ifcb-features` v1.1.0 and later depend on `ifcbkit`, while v1.0.0 and
+#'   earlier depend on `pyifcb`. `iRfcb` supports both, so either reference
+#'   works and the two readers may coexist in one environment. The computed
+#'   feature values are identical either way, because the feature code itself is
+#'   unchanged between these releases; only the reader differs.
+#'
+#'   Note that installing v1.0.0 or earlier pulls in `pyifcb`, which requires
+#'   binary wheels for `h5py` (available for Python 3.10-3.13). Installation
+#'   fails on Python versions without such a wheel. The `ifcbkit`-based
+#'   releases have no such constraint and require only Python >= 3.10.
 #'
 #' @return No return value. This function is called for its side effect of configuring the Python environment.
 #'
@@ -148,9 +157,9 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
             cli_abort(c(
               "Failed to install {.pkg ifcb-features} dependencies from source.",
               "x" = msg,
-              "i" = "A dependency (likely {.pkg h5py}) has no binary wheel for your Python version.",
-              "i" = "Check {.url https://github.com/WHOIGit/ifcb-features} for supported Python versions.",
-              "i" = "You can install a compatible Python version with {.code reticulate::install_python(\"3.12:latest\")}."
+              "i" = "A dependency (likely {.pkg h5py}, required by {.pkg pyifcb}) has no binary wheel for your Python version.",
+              "i" = "{.pkg pyifcb} is only used by {.pkg ifcb-features} v1.0.0 and earlier; newer releases use {.pkg ifcbkit}, which has no such constraint.",
+              "i" = "Install a newer release with {.code ifcb_py_install(features = TRUE)}, or a compatible Python with {.code reticulate::install_python(\"3.12:latest\")}."
             ))
           } else {
             cli_abort(c("Failed to install Python packages.", "x" = msg))

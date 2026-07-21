@@ -26,8 +26,9 @@ if (not_cran) {
   # Install ifcb-features so that ifcb_extract_features() tests can run.
   # ifcb_py_install() skips the install if the module already imports successfully,
   # so repeated test runs do not re-download from GitHub.
-  # Note: requires Python 3.12 in CI (not 3.x/3.13) because h5py (a pyifcb
-  # dependency) only has binary wheels for 3.12; source compilation fails with
-  # numpy 2.x on 3.13.
+  # Note: the default (latest) release reads raw data with ifcbkit, which is
+  # pure Python and needs only Python >= 3.10. Pinning features_ref to v1.0.0 or
+  # earlier would instead pull in pyifcb, which requires a binary h5py wheel and
+  # so constrains the Python version.
   iRfcb::ifcb_py_install(envname = venv_dir, features = TRUE)
 }

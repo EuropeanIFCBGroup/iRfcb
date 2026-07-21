@@ -8,7 +8,10 @@ extract_slim_features.py from https://github.com/WHOIGit/ifcb-features so that:
   * existing outputs are skipped unless overwrite is requested, and
   * bins can be processed in parallel via a process pool (Linux) or a thread
     pool (when ``use_threads`` is set, e.g. on Windows / macOS where an embedded
-    interpreter cannot spawn worker processes).
+    interpreter cannot spawn worker processes), and
+  * raw data is read through the ``ifcb_reader`` adapter, so either the
+    ``ifcbkit`` backend (ifcb-features >= 1.1.0) or the ``pyifcb`` backend
+    (ifcb-features <= 1.0.0) can be used.
 
 It still produces the same per-bin outputs as upstream: a
 ``<lid>_features_v4.csv`` table (30 morphological features per ROI) and a
@@ -28,8 +31,12 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from ifcb import DataDirectory
 from ifcb_features.all import compute_features
+
+# Sibling module, imported at module scope so it resolves while this file's
+# directory is still on sys.path (reticulate's import_from_path puts it there
+# only for the duration of the import).
+from ifcb_reader import open_data_directory
 
 
 def _ensure_module_importable():
@@ -79,6 +86,15 @@ def _ensure_spawn_executable(python_executable=None):
 warnings.filterwarnings("ignore", category=RuntimeWarning,
                         module="ifcb_features")
 
+# Recent scikit-image releases deprecate several functions ifcb_features calls
+# (binary_closing / binary_erosion / binary_dilation, equivalent_diameter),
+# emitting a FutureWarning per ROI. Nothing in iRfcb can act on these - they
+# have to be fixed upstream - and left unfiltered they bury the progress bar.
+# Suppressing them does not hide an eventual removal, which surfaces as an
+# ImportError or AttributeError instead.
+warnings.filterwarnings("ignore", category=FutureWarning,
+                        module="ifcb_features")
+
 # The "slim" feature columns produced by ifcb_features.all.compute_features,
 # in the same order as upstream extract_slim_features.py.
 FEATURE_COLUMNS = [
@@ -115,6 +131,27 @@ FEATURE_COLUMNS = [
 ]
 
 
+def _real_valued(roi_features):
+    """Drop zero imaginary parts from computed feature values.
+
+    ``ifcb_features`` derives the ellipse properties (Eccentricity,
+    MajorAxisLength, MinorAxisLength) from ``numpy.linalg.eig``. For a real
+    symmetric covariance matrix that used to yield real eigenvalues, but from
+    numpy 2.3 onwards eig returns complex ones, so those features arrive as
+    complex numbers whose imaginary part is exactly zero. Written straight to
+    CSV they become "(0.797+0j)" strings, silently turning numeric columns into
+    text. The imaginary part carries no information here, so take the real part.
+
+    Args:
+        roi_features: iterable of (name, value) pairs from compute_features.
+
+    Returns:
+        list: the same pairs with complex values reduced to floats.
+    """
+    return [(name, float(np.real(value)) if np.iscomplexobj(value) else value)
+            for name, value in roi_features]
+
+
 def _output_paths(lid, features_directory, blobs_directory,
                   feature_tag="features"):
     """Return the (features_csv, blobs_zip) output paths for a bin lid.
@@ -137,9 +174,8 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
 
     This is a module-level function so it can be pickled and dispatched to a
     pool worker (a process under ``multiprocessing.Pool``, or a thread under
-    ``ThreadPool``). Each call rebuilds its own ``DataDirectory`` because the
-    pyifcb sample objects are not picklable and to avoid sharing state between
-    workers.
+    ``ThreadPool``). Each call opens its own reader because the underlying
+    bin objects are not picklable and to avoid sharing state between workers.
 
     ``feature_tag`` is forwarded to :func:`_output_paths` to control the
     feature CSV name (e.g. ``"features"`` or ``"fea"``).
@@ -156,8 +192,8 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
                 "message": "outputs already exist"}
 
     try:
-        data_dir = DataDirectory(data_directory)
-        sample = data_dir[bin_name]
+        reader = open_data_directory(data_directory)
+        images = reader.read_images(bin_name)
     except KeyError:
         return {"bin": bin_name, "status": "error",
                 "message": "bin not found in data directory"}
@@ -167,18 +203,18 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     all_features = []
     all_blobs = {}
 
-    for number, image in sample.images.items():
+    for number, image in images.items():
         features = {'roi_number': number}
         try:
             blobs_image, roi_features = compute_features(image)
-            features.update(roi_features)
+            features.update(_real_valued(roi_features))
 
             img_buffer = io.BytesIO()
             Image.fromarray((blobs_image > 0).astype(np.uint8) * 255).save(
                 img_buffer, format="PNG")
             all_blobs[number] = img_buffer.getvalue()
         except Exception as e:  # noqa: BLE001 - skip a bad ROI, keep the rest
-            print(f"Error processing ROI {number} in sample {sample.pid}: {e}")
+            print(f"Error processing ROI {number} in sample {bin_name}: {e}")
 
         all_features.append(features)
 
@@ -206,12 +242,13 @@ def _resolve_bins(data_directory, bins):
     Otherwise the requested bins are filtered against the directory and any
     missing ones are reported back to the caller.
     """
-    data_dir = DataDirectory(data_directory)
+    reader = open_data_directory(data_directory)
+    lids = reader.list_lids()
 
     if not bins:
-        return [sample.lid for sample in data_dir], []
+        return lids, []
 
-    available = {sample.lid for sample in data_dir}
+    available = set(lids)
     requested = [str(b) for b in bins]
     found = [b for b in requested if b in available]
     missing = [b for b in requested if b not in available]
@@ -352,7 +389,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
 
     Args:
         data_directory (str): Path to the raw IFCB data directory (searched
-            recursively by pyifcb's DataDirectory).
+            recursively by the raw-data reader; see ifcb_reader).
         features_directory (str): Directory where ``*_features_v4.csv`` files
             are written. Created if it does not exist.
         blobs_directory (str): Directory where ``*_blobs_v4.zip`` files are
