@@ -45,7 +45,11 @@ unchanged between these releases; only the reader differs.
 Note that installing v1.0.0 or earlier pulls in \code{pyifcb}, which requires
 binary wheels for \code{h5py} (available for Python 3.10-3.13). Installation
 fails on Python versions without such a wheel. The \code{ifcbkit}-based
-releases have no such constraint and require only Python >= 3.10.}
+releases have no such constraint and require only Python >= 3.10.
+
+Whichever reference is used, \code{scikit-image} is constrained to \verb{< 0.28},
+because \code{ifcb-features} calls morphology functions that are scheduled for
+removal in that release.}
 }
 \value{
 No return value. This function is called for its side effect of configuring the Python environment.

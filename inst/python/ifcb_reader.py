@@ -64,8 +64,9 @@ class IfcbkitReader:
         return [self._lid(fileset['pid']) for fileset in self._dd.list()]
 
     def read_images(self, lid):
-        if not self._dd.exists(lid):
-            raise KeyError(lid)
+        # read_images() resolves the fileset itself and raises KeyError for an
+        # unknown bin, so no separate existence check is needed - adding one
+        # would scan the data directory a second time for every bin.
         return self._dd.read_images(lid)
 
 

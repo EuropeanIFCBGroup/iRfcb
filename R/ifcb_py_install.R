@@ -33,6 +33,10 @@
 #'   fails on Python versions without such a wheel. The `ifcbkit`-based
 #'   releases have no such constraint and require only Python >= 3.10.
 #'
+#'   Whichever reference is used, `scikit-image` is constrained to `< 0.28`,
+#'   because `ifcb-features` calls morphology functions that are scheduled for
+#'   removal in that release.
+#'
 #' @return No return value. This function is called for its side effect of configuring the Python environment.
 #'
 #' @details
@@ -100,7 +104,8 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
 
     # Optionally include WHOI's ifcb-features package (installed from GitHub)
     if (features) {
-      packages <- unique(c(packages, resolve_ifcb_features_url(features_ref)))
+      packages <- unique(c(packages, resolve_ifcb_features_url(features_ref),
+                           ifcb_features_constraints()))
     }
 
     # Read required packages from requirements.txt
@@ -142,7 +147,8 @@ ifcb_py_install <- function(envname = "~/.virtualenvs/iRfcb", use_venv = TRUE, p
           "i" = "Set {.arg features_ref} to (re)install a specific version."
         ))
       } else {
-        packages <- unique(c(packages, resolve_ifcb_features_url(features_ref)))
+        packages <- unique(c(packages, resolve_ifcb_features_url(features_ref),
+                             ifcb_features_constraints()))
       }
     }
 
