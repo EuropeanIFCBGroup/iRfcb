@@ -694,6 +694,12 @@ get_latest_github_release <- function(repo) {
 #' upper bound keeps installs working until upstream updates those calls, and
 #' is satisfied by the version the older releases pin.
 #'
+#' Upstream renamed those calls in `ifcb-features` PR #16, merged to main
+#' 2026-07-23 but not yet in a tagged release (the latest release, v1.1.1, still
+#' uses the deprecated names). Once the installed release includes that fix the
+#' bound is no longer needed and can be dropped; it is retained for v1.1.1
+#' compatibility.
+#'
 #' @return Character vector of pip specifiers.
 #' @noRd
 ifcb_features_constraints <- function() {

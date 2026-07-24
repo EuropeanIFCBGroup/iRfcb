@@ -92,6 +92,10 @@ warnings.filterwarnings("ignore", category=RuntimeWarning,
 # have to be fixed upstream - and left unfiltered they bury the progress bar.
 # Suppressing them does not hide an eventual removal, which surfaces as an
 # ImportError or AttributeError instead.
+# Upstream removed these deprecated calls in ifcb-features PR #16, merged to
+# main 2026-07-23 but not yet released (the latest release, v1.1.1, still emits
+# the warnings). The filter is harmless on fixed versions (no such warning is
+# raised), so it stays for v1.1.1 compatibility.
 warnings.filterwarnings("ignore", category=FutureWarning,
                         module="ifcb_features")
 
@@ -141,6 +145,13 @@ def _real_valued(roi_features):
     complex numbers whose imaginary part is exactly zero. Written straight to
     CSV they become "(0.797+0j)" strings, silently turning numeric columns into
     text. The imaginary part carries no information here, so take the real part.
+
+    Upstream fixed this in ifcb-features PR #20 (switch to numpy.linalg.eigh),
+    merged to main 2026-07-23 but not yet in a tagged release; the latest
+    release, v1.1.1, still returns complex values. This coercion is a no-op on
+    fixed versions (values are already real, so np.iscomplexobj is False), so it
+    stays for v1.1.1 compatibility and can be removed once the installed
+    ifcb-features release includes that fix.
 
     Args:
         roi_features: iterable of (name, value) pairs from compute_features.
