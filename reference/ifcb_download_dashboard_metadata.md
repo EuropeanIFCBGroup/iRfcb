@@ -48,7 +48,7 @@ to retrieve list of available bins from the IFCB Dashboard API.
 
   # Print result as tibble
   print(metadata_mvco)
-#> # A tibble: 348,549 × 20
+#> # A tibble: 348,552 × 24
 #>    dataset pid    sample_time          ifcb ml_analyzed latitude longitude depth
 #>    <chr>   <chr>  <dttm>              <dbl>       <dbl>    <dbl>     <dbl> <dbl>
 #>  1 mvco    D2017… 2017-04-14 16:31:47    10        2.57     41.3     -70.6     0
@@ -61,9 +61,10 @@ to retrieve list of available bins from the IFCB Dashboard API.
 #>  8 mvco    D2017… 2017-04-14 19:08:54    10        2.74     41.3     -70.6     0
 #>  9 mvco    D2017… 2017-04-14 19:31:20    10        2.85     41.3     -70.6     0
 #> 10 mvco    D2017… 2017-04-14 19:53:42    10        2.67     41.3     -70.6     0
-#> # ℹ 348,539 more rows
-#> # ℹ 12 more variables: cruise <chr>, cast <lgl>, niskin <lgl>,
+#> # ℹ 348,542 more rows
+#> # ℹ 16 more variables: cruise <chr>, cast <lgl>, niskin <lgl>,
 #> #   sample_type <chr>, n_images <dbl>, tag1 <chr>, tag2 <chr>, tag3 <chr>,
-#> #   tag4 <chr>, comment_summary <chr>, trigger_selection <dbl>, skip <dbl>
+#> #   tag4 <chr>, comment_summary <chr>, trigger_selection <dbl>, skip <dbl>,
+#> #   add_dataset <lgl>, remove_dataset <lgl>, add_tag <lgl>, remove_tag <lgl>
 # }
 ```
