@@ -149,6 +149,50 @@
   `Imports` to `Suggests` (used only as an independent cross-check in
   the test suite).
 - [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  now supports both raw-data readers used by the WHOI
+  [`ifcb-features`](https://github.com/WHOIGit/ifcb-features) package.
+  Release v1.1.0 replaced its `pyifcb` dependency with the much lighter
+  [`ifcbkit`](https://github.com/joefutrelle/ifcbkit), which exposes a
+  different API; `iRfcb` previously required `pyifcb` and therefore
+  failed against v1.1.0 and later. Since
+  `ifcb_py_install(features = TRUE)` installs the latest release by
+  default, this affected new installations. Raw data is now read through
+  an adapter that uses whichever reader is available (`ifcbkit`
+  preferred when both are), so `ifcb-features` v1.0.0 and v1.1.x both
+  work, including with both readers installed in the same environment.
+  Set the `IRFCB_IFCB_BACKEND` environment variable to `"ifcbkit"` or
+  `"pyifcb"` to force a specific reader. Computed features are
+  unaffected by the choice: the `ifcb_features` code is identical
+  between these releases, and the two readers agree on ROI numbering,
+  the skipping of zero-sized ROIs, and pixel data. Note that installing
+  `ifcb-features` v1.1.0 or later no longer pulls in `h5py` (via
+  `pyifcb`), removing the binary-wheel constraint that previously
+  limited which Python versions could be used.
+- Fixed
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  writing non-numeric values into the `Eccentricity`, `MajorAxisLength`
+  and `MinorAxisLength` columns of `<bin>_features_v4.csv`.
+  `ifcb_features` derives these from `numpy.linalg.eig`, which returns
+  complex eigenvalues (with a zero imaginary part) for real symmetric
+  input from `numpy` 2.3 and later; they were written as strings such as
+  `(0.797+0j)`, silently turning three numeric columns into text. The
+  zero imaginary part is now dropped, so the columns are numeric again
+  and the values are unchanged. This only affected environments with
+  `numpy` \>= 2.3, which became reachable when `ifcb-features` v1.1.0
+  dropped the `pyifcb` dependency whose pinned `scipy` had previously
+  capped `numpy`. Feature values and blob masks are otherwise
+  byte-identical across both readers and across old and new
+  `numpy`/`scikit-image`/`scipy` versions.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  no longer emits a `FutureWarning` per region of interest from recent
+  `scikit-image` releases, which had obscured the progress bar.
+  `ifcb_py_install(features = TRUE)` additionally constrains
+  `scikit-image` to `< 0.28`, the release that removes the deprecated
+  morphology functions `ifcb_features` calls; without the bound, a
+  future `scikit-image` release would break `ifcb-features` v1.1.x
+  installs, which (unlike v1.0.0, pinned via `pyifcb`) leave the version
+  unconstrained.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
   gains a `feature_tag` argument to control the feature file naming. The
   default (`"features"`) writes `<bin>_features_v4.csv` as before;
   `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB

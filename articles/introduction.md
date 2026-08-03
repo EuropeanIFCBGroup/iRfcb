@@ -174,8 +174,8 @@ masks for each bin, writing a `<bin>_features_v4.csv` table and a
 `<bin>_blobs_v4.zip` archive to separate, user-specified folders.
 
 This requires the optional `ifcb-features` package, which is installed
-alongside its dependencies (`pyifcb`, `phasepack`, `scikit-image`,
-`scikit-learn`) by passing `features = TRUE` to
+alongside its dependencies (a raw-data reader, `phasepack`,
+`scikit-image`, `scikit-learn`) by passing `features = TRUE` to
 [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md):
 
 ``` r
@@ -183,6 +183,14 @@ alongside its dependencies (`pyifcb`, `phasepack`, `scikit-image`,
 # Install the Python environment including ifcb-features
 ifcb_py_install(features = TRUE)
 ```
+
+By default the latest published `ifcb-features` release is installed.
+Releases from v1.1.0 and later read raw data with
+[`ifcbkit`](https://github.com/joefutrelle/ifcbkit), while v1.0.0 and
+earlier use [`pyifcb`](https://github.com/joefutrelle/pyifcb); `iRfcb`
+supports both, and a specific release can be pinned with `features_ref`
+(e.g. `features_ref = "v1.0.0"`). The computed features are the same
+either way.
 
 Extract features and blobs from all bins found in a data folder.
 Existing outputs are skipped unless `overwrite = TRUE`, so the call can

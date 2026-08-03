@@ -29,8 +29,8 @@ ifcb_extract_features(
 - data_folder:
 
   The path to a directory containing raw IFCB data (`.roi`, `.adc` and
-  `.hdr` files). The directory is searched recursively by `pyifcb`, so
-  nested data structures are supported.
+  `.hdr` files). The directory is searched recursively by the raw-data
+  reader, so nested data structures are supported.
 
 - features_folder:
 
@@ -102,16 +102,25 @@ This function wraps the `extract_slim_features` workflow from the
 Python and the `ifcb-features` package must be installed to use this
 function. The required Python packages can be installed in a virtual
 environment using `ifcb_py_install(features = TRUE)`, which additionally
-installs `ifcb-features` and its dependencies (`pyifcb`, `phasepack`,
-`scikit-image`, `scikit-learn`).
+installs `ifcb-features` and its dependencies (a raw-data reader,
+`phasepack`, `scikit-image`, `scikit-learn`).
 
-**Python version requirement:** `pyifcb` and its dependencies (notably
-`h5py`) must be available as binary wheels for your Python version;
-installation will fail if source compilation is required and the build
-environment is incompatible. See
-<https://github.com/WHOIGit/ifcb-features> for current Python version
-requirements, and use `ifcb_py_install(features = TRUE)` to install into
-a compatible environment.
+**Supported `ifcb-features` versions:** raw data is read through
+whichever reader the installed `ifcb-features` release provides -
+`ifcbkit` for v1.1.0 and later, `pyifcb` for v1.0.0 and earlier. Both
+are supported and may be installed side by side; set the
+`IRFCB_IFCB_BACKEND` environment variable to `"ifcbkit"` or `"pyifcb"`
+to force one when both are present. The computed features are identical
+either way, since the feature code is unchanged between these releases
+and the two readers agree on ROI numbering, skipping of zero-sized ROIs
+and pixel data.
+
+**Python version requirement:** `ifcb-features` requires Python \>=
+3.10. Installing v1.0.0 or earlier additionally pulls in `pyifcb`, which
+needs a binary `h5py` wheel (available for Python 3.10-3.13). See
+<https://github.com/WHOIGit/ifcb-features> for current requirements, and
+use `ifcb_py_install(features = TRUE)` to install into a compatible
+environment.
 
 Bins are processed sequentially by default. When `parallel = TRUE`, bins
 are distributed across `n_cores` workers, which can substantially reduce

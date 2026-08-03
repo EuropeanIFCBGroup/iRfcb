@@ -229,13 +229,20 @@ writing a <code>&lt;bin&gt;_features_v4.csv</code> table and a
 <code>&lt;bin&gt;_blobs_v4.zip</code> archive to separate,
 user-specified folders.</p>
 <p>This requires the optional <code>ifcb-features</code> package, which
-is installed alongside its dependencies (<code>pyifcb</code>,
+is installed alongside its dependencies (a raw-data reader,
 <code>phasepack</code>, <code>scikit-image</code>,
 <code>scikit-learn</code>) by passing <code>features = TRUE</code> to
 <code><a href="../reference/ifcb_py_install.html">ifcb_py_install()</a></code>:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the Python environment including ifcb-features</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>features <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>By default the latest published <code>ifcb-features</code> release is
+installed. Releases from v1.1.0 and later read raw data with <a href="https://github.com/joefutrelle/ifcbkit" class="external-link"><code>ifcbkit</code></a>,
+while v1.0.0 and earlier use <a href="https://github.com/joefutrelle/pyifcb" class="external-link"><code>pyifcb</code></a>;
+<code>iRfcb</code> supports both, and a specific release can be pinned
+with <code>features_ref</code>
+(e.g. <code>features_ref = "v1.0.0"</code>). The computed features are
+the same either way.</p>
 <p>Extract features and blobs from all bins found in a data folder.
 Existing outputs are skipped unless <code>overwrite = TRUE</code>, so
 the call can be re-run to resume an interrupted extraction. Set

@@ -41,17 +41,13 @@ ifcb_py_install(
 
   Logical. If `TRUE`, additionally installs the WHOI `ifcb-features`
   package (<https://github.com/WHOIGit/ifcb-features>) from GitHub,
-  together with its dependencies (`pyifcb`, `phasepack`, `scikit-image`,
-  `scikit-learn`). This is required by
+  together with its dependencies (a raw-data reader, `phasepack`,
+  `scikit-image`, `scikit-learn`). This is required by
   [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md).
   Default is `FALSE` to keep the default environment lightweight. When
   installing into an existing virtual environment, the (slow) install is
   skipped if `ifcb-features` already imports successfully, unless
-  `features_ref` is given. Installation requires binary wheels for all
-  of `pyifcb`'s dependencies (notably `h5py`); if no wheel is available
-  for your Python version, installation will fail. See
-  <https://github.com/WHOIGit/ifcb-features> for current Python version
-  requirements.
+  `features_ref` is given.
 
 - features_ref:
 
@@ -62,6 +58,23 @@ ifcb_py_install(
   default branch. Use `features_ref = "main"` to install the latest
   development commit, or a tag such as `"v1.0.0"` to pin a specific
   version.
+
+  The choice of reference determines which raw-data reader is installed:
+  `ifcb-features` v1.1.0 and later depend on `ifcbkit`, while v1.0.0 and
+  earlier depend on `pyifcb`. `iRfcb` supports both, so either reference
+  works and the two readers may coexist in one environment. The computed
+  feature values are identical either way, because the feature code
+  itself is unchanged between these releases; only the reader differs.
+
+  Note that installing v1.0.0 or earlier pulls in `pyifcb`, which
+  requires binary wheels for `h5py` (available for Python 3.10-3.13).
+  Installation fails on Python versions without such a wheel. The
+  `ifcbkit`-based releases have no such constraint and require only
+  Python \>= 3.10.
+
+  Whichever reference is used, `scikit-image` is constrained to
+  `< 0.28`, because `ifcb-features` calls morphology functions that are
+  scheduled for removal in that release.
 
 ## Value
 
