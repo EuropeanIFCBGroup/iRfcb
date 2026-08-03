@@ -177,12 +177,21 @@ def _real_valued(roi_features):
     so the two implementations agree by construction rather than by
     coincidence.
 
-    ``ifcb_features`` in fact already does the same thing itself: ``summed_attr``
-    builds its blob array with ``np.array(..., dtype=np.float64)``, which casts
-    a complex axis length to its real part (raising a ComplexWarning), so
-    summedMajorAxisLength and summedMinorAxisLength report a degenerate blob as
-    0 on every release. Taking the real part here makes the three per-blob
-    columns agree with the summed ones, which reporting NaN did not.
+    ``ifcb_features`` in fact already does the same thing itself, in exactly the
+    environment this coercion applies to: ``summed_attr`` builds its blob array
+    with ``np.array(..., dtype=np.float64)``, which casts a complex axis length
+    to its real part (raising a ComplexWarning), so on numpy >= 2.3
+    summedMajorAxisLength and summedMinorAxisLength already report a degenerate
+    blob as 0. Taking the real part here makes the three per-blob columns agree
+    with the summed ones, which reporting NaN did not.
+
+    On numpy < 2.3 none of this applies and nothing here changes: eig returns
+    real eigenvalues, the square root of a negative one is a real NaN, and -
+    because np.max and np.min propagate NaN - one degenerate blob makes
+    MajorAxisLength, MinorAxisLength *and* Eccentricity NaN, summed columns
+    included. This function is a no-op there (np.iscomplexobj is False), so that
+    older behaviour is passed through untouched, which is what reproducing an
+    ifcb-features v1.0.0 run relies on.
 
     There is deliberately no ``np.clip`` on the result: a principal square root
     never has a negative real part, so it would be a no-op that only obscured
