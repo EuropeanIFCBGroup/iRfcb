@@ -81,10 +81,10 @@ class without any threshold applied.}
 \item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
 \item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count}
-data stored by the diatom chain counter in \code{.h5}/\code{.csv} classification files and
+data stored by the diatom chain counter in \code{.mat}/\code{.h5}/\code{.csv} classification files and
 adds \code{cell_count} (raw) and \code{cell_count_resolved} (resolved abundance) columns to the
-output. Only supported with automated \code{class_files}; not with manual files,
-\code{.mat} files, or \code{custom_images}. Default: \code{FALSE}.}
+output. Only supported with automated \code{class_files}; not with manual files
+or \code{custom_images}. Default: \code{FALSE}.}
 
 \item{single_cell_values}{Integer vector of \code{cell_count} values that should be treated
 as a single cell when resolving \code{cell_count_resolved}. Default is \code{c(-1, 0)}, i.e. ROIs that

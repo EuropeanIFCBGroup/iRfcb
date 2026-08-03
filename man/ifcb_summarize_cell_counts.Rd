@@ -18,8 +18,10 @@ ifcb_summarize_cell_counts(
 }
 \arguments{
 \item{class_files}{A character vector of full paths to classification files
-(\code{.h5} or \code{.csv}), or a single path to a folder containing such files. Only
-\code{.h5} and \code{.csv} files can carry chain-count data; \code{.mat} files never do.}
+(\code{.mat}, \code{.h5} or \code{.csv}), or a single path to a folder containing such
+files. Any of these file types can carry the optional \code{cell_count} data
+written by the chain counter; files without it are treated as \code{NA} chain
+counts.}
 
 \item{hdr_folder}{(Optional) Path to the folder containing HDR files. Needed
 for calculating cell abundance per liter.}
@@ -46,8 +48,7 @@ searches recursively for classification files. Default is \code{TRUE}.}
 within \code{hdr_folder} (if provided). Default is \code{TRUE}.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a
-Python-based method (\code{SciPy}). Default is \code{FALSE}. Has no effect on chain
-counts, which are only present in \code{.h5}/\code{.csv} files.}
+Python-based method (\code{SciPy}). Default is \code{FALSE}.}
 
 \item{verbose}{Logical. If \code{TRUE}, prints progress messages. Default is \code{TRUE}.}
 }
@@ -61,9 +62,10 @@ are added as \code{n_chains}, \code{mean_chain_length}, \code{median_chain_lengt
 }
 \description{
 Summarizes the optional per-ROI cell-count data produced by the diatom chain
-counter and stored in classification files (\code{.h5} or \code{.csv}). For each sample
-and class it computes the total cell abundance (number of cells, accounting
-for chains) together with a user-selectable set of chain-length statistics.
+counter and stored in classification files (\code{.mat}, \code{.h5} or \code{.csv}). For each
+sample and class it computes the total cell abundance (number of cells,
+accounting for chains) together with a user-selectable set of chain-length
+statistics.
 }
 \details{
 The chain counter stores one integer \code{cell_count} per region of interest
@@ -85,8 +87,8 @@ Chain counting was introduced by Groves et al. (2026), who trained a
 diatom chains imaged by the IFCB. The per-ROI \code{cell_count} data summarized
 here is produced by the \code{ifcb-pytorch-classify} inference pipeline
 (\url{https://github.com/nodc-sweden/ifcb-pytorch-classify}), which writes it
-as an optional dataset in the \code{.h5} classification files alongside the class
-predictions.
+as an optional \code{cell_count} variable in the \code{.mat}, \code{.h5} and \code{.csv}
+classification files alongside the class predictions.
 
 This function derives \code{cell_counts} from every classified ROI. This differs
 from \code{\link[=ifcb_summarize_biovolumes]{ifcb_summarize_biovolumes()}}, which reports \code{cell_counts} only over ROIs

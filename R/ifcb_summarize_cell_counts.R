@@ -3,9 +3,10 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' Summarize Diatom Cell Counts and Chain-Length Statistics from IFCB Data
 #'
 #' Summarizes the optional per-ROI cell-count data produced by the diatom chain
-#' counter and stored in classification files (`.h5` or `.csv`). For each sample
-#' and class it computes the total cell abundance (number of cells, accounting
-#' for chains) together with a user-selectable set of chain-length statistics.
+#' counter and stored in classification files (`.mat`, `.h5` or `.csv`). For each
+#' sample and class it computes the total cell abundance (number of cells,
+#' accounting for chains) together with a user-selectable set of chain-length
+#' statistics.
 #'
 #' The chain counter stores one integer `cell_count` per region of interest
 #' (ROI). The value `-1` marks ROIs of classes that were not configured for chain
@@ -22,8 +23,10 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' to `single_cell_values`.
 #'
 #' @param class_files A character vector of full paths to classification files
-#'   (`.h5` or `.csv`), or a single path to a folder containing such files. Only
-#'   `.h5` and `.csv` files can carry chain-count data; `.mat` files never do.
+#'   (`.mat`, `.h5` or `.csv`), or a single path to a folder containing such
+#'   files. Any of these file types can carry the optional `cell_count` data
+#'   written by the chain counter; files without it are treated as `NA` chain
+#'   counts.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed
 #'   for calculating cell abundance per liter.
 #' @param single_cell_values Integer vector of `cell_count` values that should
@@ -43,8 +46,7 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' @param hdr_recursive Logical. If `TRUE`, searches for HDR files recursively
 #'   within `hdr_folder` (if provided). Default is `TRUE`.
 #' @param use_python Logical. If `TRUE`, attempts to read `.mat` files using a
-#'   Python-based method (`SciPy`). Default is `FALSE`. Has no effect on chain
-#'   counts, which are only present in `.h5`/`.csv` files.
+#'   Python-based method (`SciPy`). Default is `FALSE`.
 #' @param verbose Logical. If `TRUE`, prints progress messages. Default is `TRUE`.
 #'
 #' @return A data frame with one row per sample and class. Columns always include
@@ -60,8 +62,8 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' diatom chains imaged by the IFCB. The per-ROI `cell_count` data summarized
 #' here is produced by the `ifcb-pytorch-classify` inference pipeline
 #' (\url{https://github.com/nodc-sweden/ifcb-pytorch-classify}), which writes it
-#' as an optional dataset in the `.h5` classification files alongside the class
-#' predictions.
+#' as an optional `cell_count` variable in the `.mat`, `.h5` and `.csv`
+#' classification files alongside the class predictions.
 #'
 #' This function derives `cell_counts` from every classified ROI. This differs
 #' from [ifcb_summarize_biovolumes()], which reports `cell_counts` only over ROIs
@@ -106,23 +108,32 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
 
   # Resolve class_files: a single folder path or a vector of file paths
   if (length(class_files) == 1 && dir.exists(class_files)) {
-    class_files <- list.files(class_files, pattern = "\\.(h5|csv)$",
+    class_files <- list.files(class_files, pattern = "\\.(mat|h5|csv)$",
                               recursive = class_recursive, full.names = TRUE)
+    # A directory may hold non-class .csv files (e.g. dashboard class_scores
+    # exports); drop them with a warning rather than failing later.
+    class_files <- drop_invalid_class_csv(class_files)
   }
 
-  # Chain counts only exist in .h5 and .csv files; drop any .mat files
-  class_files <- class_files[tolower(tools::file_ext(class_files)) %in% c("h5", "csv")]
+  # Keep only classification file types that can carry chain-count data
+  class_files <- class_files[tolower(tools::file_ext(class_files)) %in% c("mat", "h5", "csv")]
 
   if (length(class_files) == 0) {
     cli_abort(c(
-      "No {.file .h5} or {.file .csv} classification files found.",
-      "i" = "Chain-count data is only stored in {.file .h5} and {.file .csv} files."
+      "No {.file .mat}, {.file .h5} or {.file .csv} classification files found.",
+      "i" = "Chain-count data is stored in {.file .mat}, {.file .h5} and {.file .csv} files."
     ))
   }
 
   n_files <- length(class_files)
   tb_list <- vector("list", n_files)
   has_chain <- logical(n_files)
+  is_automated <- logical(n_files)
+
+  # Sample names depend only on the file name; compute up front so we can detect
+  # a sample resolving to more than one classification file below.
+  sample_names <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(class_files))
+  sample_names <- sub("\\.csv$", "", sample_names)
 
   if (verbose) {
     cli_progress_bar("Reading classification files", total = n_files)
@@ -138,13 +149,18 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
       read_class_file(class_files[i], use_python = use_python)
     })
 
+    # Skip files that are not automated classifications (e.g. manual .mat
+    # annotation files), which have no per-ROI winning class and cannot carry
+    # chain counts. These are dropped rather than added as junk rows.
+    if (is.null(temp$roinum) || is.null(temp$TBclass_above_threshold)) {
+      next
+    }
+
+    is_automated[i] <- TRUE
     has_chain[i] <- !is.null(temp$cell_count)
 
-    sample_name <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(class_files[i]))
-    sample_name <- sub("\\.csv$", "", sample_name)
-
     tb_list[[i]] <- tibble(
-      sample = sample_name,
+      sample = sample_names[i],
       classifier = temp$classifierName,
       roi_number = temp$roinum,
       class = if (threshold == "opt") {
@@ -158,6 +174,33 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
 
   if (verbose) cli_progress_done()
 
+  n_skipped <- sum(!is_automated)
+  if (n_skipped > 0 && verbose) {
+    cli_warn(c(
+      "{n_skipped} of {n_files} file{?s} {?is/are} not {?an/} automated classification file{?s} and {?was/were} skipped.",
+      "i" = "Chain-count data is only available in automated classification files; manual annotation {.file .mat} files are ignored."
+    ))
+  }
+
+  if (!any(is_automated)) {
+    cli_abort(c(
+      "No automated classification files found.",
+      "i" = "Chain-count data is only stored in automated {.file .mat}, {.file .h5} and {.file .csv} classification files."
+    ))
+  }
+
+  # Guard against the same sample resolving to more than one classification file
+  # (e.g. both a .mat and a .h5 for one sample), which would silently double the
+  # counts when the per-file rows are summed together.
+  automated_samples <- sample_names[is_automated]
+  dup_samples <- unique(automated_samples[duplicated(automated_samples)])
+  if (length(dup_samples) > 0) {
+    cli_abort(c(
+      "{length(dup_samples)} sample{?s} resolve{?s/} to more than one classification file: {.val {dup_samples}}.",
+      "i" = "Supply a single file format per sample (e.g. only {.file .mat} or only {.file .h5}) to avoid double-counting."
+    ))
+  }
+
   if (!any(has_chain)) {
     cli_abort(c(
       "None of the supplied classification files contain chain-count data.",
@@ -165,9 +208,11 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     ))
   }
 
-  if (!all(has_chain) && verbose) {
+  auto_has_chain <- has_chain[is_automated]
+  if (!all(auto_has_chain) && verbose) {
+    n_no_chain <- sum(!auto_has_chain)
     cli_warn(c(
-      "{sum(!has_chain)} of {n_files} classification file{?s} {?does/do} not contain chain-count data.",
+      "{n_no_chain} of {sum(is_automated)} classification file{?s} {?does/do} not contain chain-count data.",
       "i" = "ROIs from {?this file/these files} are treated as {.code NA} chain counts."
     ))
   }

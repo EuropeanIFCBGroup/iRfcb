@@ -784,6 +784,59 @@ resolve_cell_counts <- function(cell_count, single_cell_values = c(-1, 0)) {
   }
   cells
 }
+#' Required columns missing from a `.csv` classification (label) file
+#'
+#' Reads only the header of a `.csv` file and returns the names of the required
+#' ClassiPyR/iRfcb class-file columns (`file_name`, `class_name`) that are absent.
+#' An empty result means the file is a valid class file; a non-empty result names
+#' the missing columns. Unreadable or empty files report both columns missing.
+#'
+#' @param filepath Character. Path to the `.csv` file.
+#'
+#' @return Character vector of missing required column names (empty if valid).
+#'
+#' @noRd
+class_csv_missing_columns <- function(filepath) {
+  header <- tryCatch(
+    colnames(utils::read.csv(filepath, nrows = 0)),
+    error = function(e) character(0)
+  )
+  setdiff(c("file_name", "class_name"), header)
+}
+#' Drop non-class `.csv` files from a list of classification files
+#'
+#' Filters a vector of classification file paths, removing any `.csv` file that is
+#' not a ClassiPyR/iRfcb class (label) file (e.g. an IFCB-Dashboard class_scores
+#' export). `.mat` and `.h5` files pass through untouched. A `cli_warn` names each
+#' skipped file and the columns it is missing. Intended for the folder-listing
+#' path, where a directory may legitimately mix class files with other `.csv`
+#' exports; explicit user-supplied paths are validated (and aborted on) by
+#' [read_class_file()] instead.
+#'
+#' @param class_files Character vector of classification file paths.
+#'
+#' @return The subset of `class_files` that are valid classification files.
+#'
+#' @noRd
+drop_invalid_class_csv <- function(class_files) {
+  is_csv <- tolower(tools::file_ext(class_files)) == "csv"
+  if (!any(is_csv)) {
+    return(class_files)
+  }
+
+  keep <- rep(TRUE, length(class_files))
+  for (i in which(is_csv)) {
+    missing_cols <- class_csv_missing_columns(class_files[i])
+    if (length(missing_cols) > 0) {
+      keep[i] <- FALSE
+      cli_warn(
+        "Skipping {.file {basename(class_files[i])}}: not a ClassiPyR class file (missing {.field {missing_cols}})."
+      )
+    }
+  }
+
+  class_files[keep]
+}
 #' Read Classification File (.mat, .h5, or .csv)
 #'
 #' Reads a `.mat`, `.h5`, or `.csv` classification file and returns a standardized
@@ -807,7 +860,8 @@ resolve_cell_counts <- function(cell_count, single_cell_values = c(-1, 0)) {
 #'   \item{TBclass_above_threshold}{Character vector. Winning class or "unclassified" if below threshold.}
 #'   \item{TBclass_above_adhocthresh}{Character vector or NULL. Adhoc threshold classes (`.mat` only, NULL for `.h5`/`.csv`).}
 #'   \item{cell_count}{Integer vector or NULL. Optional per-ROI cell counts
-#'     produced by the diatom chain counter (`.h5`/`.csv` only). `-1` marks ROIs that
+#'     produced by the diatom chain counter, present in `.mat`, `.h5` or `.csv`
+#'     files that were classified with chain counting enabled. `-1` marks ROIs that
 #'     were not counted, `0` marks ROIs that were counted but where no cells were
 #'     detected, and a positive value is the number of cells in the ROI. `NULL` when
 #'     the file does not contain cell-count data.}
@@ -819,7 +873,25 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
   ext <- tolower(tools::file_ext(filepath))
 
   if (ext == "csv") {
-    csv_data <- utils::read.csv(filepath)
+    csv_data <- tryCatch(utils::read.csv(filepath), error = function(e) NULL)
+
+    # A directory can legitimately hold .csv files that are not ClassiPyR class
+    # (label) files, e.g. the IFCB-Dashboard class_scores export ({sample}_class.csv
+    # with pid + per-class score columns). Fail clearly rather than dereferencing
+    # missing columns and erroring later in the WoRMS lookup. An unreadable/empty
+    # file is treated as missing both required columns.
+    missing_cols <- if (is.null(csv_data)) {
+      c("file_name", "class_name")
+    } else {
+      setdiff(c("file_name", "class_name"), colnames(csv_data))
+    }
+    if (length(missing_cols) > 0) {
+      cli_abort(c(
+        "{.file {basename(filepath)}} is not a ClassiPyR classification file.",
+        "x" = "Missing required column{?s}: {.field {missing_cols}}.",
+        "i" = "A class file must have per-ROI {.field file_name} and {.field class_name} columns."
+      ))
+    }
 
     # Extract ROI numbers from file_name column (e.g. ..._00001.png -> 1)
     roi_numbers <- as.integer(
@@ -933,11 +1005,24 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
   }
 
   # Default: read .mat file
-  if (use_python && scipy_available()) {
+  result <- if (use_python && scipy_available()) {
     ifcb_read_mat(filepath)
   } else {
     read_mat(filepath, fixNames = FALSE)
   }
+
+  # Normalize shapes to match the .h5/.csv branches: MATLAB stores column
+  # vectors as [n, 1] matrices, so flatten roinum and the optional per-ROI
+  # cell_count to plain vectors. Absent fields stay NULL so callers can still
+  # detect the absence of chain-count data.
+  if (!is.null(result$roinum)) {
+    result$roinum <- as.vector(result$roinum)
+  }
+  if (!is.null(result$cell_count)) {
+    result$cell_count <- as.integer(result$cell_count)
+  }
+
+  result
 }
 #' Extract the Class from the First Row of Each worms_records Tibble
 #'

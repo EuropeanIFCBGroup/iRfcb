@@ -40,7 +40,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
-#'   stored by the diatom chain counter in `.h5`/`.csv` classification files and adds
+#'   stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and adds
 #'   `cell_counts` (and `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,
 #'   reporting cell abundance alongside ROI counts. Only supported with automated `class_files`.
 #'   The function aborts if enabled but no classification file contains chain-count data. For

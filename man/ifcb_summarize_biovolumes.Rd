@@ -83,7 +83,7 @@ class without any threshold applied.}
 \item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
 
 \item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count} data
-stored by the diatom chain counter in \code{.h5}/\code{.csv} classification files and adds
+stored by the diatom chain counter in \code{.mat}/\code{.h5}/\code{.csv} classification files and adds
 \code{cell_counts} (and \code{cell_counts_per_liter} when \code{hdr_folder} is supplied) to the output,
 reporting cell abundance alongside ROI counts. Only supported with automated \code{class_files}.
 The function aborts if enabled but no classification file contains chain-count data. For
