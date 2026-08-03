@@ -195,6 +195,63 @@ test_that("feature columns are numeric (complex eigenvalues are not written to C
   expect_true(all(vapply(features, is.numeric, logical(1))))
 })
 
+test_that("a degenerate blob measures zero, as it does with upstream ifcb-features", {
+  # ifcb-features <= v1.1.1 derives the axis lengths as 4 * sqrt(eigenvalue) via
+  # numpy.linalg.eig. A collinear blob can yield a slightly negative eigenvalue,
+  # putting the axis length on the imaginary axis. Upstream (PR #20) guards the
+  # same case by clipping the radicand to zero, so iRfcb must report 0 too:
+  # anything else would make the measurement depend on which ifcb-features
+  # release happens to be installed.
+  #
+  # This exercises _real_valued() directly rather than a whole extraction run,
+  # but still needs ifcb-features installed, because extract_slim_features.py
+  # imports ifcb_features.all at module scope.
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  extract <- reticulate::import_from_path(
+    "extract_slim_features",
+    path = system.file("python", package = "iRfcb"),
+    delay_load = FALSE
+  )
+
+  # _real_valued() takes and returns (name, value) pairs; flatten them to a
+  # named numeric vector so the values can be compared directly.
+  real_valued <- function(python_pairs) {
+    out <- extract$`_real_valued`(reticulate::py_eval(python_pairs, convert = FALSE))
+    stats::setNames(vapply(out, function(pair) pair[[2]], numeric(1)),
+                    vapply(out, function(pair) pair[[1]], character(1)))
+  }
+
+  # What ifcb-features v1.1.1 returns for a collinear blob: a purely imaginary
+  # minor axis, a real major axis carried in a complex type, and a plain float.
+  values <- real_valued(paste0(
+    '[("MinorAxisLength", complex(0, 7.62939453e-06)),',
+    ' ("MajorAxisLength", complex(720.2434592, 0)),',
+    ' ("Eccentricity", complex(1, 0)),',
+    ' ("Area", 42.0)]'
+  ))
+
+  expect_equal(values[["MinorAxisLength"]], 0)   # clipped, not NaN
+  expect_false(is.na(values[["MinorAxisLength"]]))
+  expect_equal(values[["MajorAxisLength"]], 720.2434592)
+  expect_equal(values[["Eccentricity"]], 1)
+  expect_equal(values[["Area"]], 42)             # non-complex, passed through
+
+  # The property that matters for reproducibility: once upstream tags a release
+  # with its fix, the same blob arrives already real and this coercion becomes a
+  # no-op. Both inputs must produce the same output, or upgrading
+  # ifcb-features would silently shift the reported values.
+  expect_equal(
+    real_valued('[("MinorAxisLength", complex(0, 7.62939453e-06))]'),
+    real_valued('[("MinorAxisLength", 0.0)]')
+  )
+})
+
 test_that("the raw-data reader supports both ifcb-features backends", {
   skip_if_no_python()
   skip_if_no_ifcb_features()

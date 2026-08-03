@@ -25,10 +25,11 @@ blob masks (one PNG per ROI). Passing ``feature_tag="fea"`` renames the feature
 table to ``<lid>_fea_v4.csv``, the name the IFCB Dashboard looks for; the blob
 archive name is unaffected.
 
-Feature values match upstream except where upstream would emit a complex number:
-a zero imaginary part is dropped, and a genuinely imaginary value (possible for
-a degenerate blob whose covariance yields a slightly negative eigenvalue) is
-written as NaN rather than silently truncated to its real part.
+Feature values match upstream. Where ifcb-features returns a complex number -
+it does from numpy 2.3 onwards - the real part is taken, which reproduces the
+clip-to-zero guard upstream applies to the same degenerate case (see
+``_real_valued``), so a given blob measures the same whichever ifcb-features
+release is installed.
 """
 
 import argparse
@@ -148,54 +149,64 @@ FEATURE_COLUMNS = [
 ]
 
 
-#: Largest imaginary part, relative to the real part, still treated as numerical
-#: noise from the eigendecomposition rather than a genuinely complex result.
-_IMAG_TOL = 1e-12
-
-
 def _real_valued(roi_features):
-    """Drop zero imaginary parts from computed feature values.
+    """Reduce complex feature values to the real numbers upstream reports.
 
     ``ifcb_features`` derives the ellipse properties (Eccentricity,
     MajorAxisLength, MinorAxisLength) from ``numpy.linalg.eig``. For a real
     symmetric covariance matrix that used to yield real eigenvalues, but from
-    numpy 2.3 onwards eig returns complex ones, so those features arrive as
-    complex numbers whose imaginary part is exactly zero. Written straight to
-    CSV they become "(0.797+0j)" strings, silently turning numeric columns into
-    text. Where the imaginary part is numerical noise it carries no information,
-    so the real part is taken.
+    numpy 2.3 onwards eig returns complex ones, so those three features arrive
+    as complex numbers. Written straight to CSV they become "(0.797+0j)"
+    strings, silently turning numeric columns into text. They are the only
+    complex columns: Orientation comes from a separate ``explicit_orientation``
+    routine, and the ``summed*`` variants are already real (see below).
 
-    The imaginary part is *not* always zero, though. ``ellipse_properties``
-    computes ``L = 4 * sqrt(eVal)``, and for a degenerate (near-collinear) blob
-    ``np.cov`` can yield a tiny negative eigenvalue, making the axis length
-    purely imaginary. Taking the real part there would report
-    ``MinorAxisLength = 0.0`` - a plausible measurement that silently corrupts
-    downstream size-spectrum and biovolume aggregation - where a real-valued
-    sqrt would have produced NaN. Such values are returned as NaN instead, which
-    is filterable downstream.
+    Taking the real part reproduces what upstream reports in both of the cases
+    that arise. ``ellipse_properties`` computes ``L = 4 * sqrt(eVal)``:
 
-    Upstream fixed this in ifcb-features PR #20 (switch to numpy.linalg.eigh),
-    merged to main 2026-07-23 but not yet in a tagged release; the latest
-    release, v1.1.1, still returns complex values. This coercion is a no-op on
-    fixed versions (values are already real, so np.iscomplexobj is False), so it
-    stays for v1.1.1 compatibility and can be removed once the installed
-    ifcb-features release includes that fix.
+      * A non-negative eigenvalue gives a real square root carried in a complex
+        type, with an imaginary part of exactly zero, so the real part is the
+        value itself.
+      * A degenerate (collinear) blob can make ``np.cov`` return a slightly
+        negative eigenvalue, and on the principal branch
+        ``sqrt(-x) = 0 + i*sqrt(x)``, whose real part is exactly 0.0 - the same
+        value upstream obtains by clipping the radicand,
+        ``4 * sqrt(np.clip(eVal, 0, None))``.
+
+    That is, ``real(sqrt(z)) == sqrt(clip(z, 0, None))`` for every real ``z``,
+    so the two implementations agree by construction rather than by
+    coincidence.
+
+    ``ifcb_features`` in fact already does the same thing itself: ``summed_attr``
+    builds its blob array with ``np.array(..., dtype=np.float64)``, which casts
+    a complex axis length to its real part (raising a ComplexWarning), so
+    summedMajorAxisLength and summedMinorAxisLength report a degenerate blob as
+    0 on every release. Taking the real part here makes the three per-blob
+    columns agree with the summed ones, which reporting NaN did not.
+
+    There is deliberately no ``np.clip`` on the result: a principal square root
+    never has a negative real part, so it would be a no-op that only obscured
+    the argument above. Equally deliberately, a large imaginary part is not
+    special-cased - upstream has no such guard, and adding one would reinstate
+    the version-dependent divergence this avoids.
+
+    Upstream made the clip explicit in ifcb-features PR #20 (switching to
+    numpy.linalg.eigh, whose eigenvalues of a symmetric matrix are real by
+    construction), merged to main 2026-07-23 but not yet in a tagged release;
+    the latest release, v1.1.1, still returns complex values. This coercion is
+    a no-op on fixed versions (values are already real, so np.iscomplexobj is
+    False), so iRfcb reports the same numbers whichever release is installed.
 
     Args:
         roi_features: iterable of (name, value) pairs from compute_features.
 
     Returns:
-        list: the same pairs with complex values reduced to floats, or to NaN
-        where the imaginary part is genuine.
+        list: the same pairs with complex values reduced to floats.
     """
     out = []
     for name, value in roi_features:
         if np.iscomplexobj(value):
-            real, imag = float(np.real(value)), float(np.imag(value))
-            if abs(imag) <= _IMAG_TOL * max(1.0, abs(real)):
-                value = real
-            else:
-                value = float("nan")
+            value = float(np.real(value))
         out.append((name, value))
     return out
 
