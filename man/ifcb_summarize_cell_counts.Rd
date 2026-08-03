@@ -59,6 +59,11 @@ A data frame with one row per sample and class. Columns always include
 are added as \code{n_chains}, \code{mean_chain_length}, \code{median_chain_length},
 \code{max_chain_length}, and/or \code{sd_chain_length}. When \code{hdr_folder} is provided,
 \code{ml_analyzed} and \code{cell_counts_per_liter} are also returned.
+
+\code{cell_counts} is \code{NA} for a sample whose classification file carries no
+\code{cell_count} data, since the cell total is unknown there. It is not
+reported as \code{0}, which would be indistinguishable from a taxon that was
+genuinely absent. \code{counts} is unaffected and still reports the ROIs.
 }
 \description{
 Summarizes the optional per-ROI cell-count data produced by the diatom chain

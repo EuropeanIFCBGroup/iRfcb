@@ -24,9 +24,13 @@
 #'   The choice of reference determines which raw-data reader is installed:
 #'   `ifcb-features` v1.1.0 and later depend on `ifcbkit`, while v1.0.0 and
 #'   earlier depend on `pyifcb`. `iRfcb` supports both, so either reference
-#'   works and the two readers may coexist in one environment. The computed
-#'   feature values are identical either way, because the feature code itself is
-#'   unchanged between these releases; only the reader differs.
+#'   works and the two readers may coexist in one environment. The feature code
+#'   itself is unchanged between these releases, so the choice does not affect
+#'   how a region of interest is measured, and for the D-style bins produced by
+#'   current instruments the two readers agree. They differ for older I-style
+#'   bins, which `ifcbkit` stitches and `pyifcb` does not, and on ROIs with a
+#'   zero height; see [ifcb_extract_features()], whose `backend` argument pins a
+#'   reader when both are installed.
 #'
 #'   Note that installing v1.0.0 or earlier pulls in `pyifcb`, which requires
 #'   binary wheels for `h5py` (available for Python 3.10-3.13). Installation

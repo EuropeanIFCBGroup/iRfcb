@@ -22,11 +22,19 @@ utils::globalVariables("bin")
 #' **Supported `ifcb-features` versions:** raw data is read through whichever
 #' reader the installed `ifcb-features` release provides - `ifcbkit` for v1.1.0
 #' and later, `pyifcb` for v1.0.0 and earlier. Both are supported and may be
-#' installed side by side; set the `IRFCB_IFCB_BACKEND` environment variable to
-#' `"ifcbkit"` or `"pyifcb"` to force one when both are present. The computed
-#' features are identical either way, since the feature code is unchanged
-#' between these releases and the two readers agree on ROI numbering, skipping
-#' of zero-sized ROIs and pixel data.
+#' installed side by side, with `ifcbkit` preferred when both are present. Use
+#' the `backend` argument (or the `IRFCB_IFCB_BACKEND` environment variable) to
+#' force a particular reader.
+#'
+#' The feature code itself is unchanged between these releases, so the choice of
+#' reader does not affect how a region of interest is measured. The readers do
+#' not agree in every case, however: `pyifcb` skips a ROI whose recorded width is
+#' zero, while `ifcbkit` skips one whose width *or* height is zero, and `ifcbkit`
+#' additionally stitches overlapping ROI pairs in older I-style bins, which
+#' `pyifcb` returns separately. For the D-style bins produced by current
+#' instruments the two agree on ROI numbering and pixel data, and outputs are
+#' interchangeable; for I-style data, pin a reader with `backend` if you need
+#' results comparable to an earlier run.
 #'
 #' **Python version requirement:** `ifcb-features` requires Python >= 3.10.
 #' Installing v1.0.0 or earlier additionally pulls in `pyifcb`, which needs a
@@ -76,6 +84,11 @@ utils::globalVariables("bin")
 #'   the output is destined for an IFCB Dashboard instance; remember the dataset
 #'   directory there must be registered with product version 4 to match the
 #'   `_v4` suffix. The blob archive name (`<bin>_blobs_v4.zip`) is unaffected.
+#' @param backend An optional string forcing the raw-data reader, either
+#'   `"ifcbkit"` or `"pyifcb"`. If `NULL` (default), the `IRFCB_IFCB_BACKEND`
+#'   environment variable is used when set, otherwise the preferred available
+#'   reader (`ifcbkit` when both are installed). See Details for the cases in
+#'   which the two readers differ.
 #' @param verbose A logical indicating whether to print progress messages,
 #'   including a progress bar that advances as each bin is processed.
 #'   Default is `TRUE`.
@@ -128,9 +141,20 @@ ifcb_extract_features <- function(data_folder,
                                   n_cores = NULL,
                                   overwrite = FALSE,
                                   feature_tag = c("features", "fea"),
+                                  backend = NULL,
                                   verbose = TRUE) {
 
   feature_tag <- match.arg(feature_tag)
+  # Fall back to the environment variable, read here rather than in Python:
+  # Python snapshots os.environ at interpreter start, so a Sys.setenv() call
+  # made from R after Python has initialised would never reach it.
+  if (is.null(backend)) {
+    env_backend <- Sys.getenv("IRFCB_IFCB_BACKEND", unset = "")
+    if (nzchar(env_backend)) backend <- env_backend
+  }
+  if (!is.null(backend)) {
+    backend <- match.arg(backend, c("ifcbkit", "pyifcb"))
+  }
 
   if (!dir.exists(data_folder)) {
     cli_abort("{.arg data_folder} does not exist: {.file {data_folder}}")
@@ -219,7 +243,8 @@ ifcb_extract_features <- function(data_folder,
     # large directories, so we show a message immediately and pass the resolved
     # list into ParallelExtractor to avoid a second scan.
     if (verbose) cli_alert_info("Scanning data directory...")
-    bin_info <- py_mod$list_bins(as.character(data_folder), bins = py_bins)
+    bin_info <- py_mod$list_bins(as.character(data_folder), bins = py_bins,
+                                 backend = backend)
     n_bins <- length(bin_info$found)
     pb <- NULL
     if (verbose && n_bins > 0) {
@@ -246,7 +271,8 @@ ifcb_extract_features <- function(data_folder,
       missing_bins       = as.list(bin_info$missing),
       python_executable  = reticulate::py_exe(),
       use_threads        = use_threads,
-      feature_tag        = feature_tag
+      feature_tag        = feature_tag,
+      backend            = backend
     )
     on.exit(try(extractor$terminate(), silent = TRUE), add = TRUE)
 
@@ -272,7 +298,8 @@ ifcb_extract_features <- function(data_folder,
     pb <- NULL
     progress_cb <- NULL
     if (verbose) {
-      n_bins <- length(py_mod$list_bins(as.character(data_folder), bins = py_bins)$found)
+      n_bins <- length(py_mod$list_bins(as.character(data_folder), bins = py_bins,
+                                        backend = backend)$found)
       if (n_bins > 0) {
         pb <- cli_progress_bar("Extracting features and blobs", total = n_bins)
         progress_cb <- function(done, total) {
@@ -289,7 +316,8 @@ ifcb_extract_features <- function(data_folder,
       overwrite = overwrite,
       num_workers = 1L,
       progress = progress_cb,
-      feature_tag = feature_tag
+      feature_tag = feature_tag,
+      backend = backend
     )
 
     if (!is.null(pb)) cli_progress_done(id = pb)

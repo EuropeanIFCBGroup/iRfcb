@@ -374,10 +374,12 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
             "i" = "Re-run classification with chain counting enabled to produce a {.code cell_count} dataset."
           ))
         }
-        if (!all(has_chain) && verbose) {
+        # Not gated on `verbose`: this reports a data-integrity condition that
+        # changes the returned numbers, not progress.
+        if (!all(has_chain)) {
           cli_warn(c(
-            "{sum(!has_chain)} of {n_files} classification file{?s} {?does/do} not contain chain-count data.",
-            "i" = "ROIs from {?this file/these files} are treated as {.code NA} chain counts."
+            "{sum(!has_chain)} of {n_files} classification file{?s} {qty(sum(!has_chain))}{?does/do} not contain chain-count data.",
+            "i" = "ROIs from {qty(sum(!has_chain))}{?this file/these files} are treated as {.code NA} chain counts, so {.field cell_counts} is {.code NA} for the affected samples."
           ))
         }
       }

@@ -133,6 +133,7 @@ classlist
 classpath
 classxxxx
 collectionCode
+collinear
 coordinateUncertaintyInMeters
 csv
 cytobot
@@ -201,6 +202,7 @@ se
 selectable
 smhi
 spp
+structs
 subfolder
 subfolders
 subpath
@@ -208,9 +210,11 @@ summarization
 taxonomical
 tibble
 tibbles
+traceback
 trophic
 ug
 unannotated
+unhandled
 unselect
 venv
 verbatimIdentification

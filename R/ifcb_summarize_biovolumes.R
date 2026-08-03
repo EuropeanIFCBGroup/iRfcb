@@ -66,7 +66,9 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
 #'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
 #'   abundance columns 'cell_counts' (and 'cell_counts_per_liter' when `hdr_folder` is provided) are
-#'   also included.
+#'   also included. `cell_counts` is `NA` for a sample whose classification file carries no
+#'   `cell_count` data, since the cell total is unknown there; it is not reported as `0`, which
+#'   would be indistinguishable from a taxon that was genuinely absent.
 #'
 #' @details This function performs the following steps:
 #' \enumerate{
@@ -170,7 +172,12 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
   biovolume_aggregated <- biovolumes %>%
     group_by(sample, classifier, class) %>%
     summarise(counts = n(),
-              cell_counts = if (use_cell_counts) sum(cell_count_resolved, na.rm = TRUE) else NA_real_,
+              # ROIs from a file without a `cell_count` dataset carry NA. Summing
+              # them with na.rm = TRUE would report 0 cells for a taxon present
+              # in the images, so the group total is reported as NA instead.
+              cell_counts = if (!use_cell_counts) NA_real_
+                            else if (any(is.na(cell_count_resolved))) NA_real_
+                            else sum(cell_count_resolved),
               biovolume_mm3 = sum(biovolume_um3 * 10^-9, na.rm = TRUE),  # Convert from um3 to mm3
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug
               .groups = 'drop')

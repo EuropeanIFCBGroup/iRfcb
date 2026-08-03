@@ -77,14 +77,18 @@ for full compatibility with \code{ifcb-analysis}.
 }
 \examples{
 \donttest{
-ifcb_download_dashboard_data(
-  dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
-  samples = "IFCB1_2014_188_222013",
-  file_types = c("blobs", "autoclass"),
-  dest_dir = tempdir(),
-  convert_filenames = FALSE,
-  convert_adc = FALSE,
-  quiet = TRUE
+# Requires an internet connection and a reachable dashboard; wrapped in try()
+# so the example degrades gracefully when the service is unavailable.
+try(
+  ifcb_download_dashboard_data(
+    dashboard_url = "https://ifcb-data.whoi.edu/mvco/",
+    samples = "IFCB1_2014_188_222013",
+    file_types = c("blobs", "autoclass"),
+    dest_dir = tempdir(),
+    convert_filenames = FALSE,
+    convert_adc = FALSE,
+    quiet = TRUE
+  )
 )
 }
 

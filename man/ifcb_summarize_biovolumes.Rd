@@ -116,7 +116,9 @@ A data frame summarizing aggregated biovolume and carbon content per class per s
 Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
 'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When \code{use_cell_counts = TRUE}, the cell
 abundance columns 'cell_counts' (and 'cell_counts_per_liter' when \code{hdr_folder} is provided) are
-also included.
+also included. \code{cell_counts} is \code{NA} for a sample whose classification file carries no
+\code{cell_count} data, since the cell total is unknown there; it is not reported as \code{0}, which
+would be indistinguishable from a taxon that was genuinely absent.
 }
 \description{
 This function calculates aggregated biovolumes and carbon content from Imaging FlowCytobot (IFCB)
