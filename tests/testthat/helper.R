@@ -115,8 +115,12 @@ skip_if_no_ifcb_features <- function() {
   if (!reticulate::py_available(initialize = TRUE)) {
     testthat::skip("Python not available for testing")
   }
-  if (!reticulate::py_module_available("ifcb_features") ||
-      !reticulate::py_module_available("ifcb")) {
+  # The raw-data reader is 'ifcbkit' for ifcb-features >= 1.1.0 and 'ifcb'
+  # (pyifcb) for earlier releases; either is enough to run the tests.
+  has_reader <- reticulate::py_module_available("ifcbkit") ||
+    reticulate::py_module_available("ifcb")
+
+  if (!reticulate::py_module_available("ifcb_features") || !has_reader) {
     testthat::skip("ifcb-features not available for testing")
   }
 }
