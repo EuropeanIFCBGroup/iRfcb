@@ -5,17 +5,30 @@ reticulate (see ifcb_extract_features()). It adapts the upstream
 extract_slim_features.py from https://github.com/WHOIGit/ifcb-features so that:
 
   * features and blobs are written to separate, user-specified directories,
-  * existing outputs are skipped unless overwrite is requested, and
+  * existing outputs are skipped unless overwrite is requested,
   * bins can be processed in parallel via a process pool (Linux) or a thread
     pool (when ``use_threads`` is set, e.g. on Windows / macOS where an embedded
-    interpreter cannot spawn worker processes), and
+    interpreter cannot spawn worker processes),
   * raw data is read through the ``ifcb_reader`` adapter, so either the
     ``ifcbkit`` backend (ifcb-features >= 1.1.0) or the ``pyifcb`` backend
-    (ifcb-features <= 1.0.0) can be used.
+    (ifcb-features <= 1.0.0) can be used; ``backend`` forces one when both are
+    installed,
+  * a bin that cannot be read is reported as a per-bin error rather than
+    aborting the run, so one corrupt file does not discard the results of every
+    bin already processed, and
+  * complex feature values are reduced to real numbers before being written
+    (see ``_real_valued``), keeping the ellipse columns numeric on numpy >= 2.3.
 
-It still produces the same per-bin outputs as upstream: a
-``<lid>_features_v4.csv`` table (30 morphological features per ROI) and a
-``<lid>_blobs_v4.zip`` archive of 1-bit blob masks (one PNG per ROI).
+Per-bin outputs are the upstream pair: a ``<lid>_features_v4.csv`` table (30
+morphological features per ROI) and a ``<lid>_blobs_v4.zip`` archive of 1-bit
+blob masks (one PNG per ROI). Passing ``feature_tag="fea"`` renames the feature
+table to ``<lid>_fea_v4.csv``, the name the IFCB Dashboard looks for; the blob
+archive name is unaffected.
+
+Feature values match upstream except where upstream would emit a complex number:
+a zero imaginary part is dropped, and a genuinely imaginary value (possible for
+a degenerate blob whose covariance yields a slightly negative eigenvalue) is
+written as NaN rather than silently truncated to its real part.
 """
 
 import argparse
