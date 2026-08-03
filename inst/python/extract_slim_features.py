@@ -135,11 +135,6 @@ FEATURE_COLUMNS = [
 ]
 
 
-#: Largest imaginary part, relative to the real part, still treated as numerical
-#: noise from the eigendecomposition rather than a genuinely complex result.
-_IMAG_TOL = 1e-12
-
-
 def _real_valued(roi_features):
     """Drop zero imaginary parts from computed feature values.
 
@@ -149,17 +144,7 @@ def _real_valued(roi_features):
     numpy 2.3 onwards eig returns complex ones, so those features arrive as
     complex numbers whose imaginary part is exactly zero. Written straight to
     CSV they become "(0.797+0j)" strings, silently turning numeric columns into
-    text. Where the imaginary part is numerical noise it carries no information,
-    so the real part is taken.
-
-    The imaginary part is *not* always zero, though. ``ellipse_properties``
-    computes ``L = 4 * sqrt(eVal)``, and for a degenerate (near-collinear) blob
-    ``np.cov`` can yield a tiny negative eigenvalue, making the axis length
-    purely imaginary. Taking the real part there would report
-    ``MinorAxisLength = 0.0`` - a plausible measurement that silently corrupts
-    downstream size-spectrum and biovolume aggregation - where a real-valued
-    sqrt would have produced NaN. Such values are returned as NaN instead, which
-    is filterable downstream.
+    text. The imaginary part carries no information here, so take the real part.
 
     Upstream fixed this in ifcb-features PR #20 (switch to numpy.linalg.eigh),
     merged to main 2026-07-23 but not yet in a tagged release; the latest
@@ -172,19 +157,10 @@ def _real_valued(roi_features):
         roi_features: iterable of (name, value) pairs from compute_features.
 
     Returns:
-        list: the same pairs with complex values reduced to floats, or to NaN
-        where the imaginary part is genuine.
+        list: the same pairs with complex values reduced to floats.
     """
-    out = []
-    for name, value in roi_features:
-        if np.iscomplexobj(value):
-            real, imag = float(np.real(value)), float(np.imag(value))
-            if abs(imag) <= _IMAG_TOL * max(1.0, abs(real)):
-                value = real
-            else:
-                value = float("nan")
-        out.append((name, value))
-    return out
+    return [(name, float(np.real(value)) if np.iscomplexobj(value) else value)
+            for name, value in roi_features]
 
 
 def _output_paths(lid, features_directory, blobs_directory,
@@ -204,7 +180,7 @@ def _output_paths(lid, features_directory, blobs_directory,
 
 
 def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
-                 overwrite, feature_tag="features", backend=None):
+                 overwrite, feature_tag="features"):
     """Extract features and blobs for a single bin.
 
     This is a module-level function so it can be pickled and dispatched to a
@@ -213,8 +189,7 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     bin objects are not picklable and to avoid sharing state between workers.
 
     ``feature_tag`` is forwarded to :func:`_output_paths` to control the
-    feature CSV name (e.g. ``"features"`` or ``"fea"``). ``backend`` forces a
-    particular raw-data reader; see :func:`ifcb_reader.open_data_directory`.
+    feature CSV name (e.g. ``"features"`` or ``"fea"``).
 
     Returns a dict with keys ``bin``, ``status`` ("processed", "skipped" or
     "error") and ``message``.
@@ -227,11 +202,8 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
         return {"bin": bin_name, "status": "skipped",
                 "message": "outputs already exist"}
 
-    # Resolving the bin and iterating its images fail in different ways and are
-    # kept apart so each can be reported accurately: only an unresolvable bin is
-    # "not found".
     try:
-        reader = open_data_directory(data_directory, backend=backend)
+        reader = open_data_directory(data_directory)
         images = reader.read_images(bin_name)
     except KeyError:
         return {"bin": bin_name, "status": "error",
@@ -239,20 +211,10 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     except Exception as e:  # noqa: BLE001 - report any access failure to R
         return {"bin": bin_name, "status": "error", "message": str(e)}
 
-    try:
-        # pyifcb's Mapping yields images lazily, so a corrupt or truncated .roi
-        # raises from the *iteration*, not from read_images(). Materialising the
-        # pairs here keeps that failure inside a try block; otherwise it escapes
-        # as an unhandled traceback and, in sequential mode, discards the
-        # results of every bin already processed.
-        image_items = list(images.items())
-    except Exception as e:  # noqa: BLE001 - a bad bin must not abort the run
-        return {"bin": bin_name, "status": "error", "message": str(e)}
-
     all_features = []
     all_blobs = {}
 
-    for number, image in image_items:
+    for number, image in images.items():
         features = {'roi_number': number}
         try:
             blobs_image, roi_features = compute_features(image)
@@ -284,15 +246,14 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     return {"bin": bin_name, "status": "processed", "message": ""}
 
 
-def _resolve_bins(data_directory, bins, backend=None):
+def _resolve_bins(data_directory, bins):
     """Return the list of bin lids to process.
 
     When ``bins`` is None, every bin in the data directory is returned.
     Otherwise the requested bins are filtered against the directory and any
-    missing ones are reported back to the caller. ``backend`` forces a
-    particular raw-data reader.
+    missing ones are reported back to the caller.
     """
-    reader = open_data_directory(data_directory, backend=backend)
+    reader = open_data_directory(data_directory)
     lids = reader.list_lids()
 
     if not bins:
@@ -305,22 +266,20 @@ def _resolve_bins(data_directory, bins, backend=None):
     return found, missing
 
 
-def list_bins(data_directory, bins=None, backend=None):
+def list_bins(data_directory, bins=None):
     """Return the bins that would be processed for the given inputs.
 
     Args:
         data_directory (str): Path to the raw IFCB data directory.
         bins (list, optional): Bin lids to restrict to. If None, all bins are
             listed.
-        backend (str, optional): Force a specific raw-data reader, ``"ifcbkit"``
-            or ``"pyifcb"``.
 
     Returns:
         dict: ``{"found": [...], "missing": [...]}`` where ``found`` are the bin
         lids present in the data directory and ``missing`` are any requested bins
         that were not found.
     """
-    found, missing = _resolve_bins(data_directory, bins, backend=backend)
+    found, missing = _resolve_bins(data_directory, bins)
     return {"found": found, "missing": missing}
 
 
@@ -355,7 +314,7 @@ class ParallelExtractor:
     def __init__(self, data_directory, features_directory, blobs_directory,
                  bins=None, overwrite=False, num_workers=2,
                  found_bins=None, missing_bins=None, python_executable=None,
-                 use_threads=False, feature_tag="features", backend=None):
+                 use_threads=False, feature_tag="features"):
         os.makedirs(features_directory, exist_ok=True)
         os.makedirs(blobs_directory, exist_ok=True)
 
@@ -371,8 +330,7 @@ class ParallelExtractor:
             bin_names = [str(b) for b in found_bins]
             self.missing = [str(b) for b in (missing_bins or [])]
         else:
-            bin_names, self.missing = _resolve_bins(data_directory, bins,
-                                                    backend=backend)
+            bin_names, self.missing = _resolve_bins(data_directory, bins)
         self.total = len(bin_names)
 
         if use_threads:
@@ -395,7 +353,7 @@ class ParallelExtractor:
             (bin_name, self.pool.apply_async(
                 _process_bin,
                 (data_directory, features_directory, blobs_directory,
-                 bin_name, overwrite, feature_tag, backend)))
+                 bin_name, overwrite, feature_tag)))
             for bin_name in bin_names
         ]
 
@@ -437,7 +395,7 @@ class ParallelExtractor:
 def extract_features(data_directory, features_directory, blobs_directory,
                      bins=None, overwrite=False, num_workers=1, progress=None,
                      python_executable=None, use_threads=False,
-                     feature_tag="features", backend=None):
+                     feature_tag="features"):
     """Extract slim features and blobs for IFCB bins.
 
     Args:
@@ -470,8 +428,6 @@ def extract_features(data_directory, features_directory, blobs_directory,
             ``<lid>_features_v4.csv``; ``"fea"`` writes ``<lid>_fea_v4.csv``,
             the name served by the IFCB Dashboard. Blob archive names are
             unaffected.
-        backend (str, optional): Force a specific raw-data reader, ``"ifcbkit"``
-            or ``"pyifcb"``. If None, the preferred available reader is used.
 
     Returns:
         list[dict]: One result dict per bin with keys ``bin``, ``status`` and
@@ -480,7 +436,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
     os.makedirs(features_directory, exist_ok=True)
     os.makedirs(blobs_directory, exist_ok=True)
 
-    bin_names, missing = _resolve_bins(data_directory, bins, backend=backend)
+    bin_names, missing = _resolve_bins(data_directory, bins)
 
     results = [{"bin": b, "status": "error",
                 "message": "bin not found in data directory"}
@@ -500,7 +456,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
         for bin_name in bin_names:
             results.append(_process_bin(data_directory, features_directory,
                                         blobs_directory, bin_name, overwrite,
-                                        feature_tag, backend))
+                                        feature_tag))
             _report()
     else:
         # Delegate to ParallelExtractor and poll it to completion. On any
@@ -511,8 +467,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
                                       num_workers,
                                       python_executable=python_executable,
                                       use_threads=use_threads,
-                                      feature_tag=feature_tag,
-                                      backend=backend)
+                                      feature_tag=feature_tag)
         try:
             while extractor.remaining() > 0:
                 for result in extractor.poll():

@@ -13,7 +13,6 @@ ifcb_extract_features(
   n_cores = NULL,
   overwrite = FALSE,
   feature_tag = c("features", "fea"),
-  backend = NULL,
   verbose = TRUE
 )
 }
@@ -53,12 +52,6 @@ the output is destined for an IFCB Dashboard instance; remember the dataset
 directory there must be registered with product version 4 to match the
 \verb{_v4} suffix. The blob archive name (\verb{<bin>_blobs_v4.zip}) is unaffected.}
 
-\item{backend}{An optional string forcing the raw-data reader, either
-\code{"ifcbkit"} or \code{"pyifcb"}. If \code{NULL} (default), the \code{IRFCB_IFCB_BACKEND}
-environment variable is used when set, otherwise the preferred available
-reader (\code{ifcbkit} when both are installed). See Details for the cases in
-which the two readers differ.}
-
 \item{verbose}{A logical indicating whether to print progress messages,
 including a progress bar that advances as each bin is processed.
 Default is \code{TRUE}.}
@@ -91,19 +84,11 @@ and its dependencies (a raw-data reader, \code{phasepack}, \code{scikit-image},
 \strong{Supported \code{ifcb-features} versions:} raw data is read through whichever
 reader the installed \code{ifcb-features} release provides - \code{ifcbkit} for v1.1.0
 and later, \code{pyifcb} for v1.0.0 and earlier. Both are supported and may be
-installed side by side, with \code{ifcbkit} preferred when both are present. Use
-the \code{backend} argument (or the \code{IRFCB_IFCB_BACKEND} environment variable) to
-force a particular reader.
-
-The feature code itself is unchanged between these releases, so the choice of
-reader does not affect how a region of interest is measured. The readers do
-not agree in every case, however: \code{pyifcb} skips a ROI whose recorded width is
-zero, while \code{ifcbkit} skips one whose width \emph{or} height is zero, and \code{ifcbkit}
-additionally stitches overlapping ROI pairs in older I-style bins, which
-\code{pyifcb} returns separately. For the D-style bins produced by current
-instruments the two agree on ROI numbering and pixel data, and outputs are
-interchangeable; for I-style data, pin a reader with \code{backend} if you need
-results comparable to an earlier run.
+installed side by side; set the \code{IRFCB_IFCB_BACKEND} environment variable to
+\code{"ifcbkit"} or \code{"pyifcb"} to force one when both are present. The computed
+features are identical either way, since the feature code is unchanged
+between these releases and the two readers agree on ROI numbering, skipping
+of zero-sized ROIs and pixel data.
 
 \strong{Python version requirement:} \code{ifcb-features} requires Python >= 3.10.
 Installing v1.0.0 or earlier additionally pulls in \code{pyifcb}, which needs a

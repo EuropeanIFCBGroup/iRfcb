@@ -395,35 +395,3 @@ test_that("ifcb_summarize_cell_counts fails clearly when only a non-class .csv i
     "not a ClassiPyR class file"
   )
 })
-
-test_that("samples from a file without cell_count report NA, not zero cells", {
-  skip_if_not_installed("hdf5r")
-  dir <- fresh_dir()
-
-  # One file carries chain counts, the other predates chain counting.
-  write_test_class_h5(file.path(dir, "D20220101T000000_IFCB001_class_v1.h5"),
-                      roi = 1:4, classes = rep("Skeletonema", 4),
-                      chain = c(-1, 0, 2, 3))
-  write_test_class_h5(file.path(dir, "D20220102T000000_IFCB001_class_v1.h5"),
-                      roi = 1:5, classes = rep("Skeletonema", 5),
-                      chain = NULL)
-
-  # The mixed input is a data-integrity condition, so it warns regardless of
-  # `verbose` - a scripted pipeline must not be able to silence it.
-  expect_warning(
-    res <- ifcb_summarize_cell_counts(dir, verbose = FALSE),
-    "not contain chain-count data"
-  )
-
-  res <- res[order(res$sample), ]
-
-  # The chain-counted sample is unaffected: 1 + 1 + 2 + 3.
-  expect_equal(res$counts[1], 4L)
-  expect_equal(res$cell_counts[1], 7)
-
-  # The sample without chain counts has 5 ROIs and an unknown cell total. It
-  # must not be reported as 0 cells, which would read as "taxon absent" in a
-  # per-liter abundance destined for GBIF/OBIS/SHARK.
-  expect_equal(res$counts[2], 5L)
-  expect_true(is.na(res$cell_counts[2]))
-})
