@@ -33,7 +33,7 @@ researchers using, or partly using, the MATLAB
 - **Image Extraction**: Tools to extract and prepare images for
   publication.
 - **Image Classification**: Functions to classify IFCB images through a
-  CNN model served by a [Gradio](https://www.gradio.app/) application.
+  CNN model served by a [Gradio](https://gradio.app/) application.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data
   and calculating biomass concentration from image data.
 

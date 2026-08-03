@@ -9,7 +9,7 @@ Alternatively, users can opt to use the system Python instead of creating a virt
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,9 +103,13 @@ such as <code>"v1.0.0"</code> to pin a specific version.</p>
 <p>The choice of reference determines which raw-data reader is installed:
 <code>ifcb-features</code> v1.1.0 and later depend on <code>ifcbkit</code>, while v1.0.0 and
 earlier depend on <code>pyifcb</code>. <code>iRfcb</code> supports both, so either reference
-works and the two readers may coexist in one environment. The computed
-feature values are identical either way, because the feature code itself is
-unchanged between these releases; only the reader differs.</p>
+works and the two readers may coexist in one environment. The feature code
+itself is unchanged between these releases, so the choice does not affect
+how a region of interest is measured, and for the D-style bins produced by
+current instruments the two readers agree. They differ for older I-style
+bins, which <code>ifcbkit</code> stitches and <code>pyifcb</code> does not, and on ROIs with a
+zero height; see <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code>, whose <code>backend</code> argument pins a
+reader when both are installed.</p>
 <p>Note that installing v1.0.0 or earlier pulls in <code>pyifcb</code>, which requires
 binary wheels for <code>h5py</code> (available for Python 3.10-3.13). Installation
 fails on Python versions without such a wheel. The <code>ifcbkit</code>-based

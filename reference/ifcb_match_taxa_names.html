@@ -17,7 +17,7 @@ It retries the operation if an error occurs, up to a specified number of attempt
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -129,15 +129,19 @@ The fuzzy argument is no longer available</p></dd>
 <span class="r-in"><span><span class="co"># Example: Retrieve WoRMS records for a list of taxa names</span></span></span>
 <span class="r-in"><span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Calanus finmarchicus"</span>, <span class="st">"Thalassiosira pseudonana"</span>, <span class="st">"Phaeodactylum tricornutum"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Call the function</span></span></span>
-<span class="r-in"><span><span class="va">records</span> <span class="op">&lt;-</span> <span class="fu">ifcb_match_taxa_names</span><span class="op">(</span>taxa_names <span class="op">=</span> <span class="va">taxa</span>,</span></span>
-<span class="r-in"><span>                                 max_retries <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>                                 sleep_time <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                                 marine_only <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>                                 verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Requires an internet connection to the WoRMS API; wrapped in try() so the</span></span></span>
+<span class="r-in"><span><span class="co"># example degrades gracefully when the service is unavailable.</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Call the function</span></span></span>
+<span class="r-in"><span>  <span class="va">records</span> <span class="op">&lt;-</span> <span class="fu">ifcb_match_taxa_names</span><span class="op">(</span>taxa_names <span class="op">=</span> <span class="va">taxa</span>,</span></span>
+<span class="r-in"><span>                                   max_retries <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                                   sleep_time <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>                                   marine_only <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                                   verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Print records as tibble</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">records</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Print records as tibble</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">records</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 29</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name  AphiaID url   scientificname authority status unacceptreason taxonRankID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>

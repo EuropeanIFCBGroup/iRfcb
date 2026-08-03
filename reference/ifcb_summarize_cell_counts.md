@@ -87,6 +87,11 @@ statistics are added as `n_chains`, `mean_chain_length`,
 When `hdr_folder` is provided, `ml_analyzed` and `cell_counts_per_liter`
 are also returned.
 
+`cell_counts` is `NA` for a sample whose classification file carries no
+`cell_count` data, since the cell total is unknown there. It is not
+reported as `0`, which would be indistinguishable from a taxon that was
+genuinely absent. `counts` is unaffected and still reports the ROIs.
+
 ## Details
 
 The chain counter stores one integer `cell_count` per region of interest
