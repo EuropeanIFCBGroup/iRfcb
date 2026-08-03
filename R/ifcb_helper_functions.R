@@ -832,7 +832,7 @@ class_csv_missing_columns <- function(filepath) {
 #' skipped file and the columns it is missing. Intended for the folder-listing
 #' path, where a directory may legitimately mix class files with other `.csv`
 #' exports; explicit user-supplied paths are validated (and aborted on) by
-#' [read_class_file()] instead.
+#' `read_class_file()` instead.
 #'
 #' @param class_files Character vector of classification file paths.
 #'
