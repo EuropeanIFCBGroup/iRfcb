@@ -96,12 +96,8 @@ classification, including any `diatom_include` override).
 # Example taxa
 taxa_list <- c("Nitzschia_sp", "Chaetoceros_sp", "Dinophysis_norvegica", "Thalassiosira_sp")
 
-# Requires an internet connection to the WoRMS API; wrapped in try() so the
-# example degrades gracefully when the service is unavailable.
-try({
-  res <- ifcb_is_diatom(taxa_list)
-  print(res)
-})
+res <- ifcb_is_diatom(taxa_list)
+print(res)
 #> [1]  TRUE  TRUE FALSE  TRUE
 # }
 ```

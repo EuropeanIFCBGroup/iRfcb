@@ -41,17 +41,13 @@ to retrieve list of available bins from the IFCB Dashboard API.
 
 ``` r
 # \donttest{
-  # Requires an internet connection and a reachable dashboard; wrapped in
-  # try() so the example degrades gracefully when the service is unavailable.
-  try({
-    # Download metadata for a specific dataset
-    metadata_mvco <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/",
-                                                      dataset_name = "mvco",
-                                                      quiet = TRUE)
+  # Download metadata for a specific dataset
+  metadata_mvco <- ifcb_download_dashboard_metadata("https://ifcb-data.whoi.edu/",
+                                                    dataset_name = "mvco",
+                                                    quiet = TRUE)
 
-    # Print result as tibble
-    print(metadata_mvco)
-  })
+  # Print result as tibble
+  print(metadata_mvco)
 #> # A tibble: 348,552 × 24
 #>    dataset pid    sample_time          ifcb ml_analyzed latitude longitude depth
 #>    <chr>   <chr>  <dttm>              <dbl>       <dbl>    <dbl>     <dbl> <dbl>

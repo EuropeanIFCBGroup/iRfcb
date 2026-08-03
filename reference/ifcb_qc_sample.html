@@ -15,7 +15,7 @@ base name: a header (.hdr), an ADC table (.adc), and the raw image data
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -99,9 +99,9 @@ when <code>sample</code> is given as bare sample names. Searched recursively.</p
 <dd><p>Optional fixed upper bound (in millilitres) for a plausible
 analyzed volume, applied to every sample. Default <code>NULL</code> derives the ceiling
 per sample from the header syringe volume (<code>SyringeSampleVolume</code>, falling
-back to <code>syringeSize</code>, then the 5 mL IFCB standard when neither is present
-or the reported volume is not positive) scaled by <code>volume_tolerance</code>. Set
-this only to override that instrument-reported value.</p></dd>
+back to <code>syringeSize</code>, then the 5 mL IFCB standard) scaled by
+<code>volume_tolerance</code>. Set this only to override that instrument-reported
+value.</p></dd>
 
 
 <dt id="arg-volume-tolerance">volume_tolerance<a class="anchor" aria-label="anchor" href="#arg-volume-tolerance"></a></dt>
@@ -205,11 +205,9 @@ three are only evaluated when their threshold is supplied; otherwise they are
 given sample is reported as <code>NA</code> and treated as <em>not applicable</em>: it does not
 fail <code>qc_pass</code>. This matters for legacy IFCB headers, which omit the
 post-run <code>roiCount</code> summary field (so <code>roi_count_match</code> is <code>NA</code>); such samples
-can still pass on the checks that do apply. It also applies to a sample that
-never triggered, where no volume can be computed and <code>volume_ok</code> is <code>NA</code>
-rather than <code>FALSE</code> (<code>is_empty</code> reports the condition instead). Only a check
-that actually evaluates to <code>FALSE</code> fails the sample. <code>files_complete</code> is
-always <code>TRUE</code>/<code>FALSE</code> (never <code>NA</code>) and so always counts.</p>
+can still pass on the checks that do apply. Only a check that actually
+evaluates to <code>FALSE</code> fails the sample. <code>files_complete</code> and <code>volume_ok</code> are
+always <code>TRUE</code>/<code>FALSE</code> (never <code>NA</code>) and so always count.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

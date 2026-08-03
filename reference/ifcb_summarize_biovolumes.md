@@ -194,10 +194,7 @@ class per sample. Columns include 'sample', 'classifier', 'class',
 'biovolume_mm3', 'carbon_ug', 'ml_analyzed', 'biovolume_mm3_per_liter',
 and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
 abundance columns 'cell_counts' (and 'cell_counts_per_liter' when
-`hdr_folder` is provided) are also included. `cell_counts` is `NA` for a
-sample whose classification file carries no `cell_count` data, since the
-cell total is unknown there; it is not reported as `0`, which would be
-indistinguishable from a taxon that was genuinely absent.
+`hdr_folder` is provided) are also included.
 
 ## Details
 

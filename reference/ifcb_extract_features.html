@@ -17,7 +17,7 @@ ROI). Features and blobs are written to separate, user-specified directories.'><
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,6 @@ ROI). Features and blobs are written to separate, user-specified directories.</p
 <span>  n_cores <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_tag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"features"</span>, <span class="st">"fea"</span><span class="op">)</span>,</span>
-<span>  backend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -138,14 +137,6 @@ directory there must be registered with product version 4 to match the
 <code>_v4</code> suffix. The blob archive name (<code>&lt;bin&gt;_blobs_v4.zip</code>) is unaffected.</p></dd>
 
 
-<dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
-<dd><p>An optional string forcing the raw-data reader, either
-<code>"ifcbkit"</code> or <code>"pyifcb"</code>. If <code>NULL</code> (default), the <code>IRFCB_IFCB_BACKEND</code>
-environment variable is used when set, otherwise the preferred available
-reader (<code>ifcbkit</code> when both are installed). See Details for the cases in
-which the two readers differ.</p></dd>
-
-
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>A logical indicating whether to print progress messages,
 including a progress bar that advances as each bin is processed.
@@ -172,18 +163,11 @@ and its dependencies (a raw-data reader, <code>phasepack</code>, <code>scikit-im
 <p><strong>Supported <code>ifcb-features</code> versions:</strong> raw data is read through whichever
 reader the installed <code>ifcb-features</code> release provides - <code>ifcbkit</code> for v1.1.0
 and later, <code>pyifcb</code> for v1.0.0 and earlier. Both are supported and may be
-installed side by side, with <code>ifcbkit</code> preferred when both are present. Use
-the <code>backend</code> argument (or the <code>IRFCB_IFCB_BACKEND</code> environment variable) to
-force a particular reader.</p>
-<p>The feature code itself is unchanged between these releases, so the choice of
-reader does not affect how a region of interest is measured. The readers do
-not agree in every case, however: <code>pyifcb</code> skips a ROI whose recorded width is
-zero, while <code>ifcbkit</code> skips one whose width <em>or</em> height is zero, and <code>ifcbkit</code>
-additionally stitches overlapping ROI pairs in older I-style bins, which
-<code>pyifcb</code> returns separately. For the D-style bins produced by current
-instruments the two agree on ROI numbering and pixel data, and outputs are
-interchangeable; for I-style data, pin a reader with <code>backend</code> if you need
-results comparable to an earlier run.</p>
+installed side by side; set the <code>IRFCB_IFCB_BACKEND</code> environment variable to
+<code>"ifcbkit"</code> or <code>"pyifcb"</code> to force one when both are present. The computed
+features are identical either way, since the feature code is unchanged
+between these releases and the two readers agree on ROI numbering, skipping
+of zero-sized ROIs and pixel data.</p>
 <p><strong>Python version requirement:</strong> <code>ifcb-features</code> requires Python &gt;= 3.10.
 Installing v1.0.0 or earlier additionally pulls in <code>pyifcb</code>, which needs a
 binary <code>h5py</code> wheel (available for Python 3.10-3.13). See

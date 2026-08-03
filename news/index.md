@@ -1,7 +1,7 @@
 # News
 
 - [Version
-  0.10](https://europeanifcbgroup.github.io/iRfcb/news/news-0.10.md)
+  dev](https://europeanifcbgroup.github.io/iRfcb/news/news-dev.md)
 - [Version
   0.9](https://europeanifcbgroup.github.io/iRfcb/news/news-0.9.md)
 - [Version

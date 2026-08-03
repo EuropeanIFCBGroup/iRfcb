@@ -186,16 +186,11 @@ ifcb_py_install(features = TRUE)
 
 By default the latest published `ifcb-features` release is installed.
 Releases from v1.1.0 and later read raw data with
-[`ifcbkit`](https://github.com/WHOIGit/ifcbkit), while v1.0.0 and
+[`ifcbkit`](https://github.com/joefutrelle/ifcbkit), while v1.0.0 and
 earlier use [`pyifcb`](https://github.com/joefutrelle/pyifcb); `iRfcb`
 supports both, and a specific release can be pinned with `features_ref`
-(e.g. `features_ref = "v1.0.0"`). The feature code is unchanged between
-these releases, so the choice does not affect how a region of interest
-is measured, and the two readers agree for the D-style bins produced by
-current instruments. They differ for older I-style bins, where `ifcbkit`
-stitches overlapping region-of-interest pairs that `pyifcb` returns
-separately; `ifcb_extract_features(backend = ...)` pins a reader when
-both are installed.
+(e.g. `features_ref = "v1.0.0"`). The computed features are the same
+either way.
 
 Extract features and blobs from all bins found in a data folder.
 Existing outputs are skipped unless `overwrite = TRUE`, so the call can
@@ -331,7 +326,7 @@ please see the `vignette("image-export-tutorial")` and
 ## Classify IFCB Images
 
 IFCB images can be classified directly in R using a CNN model served by
-a [Gradio](https://gradio.app/) application. By default, the
+a [Gradio](https://www.gradio.app/) application. By default, the
 classification functions use an instance hosted on the SciLifeLab Serve
 platform (`https://ifcb.serve.scilifelab.se`). A free example Space is
 also available on Hugging Face (`https://irfcb-classify.hf.space`); it

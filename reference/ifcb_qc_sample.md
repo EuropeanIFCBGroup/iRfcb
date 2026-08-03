@@ -42,8 +42,7 @@ ifcb_qc_sample(
   Optional fixed upper bound (in millilitres) for a plausible analyzed
   volume, applied to every sample. Default `NULL` derives the ceiling
   per sample from the header syringe volume (`SyringeSampleVolume`,
-  falling back to `syringeSize`, then the 5 mL IFCB standard when
-  neither is present or the reported volume is not positive) scaled by
+  falling back to `syringeSize`, then the 5 mL IFCB standard) scaled by
   `volume_tolerance`. Set this only to override that instrument-reported
   value.
 
@@ -157,12 +156,10 @@ their threshold is supplied; otherwise they are `NA`. The measured
 a given sample is reported as `NA` and treated as *not applicable*: it
 does not fail `qc_pass`. This matters for legacy IFCB headers, which
 omit the post-run `roiCount` summary field (so `roi_count_match` is
-`NA`); such samples can still pass on the checks that do apply. It also
-applies to a sample that never triggered, where no volume can be
-computed and `volume_ok` is `NA` rather than `FALSE` (`is_empty` reports
-the condition instead). Only a check that actually evaluates to `FALSE`
-fails the sample. `files_complete` is always `TRUE`/`FALSE` (never `NA`)
-and so always counts.
+`NA`); such samples can still pass on the checks that do apply. Only a
+check that actually evaluates to `FALSE` fails the sample.
+`files_complete` and `volume_ok` are always `TRUE`/`FALSE` (never `NA`)
+and so always count.
 
 ## References
 

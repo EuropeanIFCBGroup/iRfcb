@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -237,18 +237,12 @@ is installed alongside its dependencies (a raw-data reader,
 <code class="sourceCode R"><span><span class="co"># Install the Python environment including ifcb-features</span></span>
 <span><span class="fu"><a href="../reference/ifcb_py_install.html">ifcb_py_install</a></span><span class="op">(</span>features <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>By default the latest published <code>ifcb-features</code> release is
-installed. Releases from v1.1.0 and later read raw data with <a href="https://github.com/WHOIGit/ifcbkit" class="external-link"><code>ifcbkit</code></a>,
+installed. Releases from v1.1.0 and later read raw data with <a href="https://github.com/joefutrelle/ifcbkit" class="external-link"><code>ifcbkit</code></a>,
 while v1.0.0 and earlier use <a href="https://github.com/joefutrelle/pyifcb" class="external-link"><code>pyifcb</code></a>;
 <code>iRfcb</code> supports both, and a specific release can be pinned
 with <code>features_ref</code>
-(e.g. <code>features_ref = "v1.0.0"</code>). The feature code is
-unchanged between these releases, so the choice does not affect how a
-region of interest is measured, and the two readers agree for the
-D-style bins produced by current instruments. They differ for older
-I-style bins, where <code>ifcbkit</code> stitches overlapping
-region-of-interest pairs that <code>pyifcb</code> returns separately;
-<code>ifcb_extract_features(backend = ...)</code> pins a reader when
-both are installed.</p>
+(e.g. <code>features_ref = "v1.0.0"</code>). The computed features are
+the same either way.</p>
 <p>Extract features and blobs from all bins found in a data folder.
 Existing outputs are skipped unless <code>overwrite = TRUE</code>, so
 the call can be re-run to resume an interrupted extraction. Set
@@ -366,10 +360,11 @@ please see the <code>vignette("image-export-tutorial")</code> and
 <h2 id="classify-ifcb-images">Classify IFCB Images<a class="anchor" aria-label="anchor" href="#classify-ifcb-images"></a>
 </h2>
 <p>IFCB images can be classified directly in R using a CNN model served
-by a <a href="https://gradio.app/" class="external-link">Gradio</a> application. By default,
-the classification functions use an instance hosted on the SciLifeLab
-Serve platform (<code>https://ifcb.serve.scilifelab.se</code>). A free
-example Space is also available on Hugging Face
+by a <a href="https://www.gradio.app/" class="external-link">Gradio</a> application. By
+default, the classification functions use an instance hosted on the
+SciLifeLab Serve platform
+(<code>https://ifcb.serve.scilifelab.se</code>). A free example Space is
+also available on Hugging Face
 (<code>https://irfcb-classify.hf.space</code>); it has limited resources
 and is intended for testing and demonstration purposes. For large-scale
 or production classification, we recommend deploying your own instance
