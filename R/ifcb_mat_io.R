@@ -38,9 +38,40 @@
 
 # ---- MAT-file array class codes ----
 .MX_CELL   <- 1L
+.MX_STRUCT <- 2L
+.MX_OBJECT <- 3L
 .MX_CHAR   <- 4L
+.MX_SPARSE <- 5L
 .MX_DOUBLE <- 6L
 .MX_UINT16 <- 11L
+
+# Array classes the reader can decode. Anything else (struct, object, sparse,
+# function handle) must be rejected rather than fall through to the numeric
+# branch, which would read an unrelated subelement as data and return a
+# plausible-looking number. That matters because callers such as
+# ifcb_adjust_classes() write the parsed variables straight back over the
+# original file.
+.MX_SUPPORTED <- c(
+  .MX_CELL, .MX_CHAR, .MX_DOUBLE,
+  7L,  # mxSINGLE
+  8L,  # mxINT8
+  9L,  # mxUINT8
+  10L, # mxINT16
+  .MX_UINT16,
+  12L, # mxINT32
+  13L  # mxUINT32
+)
+
+# Human-readable names for the classes we refuse, used in the error message.
+.MX_CLASS_NAMES <- c(
+  "2" = "struct", "3" = "object", "5" = "sparse",
+  "14" = "int64", "15" = "uint64", "16" = "function handle"
+)
+
+# Array-flags bits (second byte of the flags word).
+.MX_FLAG_LOGICAL <- 0x02L
+.MX_FLAG_GLOBAL  <- 0x04L
+.MX_FLAG_COMPLEX <- 0x08L
 
 # =============================================================================
 # Writer
@@ -272,17 +303,36 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
 # Handles both the regular and "small data element" tag formats.
 # Returns list(type, data, next_off).
 .read_element <- function(raw, off) {
+  # Out-of-range raw subsetting yields 00 bytes rather than an error, so every
+  # read has to be bounds-checked explicitly; otherwise a truncated file is
+  # silently zero-filled and those zeros are written back as real data.
+  .need <- function(last) {
+    if (last > length(raw)) {
+      cli::cli_abort(c(
+        "Malformed or truncated MAT-file element.",
+        "i" = "Needed {last} byte{?s} but the element data ends at {length(raw)}."
+      ))
+    }
+  }
+
+  .need(off + 3L)
   tag4 <- readBin(raw[off:(off + 3L)], "integer", size = 4L, endian = "little")
   nbytes_small <- bitwShiftR(tag4, 16L)
   if (nbytes_small != 0L) {
     # small data element: low 16 bits = type, high 16 bits = byte count
     type <- bitwAnd(tag4, 0xFFFFL)
     nb <- nbytes_small
+    .need(off + 3L + nb)
     data <- if (nb > 0L) raw[(off + 4L):(off + 3L + nb)] else raw(0)
     list(type = type, data = data, next_off = off + 8L)
   } else {
     type <- tag4
+    .need(off + 7L)
     nb <- readBin(raw[(off + 4L):(off + 7L)], "integer", size = 4L, endian = "little")
+    if (is.na(nb) || nb < 0L) {
+      cli::cli_abort("Malformed MAT-file element: invalid byte count {.val {nb}}.")
+    }
+    .need(off + 7L + nb)
     data <- if (nb > 0L) raw[(off + 8L):(off + 7L + nb)] else raw(0)
     pad <- (8L - (nb %% 8L)) %% 8L
     list(type = type, data = data, next_off = off + 8L + nb + pad)
@@ -352,8 +402,9 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
   off <- 1L
 
   flags_el <- .read_element(body, off); off <- flags_el$next_off
-  class_code <- bitwAnd(
-    readBin(flags_el$data[1:4], "integer", size = 4L, endian = "little"), 0xFFL)
+  flags_word <- readBin(flags_el$data[1:4], "integer", size = 4L, endian = "little")
+  class_code <- bitwAnd(flags_word, 0xFFL)
+  flag_bits <- bitwAnd(bitwShiftR(flags_word, 8L), 0xFFL)
 
   dims_el <- .read_element(body, off); off <- dims_el$next_off
   dims <- readBin(dims_el$data, "integer", n = length(dims_el$data) %/% 4L,
@@ -361,6 +412,35 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
 
   name_el <- .read_element(body, off); off <- name_el$next_off
   name <- if (length(name_el$data) == 0L) "" else rawToChar(name_el$data)
+
+  # Refuse anything we cannot represent faithfully. Decoding these as numeric
+  # would silently replace the variable with unrelated bytes, and callers write
+  # the result back over the source file.
+  if (!class_code %in% .MX_SUPPORTED) {
+    label <- .MX_CLASS_NAMES[[as.character(class_code)]]
+    cli::cli_abort(c(
+      "Unsupported MATLAB array class {.val {class_code}}{if (!is.null(label)) paste0(' (', label, ')') else ''} in variable {.val {name}}.",
+      "i" = "Cell arrays of strings, character arrays and numeric arrays are supported; structs, objects, sparse and 64-bit integer arrays are not."
+    ))
+  }
+  if (bitwAnd(flag_bits, .MX_FLAG_COMPLEX) != 0L) {
+    cli::cli_abort(c(
+      "Variable {.val {name}} is a complex array, which is not supported.",
+      "i" = "Reading it would silently discard the imaginary part."
+    ))
+  }
+  if (bitwAnd(flag_bits, .MX_FLAG_LOGICAL) != 0L) {
+    cli::cli_abort(c(
+      "Variable {.val {name}} is a logical array, which is not supported.",
+      "i" = "Reading it would demote it to {.code uint8}, breaking logical indexing in MATLAB."
+    ))
+  }
+  if (length(dims) > 2L) {
+    cli::cli_abort(c(
+      "Variable {.val {name}} has {length(dims)} dimensions; only 2-D arrays are supported.",
+      "i" = "Reading it would silently keep only the first two dimensions."
+    ))
+  }
 
   spec <- if (class_code == .MX_CELL) {
     nel <- prod(dims)
@@ -384,6 +464,15 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     cm <- matrix(strs, nrow = dims[1], ncol = if (length(dims) > 1) dims[2] else 1L)
     mat_var_cell(cm)
   } else if (class_code == .MX_CHAR) {
+    # A char array is held as one string, so only the 1xN (and empty) forms
+    # round-trip. A multi-row array would be flattened in column-major order
+    # and rewritten as a single row.
+    if (length(dims) > 1L && dims[1] > 1L) {
+      cli::cli_abort(c(
+        "Variable {.val {name}} is a {dims[1]}x{dims[2]} character array; only single-row character arrays are supported.",
+        "i" = "Reading it would flatten and transpose the rows into one string."
+      ))
+    }
     data_el <- .read_element(body, off)
     mat_var_char(.decode_char(data_el$type, data_el$data))
   } else {
@@ -422,6 +511,19 @@ read_mat_v5 <- function(filename) {
     ln <- readBin(raw_all[(pos + 4L):(pos + 7L)], "integer", size = 4L, endian = "little")
     data_start <- pos + 8L
 
+    if (is.na(ln) || ln < 0L) {
+      cli::cli_abort(c(
+        "Malformed {.file {basename(filename)}}: invalid element length {.val {ln}}.",
+        "i" = "The file may have been written incompletely."
+      ))
+    }
+    if (data_start + ln - 1L > n) {
+      cli::cli_abort(c(
+        "{.file {basename(filename)}} is truncated.",
+        "i" = "An element declares {ln} byte{?s} of data but only {n - data_start + 1L} remain{?s/} in the file."
+      ))
+    }
+
     if (typ == .MI_COMPRESSED) {
       element <- tryCatch(
         memDecompress(raw_all[data_start:(data_start + ln - 1L)], type = "gzip"),
@@ -434,7 +536,23 @@ read_mat_v5 <- function(filename) {
         }
       )
       # element is a full miMATRIX element: strip its 8-byte tag, parse the body
+      if (length(element) < 8L) {
+        cli::cli_abort("Malformed {.file {basename(filename)}}: compressed section is too short to hold an element tag.")
+      }
+      element_type <- readBin(element[1:4], "integer", size = 4L, endian = "little")
+      if (element_type != .MI_MATRIX) {
+        cli::cli_abort(c(
+          "Unexpected element type {.val {element_type}} inside a compressed section of {.file {basename(filename)}}.",
+          "i" = "Only matrix elements are supported at the top level."
+        ))
+      }
       body_len <- readBin(element[5:8], "integer", size = 4L, endian = "little")
+      if (is.na(body_len) || body_len < 0L || 8L + body_len > length(element)) {
+        cli::cli_abort(c(
+          "Malformed {.file {basename(filename)}}: a compressed element declares {body_len} byte{?s} but only {length(element) - 8L} were decompressed.",
+          "i" = "The file may have been written incompletely."
+        ))
+      }
       parsed <- .parse_matrix_body(element[9:(8L + body_len)])
       pos <- data_start + ln # compressed elements are not 8-byte padded
     } else if (typ == .MI_MATRIX) {

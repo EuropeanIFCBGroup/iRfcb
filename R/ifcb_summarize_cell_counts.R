@@ -56,6 +56,11 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #'   `max_chain_length`, and/or `sd_chain_length`. When `hdr_folder` is provided,
 #'   `ml_analyzed` and `cell_counts_per_liter` are also returned.
 #'
+#'   `cell_counts` is `NA` for a sample whose classification file carries no
+#'   `cell_count` data, since the cell total is unknown there. It is not
+#'   reported as `0`, which would be indistinguishable from a taxon that was
+#'   genuinely absent. `counts` is unaffected and still reports the ROIs.
+#'
 #' @details
 #' Chain counting was introduced by Groves et al. (2026), who trained a
 #' "You Only Look Once" (YOLO) object detection model to enumerate the cells in
@@ -208,12 +213,14 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     ))
   }
 
+  # Not gated on `verbose`: this reports a data-integrity condition that changes
+  # the returned numbers, not progress.
   auto_has_chain <- has_chain[is_automated]
-  if (!all(auto_has_chain) && verbose) {
+  if (!all(auto_has_chain)) {
     n_no_chain <- sum(!auto_has_chain)
     cli_warn(c(
-      "{n_no_chain} of {sum(is_automated)} classification file{?s} {?does/do} not contain chain-count data.",
-      "i" = "ROIs from {?this file/these files} are treated as {.code NA} chain counts."
+      "{n_no_chain} of {sum(is_automated)} classification file{?s} {qty(n_no_chain)}{?does/do} not contain chain-count data.",
+      "i" = "ROIs from {qty(n_no_chain)}{?this file/these files} are treated as {.code NA} chain counts, so {.field cell_counts} is {.code NA} for the affected samples."
     ))
   }
 
@@ -233,7 +240,10 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     group_by(sample, classifier, class) %>%
     summarise(
       counts = n(),
-      cell_counts = sum(cell_count_resolved, na.rm = TRUE),
+      # ROIs from a file without a `cell_count` dataset carry NA. Summing them
+      # with na.rm = TRUE would report 0 cells for a taxon that is present in
+      # the images, so the group total is reported as NA instead.
+      cell_counts = if (any(is.na(cell_count_resolved))) NA_real_ else sum(cell_count_resolved),
       n_chains = sum(cell_count >= 1, na.rm = TRUE),
       mean_chain_length = length_stat(cell_count, mean),
       median_chain_length = length_stat(cell_count, stats::median),

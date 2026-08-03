@@ -7,17 +7,32 @@ wraps whichever is installed behind one small interface used by
 ``extract_slim_features``. A single iRfcb installation therefore works against
 either ifcb-features version, and both readers may be installed side by side.
 
-The feature computation itself is unaffected: the ``ifcb_features`` package is
-byte-identical between v1.0.0 and v1.1.1, so the choice of reader does not
-change any computed feature value. The readers also agree on the details that
-reach the feature code - 1-based ROI numbering, skipping of zero-sized ROIs, and
-8-bit grayscale pixel data - so outputs are interchangeable.
+The feature computation itself is unaffected: the ``ifcb_features`` code is
+unchanged between v1.0.0 and v1.1.1, so the choice of reader does not change how
+a region of interest is measured. Both readers use 1-based ROI numbering and
+deliver 8-bit grayscale pixel data.
+
+They are *not* equivalent in every case, though:
+
+* Zero-sized ROIs. ``pyifcb`` skips a ROI whose recorded width is zero;
+  ``ifcbkit`` skips one whose width *or* height is zero. A ``width > 0,
+  height == 0`` row is therefore kept by the former and dropped by the latter.
+* Stitching. ``ifcbkit``'s ``read_images`` composites overlapping consecutive
+  ROI pairs in older I-style bins and drops the second of the pair from
+  iteration; ``pyifcb`` returns both separately. Row counts, ROI numbering and
+  feature values consequently differ for I-style data.
+
+For the D-style bins produced by current instruments the two agree and outputs
+are interchangeable. For I-style data, pin a reader if results must be
+comparable to an earlier run.
 
 ``ifcbkit`` is preferred when both are importable, since it is what current
-ifcb-features releases depend on and it carries far fewer dependencies. Set the
-``IRFCB_IFCB_BACKEND`` environment variable to ``"ifcbkit"`` or ``"pyifcb"`` to
-override that choice. The variable is read on each call, and pool workers
-inherit it, so it applies to parallel extraction as well.
+ifcb-features releases depend on and it carries far fewer dependencies. Pass
+``backend`` to :func:`open_data_directory` to override that choice, or set the
+``IRFCB_IFCB_BACKEND`` environment variable. Note that when this module is
+driven from R, the environment variable is read on the R side and forwarded as
+``backend``: Python snapshots ``os.environ`` at interpreter start, so a
+``Sys.setenv()`` call made after Python has initialised would not be seen here.
 """
 
 import os

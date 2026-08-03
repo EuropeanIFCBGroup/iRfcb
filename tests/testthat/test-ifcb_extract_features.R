@@ -230,3 +230,44 @@ test_that("the raw-data reader supports both ifcb-features backends", {
     expect_true(bin %in% dd$list_lids())
   }
 })
+
+test_that("ifcb_extract_features validates the backend argument", {
+  # Argument validation happens before the Python and data-folder checks, so
+  # this needs no Python environment.
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b", backend = "ifcbKit"),
+    "should be one of|'arg' should be"
+  )
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b", backend = "scipy"),
+    "should be one of|'arg' should be"
+  )
+})
+
+test_that("the backend override is read from R rather than from Python's environment", {
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  # Python captures os.environ when the interpreter starts, so a Sys.setenv()
+  # made from R afterwards is invisible to it. iRfcb therefore has to read the
+  # variable on the R side and forward it as an argument; assert the premise so
+  # this does not silently regress to reading it in Python.
+  reticulate::py_run_string("import os")
+  old <- Sys.getenv("IRFCB_IFCB_BACKEND", unset = NA)
+  on.exit({
+    if (is.na(old)) Sys.unsetenv("IRFCB_IFCB_BACKEND") else Sys.setenv(IRFCB_IFCB_BACKEND = old)
+  }, add = TRUE)
+
+  Sys.setenv(IRFCB_IFCB_BACKEND = "pyifcb")
+  expect_equal(Sys.getenv("IRFCB_IFCB_BACKEND"), "pyifcb")
+  expect_null(reticulate::py_eval('os.environ.get("IRFCB_IFCB_BACKEND")'))
+
+  # An unusable value set via the environment must still be rejected, which only
+  # happens if R reads it.
+  Sys.setenv(IRFCB_IFCB_BACKEND = "not-a-backend")
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b"),
+    "should be one of|'arg' should be"
+  )
+})

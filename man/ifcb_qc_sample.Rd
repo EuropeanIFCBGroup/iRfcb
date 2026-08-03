@@ -28,9 +28,9 @@ when \code{sample} is given as bare sample names. Searched recursively.}
 \item{max_ml}{Optional fixed upper bound (in millilitres) for a plausible
 analyzed volume, applied to every sample. Default \code{NULL} derives the ceiling
 per sample from the header syringe volume (\code{SyringeSampleVolume}, falling
-back to \code{syringeSize}, then the 5 mL IFCB standard) scaled by
-\code{volume_tolerance}. Set this only to override that instrument-reported
-value.}
+back to \code{syringeSize}, then the 5 mL IFCB standard when neither is present
+or the reported volume is not positive) scaled by \code{volume_tolerance}. Set
+this only to override that instrument-reported value.}
 
 \item{volume_tolerance}{Fractional tolerance added to the derived syringe
 volume ceiling (default \code{0.05}, i.e. 5\%) to absorb estimation noise in the
@@ -120,9 +120,11 @@ three are only evaluated when their threshold is supplied; otherwise they are
 given sample is reported as \code{NA} and treated as \emph{not applicable}: it does not
 fail \code{qc_pass}. This matters for legacy IFCB headers, which omit the
 post-run \code{roiCount} summary field (so \code{roi_count_match} is \code{NA}); such samples
-can still pass on the checks that do apply. Only a check that actually
-evaluates to \code{FALSE} fails the sample. \code{files_complete} and \code{volume_ok} are
-always \code{TRUE}/\code{FALSE} (never \code{NA}) and so always count.
+can still pass on the checks that do apply. It also applies to a sample that
+never triggered, where no volume can be computed and \code{volume_ok} is \code{NA}
+rather than \code{FALSE} (\code{is_empty} reports the condition instead). Only a check
+that actually evaluates to \code{FALSE} fails the sample. \code{files_complete} is
+always \code{TRUE}/\code{FALSE} (never \code{NA}) and so always counts.
 }
 \examples{
 \dontrun{
