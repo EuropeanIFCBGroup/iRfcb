@@ -142,13 +142,13 @@ ifcb_summarize_biovolumes(
 - use_cell_counts:
 
   Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
-  stored by the diatom chain counter in `.h5`/`.csv` classification
-  files and adds `cell_counts` (and `cell_counts_per_liter` when
-  `hdr_folder` is supplied) to the output, reporting cell abundance
-  alongside ROI counts. Only supported with automated `class_files`. The
-  function aborts if enabled but no classification file contains
-  chain-count data. For chain-length statistics (mean, median, max chain
-  length) use
+  stored by the diatom chain counter in `.mat`/`.h5`/`.csv`
+  classification files and adds `cell_counts` (and
+  `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,
+  reporting cell abundance alongside ROI counts. Only supported with
+  automated `class_files`. The function aborts if enabled but no
+  classification file contains chain-count data. For chain-length
+  statistics (mean, median, max chain length) use
   [`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md).
   Note that `cell_counts` here is summed only over ROIs that also have
   matching feature (biovolume) data (the same ROI population as

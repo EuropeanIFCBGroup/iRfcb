@@ -9,9 +9,9 @@
   [doi:10.1093/plankt/fbaf064](https://doi.org/10.1093/plankt/fbaf064))
   via the
   [`ifcb-pytorch-classify`](https://github.com/nodc-sweden/ifcb-pytorch-classify)
-  inference pipeline, and stored in `.h5`/`.csv` classification files.
-  This enables reporting cell abundance (accounting for chains) in
-  addition to ROI counts.
+  inference pipeline, and stored in `.mat`/`.h5`/`.csv` classification
+  files. This enables reporting cell abundance (accounting for chains)
+  in addition to ROI counts.
   - New
     [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
     summarizes cell abundance and user-selectable chain-length
@@ -71,6 +71,23 @@
 
 ### Minor improvements and fixes
 
+- The classification-file readers used by
+  [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md),
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md),
+  and
+  [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+  are now robust to non-class `.csv` files in a class directory.
+  Previously a directory that also contained an IFCB-Dashboard
+  class_scores export (`{sample}_class.csv`, with a `pid` column plus
+  one score column per class, and no `file_name`/`class_name` columns)
+  could be picked up and either silently tolerated or fail later with a
+  cryptic `Unknown or uninitialised column: 'class'` error followed by a
+  WoRMS (400) Bad Request. When a folder is supplied, such files are now
+  skipped with a warning naming the file and the missing columns, so a
+  directory mixing dashboard score exports with ClassiPyR label files
+  runs cleanly using only the valid label files. When a non-class `.csv`
+  is passed explicitly, the reader aborts with a clear message
+  identifying the file and the missing columns.
 - [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
   gains a `details` argument. When `TRUE`, it returns a data frame with
   the resolved WoRMS class (`worms_class`) for each taxon instead of a

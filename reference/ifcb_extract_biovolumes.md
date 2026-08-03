@@ -139,10 +139,10 @@ ifcb_extract_biovolumes(
 - use_cell_counts:
 
   Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
-  stored by the diatom chain counter in `.h5`/`.csv` classification
-  files and adds `cell_count` (raw) and `cell_count_resolved` (resolved
-  abundance) columns to the output. Only supported with automated
-  `class_files`; not with manual files, `.mat` files, or
+  stored by the diatom chain counter in `.mat`/`.h5`/`.csv`
+  classification files and adds `cell_count` (raw) and
+  `cell_count_resolved` (resolved abundance) columns to the output. Only
+  supported with automated `class_files`; not with manual files or
   `custom_images`. Default: `FALSE`.
 
 - single_cell_values:

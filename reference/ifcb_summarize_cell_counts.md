@@ -1,10 +1,10 @@
 # Summarize Diatom Cell Counts and Chain-Length Statistics from IFCB Data
 
 Summarizes the optional per-ROI cell-count data produced by the diatom
-chain counter and stored in classification files (`.h5` or `.csv`). For
-each sample and class it computes the total cell abundance (number of
-cells, accounting for chains) together with a user-selectable set of
-chain-length statistics.
+chain counter and stored in classification files (`.mat`, `.h5` or
+`.csv`). For each sample and class it computes the total cell abundance
+(number of cells, accounting for chains) together with a user-selectable
+set of chain-length statistics.
 
 ## Usage
 
@@ -26,10 +26,11 @@ ifcb_summarize_cell_counts(
 
 - class_files:
 
-  A character vector of full paths to classification files (`.h5` or
-  `.csv`), or a single path to a folder containing such files. Only
-  `.h5` and `.csv` files can carry chain-count data; `.mat` files never
-  do.
+  A character vector of full paths to classification files (`.mat`,
+  `.h5` or `.csv`), or a single path to a folder containing such files.
+  Any of these file types can carry the optional `cell_count` data
+  written by the chain counter; files without it are treated as `NA`
+  chain counts.
 
 - hdr_folder:
 
@@ -70,8 +71,7 @@ ifcb_summarize_cell_counts(
 - use_python:
 
   Logical. If `TRUE`, attempts to read `.mat` files using a Python-based
-  method (`SciPy`). Default is `FALSE`. Has no effect on chain counts,
-  which are only present in `.h5`/`.csv` files.
+  method (`SciPy`). Default is `FALSE`.
 
 - verbose:
 
@@ -110,8 +110,8 @@ Chain counting was introduced by Groves et al. (2026), who trained a
 cells in diatom chains imaged by the IFCB. The per-ROI `cell_count` data
 summarized here is produced by the `ifcb-pytorch-classify` inference
 pipeline (<https://github.com/nodc-sweden/ifcb-pytorch-classify>), which
-writes it as an optional dataset in the `.h5` classification files
-alongside the class predictions.
+writes it as an optional `cell_count` variable in the `.mat`, `.h5` and
+`.csv` classification files alongside the class predictions.
 
 This function derives `cell_counts` from every classified ROI. This
 differs from
