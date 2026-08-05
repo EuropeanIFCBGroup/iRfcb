@@ -63,9 +63,18 @@
 )
 
 # Human-readable names for the classes we refuse, used in the error message.
-.MX_CLASS_NAMES <- c(
+# A list rather than a character vector, so that `[[` on an unlisted class code
+# (undocumented or corrupt) yields NULL instead of a "subscript out of bounds"
+# error and the message below can name the code on its own. Single-bracket
+# indexing would not do: it returns a named NA, which is not NULL and renders
+# as "(NA)".
+.MX_CLASS_NAMES <- list(
   "2" = "struct", "3" = "object", "5" = "sparse",
-  "14" = "int64", "15" = "uint64", "16" = "function handle"
+  "14" = "int64", "15" = "uint64", "16" = "function handle",
+  # mxOPAQUE, how MATLAB stores string arrays, tables, categoricals and class
+  # objects. Not in the documented class list, but common in files saved by
+  # recent MATLAB releases.
+  "17" = "opaque (string, table, categorical or object)"
 )
 
 # Array-flags bits (second byte of the flags word).
@@ -420,7 +429,7 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     label <- .MX_CLASS_NAMES[[as.character(class_code)]]
     cli::cli_abort(c(
       "Unsupported MATLAB array class {.val {class_code}}{if (!is.null(label)) paste0(' (', label, ')') else ''} in variable {.val {name}}.",
-      "i" = "Cell arrays of strings, character arrays and numeric arrays are supported; structs, objects, sparse and 64-bit integer arrays are not."
+      "i" = "Cell arrays of strings, character arrays and numeric arrays are supported; structs, objects, sparse, string, table, categorical and 64-bit integer arrays are not."
     ))
   }
   if (bitwAnd(flag_bits, .MX_FLAG_COMPLEX) != 0L) {

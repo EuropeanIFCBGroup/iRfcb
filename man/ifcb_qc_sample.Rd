@@ -87,6 +87,13 @@ check.}
 the last image's end offset (\code{max(StartByte + width * height)}) computed
 from the ADC. A smaller file indicates a truncated or aborted transfer
 (\code{roi_data_complete}).}
+\item{ROI dimension validity}{Every ROI width, height and start byte in the
+ADC must parse as a number (\code{roi_dims_valid}, with the offending row
+count in \code{n_roi_malformed}). A blank or \code{NaN} dimension is excluded from
+\code{n_rois} so that one damaged file cannot abort a whole survey, but the
+exclusion is reported rather than silent: without this check a width
+column that failed to parse would be indistinguishable from a sample that
+never triggered.}
 \item{Run time consistency}{The run time recorded at the ADC's last trigger
 must not exceed the header's total run time (within \code{runtime_tolerance}),
 since a trigger cannot fire after acquisition has stopped
@@ -115,7 +122,7 @@ three are only evaluated when their threshold is supplied; otherwise they are
 \code{NA}. The measured \code{humidity} and \code{temperature} are always reported.
 
 \code{qc_pass} is the conjunction of the integrity checks above
-(\code{files_complete}, \code{roi_count_match}, \code{roi_data_complete},
+(\code{files_complete}, \code{roi_count_match}, \code{roi_data_complete}, \code{roi_dims_valid},
 \code{runtime_consistent}, \code{volume_ok}). A check that cannot be evaluated for a
 given sample is reported as \code{NA} and treated as \emph{not applicable}: it does not
 fail \code{qc_pass}. This matters for legacy IFCB headers, which omit the

@@ -369,12 +369,12 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       n_files <- length(matching_class_files)
 
       # Guard against one sample resolving to more than one classification file
-      # (e.g. a .mat, .h5 and .csv for the same sample in one folder). Their rows
-      # would all survive the join below, duplicating that sample's ROIs and so
-      # multiplying its counts, biovolume and carbon. ifcb_summarize_cell_counts()
-      # rejects the same input for the same reason. Reuse `class_samples` rather
-      # than re-deriving names from the file extensions, so the guard cannot
-      # disagree with the selection above about which sample a file belongs to.
+      # (e.g. a .mat, .h5 and .csv for the same sample in one folder). Every row
+      # survives the join below, so that sample's ROIs are duplicated and its
+      # counts, biovolume and carbon multiply. This reuses `class_samples`
+      # instead of re-deriving names from the file extensions, so the guard
+      # cannot disagree with the selection above about which sample a file
+      # belongs to.
       matched_samples <- class_samples[class_samples %in% unique_samples]
       dup_samples <- unique(matched_samples[duplicated(matched_samples)])
       if (length(dup_samples) > 0) {

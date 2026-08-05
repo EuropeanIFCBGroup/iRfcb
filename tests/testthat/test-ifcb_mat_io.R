@@ -265,6 +265,27 @@ test_that("read_mat_v5 rejects array classes it cannot represent", {
   expect_mat_rejected(sparse, "[Uu]nsupported MATLAB array class")
 })
 
+test_that("read_mat_v5 names the class code even when it has no readable label", {
+  raw <- mat_flag_bytes()
+
+  # mxOPAQUE, how recent MATLAB releases store string arrays, tables,
+  # categoricals and class objects. It is not in the documented class list.
+  opaque <- raw
+  opaque[145] <- as.raw(17L)
+  expect_mat_rejected(opaque, "[Uu]nsupported MATLAB array class.*opaque")
+
+  # A code with no label at all - corrupt, or a class MATLAB has yet to define.
+  # Looking the label up used to raise "subscript out of bounds", losing the
+  # diagnostic entirely, so assert the intended message rather than just any
+  # error.
+  for (code in c(0L, 18L, 19L)) {
+    unknown <- raw
+    unknown[145] <- as.raw(code)
+    expect_mat_rejected(unknown, "[Uu]nsupported MATLAB array class")
+    expect_mat_rejected(unknown, as.character(code))
+  }
+})
+
 test_that("read_mat_v5 rejects complex and logical arrays rather than degrading them", {
   raw <- mat_flag_bytes()
 

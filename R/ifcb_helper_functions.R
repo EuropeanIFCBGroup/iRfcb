@@ -402,11 +402,11 @@ scale_vol2C_per_cell <- function(fun, cells) {
   force(cells)
   function(volume) {
     # Guard the divisor only. A ROI with no chain data (NA), or one mapped to a
-    # non-positive count because the caller removed -1 from single_cell_values,
-    # is converted as a single cell -- the whole-ROI value, which is what the
-    # user gets today. Letting NA through would propagate into carbon_pg, and
-    # ifcb_summarize_biovolumes() sums that with na.rm = TRUE, silently
-    # under-reporting the class total. cell_count_resolved itself is left alone.
+    # non-positive count because the caller dropped -1 from single_cell_values,
+    # converts as a single cell and so keeps its whole-ROI value. Letting NA
+    # through would reach carbon_pg, which ifcb_summarize_biovolumes() sums with
+    # na.rm = TRUE, quietly under-reporting the class total. This leaves
+    # cell_count_resolved untouched.
     n <- cells
     n[is.na(n) | n < 1] <- 1
     n * fun(volume / n)

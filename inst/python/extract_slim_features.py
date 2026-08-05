@@ -113,24 +113,22 @@ warnings.filterwarnings("ignore", category=RuntimeWarning,
 warnings.filterwarnings("ignore", category=FutureWarning,
                         module="ifcb_features")
 
-# Two filters are needed because module= matches the module a warning is
+# A second filter is needed because module= matches the module a warning is
 # attributed to, not the one that started the call chain. The filter above
-# covers the deprecated functions ifcb_features calls itself, which the
-# deprecation decorator attributes to the ifcb_features caller. It cannot
-# cover scikit-image calling its own deprecated functions internally
-# (morphology/binary.py: binary_closing -> binary_erosion), which is
-# attributed to skimage.morphology.binary. scikit-image guards that inner
-# call with a warnings.catch_warnings() block, but catch_warnings swaps the
-# global filter list and is not thread-safe: under the thread pool used when
-# Python is embedded on Windows / macOS, a worker leaving the block restores a
-# snapshot taken before another worker entered, and the warning escapes. A
-# filter installed here at import time is immune, being present in every
-# snapshot taken afterwards, and reaches every pool backend (fork inherits the
+# covers the functions ifcb_features calls itself. It cannot cover scikit-image
+# calling its own deprecated functions internally (morphology/binary.py:
+# binary_closing -> binary_erosion), which is attributed to
+# skimage.morphology.binary. scikit-image guards that inner call with
+# warnings.catch_warnings(), but that swaps the global filter list and is not
+# thread-safe: on the thread pool used when Python is embedded on Windows and
+# macOS, a worker leaving the block restores a snapshot taken before another
+# worker entered, and the warning escapes. Installing a filter here at import
+# time avoids the race and reaches every pool backend (fork inherits the
 # filters, spawn re-imports this module, threads share the interpreter).
-# The message is matched as well as the module so that this stays limited to
-# the morphology deprecations; any other FutureWarning scikit-image raises is
-# still shown. Note the backticks - scikit-image's deprecation decorator wraps
-# the function name in them, and the pattern is anchored at the start.
+# Matching the message as well as the module keeps this limited to the
+# morphology deprecations, so any other scikit-image FutureWarning is still
+# shown. The backticks are scikit-image's: its deprecation decorator wraps the
+# function name in them, and the pattern is anchored at the start.
 warnings.filterwarnings("ignore", category=FutureWarning,
                         message="`binary_(closing|opening|erosion|dilation)` is deprecated",
                         module="skimage")
@@ -183,50 +181,27 @@ def _real_valued(roi_features):
     complex columns: Orientation comes from a separate ``explicit_orientation``
     routine, and the ``summed*`` variants are already real (see below).
 
-    Taking the real part reproduces what upstream reports in both of the cases
-    that arise. ``ellipse_properties`` computes ``L = 4 * sqrt(eVal)``:
+    Taking the real part matches upstream in both cases that arise, since
+    ``ellipse_properties`` computes ``L = 4 * sqrt(eVal)``. A non-negative
+    eigenvalue gives a real root with a zero imaginary part, so the real part is
+    the value itself. A degenerate (collinear) blob can make ``np.cov`` return a
+    slightly negative eigenvalue, and ``sqrt(-x)`` is ``0 + i*sqrt(x)`` on the
+    principal branch, whose real part is 0.0. That is the value upstream gets by
+    clipping the radicand: ``real(sqrt(z)) == sqrt(clip(z, 0, None))`` holds for
+    every real ``z``, so the two agree by construction. ``ifcb_features``
+    already relies on this itself, casting the same complex value to float in
+    ``summed_attr``, so summedMajorAxisLength and summedMinorAxisLength report
+    such a blob as 0 on numpy >= 2.3.
 
-      * A non-negative eigenvalue gives a real square root carried in a complex
-        type, with an imaginary part of exactly zero, so the real part is the
-        value itself.
-      * A degenerate (collinear) blob can make ``np.cov`` return a slightly
-        negative eigenvalue, and on the principal branch
-        ``sqrt(-x) = 0 + i*sqrt(x)``, whose real part is exactly 0.0 - the same
-        value upstream obtains by clipping the radicand,
-        ``4 * sqrt(np.clip(eVal, 0, None))``.
-
-    That is, ``real(sqrt(z)) == sqrt(clip(z, 0, None))`` for every real ``z``,
-    so the two implementations agree by construction rather than by
-    coincidence.
-
-    ``ifcb_features`` in fact already does the same thing itself, in exactly the
-    environment this coercion applies to: ``summed_attr`` builds its blob array
-    with ``np.array(..., dtype=np.float64)``, which casts a complex axis length
-    to its real part (raising a ComplexWarning), so on numpy >= 2.3
-    summedMajorAxisLength and summedMinorAxisLength already report a degenerate
-    blob as 0. Taking the real part here makes the three per-blob columns agree
-    with the summed ones, which reporting NaN did not.
-
-    On numpy < 2.3 none of this applies and nothing here changes: eig returns
-    real eigenvalues, the square root of a negative one is a real NaN, and -
-    because np.max and np.min propagate NaN - one degenerate blob makes
-    MajorAxisLength, MinorAxisLength *and* Eccentricity NaN, summed columns
-    included. This function is a no-op there (np.iscomplexobj is False), so that
-    older behaviour is passed through untouched, which is what reproducing an
-    ifcb-features v1.0.0 run relies on.
-
-    There is deliberately no ``np.clip`` on the result: a principal square root
-    never has a negative real part, so it would be a no-op that only obscured
-    the argument above. Equally deliberately, a large imaginary part is not
-    special-cased - upstream has no such guard, and adding one would reinstate
-    the version-dependent divergence this avoids.
+    On numpy < 2.3 this is a no-op (``np.iscomplexobj`` is False). eig returns
+    real eigenvalues there, the root of a negative one is NaN, and since np.max
+    and np.min propagate NaN, one degenerate blob makes all three columns NaN.
+    That older behaviour passes through untouched, which is what reproducing an
+    ifcb-features v1.0.0 run depends on.
 
     Upstream made the clip explicit in ifcb-features PR #20 (switching to
-    numpy.linalg.eigh, whose eigenvalues of a symmetric matrix are real by
-    construction), merged to main 2026-07-23 but not yet in a tagged release;
-    the latest release, v1.1.1, still returns complex values. This coercion is
-    a no-op on fixed versions (values are already real, so np.iscomplexobj is
-    False), so iRfcb reports the same numbers whichever release is installed.
+    numpy.linalg.eigh), merged to main 2026-07-23 but not yet in a tagged
+    release; v1.1.1 still returns complex values.
 
     Args:
         roi_features: iterable of (name, value) pairs from compute_features.

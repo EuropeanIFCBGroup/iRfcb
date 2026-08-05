@@ -5,7 +5,7 @@ IFCB_DEFAULT_SYRINGE_ML <- 5
 # Only the columns referenced unquoted in the `with(out, ...)` summary below
 # need declaring; everything else is an ordinary local variable.
 utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete",
-                         "runtime_consistent", "volume_ok"))
+                         "roi_dims_valid", "runtime_consistent", "volume_ok"))
 
 #' Quality-control a raw IFCB sample (hdr/adc/roi triplet)
 #'
@@ -33,6 +33,13 @@ utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete
 #'     the last image's end offset (`max(StartByte + width * height)`) computed
 #'     from the ADC. A smaller file indicates a truncated or aborted transfer
 #'     (`roi_data_complete`).}
+#'   \item{ROI dimension validity}{Every ROI width, height and start byte in the
+#'     ADC must parse as a number (`roi_dims_valid`, with the offending row
+#'     count in `n_roi_malformed`). A blank or `NaN` dimension is excluded from
+#'     `n_rois` so that one damaged file cannot abort a whole survey, but the
+#'     exclusion is reported rather than silent: without this check a width
+#'     column that failed to parse would be indistinguishable from a sample that
+#'     never triggered.}
 #'   \item{Run time consistency}{The run time recorded at the ADC's last trigger
 #'     must not exceed the header's total run time (within `runtime_tolerance`),
 #'     since a trigger cannot fire after acquisition has stopped
@@ -61,7 +68,7 @@ utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete
 #' `NA`. The measured `humidity` and `temperature` are always reported.
 #'
 #' `qc_pass` is the conjunction of the integrity checks above
-#' (`files_complete`, `roi_count_match`, `roi_data_complete`,
+#' (`files_complete`, `roi_count_match`, `roi_data_complete`, `roi_dims_valid`,
 #' `runtime_consistent`, `volume_ok`). A check that cannot be evaluated for a
 #' given sample is reported as `NA` and treated as *not applicable*: it does not
 #' fail `qc_pass`. This matters for legacy IFCB headers, which omit the
@@ -196,6 +203,7 @@ ifcb_qc_sample <- function(sample,
     ok <- files_complete &
       dplyr::coalesce(roi_count_match, TRUE) &
       dplyr::coalesce(roi_data_complete, TRUE) &
+      dplyr::coalesce(roi_dims_valid, TRUE) &
       dplyr::coalesce(runtime_consistent, TRUE) &
       dplyr::coalesce(volume_ok, TRUE)
     ok
@@ -305,6 +313,7 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   # ---- ADC-derived counts and expected ROI byte extent ---------------------
   n_targets <- NA_integer_
   n_rois <- NA_integer_
+  n_roi_malformed <- NA_integer_
   roi_bytes_expected <- NA_real_
   adc_runtime <- NA_real_
 
@@ -315,17 +324,25 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
       # rather than an unreadable one (which would leave the counts NA).
       n_targets <- 0L
       n_rois <- 0L
+      n_roi_malformed <- 0L
       roi_bytes_expected <- 0
     } else {
       adc <- tryCatch(read_adc_columns(adc_file), error = function(e) NULL)
       if (!is.null(adc)) {
         n_targets <- nrow(adc)
         rc <- adc_get_roi_columns(adc)
-        # A malformed (non-numeric) width parses to NA. Treat those rows as not
-        # imaged rather than letting NA propagate into `n_rois`, where it would
-        # abort this sample - and with it the whole survey, which is exactly the
-        # corruption this function exists to find.
-        imaged <- !is.na(rc$x) & rc$x > 0
+        # A ROI dimension that is blank or NaN reads back as NA. Those rows stay
+        # out of `imaged`, since an NA in `n_rois` would abort the sample and
+        # with it the whole survey. They are counted rather than just dropped: a
+        # width column that failed to parse otherwise looks identical to a
+        # sample that never triggered, and on a legacy header, with no
+        # `roiCount` to compare against, nothing else would catch it.
+        dims_malformed <- is.na(rc$x) | is.na(rc$y)
+        imaged <- !dims_malformed & rc$x > 0
+        # An imaged row with an unreadable start byte counts as malformed too.
+        # It drops out of the `roi_bytes_expected` maximum below, understating
+        # how far the .roi must extend and weakening `roi_data_complete`.
+        n_roi_malformed <- sum(dims_malformed | (imaged & is.na(rc$startbyte)))
         n_rois <- sum(imaged)
         roi_bytes_expected <- if (n_rois > 0) {
           ends <- rc$startbyte[imaged] + rc$x[imaged] * rc$y[imaged]
@@ -344,6 +361,10 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   files_complete <- has_hdr && has_adc && has_roi
   roi_count_match <- if (!is.na(n_rois) && !is.na(hdr_roi_count)) n_rois == hdr_roi_count else NA
   roi_data_complete <- if (has_roi && !is.na(roi_bytes_expected)) roi_bytes >= roi_bytes_expected else NA
+  # Every ROI dimension in the ADC had to parse. NA when the ADC could not be
+  # read at all, which is a different defect and is already reported by
+  # `volume_ok` (no volume can be derived without the ADC).
+  roi_dims_valid <- if (!is.na(n_roi_malformed)) n_roi_malformed == 0L else NA
 
   # Volume ceiling: an explicit max_ml wins; otherwise derive from the header
   # syringe volume (with tolerance), falling back to the 5 mL IFCB standard.
@@ -351,8 +372,8 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
     max_ml
   } else {
     # A header reporting a zero or negative syringe volume is not a usable
-    # ceiling - taking it literally would fail every sample it appears on - so
-    # it falls back to the standard volume alongside a missing field.
+    # ceiling, since taking it literally would fail every sample it appears on.
+    # It falls back to the standard volume, as a missing field does.
     base_ml <- if (!is.na(syringe_ml) && syringe_ml > 0) syringe_ml else IFCB_DEFAULT_SYRINGE_ML
     base_ml * (1 + volume_tolerance)
   }
@@ -401,6 +422,7 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
     hdr_roi_count = hdr_roi_count,
     n_targets = n_targets,
     n_rois = n_rois,
+    n_roi_malformed = n_roi_malformed,
     roi_bytes = roi_bytes,
     roi_bytes_expected = roi_bytes_expected,
     runtime_s = runtime_s,
@@ -412,6 +434,7 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
     files_complete = files_complete,
     roi_count_match = roi_count_match,
     roi_data_complete = roi_data_complete,
+    roi_dims_valid = roi_dims_valid,
     runtime_consistent = runtime_consistent,
     volume_ok = volume_ok,
     is_empty = is_empty,
