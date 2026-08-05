@@ -268,6 +268,113 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
                "must be a character vector")
 })
 
+test_that("carbon_conversion is validated before any file is read", {
+  # No network, no files: check_carbon_conversion() runs at the top of both
+  # functions, so a bad combination fails instantly.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, class_folder, carbon_conversion = "cell", verbose = FALSE),
+    "requires"
+  )
+  expect_error(
+    ifcb_summarize_biovolumes(feature_folder, class_folder, carbon_conversion = "cell", verbose = FALSE),
+    "requires"
+  )
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, class_folder, carbon_conversion = "per-cell", verbose = FALSE),
+    "should be one of"
+  )
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, class_folder, diatom_equation = "automatic", verbose = FALSE),
+    "should be one of"
+  )
+})
+
+test_that("carbon_conversion = 'cell' applies the equation per cell and sums over the chain", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_not_installed("hdf5r")
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # Synthetic .h5 for the sample the real feature file covers (ROIs 2 and 3),
+  # single-class so the exponent b is unambiguous. Chaetoceros is a diatom in
+  # WoRMS, so diatom_equation selects the conversion.
+  chain_dir <- file.path(tempdir(), "ifcb_extract_biovolumes_percell")
+  dir.create(chain_dir, showWarnings = FALSE)
+  on.exit(unlink(chain_dir, recursive = TRUE), add = TRUE)
+
+  write_chain_h5 <- function(path, counts) {
+    f <- hdf5r::H5File$new(path, mode = "w")
+    cl <- "Chaetoceros_sp"
+    f[["class_labels"]] <- cl
+    f[["roi_numbers"]] <- c(2L, 3L)
+    f[["output_scores"]] <- matrix(0.9, nrow = 1, ncol = 2)
+    f[["classifier_name"]] <- "test_clf"
+    f[["class_name_auto"]] <- rep(cl, 2)
+    f[["class_name"]] <- rep(cl, 2)
+    f[["thresholds"]] <- 0.5
+    f[["cell_count"]] <- counts
+    f$close_all()
+  }
+  h5_path <- file.path(chain_dir, "D20220522T003051_IFCB134_class.h5")
+  write_chain_h5(h5_path, c(4L, 5L))
+
+  roi <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                 verbose = FALSE)
+  cell <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                  carbon_conversion = "cell", verbose = FALSE)
+
+  # Biovolume is a linear sum, so it cannot depend on how carbon is converted.
+  expect_identical(roi$biovolume_um3, cell$biovolume_um3)
+  # cell_count_resolved must keep its position after carbon_pg.
+  expect_identical(names(roi), names(cell))
+  expect_equal(cell$cell_count_resolved, c(4L, 5L))
+
+  # Closed form for a power law: n * f(V/n) == f(V) * n^(1-b), b = 0.881.
+  expect_equal(cell$carbon_pg, roi$carbon_pg * c(4, 5)^(1 - 0.881))
+  # The all-sizes equation has b = 0.811.
+  cell_all <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                      carbon_conversion = "cell", diatom_equation = "all",
+                                      verbose = FALSE)
+  roi_all <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                     diatom_equation = "all", verbose = FALSE)
+  expect_equal(cell_all$carbon_pg, roi_all$carbon_pg * c(4, 5)^(1 - 0.811))
+
+  # Single cells and unmeasured ROIs must reproduce the whole-ROI numbers exactly.
+  for (counts in list(c(1L, 1L), c(-1L, 0L))) {
+    write_chain_h5(h5_path, counts)
+    a <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                 verbose = FALSE)
+    b <- ifcb_extract_biovolumes(feature_folder, chain_dir, use_cell_counts = TRUE,
+                                 carbon_conversion = "cell", verbose = FALSE)
+    expect_identical(a$carbon_pg, b$carbon_pg)
+  }
+})
+
+test_that("carbon_conversion = 'roi' leaves carbon_pg bit-for-bit unchanged", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # Reading chain counts must not perturb carbon while the default conversion
+  # is in force; this is the regression guarantee for existing users.
+  without <- ifcb_extract_biovolumes(feature_folder, class_folder, verbose = FALSE)
+  with_eq <- ifcb_extract_biovolumes(feature_folder, class_folder,
+                                     diatom_equation = "large", verbose = FALSE)
+  expect_identical(without$carbon_pg, with_eq$carbon_pg)
+})
+
+test_that("diatom_equation = 'auto' selects per volume and is discontinuous at 3000", {
+  # vol2C_diatom_auto is what backs the argument; check the selection directly
+  # so this needs no network.
+  small <- 2000
+  large <- 20000
+  expect_identical(vol2C_diatom_auto(small), vol2C_diatom(small))
+  expect_identical(vol2C_diatom_auto(large), vol2C_lgdiatom(large))
+  # Crossing the boundary upward makes carbon fall, which is the documented
+  # (and deliberate) consequence of keeping each equation in calibration.
+  expect_gt(vol2C_diatom_auto(2999), vol2C_diatom_auto(3001))
+})
+
 test_that("ifcb_extract_biovolumes aborts when a sample resolves to two class files", {
   # A folder holding both a .mat and a .h5 for one sample would join both sets
   # of ROI rows and double that sample's counts and biovolume. The guard runs

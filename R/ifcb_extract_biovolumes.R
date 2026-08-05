@@ -29,9 +29,18 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #'   carbon-to-volume relationship to apply to diatoms. `"large"` (default) uses the
 #'   large-diatom (> 3000 micron^3) equation (`vol2C_lgdiatom`), matching the
 #'   `ifcb-analysis` convention. `"all"` uses the all-sizes diatom equation
-#'   (`vol2C_diatom`), which assigns more carbon to small cells. Note that
-#'   biovolume is measured per region of interest (ROI/image), so this is not a
-#'   per-cell volume: chains of small cells register a large ROI biovolume.
+#'   (`vol2C_diatom`), which assigns more carbon to small cells. `"auto"`
+#'   (`vol2C_diatom_auto`) selects between them per volume, using the
+#'   large-diatom equation above 3000 micron^3 and the all-sizes equation at or
+#'   below it, so each stays inside its calibrated size range. `"auto"` needs no
+#'   `cell_count` data and is independent of `carbon_conversion`. Be aware that the
+#'   two are discontinuous at that boundary (about 190 pgC against 135 pgC), so
+#'   `"auto"` makes predicted carbon fall as a cell grows across it; that is why
+#'   it is not the default. `"auto"` selects on whatever volume the conversion
+#'   receives, which is the per-cell volume when `carbon_conversion = "cell"`.
+#'   Note that biovolume is measured per region of interest (ROI/image), so it is
+#'   not a per-cell volume unless `carbon_conversion = "cell"` is used: chains of
+#'   small cells register a large ROI biovolume.
 #'   Non-diatom protists always use `vol2C_nondiatom` regardless of this setting.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
@@ -52,6 +61,18 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #'        as a single cell when resolving `cell_count_resolved`. Default is `c(-1, 0)`, i.e. ROIs that
 #'        were not counted (`-1`) and ROIs where no cells were detected (`0`) each count as one
 #'        cell. Values not listed are used verbatim. Only used when `use_cell_counts = TRUE`.
+#' @param carbon_conversion A character string controlling how the Menden-Deuer and
+#'        Lessard (2000) relationships are applied. `"roi"` (default) applies the
+#'        selected equation once to the whole ROI biovolume, matching the
+#'        `ifcb-analysis` convention and reproducing previous results exactly.
+#'        `"cell"` divides the ROI biovolume by the resolved cell count, applies
+#'        the equation to that per-cell volume, and multiplies back by the count,
+#'        which is how the relationships are defined (`log pgC cell^-1`). Requires
+#'        `use_cell_counts = TRUE`. `carbon_pg` remains a per-ROI total in both
+#'        cases, not carbon per cell. ROIs holding a single cell, ROIs that were
+#'        never chain-counted, and ROIs from files carrying no `cell_count` data
+#'        are all converted as one cell, so only ROIs with `cell_count >= 2`
+#'        change.
 #' @param use_python Logical. If `TRUE`, attempts to read `.mat` files using a Python-based method (`SciPy`). Default: `FALSE`.
 #' @param verbose Logical. If `TRUE`, prints progress messages. Default: `TRUE`.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
@@ -80,6 +101,22 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' - **MAT File Processing:**
 #'   - If `use_python = TRUE`, the function reads `.mat` files using `ifcb_read_mat()` (requires Python + `SciPy`).
 #'   - Otherwise, it reads `.mat` files with the default R reader.
+#'
+#' - **Per-cell carbon conversion:**
+#'   - The Menden-Deuer and Lessard (2000) relationships are fitted per cell
+#'     (`log pgC cell^-1 = log a + b * log V`), but an IFCB biovolume describes a
+#'     whole region of interest, which for a chain-forming diatom is the whole
+#'     chain. Every one of these relationships has `b < 1`, so applying one to an
+#'     aggregated chain volume returns less carbon than applying it per cell and
+#'     summing. The two differ by a factor of `n^(1-b)`: about 1.28 for an
+#'     8-cell chain and 1.43 for 20 cells under the large-diatom equation.
+#'   - `carbon_conversion = "cell"` divides the ROI biovolume evenly among the
+#'     counted cells, which assumes the cells in a chain are of similar size.
+#'   - It further assumes the ROI biovolume is cell volume. This is weakest for
+#'     *Chaetoceros*, whose setae add to the measured ROI biovolume without being
+#'     cell material, so the per-cell volume is overestimated and per-cell carbon
+#'     is biased high; whole-ROI conversion biases it low instead. Neither is
+#'     corrected here.
 #'
 #' @examples
 #' \dontrun{
@@ -115,14 +152,17 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_images = NULL, custom_classes = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
-                                    diatom_equation = c("large", "all"),
+                                    diatom_equation = c("large", "all", "auto"),
                                     threshold = "opt", multiblob = FALSE, feature_recursive = TRUE,
                                     class_recursive = TRUE, drop_zero_volume = FALSE,
                                     feature_version = NULL, use_cell_counts = FALSE,
-                                    single_cell_values = c(-1, 0), use_python = FALSE, verbose = TRUE,
+                                    single_cell_values = c(-1, 0), carbon_conversion = c("roi", "cell"),
+                                    use_python = FALSE, verbose = TRUE,
                                     mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
 
   diatom_equation <- match.arg(diatom_equation)
+  carbon_conversion <- match.arg(carbon_conversion)
+  check_carbon_conversion(carbon_conversion, use_cell_counts)
 
   # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
@@ -481,22 +521,39 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     }
   }
 
+  # Resolve per-ROI cell counts (abundance) from chain counts. Computed here,
+  # ahead of the carbon block that may need it, but assigned onto the tibble
+  # below so that `cell_count_resolved` keeps its position after `carbon_pg`.
+  cells <- if (use_cell_counts) {
+    resolve_cell_counts(biovolume_df$cell_count, single_cell_values)
+  }
+
   # Select the diatom carbon conversion function
-  vol2C_diatom_fun <- if (diatom_equation == "all") vol2C_diatom else vol2C_lgdiatom
+  vol2C_diatom_fun <- switch(diatom_equation,
+    all = vol2C_diatom,
+    auto = vol2C_diatom_auto,
+    vol2C_lgdiatom
+  )
+
+  # Under carbon_conversion = "cell" the equations are applied to the per-cell
+  # volume and summed back over the chain; under "roi" the wrapper returns the
+  # conversion functions untouched, so the numbers are exactly as before.
+  carbon_cells <- if (carbon_conversion == "cell") cells
+  diatom_fun <- scale_vol2C_per_cell(vol2C_diatom_fun, carbon_cells)
+  nondiatom_fun <- scale_vol2C_per_cell(vol2C_nondiatom, carbon_cells)
 
   # Calculate carbon content based on diatom classification
   biovolume_df <- biovolume_df %>%
     mutate(carbon_pg = case_when(
-      !is.na(is_diatom) & is_diatom ~ vol2C_diatom_fun(biovolume_um3),
-      !is.na(is_diatom) & !is_diatom ~ vol2C_nondiatom(biovolume_um3),
-      is.na(is_diatom) ~ vol2C_nondiatom(biovolume_um3),
+      !is.na(is_diatom) & is_diatom ~ diatom_fun(biovolume_um3),
+      !is.na(is_diatom) & !is_diatom ~ nondiatom_fun(biovolume_um3),
+      is.na(is_diatom) ~ nondiatom_fun(biovolume_um3),
       TRUE ~ NA_real_
     )) %>%
     select(-biovolume, -is_diatom)
 
-  # Resolve per-ROI cell counts (abundance) from chain counts
   if (use_cell_counts) {
-    biovolume_df$cell_count_resolved <- resolve_cell_counts(biovolume_df$cell_count, single_cell_values)
+    biovolume_df$cell_count_resolved <- cells
   }
 
   type_convert(biovolume_df, col_types = cols())

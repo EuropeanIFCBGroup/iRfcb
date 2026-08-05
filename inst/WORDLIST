@@ -10,6 +10,7 @@ Biovolumes
 Bresnan
 Brownlee
 CMD
+Chaetoceros
 ClassiPyR
 Classlist
 Codecov
@@ -200,6 +201,7 @@ runnable
 scientificName
 se
 selectable
+setae
 smhi
 spp
 structs

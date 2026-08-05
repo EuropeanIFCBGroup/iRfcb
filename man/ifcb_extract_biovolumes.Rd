@@ -14,7 +14,7 @@ ifcb_extract_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
-  diatom_equation = c("large", "all"),
+  diatom_equation = c("large", "all", "auto"),
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
@@ -23,6 +23,7 @@ ifcb_extract_biovolumes(
   feature_version = NULL,
   use_cell_counts = FALSE,
   single_cell_values = c(-1, 0),
+  carbon_conversion = c("roi", "cell"),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -62,9 +63,18 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 carbon-to-volume relationship to apply to diatoms. \code{"large"} (default) uses the
 large-diatom (> 3000 micron^3) equation (\code{vol2C_lgdiatom}), matching the
 \code{ifcb-analysis} convention. \code{"all"} uses the all-sizes diatom equation
-(\code{vol2C_diatom}), which assigns more carbon to small cells. Note that
-biovolume is measured per region of interest (ROI/image), so this is not a
-per-cell volume: chains of small cells register a large ROI biovolume.
+(\code{vol2C_diatom}), which assigns more carbon to small cells. \code{"auto"}
+(\code{vol2C_diatom_auto}) selects between them per volume, using the
+large-diatom equation above 3000 micron^3 and the all-sizes equation at or
+below it, so each stays inside its calibrated size range. \code{"auto"} needs no
+\code{cell_count} data and is independent of \code{carbon_conversion}. Be aware that the
+two are discontinuous at that boundary (about 190 pgC against 135 pgC), so
+\code{"auto"} makes predicted carbon fall as a cell grows across it; that is why
+it is not the default. \code{"auto"} selects on whatever volume the conversion
+receives, which is the per-cell volume when \code{carbon_conversion = "cell"}.
+Note that biovolume is measured per region of interest (ROI/image), so it is
+not a per-cell volume unless \code{carbon_conversion = "cell"} is used: chains of
+small cells register a large ROI biovolume.
 Non-diatom protists always use \code{vol2C_nondiatom} regardless of this setting.}
 
 \item{threshold}{A character string controlling which classification to use.
@@ -93,6 +103,19 @@ or \code{custom_images}. Default: \code{FALSE}.}
 as a single cell when resolving \code{cell_count_resolved}. Default is \code{c(-1, 0)}, i.e. ROIs that
 were not counted (\code{-1}) and ROIs where no cells were detected (\code{0}) each count as one
 cell. Values not listed are used verbatim. Only used when \code{use_cell_counts = TRUE}.}
+
+\item{carbon_conversion}{A character string controlling how the Menden-Deuer and
+Lessard (2000) relationships are applied. \code{"roi"} (default) applies the
+selected equation once to the whole ROI biovolume, matching the
+\code{ifcb-analysis} convention and reproducing previous results exactly.
+\code{"cell"} divides the ROI biovolume by the resolved cell count, applies
+the equation to that per-cell volume, and multiplies back by the count,
+which is how the relationships are defined (\verb{log pgC cell^-1}). Requires
+\code{use_cell_counts = TRUE}. \code{carbon_pg} remains a per-ROI total in both
+cases, not carbon per cell. ROIs holding a single cell, ROIs that were
+never chain-counted, and ROIs from files carrying no \code{cell_count} data
+are all converted as one cell, so only ROIs with \code{cell_count >= 2}
+change.}
 
 \item{use_python}{Logical. If \code{TRUE}, attempts to read \code{.mat} files using a Python-based method (\code{SciPy}). Default: \code{FALSE}.}
 
@@ -139,6 +162,23 @@ depending on whether the class is identified as a diatom.
 \itemize{
 \item If \code{use_python = TRUE}, the function reads \code{.mat} files using \code{ifcb_read_mat()} (requires Python + \code{SciPy}).
 \item Otherwise, it reads \code{.mat} files with the default R reader.
+}
+\item \strong{Per-cell carbon conversion:}
+\itemize{
+\item The Menden-Deuer and Lessard (2000) relationships are fitted per cell
+(\verb{log pgC cell^-1 = log a + b * log V}), but an IFCB biovolume describes a
+whole region of interest, which for a chain-forming diatom is the whole
+chain. Every one of these relationships has \code{b < 1}, so applying one to an
+aggregated chain volume returns less carbon than applying it per cell and
+summing. The two differ by a factor of \code{n^(1-b)}: about 1.28 for an
+8-cell chain and 1.43 for 20 cells under the large-diatom equation.
+\item \code{carbon_conversion = "cell"} divides the ROI biovolume evenly among the
+counted cells, which assumes the cells in a chain are of similar size.
+\item It further assumes the ROI biovolume is cell volume. This is weakest for
+\emph{Chaetoceros}, whose setae add to the measured ROI biovolume without being
+cell material, so the per-cell volume is overestimated and per-cell carbon
+is biased high; whole-ROI conversion biases it low instead. Neither is
+corrected here.
 }
 }
 }

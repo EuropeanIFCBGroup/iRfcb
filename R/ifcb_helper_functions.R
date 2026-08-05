@@ -338,6 +338,98 @@ vol2C_nondiatom <- function(volume) {
   carbon
 }
 
+#' Convert Biovolume to Carbon for Diatoms, Choosing the Equation by Volume
+#'
+#' This function converts biovolume in microns^3 to carbon in picograms for
+#' diatoms, selecting between the two Menden-Deuer and Lessard (2000) diatom
+#' relationships element-wise: volumes greater than 3000 micron^3 use the
+#' large-diatom equation (\code{\link{vol2C_lgdiatom}}), and the rest use the
+#' all-sizes equation (\code{\link{vol2C_diatom}}). It backs
+#' `diatom_equation = "auto"` in [ifcb_extract_biovolumes()] and
+#' [ifcb_summarize_biovolumes()], and applies to whatever volume it is handed:
+#' the ROI biovolume under `carbon_conversion = "roi"`, or the per-cell volume
+#' under `carbon_conversion = "cell"`.
+#'
+#' Be aware that the two relationships are not continuous at the 3000 micron^3
+#' boundary: the all-sizes equation predicts about 190 pgC there and the
+#' large-diatom equation about 135 pgC. Selecting between them by volume
+#' therefore makes predicted carbon *drop* by roughly 41% as a cell grows across
+#' the boundary, which is why this is not the default. Use it when keeping each
+#' equation inside its calibrated size range matters more than a monotonic
+#' carbon-to-volume curve.
+#'
+#' @param volume A numeric vector of biovolumes in microns^3.
+#'
+#' @return A numeric vector of carbon content in picograms.
+#'
+#' @seealso \code{\link{vol2C_diatom}} \code{\link{vol2C_lgdiatom}}
+#'
+#' @references Menden-Deuer Susanne, Lessard Evelyn J., (2000), Carbon to volume relationships for dinoflagellates, diatoms, and other protist plankton, Limnology and Oceanography, 45(3), 569-579, doi: 10.4319/lo.2000.45.3.0569.
+#'
+#' @examples
+#' # Volumes in microns^3, spanning the 3000 micron^3 boundary
+#' volume <- c(500, 2000, 5000, 20000)
+#'
+#' # Small volumes use the all-sizes equation, large ones the large-diatom equation
+#' vol2C_diatom_auto(volume)
+#' @export
+vol2C_diatom_auto <- function(volume) {
+  ifelse(volume > 3000, vol2C_lgdiatom(volume), vol2C_diatom(volume))
+}
+
+#' Apply a Carbon Conversion Per Cell Rather Than Per ROI (internal)
+#'
+#' The Menden-Deuer and Lessard (2000) relationships are fitted per cell
+#' (`log pgC cell^-1 = log a + b * log V`), but an IFCB biovolume describes a
+#' whole region of interest, which for a chain-forming diatom is the whole
+#' chain. Because every one of these relationships has `b < 1`, applying one to
+#' an aggregated chain volume returns less carbon than applying it to each cell
+#' and summing: the two differ by a factor `n^(1-b)`.
+#'
+#' @param fun A volume-to-carbon function, e.g. [vol2C_lgdiatom()].
+#' @param cells Either `NULL`, or a numeric vector of per-ROI cell counts the
+#'   same length as the volumes `fun` will be called with.
+#' @return When `cells` is `NULL`, `fun` itself, unchanged. Returning the
+#'   identical object is what guarantees that `carbon_conversion = "roi"`
+#'   reproduces previous results exactly rather than merely closely. Otherwise a
+#'   function computing `n * fun(volume / n)`.
+#' @noRd
+scale_vol2C_per_cell <- function(fun, cells) {
+  force(fun)
+  if (is.null(cells)) {
+    return(fun)
+  }
+  force(cells)
+  function(volume) {
+    # Guard the divisor only. A ROI with no chain data (NA), or one mapped to a
+    # non-positive count because the caller removed -1 from single_cell_values,
+    # is converted as a single cell -- the whole-ROI value, which is what the
+    # user gets today. Letting NA through would propagate into carbon_pg, and
+    # ifcb_summarize_biovolumes() sums that with na.rm = TRUE, silently
+    # under-reporting the class total. cell_count_resolved itself is left alone.
+    n <- cells
+    n[is.na(n) | n < 1] <- 1
+    n * fun(volume / n)
+  }
+}
+
+#' Validate the carbon_conversion Argument (internal)
+#'
+#' @param carbon_conversion The value supplied by the user, already passed
+#'   through `match.arg()`.
+#' @param use_cell_counts The value of the caller's `use_cell_counts` argument.
+#' @return `invisible(NULL)`, called for its side effect of aborting.
+#' @noRd
+check_carbon_conversion <- function(carbon_conversion, use_cell_counts) {
+  if (identical(carbon_conversion, "cell") && !isTRUE(use_cell_counts)) {
+    cli_abort(c(
+      "{.arg carbon_conversion = \"cell\"} requires {.arg use_cell_counts = TRUE}.",
+      "i" = "Converting carbon per cell needs the per-ROI {.code cell_count} data, which is only read when {.arg use_cell_counts = TRUE}."
+    ))
+  }
+  invisible(NULL)
+}
+
 #' Retrieve WoRMS Records with Retry Mechanism
 #'
 #' @description

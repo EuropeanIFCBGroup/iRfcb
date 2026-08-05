@@ -15,7 +15,7 @@ ifcb_summarize_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
-  diatom_equation = c("large", "all"),
+  diatom_equation = c("large", "all", "auto"),
   threshold = "opt",
   feature_recursive = TRUE,
   class_recursive = TRUE,
@@ -24,6 +24,7 @@ ifcb_summarize_biovolumes(
   feature_version = NULL,
   use_cell_counts = FALSE,
   single_cell_values = c(-1, 0),
+  carbon_conversion = c("roi", "cell"),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -65,8 +66,12 @@ overriding the boolean result of \code{ifcb_is_diatom}. Default: NULL.}
 carbon-to-volume relationship to apply to diatoms. \code{"large"} (default) uses the
 large-diatom (> 3000 micron^3) equation, matching the \code{ifcb-analysis} convention.
 \code{"all"} uses the all-sizes diatom equation, which assigns more carbon to small
-cells. Note that biovolume is measured per region of interest (ROI/image), not
-per cell, so chains of small cells register a large ROI biovolume. Passed to
+cells. \code{"auto"} selects between them per volume (large-diatom above
+3000 micron^3, all-sizes at or below), keeping each in its calibrated range at
+the cost of a discontinuity at the boundary, where predicted carbon falls from
+about 190 to 135 pgC as volume increases. Note that biovolume is measured per
+region of interest (ROI/image), not per cell, so chains of small cells register
+a large ROI biovolume unless \code{carbon_conversion = "cell"} is used. Passed to
 \code{ifcb_extract_biovolumes}.}
 
 \item{threshold}{A character string controlling which classification to use.
@@ -101,7 +106,16 @@ single cell when computing \code{cell_counts}. Default is \code{c(-1, 0)}, i.e. 
 counted (\code{-1}) and ROIs where no cells were detected (\code{0}) each count as one cell. Values
 not listed are used verbatim. Only used when \code{use_cell_counts = TRUE}.}
 
-\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+\item{carbon_conversion}{A character string controlling how the Menden-Deuer and
+Lessard (2000) relationships are applied. \code{"roi"} (default) applies the selected
+equation once to the whole ROI biovolume, matching the \code{ifcb-analysis}
+convention and reproducing previous results exactly. \code{"cell"} applies it to the
+per-cell volume and sums over the chain, which is how the relationships are
+defined; it requires \code{use_cell_counts = TRUE}. \code{carbon_ug} remains a per-class
+total in both cases. Unlike \code{cell_counts}, it is not \code{NA} for a sample whose
+classification file carries no \code{cell_count} data: those ROIs are converted as
+single cells, which is the value reported today rather than an unknown. See
+\code{\link{ifcb_extract_biovolumes}} for the full rationale.}
 
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
