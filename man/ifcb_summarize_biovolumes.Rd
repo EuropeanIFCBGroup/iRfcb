@@ -117,6 +117,8 @@ classification file carries no \code{cell_count} data: those ROIs are converted 
 single cells, which is the value reported today rather than an unknown. See
 \code{\link{ifcb_extract_biovolumes}} for the full rationale.}
 
+\item{use_python}{Logical. If \code{TRUE}, attempts to read the \code{.mat} file using a Python-based method. Default is \code{FALSE}.}
+
 \item{verbose}{A logical indicating whether to print progress messages. Default is TRUE.}
 
 \item{mat_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}

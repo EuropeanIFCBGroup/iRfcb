@@ -70,6 +70,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   classification file carries no `cell_count` data: those ROIs are converted as
 #'   single cells, which is the value reported today rather than an unknown. See
 #'   \code{\link{ifcb_extract_biovolumes}} for the full rationale.
+#' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
 #'    Use \code{class_files} instead.
