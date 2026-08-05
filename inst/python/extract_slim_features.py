@@ -108,10 +108,32 @@ warnings.filterwarnings("ignore", category=RuntimeWarning,
 # ImportError or AttributeError instead.
 # Upstream removed these deprecated calls in ifcb-features PR #16, merged to
 # main 2026-07-23 but not yet released (the latest release, v1.1.1, still emits
-# the warnings). The filter is harmless on fixed versions (no such warning is
-# raised), so it stays for v1.1.1 compatibility.
+# the warnings). The filters are harmless on fixed versions (no such warning is
+# raised), so they stay for v1.1.1 compatibility.
 warnings.filterwarnings("ignore", category=FutureWarning,
                         module="ifcb_features")
+
+# Two filters are needed because module= matches the module a warning is
+# attributed to, not the one that started the call chain. The filter above
+# covers the deprecated functions ifcb_features calls itself, which the
+# deprecation decorator attributes to the ifcb_features caller. It cannot
+# cover scikit-image calling its own deprecated functions internally
+# (morphology/binary.py: binary_closing -> binary_erosion), which is
+# attributed to skimage.morphology.binary. scikit-image guards that inner
+# call with a warnings.catch_warnings() block, but catch_warnings swaps the
+# global filter list and is not thread-safe: under the thread pool used when
+# Python is embedded on Windows / macOS, a worker leaving the block restores a
+# snapshot taken before another worker entered, and the warning escapes. A
+# filter installed here at import time is immune, being present in every
+# snapshot taken afterwards, and reaches every pool backend (fork inherits the
+# filters, spawn re-imports this module, threads share the interpreter).
+# The message is matched as well as the module so that this stays limited to
+# the morphology deprecations; any other FutureWarning scikit-image raises is
+# still shown. Note the backticks - scikit-image's deprecation decorator wraps
+# the function name in them, and the pattern is anchored at the start.
+warnings.filterwarnings("ignore", category=FutureWarning,
+                        message="`binary_(closing|opening|erosion|dilation)` is deprecated",
+                        module="skimage")
 
 # The "slim" feature columns produced by ifcb_features.all.compute_features,
 # in the same order as upstream extract_slim_features.py.
