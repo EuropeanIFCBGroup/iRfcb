@@ -268,4 +268,42 @@ test_that("ifcb_extract_biovolumes throws expected errors and warnings", {
                "must be a character vector")
 })
 
+test_that("ifcb_extract_biovolumes aborts when a sample resolves to two class files", {
+  # A folder holding both a .mat and a .h5 for one sample would join both sets
+  # of ROI rows and double that sample's counts and biovolume. The guard runs
+  # before any file is read, so the .h5 here need not be a real HDF5 file and
+  # the test needs no network access.
+  dup_folder <- file.path(tempdir(), "ifcb_extract_biovolumes_dup")
+  dir.create(dup_folder, showWarnings = FALSE)
+  on.exit(unlink(dup_folder, recursive = TRUE), add = TRUE)
+
+  file.copy(list.files(class_folder, full.names = TRUE), dup_folder, overwrite = TRUE)
+  mat_file <- list.files(dup_folder, pattern = "_class_v1\\.mat$", full.names = TRUE)[1]
+  sample_name <- sub("_class(_v\\d+)?\\.mat$", "", basename(mat_file))
+  file.create(file.path(dup_folder, paste0(sample_name, "_class.h5")))
+
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, dup_folder, verbose = FALSE),
+    "resolves to more than one classification file"
+  )
+
+  # ifcb_summarize_biovolumes() delegates to the above, so it must abort too.
+  expect_error(
+    ifcb_summarize_biovolumes(feature_folder, dup_folder, verbose = FALSE),
+    "resolves to more than one classification file"
+  )
+
+  # A `{sample}_class.csv` label file is the same collision by a different
+  # extension, and must be caught as well.
+  unlink(file.path(dup_folder, paste0(sample_name, "_class.h5")))
+  writeLines("file_name,class_name", file.path(dup_folder, paste0(sample_name, "_class.csv")))
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, dup_folder, verbose = FALSE),
+    "resolves to more than one classification file"
+  )
+
+  # The non-duplicate case is covered by the main test above, which uses this
+  # same class folder.
+})
+
 unlink(temp_dir, recursive = TRUE)

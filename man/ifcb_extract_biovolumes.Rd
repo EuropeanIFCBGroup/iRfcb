@@ -35,7 +35,10 @@ ifcb_extract_biovolumes(
 
 \item{class_files}{(Optional) A character vector of full paths to classification or manual
 annotation files (\code{.mat}, \code{.h5}, or \code{.csv}), or a single path to a folder
-containing such files.}
+containing such files. Supply a single file format per sample: a sample
+represented twice (e.g. by both a \code{.mat} and a \code{.h5}) would have its ROIs
+counted once per file, so this is rejected with an error naming the
+affected samples.}
 
 \item{custom_images}{(Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.

@@ -36,7 +36,10 @@ ifcb_summarize_biovolumes(
 
 \item{class_files}{(Optional) A character vector of full paths to classification or manual
 annotation files (\code{.mat}, \code{.h5}, or \code{.csv}), or a single path to a folder
-containing such files.}
+containing such files. Supply a single file format per sample: a sample
+represented twice (e.g. by both a \code{.mat} and a \code{.h5}) would have its ROIs
+counted once per file, so this is rejected with an error naming the
+affected samples.}
 
 \item{class2use_file}{(Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.}
 

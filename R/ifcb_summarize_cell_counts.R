@@ -19,14 +19,24 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' Chain-length statistics (`mean`, `median`, `max`, `sd`) are computed only over
 #' ROIs that were genuinely chain-counted (`cell_count >= 1`); ROIs with `-1`
 #' (not counted) or `0` (no cells detected) are excluded from the length
-#' statistics, although `0`-valued ROIs still contribute to abundance according
-#' to `single_cell_values`.
+#' statistics, although both still contribute to abundance according to
+#' `single_cell_values` (by default one cell each).
+#'
+#' `n_chains` reports how many ROIs those length statistics were computed over,
+#' i.e. the number of chain-counted ROIs (`cell_count >= 1`). Despite the name it
+#' is a count of ROIs rather than of chains, and it includes ROIs found to hold a
+#' single cell, which are not chains. It is useful for telling a measured
+#' abundance from an imputed one: a class with `cell_counts > 0` but
+#' `n_chains == 0` was never chain-counted, so its abundance is one cell per ROI
+#' by imputation rather than by measurement.
 #'
 #' @param class_files A character vector of full paths to classification files
 #'   (`.mat`, `.h5` or `.csv`), or a single path to a folder containing such
 #'   files. Any of these file types can carry the optional `cell_count` data
 #'   written by the chain counter; files without it are treated as `NA` chain
-#'   counts.
+#'   counts. Supply a single file format per sample: a sample represented twice
+#'   (e.g. by both a `.mat` and a `.h5`) would have its ROIs counted once per
+#'   file, so this is rejected with an error naming the affected samples.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed
 #'   for calculating cell abundance per liter.
 #' @param single_cell_values Integer vector of `cell_count` values that should
@@ -34,7 +44,8 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #'   `c(-1, 0)`, i.e. both ROIs that were not counted and ROIs where no cells
 #'   were detected count as one cell. Values not listed are used verbatim.
 #' @param stats Character vector selecting which chain-length statistics to
-#'   include. Any of `"n_chains"`, `"mean"`, `"median"`, `"max"`, and `"sd"`.
+#'   include. Any of `"n_chains"` (the number of chain-counted ROIs the other
+#'   statistics are computed over), `"mean"`, `"median"`, `"max"`, and `"sd"`.
 #'   Default is `c("n_chains", "mean", "median", "max")`. Use `character(0)` to
 #'   return abundance only.
 #' @param threshold A character string controlling which classification to use.
@@ -52,7 +63,8 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' @return A data frame with one row per sample and class. Columns always include
 #'   `sample`, `classifier`, `class`, `counts` (number of ROIs), and
 #'   `cell_counts` (total cell abundance). The requested chain-length statistics
-#'   are added as `n_chains`, `mean_chain_length`, `median_chain_length`,
+#'   are added as `n_chains` (number of chain-counted ROIs, i.e. those with
+#'   `cell_count >= 1`), `mean_chain_length`, `median_chain_length`,
 #'   `max_chain_length`, and/or `sd_chain_length`. When `hdr_folder` is provided,
 #'   `ml_analyzed` and `cell_counts_per_liter` are also returned.
 #'

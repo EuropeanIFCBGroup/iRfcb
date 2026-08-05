@@ -9,7 +9,10 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param feature_folder Path to the folder containing feature files (e.g., CSV format).
 #' @param class_files (Optional) A character vector of full paths to classification or manual
 #'   annotation files (`.mat`, `.h5`, or `.csv`), or a single path to a folder
-#'   containing such files.
+#'   containing such files. Supply a single file format per sample: a sample
+#'   represented twice (e.g. by both a `.mat` and a `.h5`) would have its ROIs
+#'   counted once per file, so this is rejected with an error naming the
+#'   affected samples.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.
 #' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),

@@ -10,7 +10,10 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' @param feature_files A path to a folder containing feature files or a character vector of file paths.
 #' @param class_files (Optional) A character vector of full paths to classification or manual
 #'   annotation files (`.mat`, `.h5`, or `.csv`), or a single path to a folder
-#'   containing such files.
+#'   containing such files. Supply a single file format per sample: a sample
+#'   represented twice (e.g. by both a `.mat` and a `.h5`) would have its ROIs
+#'   counted once per file, so this is rejected with an error naming the
+#'   affected samples.
 #' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
 #'        where "XXX" represents the IFCB number and "ZZZZZ" represents the ROI number.
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
@@ -324,6 +327,23 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
     } else {
       n_files <- length(matching_class_files)
+
+      # Guard against one sample resolving to more than one classification file
+      # (e.g. a .mat, .h5 and .csv for the same sample in one folder). Their rows
+      # would all survive the join below, duplicating that sample's ROIs and so
+      # multiplying its counts, biovolume and carbon. ifcb_summarize_cell_counts()
+      # rejects the same input for the same reason. Reuse `class_samples` rather
+      # than re-deriving names from the file extensions, so the guard cannot
+      # disagree with the selection above about which sample a file belongs to.
+      matched_samples <- class_samples[class_samples %in% unique_samples]
+      dup_samples <- unique(matched_samples[duplicated(matched_samples)])
+      if (length(dup_samples) > 0) {
+        cli_abort(c(
+          "{length(dup_samples)} sample{?s} resolve{?s/} to more than one classification file: {.val {dup_samples}}.",
+          "i" = "Supply a single file format per sample (e.g. only {.file .mat} or only {.file .h5}) to avoid double-counting."
+        ))
+      }
+
       tb_list <- vector("list", n_files)
       has_chain <- logical(n_files)
 
