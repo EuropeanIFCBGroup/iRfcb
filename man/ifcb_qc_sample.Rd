@@ -129,7 +129,10 @@ fail \code{qc_pass}. This matters for legacy IFCB headers, which omit the
 post-run \code{roiCount} summary field (so \code{roi_count_match} is \code{NA}); such samples
 can still pass on the checks that do apply. It also applies to a sample that
 never triggered, where no volume can be computed and \code{volume_ok} is \code{NA}
-rather than \code{FALSE} (\code{is_empty} reports the condition instead). Only a check
+rather than \code{FALSE} (\code{is_empty} reports the condition instead). A sample
+whose analyzed volume comes out as exactly \code{0} is a different case and does
+fail: that is a computed answer saying the instrument ran and analyzed no
+water, rather than a check that could not be run. Only a check
 that actually evaluates to \code{FALSE} fails the sample. \code{files_complete} is
 always \code{TRUE}/\code{FALSE} (never \code{NA}) and so always counts.
 }

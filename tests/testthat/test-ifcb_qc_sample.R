@@ -165,6 +165,42 @@ test_that("a zero-trigger sample is flagged is_empty rather than failing as unre
   expect_true(qc$qc_pass)
 })
 
+test_that("a zero analyzed volume fails even when the sample is empty", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+
+  # The companion of the empty-sample case above, and the other side of the
+  # `volume_ok` NA rule. Here the ADC does have rows, so a volume *can* be
+  # computed, but the trigger was inhibited for the whole run and the look time
+  # comes out as zero. No ROI is imaged either, so the sample is empty as well.
+  af <- file.path(work, paste0(nm, ".adc"))
+  adc <- utils::read.csv(af, header = FALSE)
+  adc[[16]] <- 0            # RoiWidth  - nothing imaged
+  adc[[17]] <- 0            # RoiHeight
+  adc[[24]] <- adc[[23]]    # InhibitTime == RunTime - zero look time
+  utils::write.table(adc, af, sep = ",", row.names = FALSE, col.names = FALSE)
+
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_equal(qc$n_rois, 0)
+  expect_true(qc$is_empty)
+  expect_equal(qc$ml_analyzed, 0)
+
+  # A computed zero is an answer, not a check that could not be run, so unlike
+  # the NA case it must fail. Being empty does not excuse it: the instrument ran
+  # and analyzed no water.
+  expect_false(qc$volume_ok)
+  expect_false(qc$qc_pass)
+})
+
 test_that("a non-positive syringe volume in the header falls back to the standard", {
   temp_dir <- setup_mock_directory()
   on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)

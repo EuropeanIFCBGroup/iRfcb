@@ -75,7 +75,10 @@ utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete
 #' post-run `roiCount` summary field (so `roi_count_match` is `NA`); such samples
 #' can still pass on the checks that do apply. It also applies to a sample that
 #' never triggered, where no volume can be computed and `volume_ok` is `NA`
-#' rather than `FALSE` (`is_empty` reports the condition instead). Only a check
+#' rather than `FALSE` (`is_empty` reports the condition instead). A sample
+#' whose analyzed volume comes out as exactly `0` is a different case and does
+#' fail: that is a computed answer saying the instrument ran and analyzed no
+#' water, rather than a check that could not be run. Only a check
 #' that actually evaluates to `FALSE` fails the sample. `files_complete` is
 #' always `TRUE`/`FALSE` (never `NA`) and so always counts.
 #'
@@ -381,6 +384,14 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   # property of the sample, not a defect, and `is_empty` already reports it;
   # leaving `volume_ok` NA keeps it out of `qc_pass` rather than failing a
   # sample that is merely empty.
+  #
+  # The NA is keyed on `ml_analyzed` being missing, not on the sample being
+  # empty, and the two are not the same. A missing volume means the check could
+  # not be run at all, so there is no verdict to give. A volume of exactly zero
+  # is a computed answer: the instrument ran and analyzed no water. That is a
+  # defect whether or not any ROIs came out of it, so a zero fails the sample
+  # even when it is empty. Setting one to look like the other would either
+  # excuse a genuine zero look time or fail every sample that never triggered.
   volume_ok <- if (isTRUE(n_rois == 0L) && is.na(ml_analyzed)) {
     NA
   } else {

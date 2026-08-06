@@ -9,7 +9,11 @@ utils::globalVariables(c("parameter", "roi_numbers"))
 #' @param verbose A logical value indicating whether to print progress messages. Default is TRUE.
 #' @param hdr_folder `r lifecycle::badge("deprecated")`
 #'
-#'    Use \code{hdr_files} instead.
+#'    Use \code{hdr_files} instead, which also accepts a single folder path.
+#'    This rename applies to this function only, because `hdr_files` takes a
+#'    vector of file paths as well as a folder. It is not a package-wide
+#'    rename: functions that genuinely take one directory, such as
+#'    [ifcb_psd()] and [ifcb_summarize_biovolumes()], keep `hdr_folder`.
 #'
 #' @return A data frame with sample names, GPS latitude, GPS longitude, and timestamps. When `gps_only = TRUE`, only samples with GPS coordinates are included.
 #' @examples
@@ -30,7 +34,16 @@ ifcb_read_hdr_data <- function(hdr_files, gps_only = FALSE, verbose = TRUE, hdr_
   if (lifecycle::is_present(hdr_folder)) {
 
     # Signal the deprecation to the user
-    deprecate_warn("0.3.11", "iRfcb::ifcb_read_hdr_data(hdr_folder = )", "iRfcb::ifcb_read_hdr_data(hdr_files = )")
+    deprecate_warn(
+      "0.3.11",
+      "iRfcb::ifcb_read_hdr_data(hdr_folder = )",
+      "iRfcb::ifcb_read_hdr_data(hdr_files = )",
+      details = paste(
+        "This affects `ifcb_read_hdr_data()` alone, since `hdr_files` accepts a",
+        "vector of files as well as a folder. Other functions take one directory",
+        "and keep `hdr_folder`."
+      )
+    )
 
     # Deal with the deprecated argument for compatibility
     hdr_files <- hdr_folder
