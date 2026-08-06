@@ -37,13 +37,16 @@
 .MI_UTF8   <- 16L
 
 # ---- MAT-file array class codes ----
+# Only the classes the reader and writer act on get a constant. The codes it
+# merely refuses are named in .MX_CLASS_NAMES below, where the label alongside
+# each key already says which class it is.
 .MX_CELL   <- 1L
-.MX_STRUCT <- 2L
-.MX_OBJECT <- 3L
 .MX_CHAR   <- 4L
-.MX_SPARSE <- 5L
 .MX_DOUBLE <- 6L
+.MX_SINGLE <- 7L
 .MX_UINT16 <- 11L
+.MX_INT32  <- 12L
+.MX_UINT32 <- 13L
 
 # Array classes the reader can decode. Anything else (struct, object, sparse,
 # function handle) must be rejected rather than fall through to the numeric
@@ -79,7 +82,6 @@
 
 # Array-flags bits (second byte of the flags word).
 .MX_FLAG_LOGICAL <- 0x02L
-.MX_FLAG_GLOBAL  <- 0x04L
 .MX_FLAG_COMPLEX <- 0x08L
 
 # =============================================================================
@@ -102,6 +104,35 @@
 # Encode a signed 32-bit integer vector little-endian
 .raw_i32vec <- function(x) {
   writeBin(as.integer(x), raw(), size = 4L, endian = "little")
+}
+
+# Encode a 32-bit integer vector little-endian from doubles, covering the whole
+# int32 and uint32 ranges. R's integer type cannot express either endpoint -
+# `as.integer(-2147483648)` and `as.integer(2147483648)` are both NA, since R
+# reserves -2^31 for NA itself - so going through as.integer() silently turns
+# the extreme value of each type into a missing one. Splitting the double into
+# bytes avoids the conversion entirely.
+.raw_32vec_from_double <- function(x) {
+  x <- as.double(x) %% 4294967296  # fold into [0, 2^32), so int32 wraps to two's complement
+  bytes <- rbind(
+    x %% 256,
+    (x %/% 256) %% 256,
+    (x %/% 65536) %% 256,
+    (x %/% 16777216) %% 256
+  )
+  as.raw(as.vector(bytes))
+}
+
+# Decode a little-endian 32-bit integer vector as doubles in [0, 2^32). The
+# counterpart of .raw_32vec_from_double(): readBin() cannot return either
+# endpoint as an R integer, so the bytes are combined directly.
+.u32_from_raw <- function(data) {
+  # Drop any trailing partial word, as readBin(n = length(data) %/% 4L) did;
+  # matrix() would otherwise recycle it into a fabricated value.
+  n <- length(data) %/% 4L
+  if (n == 0L) return(numeric(0))
+  b <- matrix(as.integer(data[seq_len(n * 4L)]), nrow = 4L)
+  b[1, ] + b[2, ] * 256 + b[3, ] * 65536 + b[4, ] * 16777216
 }
 
 # Write one data element (tag + data). Uses the "small data element" format
@@ -160,8 +191,10 @@
     "9"  = list(mi = .MI_UINT8,  enc = function(x) as.raw(bitwAnd(as.integer(round(x)), 255L))),  # mxUINT8
     "10" = list(mi = .MI_INT16,  enc = function(x) writeBin(as.integer(x), raw(), size = 2L, endian = "little")), # mxINT16
     "11" = list(mi = .MI_UINT16, enc = function(x) .raw_u16vec(x)),                               # mxUINT16
-    "12" = list(mi = .MI_INT32,  enc = function(x) .raw_i32vec(x)),                               # mxINT32
-    "13" = list(mi = .MI_UINT32, enc = function(x) .raw_i32vec(x)),                               # mxUINT32
+    # mxINT32 and mxUINT32 both arrive as doubles (see .decode_numeric) and
+    # between them span values R cannot hold as integers at either end.
+    "12" = list(mi = .MI_INT32,  enc = function(x) .raw_32vec_from_double(x)),                   # mxINT32
+    "13" = list(mi = .MI_UINT32, enc = function(x) .raw_32vec_from_double(x)),                   # mxUINT32
     cli::cli_abort("Unsupported numeric MAT array class: {.val {class_code}}")
   )
 }
@@ -369,12 +402,24 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
   switch(as.character(type),
     "9" = readBin(data, "double", n = length(data) %/% 8L, size = 8L, endian = "little"),       # miDOUBLE
     "7" = readBin(data, "double", n = length(data) %/% 4L, size = 4L, endian = "little"),       # miSINGLE
-    "5" = readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little"),      # miINT32
-    "6" = readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little"),      # miUINT32
+    # miINT32. Decoded from the raw bytes rather than by readBin(), because R
+    # cannot hold -2147483648 as an integer (that bit pattern is NA_integer_),
+    # so the most negative int32 would read back as missing.
+    "5" = {
+      v <- .u32_from_raw(data)
+      v[v >= 2147483648] <- v[v >= 2147483648] - 4294967296
+      v
+    },
+    # miUINT32. R has no unsigned 32-bit type, and values above 2147483647 do
+    # not fit an R integer at all, so these stay doubles.
+    "6" = .u32_from_raw(data),
     "4" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little", signed = FALSE), # miUINT16
     "3" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little"),      # miINT16
     "2" = as.integer(data),                                                                     # miUINT8
-    "1" = as.integer(data),                                                                     # miINT8
+    # miINT8. as.integer() on raw is unsigned, which read -128 back as 128 and
+    # -1 as 255. MATLAB stores a double array of small values compactly, so this
+    # is how an ordinary negative value can arrive.
+    "1" = readBin(data, "integer", n = length(data), size = 1L, signed = TRUE),                 # miINT8
     cli::cli_abort("Unsupported numeric MAT data type: {.val {type}}")
   )
 }
@@ -403,6 +448,46 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
   } else {
     cli::cli_abort("Unsupported char MAT data type: {.val {type}}")
   }
+}
+
+# Inflate a zlib (RFC 1950) stream incrementally, returning whatever decodes
+# before the stream ends. Used only as a fallback for a stream `memDecompress()`
+# rejects outright, which it does for a section that stops without its
+# terminator even though the deflate blocks up to that point are sound.
+#
+# Base R offers no incremental zlib reader, but `gzcon()` is an incremental gzip
+# (RFC 1952) reader, and the two formats wrap the same deflate data: swapping the
+# 2-byte zlib header for a minimal gzip header lets `gzcon()` decode it.
+#
+# The trailers differ, so a stream that runs to completion would fail the gzip
+# checksum. That does not arise on the path this is used for: a stream stopping
+# short ends at EOF before any trailer is reached, and the caller only reaches
+# here when `memDecompress()` has already refused the stream. Input that is not
+# deflate data at all can still make the connection layer print a checksum line
+# straight to stderr, which no R-level handler can suppress, but such input
+# yields nothing and the caller then aborts as before.
+#
+# The recovered bytes are validated by the element-length check in the caller,
+# so a genuinely short read is caught there rather than returned as data.
+.inflate_incremental <- function(blob) {
+  if (length(blob) < 3L) return(raw(0))
+
+  gz_header <- as.raw(c(0x1f, 0x8b, 0x08, 0x00, 0, 0, 0, 0, 0x00, 0xff))
+  con <- tryCatch(gzcon(rawConnection(c(gz_header, blob[-(1:2)]), "rb")),
+                  error = function(e) NULL)
+  if (is.null(con)) return(raw(0))
+  on.exit(try(close(con), silent = TRUE), add = TRUE, after = FALSE)
+
+  chunks <- list()
+  n <- 0L
+  repeat {
+    chunk <- tryCatch(readBin(con, "raw", 1048576L), error = function(e) raw(0))
+    if (length(chunk) == 0L) break
+    n <- n + 1L
+    chunks[[n]] <- chunk
+  }
+
+  if (n == 0L) raw(0) else do.call(c, chunks)
 }
 
 # Parse the body of a miMATRIX element (everything after its tag) into a
@@ -451,8 +536,25 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     ))
   }
 
+  # Bound the declared element count against the bytes actually present before
+  # anything allocates on the strength of it. prod() returns a double, so
+  # corrupt dimensions arrive here as values far beyond what the body could
+  # hold, or as NA. Left unchecked they are worse than a crash: the cell branch
+  # ties up gigabytes before .read_element()'s bounds check fires, or dies on a
+  # bare "vector size specified is too large" naming neither file nor variable,
+  # while matrix() in the numeric branch does not even error - it allocates and
+  # recycles the short data silently, fabricating values. No encoding stores an
+  # element in less than a byte, and the body also carries the flags, dimensions
+  # and name, so this bound never rejects an honest file.
+  nel <- prod(as.double(dims))
+  if (is.na(nel) || nel < 0 || nel > length(body)) {
+    cli::cli_abort(c(
+      "Malformed MAT-file: variable {.val {name}} declares {nel} elements.",
+      "i" = "The element data is {length(body)} bytes, which cannot hold that many."
+    ))
+  }
+
   spec <- if (class_code == .MX_CELL) {
-    nel <- prod(dims)
     strs <- character(nel)
     if (nel > 0L) {
       for (k in seq_len(nel)) {
@@ -495,7 +597,24 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     vals <- if (length(data_el$data) == 0L) numeric(0) else .decode_numeric(data_el$type, data_el$data)
     nr <- if (length(dims) > 0) dims[1] else 0L
     nc <- if (length(dims) > 1) dims[2] else 1L
-    vals <- if (out_class == .MX_DOUBLE || out_class == 7L) as.double(vals) else as.integer(vals)
+    # matrix() recycles rather than complaining when the data is shorter than
+    # the dimensions claim, so dimensions that disagree with the payload would
+    # be read back as repeated values. Refuse instead: the caller may write the
+    # result straight back over the source file.
+    if (length(vals) != nel) {
+      cli::cli_abort(c(
+        "Malformed MAT-file: variable {.val {name}} declares {nr}x{nc} but carries {length(vals)} values.",
+        "i" = "Reading it would recycle the data to fill the declared dimensions."
+      ))
+    }
+    # The 32-bit integer classes reach values R cannot hold in an integer (-2^31
+    # for int32, everything above 2^31-1 for uint32), so they stay doubles.
+    # Everything narrower is exact as an integer.
+    vals <- if (out_class %in% c(.MX_DOUBLE, .MX_SINGLE, .MX_INT32, .MX_UINT32)) {
+      as.double(vals)
+    } else {
+      as.integer(vals)
+    }
     mat_var_numeric(matrix(vals, nrow = nr, ncol = nc), out_class)
   }
 
@@ -534,14 +653,29 @@ read_mat_v5 <- function(filename) {
     }
 
     if (typ == .MI_COMPRESSED) {
+      blob <- raw_all[data_start:(data_start + ln - 1L)]
       element <- tryCatch(
-        memDecompress(raw_all[data_start:(data_start + ln - 1L)], type = "gzip"),
+        memDecompress(blob, type = "gzip"),
         error = function(e) {
-          cli::cli_abort(c(
-            "Could not decompress {.file {basename(filename)}}.",
-            "i" = "A compressed section is truncated or corrupted (the file may have been written incompletely).",
-            "x" = conditionMessage(e)
+          # Some MATLAB-written files carry a compressed section whose zlib
+          # stream never reaches its terminator. `memDecompress()` is one-shot
+          # and refuses the whole stream, but the deflate blocks before the end
+          # are intact and hold the data. `R.matlab` and `SciPy` both decode
+          # these incrementally and so read such files, so refusing them here
+          # would lose files that earlier versions of iRfcb could read.
+          recovered <- .inflate_incremental(blob)
+          if (length(recovered) < 8L) {
+            cli::cli_abort(c(
+              "Could not decompress {.file {basename(filename)}}.",
+              "i" = "A compressed section is truncated or corrupted (the file may have been written incompletely).",
+              "x" = conditionMessage(e)
+            ))
+          }
+          cli_warn(c(
+            "{.file {basename(filename)}} contains a compressed section that ends without its stream terminator.",
+            "i" = "The data was recovered by decoding the section incrementally. The file was likely written incompletely; consider rewriting it."
           ))
+          recovered
         }
       )
       # element is a full miMATRIX element: strip its 8-byte tag, parse the body

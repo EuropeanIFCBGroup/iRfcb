@@ -76,7 +76,7 @@ test_that("ifcb_summarize_cell_counts computes abundance and chain-length stats"
 
   expect_s3_class(res, "data.frame")
   expect_true(all(c("sample", "classifier", "class", "counts", "cell_counts",
-                    "n_chains", "mean_chain_length", "median_chain_length",
+                    "n_counted", "mean_chain_length", "median_chain_length",
                     "max_chain_length") %in% colnames(res)))
 
   skel <- res[res$class == "Skeletonema", ]
@@ -85,15 +85,15 @@ test_that("ifcb_summarize_cell_counts computes abundance and chain-length stats"
   # Default single_cell_values = c(-1, 0): cells = 1 + 1 + 1 + 5 = 8
   expect_equal(skel$cell_counts, 8)
   expect_equal(skel$counts, 4)
-  # n_chains and length stats only over cell_count >= 1: {1, 5}
-  expect_equal(skel$n_chains, 2)
+  # n_counted and length stats only over cell_count >= 1: {1, 5}
+  expect_equal(skel$n_counted, 2)
   expect_equal(skel$mean_chain_length, 3)
   expect_equal(skel$median_chain_length, 3)
   expect_equal(skel$max_chain_length, 5)
 
   # Mesodinium all -1: each counts as one cell, no genuine chains
   expect_equal(meso$cell_counts, 2)
-  expect_equal(meso$n_chains, 0)
+  expect_equal(meso$n_counted, 0)
   expect_true(is.na(meso$mean_chain_length))
 })
 
@@ -125,7 +125,7 @@ test_that("ifcb_summarize_cell_counts selects the requested stats", {
 
   res <- ifcb_summarize_cell_counts(dir, stats = c("mean", "sd"), verbose = FALSE)
   expect_true(all(c("mean_chain_length", "sd_chain_length") %in% colnames(res)))
-  expect_false(any(c("median_chain_length", "max_chain_length", "n_chains") %in% colnames(res)))
+  expect_false(any(c("median_chain_length", "max_chain_length", "n_counted") %in% colnames(res)))
   expect_equal(res$mean_chain_length, 2)
 })
 
@@ -190,7 +190,7 @@ test_that("ifcb_summarize_cell_counts reads cell_count from CSV files", {
 
   res <- ifcb_summarize_cell_counts(dir, verbose = FALSE)
   expect_equal(res$cell_counts, 8)   # 1 + 1 + 2 + 4
-  expect_equal(res$n_chains, 2)      # {2, 4}
+  expect_equal(res$n_counted, 2)      # {2, 4}
   expect_equal(res$max_chain_length, 4)
 })
 
@@ -212,11 +212,11 @@ test_that("ifcb_summarize_cell_counts reads cell_count from .mat files", {
 
   # Default single_cell_values = c(-1, 0): cells = 1 + 1 + 1 + 5 = 8
   expect_equal(skel$cell_counts, 8)
-  expect_equal(skel$n_chains, 2)
+  expect_equal(skel$n_counted, 2)
   expect_equal(skel$mean_chain_length, 3)
   expect_equal(skel$max_chain_length, 5)
   expect_equal(meso$cell_counts, 2)
-  expect_equal(meso$n_chains, 0)
+  expect_equal(meso$n_counted, 0)
 })
 
 test_that("ifcb_summarize_cell_counts gives identical results for .mat and .h5", {

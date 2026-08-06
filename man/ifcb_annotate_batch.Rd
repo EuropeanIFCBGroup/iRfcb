@@ -38,7 +38,10 @@ ifcb_annotate_batch(
 
 \item{adc_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-Use \code{adc_files} instead.}
+Use \code{adc_files} instead, which takes a vector of file paths. This
+rename applies to this function only, and is not a package-wide rename:
+\code{\link[=ifcb_annotate_samples]{ifcb_annotate_samples()}} genuinely takes one directory and keeps
+\code{adc_folder}.}
 }
 \value{
 The function does not return a value. It creates or updates \code{.mat} files in the \code{manual_folder} to

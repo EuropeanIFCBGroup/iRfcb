@@ -628,7 +628,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' @param modules Character vector. Names of the Python modules to check.
 #'   Default is "scipy".
 #' @param initialize Logical. Whether to initialize Python if not already initialized.
-#'   Default is FALSE.
+#'   Default is TRUE.
 #'
 #' @return This function does not return a value. It stops execution if the required
 #'   Python environment is not available.
@@ -639,7 +639,7 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
 #' check_python_and_module(c("scipy", "pandas", "matplotlib"))
 #' }
 #' @noRd
-check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
+check_python_and_module <- function(modules = "scipy", initialize = TRUE) {
   # Check if Python is available
   if (!reticulate::py_available(initialize = initialize)) {
     cli_abort(c(
@@ -648,16 +648,17 @@ check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
     ))
   }
 
-  # Discover Python configuration
-  py_cfg <- reticulate::py_discover_config()
-
-  # List available packages
-  available_packages <- reticulate::py_list_packages(
-    python = py_cfg$python
-  )
-
-  # Find missing modules
-  missing_modules <- setdiff(modules, available_packages$package)
+  # Ask Python whether each module imports, rather than looking for it in
+  # `reticulate::py_list_packages()`. See scipy_available() below for why that
+  # listing is unreliable: on a conda environment it reports conda's own base
+  # listing, so an installed and importable module can be reported missing and
+  # this would abort on a perfectly good environment.
+  missing_modules <- modules[!vapply(
+    modules,
+    function(m) isTRUE(tryCatch(reticulate::py_module_available(m),
+                                error = function(e) FALSE)),
+    logical(1)
+  )]
 
   # Error if any modules are missing
   if (length(missing_modules) > 0) {
@@ -682,17 +683,29 @@ check_python_and_module <- function(modules = "scipy", initialize = FALSE) {
 #' scipy_available() # Check for Python and 'scipy'
 #' }
 #' @noRd
-scipy_available <- function(initialize = FALSE) {
-  # Check if Python is available
+scipy_available <- function(initialize = TRUE) {
+  # Check if Python is available. Initializing by default is what the callers
+  # need: every one of them guards this behind `use_python &&`, which
+  # short-circuits, so reaching here means the caller explicitly asked for the
+  # Python path. Not initializing meant that in a fresh session, where nothing
+  # has touched Python yet, `py_available(initialize = FALSE)` is FALSE and
+  # `use_python = TRUE` was quietly ignored however well the environment was
+  # set up. Python is still never started for a caller that did not ask for it.
   if (!reticulate::py_available(initialize = initialize)) {
     return(FALSE)
   }
 
-  # Get the list of installed Python packages
-  available_packages <- reticulate::py_list_packages()
-
-  # Check if 'scipy' is installed
-  "scipy" %in% available_packages$package
+  # Ask Python whether it can import scipy, rather than looking for it in
+  # `reticulate::py_list_packages()`. That listing reports what the environment
+  # manager has recorded, and for a conda environment it is conda's own base
+  # listing, in which an installed and perfectly importable scipy can simply be
+  # absent. Every caller guards a Python branch with this, falling back to the
+  # native reader otherwise, so a false negative silently ignored
+  # `use_python = TRUE`. Probing the import answers the question actually being
+  # asked, and is cheaper too: `py_list_packages()` shells out to pip or conda,
+  # while the import is cached by Python after the first call.
+  isTRUE(tryCatch(reticulate::py_module_available("scipy"),
+                  error = function(e) FALSE))
 }
 
 #' Install Missing Python Packages

@@ -22,12 +22,12 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' statistics, although both still contribute to abundance according to
 #' `single_cell_values` (by default one cell each).
 #'
-#' `n_chains` reports how many ROIs those length statistics were computed over,
-#' i.e. the number of chain-counted ROIs (`cell_count >= 1`). Despite the name it
-#' is a count of ROIs rather than of chains, and it includes ROIs found to hold a
+#' `n_counted` reports how many ROIs those length statistics were computed over,
+#' i.e. the number of ROIs the chain counter measured (`cell_count >= 1`). It is
+#' a count of ROIs rather than of chains, and it includes ROIs found to hold a
 #' single cell, which are not chains. It is useful for telling a measured
 #' abundance from an imputed one: a class with `cell_counts > 0` but
-#' `n_chains == 0` was never chain-counted, so its abundance is one cell per ROI
+#' `n_counted == 0` was never chain-counted, so its abundance is one cell per ROI
 #' by imputation rather than by measurement.
 #'
 #' @param class_files A character vector of full paths to classification files
@@ -44,9 +44,10 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #'   `c(-1, 0)`, i.e. both ROIs that were not counted and ROIs where no cells
 #'   were detected count as one cell. Values not listed are used verbatim.
 #' @param stats Character vector selecting which chain-length statistics to
-#'   include. Any of `"n_chains"` (the number of chain-counted ROIs the other
-#'   statistics are computed over), `"mean"`, `"median"`, `"max"`, and `"sd"`.
-#'   Default is `c("n_chains", "mean", "median", "max")`. Use `character(0)` to
+#'   include. Any of `"n_counted"` (the number of ROIs the chain counter measured,
+#'   which the other statistics are computed over), `"mean"`, `"median"`, `"max"`,
+#'   and `"sd"`.
+#'   Default is `c("n_counted", "mean", "median", "max")`. Use `character(0)` to
 #'   return abundance only.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
@@ -63,8 +64,9 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' @return A data frame with one row per sample and class. Columns always include
 #'   `sample`, `classifier`, `class`, `counts` (number of ROIs), and
 #'   `cell_counts` (total cell abundance). The requested chain-length statistics
-#'   are added as `n_chains` (number of chain-counted ROIs, i.e. those with
-#'   `cell_count >= 1`), `mean_chain_length`, `median_chain_length`,
+#'   are added as `n_counted` (number of ROIs the chain counter measured, i.e.
+#'   those with `cell_count >= 1`, including single-cell ones),
+#'   `mean_chain_length`, `median_chain_length`,
 #'   `max_chain_length`, and/or `sd_chain_length`. When `hdr_folder` is provided,
 #'   `ml_analyzed` and `cell_counts_per_liter` are also returned.
 #'
@@ -107,12 +109,12 @@ utils::globalVariables(c("cell_count", "cell_count_resolved", "classifier", "cla
 #' @export
 ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
                                         single_cell_values = c(-1, 0),
-                                        stats = c("n_chains", "mean", "median", "max"),
+                                        stats = c("n_counted", "mean", "median", "max"),
                                         threshold = "opt", class_recursive = TRUE,
                                         hdr_recursive = TRUE, use_python = FALSE,
                                         verbose = TRUE) {
 
-  allowed_stats <- c("n_chains", "mean", "median", "max", "sd")
+  allowed_stats <- c("n_counted", "mean", "median", "max", "sd")
   if (length(stats) > 0) {
     invalid <- setdiff(stats, allowed_stats)
     if (length(invalid) > 0) {
@@ -256,7 +258,7 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
       # with na.rm = TRUE would report 0 cells for a taxon that is present in
       # the images, so the group total is reported as NA instead.
       cell_counts = if (any(is.na(cell_count_resolved))) NA_real_ else sum(cell_count_resolved),
-      n_chains = sum(cell_count >= 1, na.rm = TRUE),
+      n_counted = sum(cell_count >= 1, na.rm = TRUE),
       mean_chain_length = length_stat(cell_count, mean),
       median_chain_length = length_stat(cell_count, stats::median),
       max_chain_length = length_stat(cell_count, max),
@@ -265,7 +267,7 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     )
 
   # Keep only the requested chain-length statistics
-  stat_cols <- c(n_chains = "n_chains",
+  stat_cols <- c(n_counted = "n_counted",
                  mean = "mean_chain_length",
                  median = "median_chain_length",
                  max = "max_chain_length",

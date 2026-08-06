@@ -20,7 +20,11 @@ ifcb_read_hdr_data(
 
 \item{hdr_folder}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-Use \code{hdr_files} instead.}
+Use \code{hdr_files} instead, which also accepts a single folder path.
+This rename applies to this function only, because \code{hdr_files} takes a
+vector of file paths as well as a folder. It is not a package-wide
+rename: functions that genuinely take one directory, such as
+\code{\link[=ifcb_psd]{ifcb_psd()}} and \code{\link[=ifcb_summarize_biovolumes]{ifcb_summarize_biovolumes()}}, keep \code{hdr_folder}.}
 }
 \value{
 A data frame with sample names, GPS latitude, GPS longitude, and timestamps. When \code{gps_only = TRUE}, only samples with GPS coordinates are included.

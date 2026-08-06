@@ -15,7 +15,10 @@
 #' @param do_compression A logical value indicating whether to compress the .mat file. Default is TRUE.
 #' @param adc_folder `r lifecycle::badge("deprecated")`
 #'
-#'    Use \code{adc_files} instead.
+#'    Use \code{adc_files} instead, which takes a vector of file paths. This
+#'    rename applies to this function only, and is not a package-wide rename:
+#'    [ifcb_annotate_samples()] genuinely takes one directory and keeps
+#'    `adc_folder`.
 #'
 #' @details
 #' The `.mat` files are created and edited directly from R.
@@ -70,7 +73,16 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   if (lifecycle::is_present(adc_folder)) {
 
     # Signal the deprecation to the user
-    deprecate_warn("0.5.0", "iRfcb::ifcb_annotate_batch(adc_folder = )", "iRfcb::ifcb_annotate_batch(adc_files = )")
+    deprecate_warn(
+      "0.5.0",
+      "iRfcb::ifcb_annotate_batch(adc_folder = )",
+      "iRfcb::ifcb_annotate_batch(adc_files = )",
+      details = paste(
+        "This affects `ifcb_annotate_batch()` alone, since `adc_files` takes a",
+        "vector of files. `ifcb_annotate_samples()` takes one directory and",
+        "keeps `adc_folder`."
+      )
+    )
 
     # Deal with the deprecated argument for compatibility
     adc_files <- adc_folder
