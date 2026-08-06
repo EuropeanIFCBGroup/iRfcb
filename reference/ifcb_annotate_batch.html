@@ -116,7 +116,10 @@ These <code>.mat</code> files can be used with the code in the <code>ifcb-analys
 
 <dt id="arg-adc-folder">adc_folder<a class="anchor" aria-label="anchor" href="#arg-adc-folder"></a></dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a></p>
-<p>Use <code>adc_files</code> instead.</p></dd>
+<p>Use <code>adc_files</code> instead, which takes a vector of file paths. This
+rename applies to this function only, and is not a package-wide rename:
+<code><a href="ifcb_annotate_samples.html">ifcb_annotate_samples()</a></code> genuinely takes one directory and keeps
+<code>adc_folder</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

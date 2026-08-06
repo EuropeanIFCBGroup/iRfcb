@@ -70,7 +70,7 @@ statistics.</p>
 <span>  <span class="va">class_files</span>,</span>
 <span>  hdr_folder <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  single_cell_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
-<span>  stats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n_chains"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"max"</span><span class="op">)</span>,</span>
+<span>  stats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n_counted"</span>, <span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"max"</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
 <span>  class_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  hdr_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -107,9 +107,10 @@ were detected count as one cell. Values not listed are used verbatim.</p></dd>
 
 <dt id="arg-stats">stats<a class="anchor" aria-label="anchor" href="#arg-stats"></a></dt>
 <dd><p>Character vector selecting which chain-length statistics to
-include. Any of <code>"n_chains"</code> (the number of chain-counted ROIs the other
-statistics are computed over), <code>"mean"</code>, <code>"median"</code>, <code>"max"</code>, and <code>"sd"</code>.
-Default is <code>c("n_chains", "mean", "median", "max")</code>. Use <code>character(0)</code> to
+include. Any of <code>"n_counted"</code> (the number of ROIs the chain counter measured,
+which the other statistics are computed over), <code>"mean"</code>, <code>"median"</code>, <code>"max"</code>,
+and <code>"sd"</code>.
+Default is <code>c("n_counted", "mean", "median", "max")</code>. Use <code>character(0)</code> to
 return abundance only.</p></dd>
 
 
@@ -144,8 +145,9 @@ Python-based method (<code>SciPy</code>). Default is <code>FALSE</code>.</p></dd
     <p>A data frame with one row per sample and class. Columns always include
 <code>sample</code>, <code>classifier</code>, <code>class</code>, <code>counts</code> (number of ROIs), and
 <code>cell_counts</code> (total cell abundance). The requested chain-length statistics
-are added as <code>n_chains</code> (number of chain-counted ROIs, i.e. those with
-<code>cell_count &gt;= 1</code>), <code>mean_chain_length</code>, <code>median_chain_length</code>,
+are added as <code>n_counted</code> (number of ROIs the chain counter measured, i.e.
+those with <code>cell_count &gt;= 1</code>, including single-cell ones),
+<code>mean_chain_length</code>, <code>median_chain_length</code>,
 <code>max_chain_length</code>, and/or <code>sd_chain_length</code>. When <code>hdr_folder</code> is provided,
 <code>ml_analyzed</code> and <code>cell_counts_per_liter</code> are also returned.</p>
 <p><code>cell_counts</code> is <code>NA</code> for a sample whose classification file carries no
@@ -167,12 +169,12 @@ ROIs that were genuinely chain-counted (<code>cell_count &gt;= 1</code>); ROIs w
 (not counted) or <code>0</code> (no cells detected) are excluded from the length
 statistics, although both still contribute to abundance according to
 <code>single_cell_values</code> (by default one cell each).</p>
-<p><code>n_chains</code> reports how many ROIs those length statistics were computed over,
-i.e. the number of chain-counted ROIs (<code>cell_count &gt;= 1</code>). Despite the name it
-is a count of ROIs rather than of chains, and it includes ROIs found to hold a
+<p><code>n_counted</code> reports how many ROIs those length statistics were computed over,
+i.e. the number of ROIs the chain counter measured (<code>cell_count &gt;= 1</code>). It is
+a count of ROIs rather than of chains, and it includes ROIs found to hold a
 single cell, which are not chains. It is useful for telling a measured
 abundance from an imputed one: a class with <code>cell_counts &gt; 0</code> but
-<code>n_chains == 0</code> was never chain-counted, so its abundance is one cell per ROI
+<code>n_counted == 0</code> was never chain-counted, so its abundance is one cell per ROI
 by imputation rather than by measurement.</p>
 <p>Chain counting was introduced by Groves et al. (2026), who trained a
 "You Only Look Once" (YOLO) object detection model to enumerate the cells in

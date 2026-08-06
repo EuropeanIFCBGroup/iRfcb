@@ -80,7 +80,11 @@
 
 <dt id="arg-hdr-folder">hdr_folder<a class="anchor" aria-label="anchor" href="#arg-hdr-folder"></a></dt>
 <dd><p><a href="https://lifecycle.r-lib.org/articles/stages.html#deprecated" class="external-link"><img src="figures/lifecycle-deprecated.svg" alt="[Deprecated]"></a></p>
-<p>Use <code>hdr_files</code> instead.</p></dd>
+<p>Use <code>hdr_files</code> instead, which also accepts a single folder path.
+This rename applies to this function only, because <code>hdr_files</code> takes a
+vector of file paths as well as a folder. It is not a package-wide
+rename: functions that genuinely take one directory, such as
+<code><a href="ifcb_psd.html">ifcb_psd()</a></code> and <code><a href="ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code>, keep <code>hdr_folder</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

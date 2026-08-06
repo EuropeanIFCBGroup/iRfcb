@@ -216,7 +216,10 @@ fail <code>qc_pass</code>. This matters for legacy IFCB headers, which omit the
 post-run <code>roiCount</code> summary field (so <code>roi_count_match</code> is <code>NA</code>); such samples
 can still pass on the checks that do apply. It also applies to a sample that
 never triggered, where no volume can be computed and <code>volume_ok</code> is <code>NA</code>
-rather than <code>FALSE</code> (<code>is_empty</code> reports the condition instead). Only a check
+rather than <code>FALSE</code> (<code>is_empty</code> reports the condition instead). A sample
+whose analyzed volume comes out as exactly <code>0</code> is a different case and does
+fail: that is a computed answer saying the instrument ran and analyzed no
+water, rather than a check that could not be run. Only a check
 that actually evaluates to <code>FALSE</code> fails the sample. <code>files_complete</code> is
 always <code>TRUE</code>/<code>FALSE</code> (never <code>NA</code>) and so always counts.</p>
     </div>

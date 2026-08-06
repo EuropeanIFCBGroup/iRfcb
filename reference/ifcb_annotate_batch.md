@@ -79,7 +79,11 @@ ifcb_annotate_batch(
 
   **\[deprecated\]**
 
-  Use `adc_files` instead.
+  Use `adc_files` instead, which takes a vector of file paths. This
+  rename applies to this function only, and is not a package-wide
+  rename:
+  [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md)
+  genuinely takes one directory and keeps `adc_folder`.
 
 ## Value
 

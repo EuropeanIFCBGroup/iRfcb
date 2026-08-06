@@ -14,9 +14,11 @@
   of eight cells counts as eight.
   - New
     [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
-    reports cell abundance and chain-length statistics (`n_chains`,
+    reports cell abundance and chain-length statistics (`n_counted`,
     `mean`, `median`, `max`, `sd`) per sample and class, and abundance
-    per liter when given an `hdr_folder`.
+    per liter when given an `hdr_folder`. `n_counted` is the number of
+    ROIs the chain counter measured, including those it found to hold a
+    single cell.
   - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
     and
     [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
@@ -136,15 +138,40 @@
   Python now uses the native R reader as well, which decodes MATLAB
   UTF-16 text correctly, so accented class or path names survive where
   [`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html)
-  could mangle them. The reader also refuses input it cannot represent
-  faithfully, naming the variable and the reason, and reports a
-  truncated file instead of reading it back quietly padded with zeros.
-  Both matter because
+  could mangle them. It reads every numeric storage type MATLAB uses to
+  hold an array compactly (`int8` through `uint32`, `single` and
+  `double`), preserving each across a read-write round-trip, including
+  values at the signed and unsigned 32-bit limits that R cannot hold in
+  an integer. The reader also refuses input it cannot represent
+  faithfully, naming the variable and the reason, reports a truncated
+  file instead of reading it back quietly padded with zeros, and rejects
+  declared dimensions that disagree with the data carried rather than
+  recycling values to fill them out. All of this matters because
   [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
   and
   [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
-  write what they read back over the same file. `R.matlab` has moved to
-  `Suggests`.
+  write what they read back over the same file. One thing it tolerates
+  rather than refuses: a compressed section that ends without its stream
+  terminator, which some classification files written by MATLAB contain.
+  The data in those is intact, so it is decoded incrementally and read,
+  with a warning naming the file. `R.matlab` has moved to `Suggests`.
+  - Note that this makes reading stricter than in 0.9.0, so a file that
+    used to open may now stop with an error. `R.matlab` would read a
+    `.mat` containing a struct, an object, a sparse or complex array, a
+    logical array, more than two dimensions, or a MATLAB string array
+    (as saved by `class2use = ["a" "b"]` in a recent MATLAB release),
+    and iRfcb would then quietly write back something that was not what
+    it read. Those files are now named and refused instead. The formats
+    iRfcb itself deals with are unaffected: manual files, `class2use`
+    files and classifier output written by MATLAB `ifcb-analysis` or the
+    Python pipelines all read as before. If you do have a third-party
+    file that no longer opens,
+    [`ifcb_get_mat_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.md)
+    and
+    [`ifcb_get_mat_variable()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.md)
+    read it with `use_python = TRUE`, which goes through `SciPy`
+    instead, once a Python environment has been set up with
+    [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
 - [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
   now works with both raw-data readers used by WHOI
   [`ifcb-features`](https://github.com/WHOIGit/ifcb-features). Release
@@ -206,6 +233,38 @@
   valid range instead of `subscript out of bounds`, and a missing input
   file or a `.mat` file without a `classlist` variable is named
   explicitly.
+- Fixed `use_python = TRUE` being ignored when Python and `SciPy` were
+  in fact available.
+  [`ifcb_get_mat_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.md),
+  [`ifcb_get_mat_variable()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.md),
+  [`ifcb_read_summary()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_summary.md),
+  [`ifcb_count_mat_annotations()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.md),
+  [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md)
+  and
+  [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
+  decided whether they could use Python by looking for `scipy` in
+  [`reticulate::py_list_packages()`](https://rstudio.github.io/reticulate/reference/py_list_packages.html),
+  and fell back to the R reader without saying so when it was not
+  listed. Two things went wrong with that: on a `conda` environment the
+  listing reports conda’s own base packages, so an installed and
+  perfectly importable `scipy` was absent from it; and the check did not
+  initialize Python, so in a fresh session it failed whatever the
+  environment held. Availability is now settled by asking Python to
+  import the module. This matters most when a `.mat` file cannot be read
+  by the R reader, since `use_python = TRUE` is the documented way to
+  read it.
+- Clarified the deprecation of `ifcb_read_hdr_data(hdr_folder = )` and
+  `ifcb_annotate_batch(adc_folder = )`. Both read as though the package
+  had renamed `hdr_folder` and `adc_folder` everywhere, which it has
+  not: those two functions were changed to accept a vector of file
+  paths, so their argument was renamed to match. Functions that
+  genuinely take a single directory, such as
+  [`ifcb_psd()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.md),
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md),
+  [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
+  and
+  [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md),
+  keep `hdr_folder` and `adc_folder` and are not deprecated.
 - Corrected the
   [`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
   documentation, which said the relationship applied to diatoms above

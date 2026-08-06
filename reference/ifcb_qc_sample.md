@@ -170,7 +170,10 @@ IFCB headers, which omit the post-run `roiCount` summary field (so
 `roi_count_match` is `NA`); such samples can still pass on the checks
 that do apply. It also applies to a sample that never triggered, where
 no volume can be computed and `volume_ok` is `NA` rather than `FALSE`
-(`is_empty` reports the condition instead). Only a check that actually
+(`is_empty` reports the condition instead). A sample whose analyzed
+volume comes out as exactly `0` is a different case and does fail: that
+is a computed answer saying the instrument ran and analyzed no water,
+rather than a check that could not be run. Only a check that actually
 evaluates to `FALSE` fails the sample. `files_complete` is always
 `TRUE`/`FALSE` (never `NA`) and so always counts.
 
