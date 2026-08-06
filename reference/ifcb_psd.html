@@ -124,7 +124,10 @@ plots are organized into subfolders based on their flag status.</p></dd>
 
 
 <dt id="arg-start-fit">start_fit<a class="anchor" aria-label="anchor" href="#arg-start-fit"></a></dt>
-<dd><p>An integer indicating the start fit value for the plot. Default is 10.</p></dd>
+<dd><p>An integer indicating the start fit value for the plot. Default is 10.
+The value is the index of the first 1 micron ESD bin included in the curve fit,
+calibrated for version 2 features. See the Feature file version section before
+using it with another version.</p></dd>
 
 
 <dt id="arg-r-sqr">r_sqr<a class="anchor" aria-label="anchor" href="#arg-r-sqr"></a></dt>
@@ -176,7 +179,11 @@ high humidity. Optional.</p></dd>
 
 
 <dt id="arg-fea-v">fea_v<a class="anchor" aria-label="anchor" href="#arg-fea-v"></a></dt>
-<dd><p>The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. <a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p></dd>
+<dd><p>The version number of the IFCB feature file (e.g., 2, 4). Default is 2,
+as described in Hayashi et al. 2025. The function reads other versions unchanged,
+but the default <code>start_fit</code> and flag thresholds only apply to version 2. Re-derive
+them first; see the Feature file version section.
+<a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p></dd>
 
 
 <dt id="arg-use-plot-subfolders">use_plot_subfolders<a class="anchor" aria-label="anchor" href="#arg-use-plot-subfolders"></a></dt>
@@ -215,6 +222,44 @@ which can be found at <a href="https://github.com/kudelalab/PSD" class="external
 installed in a virtual environment using <code><a href="ifcb_py_install.html">ifcb_py_install()</a></code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="feature-file-version">Feature file version<a class="anchor" aria-label="anchor" href="#feature-file-version"></a></h2>
+
+
+<p>The PSD is built from one feature, <code>EquivDiameter</code>, converted to microns with
+<code>micron_factor</code> and binned into 1 micron bins. The fitted curve, <code>max_ESD_diff</code>
+and every flag derived from them all follow from that single distribution.</p>
+<p><code>EquivDiameter</code> is not directly comparable between feature set versions. The
+version 4 extractor (<code>ifcb-features</code>, see <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code>) segments a
+tighter blob boundary than the version 2 MATLAB extractor (<code>ifcb-analysis</code>), so
+it reports a smaller equivalent diameter for the same image. The difference is
+roughly a fixed number of pixels rather than a fixed proportion. It therefore
+converts to microns through <code>micron_factor</code>, and moves the whole ESD histogram
+towards smaller bins by about that many microns. Small particles lose a larger
+share of their diameter than large ones.</p>
+<p>The thresholds published by Hayashi et al. (2025) were calibrated on version 2
+features and do not carry over unchanged:</p>
+<ul><li><p><code>start_fit</code> selects a histogram bin. When the distribution moves, the fit
+window sits at a different position relative to the peak, which changes the
+fitted exponent as well as the multiplier. The <code>r_sqr</code> and <code>beads</code> flags read
+those two values.</p></li>
+<li><p><code>bloom</code> and <code>bubbles</code> are evaluated against <code>max_ESD_diff</code>, which is
+measured relative to <code>start_fit</code>. They move with the shifted distribution, and
+again with any compensating change to <code>start_fit</code>.</p></li>
+<li><p><code>biomass</code> and <code>incomplete</code> depend on the height of the most populated bin,
+which changes as the shift moves targets between bins.</p></li>
+</ul><p>With a version other than 2, measure the offset on your own data instead of
+assuming a published value: extract both feature versions for a set of
+representative bins, compare <code>EquivDiameter</code> per ROI, and lower <code>start_fit</code> by the
+median difference in whole microns. Re-derive the flag thresholds on that basis,
+and report the feature version together with any quality flags you publish.
+<code>micron_factor</code> sets what the offset amounts to in microns, so an instrument with
+a different pixel size needs its own value.</p>
+<p>The file name is the only other place the version is used: features are read as
+<code>&lt;bin&gt;_fea_v&lt;fea_v&gt;.csv</code>. <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code> writes <code>&lt;bin&gt;_features_v4.csv</code>
+by default, so pass <code>feature_tag = "fea"</code> there to get the names this function
+searches for.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Hayashi, K., Enslein, J., Lie, A., Smith, J., Kudela, R.M., 2025. Using particle size distribution (PSD)
 to automate imaging flow cytobot (IFCB) data quality in coastal California, USA.
@@ -222,7 +267,7 @@ International Society for the Study of Harmful Algae. https://doi.org/10.15027/0
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="ifcb_py_install.html">ifcb_py_install</a></code>,
+    <div class="dont-index"><p><code><a href="ifcb_py_install.html">ifcb_py_install</a></code>, <code><a href="ifcb_extract_features.html">ifcb_extract_features</a></code>,
 <a href="https://github.com/kudelalab/PSD" class="external-link">https://github.com/kudelalab/PSD</a></p></div>
     </div>
 
