@@ -450,6 +450,46 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
   }
 }
 
+# Inflate a zlib (RFC 1950) stream incrementally, returning whatever decodes
+# before the stream ends. Used only as a fallback for a stream `memDecompress()`
+# rejects outright, which it does for a section that stops without its
+# terminator even though the deflate blocks up to that point are sound.
+#
+# Base R offers no incremental zlib reader, but `gzcon()` is an incremental gzip
+# (RFC 1952) reader, and the two formats wrap the same deflate data: swapping the
+# 2-byte zlib header for a minimal gzip header lets `gzcon()` decode it.
+#
+# The trailers differ, so a stream that runs to completion would fail the gzip
+# checksum. That does not arise on the path this is used for: a stream stopping
+# short ends at EOF before any trailer is reached, and the caller only reaches
+# here when `memDecompress()` has already refused the stream. Input that is not
+# deflate data at all can still make the connection layer print a checksum line
+# straight to stderr, which no R-level handler can suppress, but such input
+# yields nothing and the caller then aborts as before.
+#
+# The recovered bytes are validated by the element-length check in the caller,
+# so a genuinely short read is caught there rather than returned as data.
+.inflate_incremental <- function(blob) {
+  if (length(blob) < 3L) return(raw(0))
+
+  gz_header <- as.raw(c(0x1f, 0x8b, 0x08, 0x00, 0, 0, 0, 0, 0x00, 0xff))
+  con <- tryCatch(gzcon(rawConnection(c(gz_header, blob[-(1:2)]), "rb")),
+                  error = function(e) NULL)
+  if (is.null(con)) return(raw(0))
+  on.exit(try(close(con), silent = TRUE), add = TRUE, after = FALSE)
+
+  chunks <- list()
+  n <- 0L
+  repeat {
+    chunk <- tryCatch(readBin(con, "raw", 1048576L), error = function(e) raw(0))
+    if (length(chunk) == 0L) break
+    n <- n + 1L
+    chunks[[n]] <- chunk
+  }
+
+  if (n == 0L) raw(0) else do.call(c, chunks)
+}
+
 # Parse the body of a miMATRIX element (everything after its tag) into a
 # variable specification. Returns list(name, spec).
 .parse_matrix_body <- function(body) {
@@ -613,14 +653,29 @@ read_mat_v5 <- function(filename) {
     }
 
     if (typ == .MI_COMPRESSED) {
+      blob <- raw_all[data_start:(data_start + ln - 1L)]
       element <- tryCatch(
-        memDecompress(raw_all[data_start:(data_start + ln - 1L)], type = "gzip"),
+        memDecompress(blob, type = "gzip"),
         error = function(e) {
-          cli::cli_abort(c(
-            "Could not decompress {.file {basename(filename)}}.",
-            "i" = "A compressed section is truncated or corrupted (the file may have been written incompletely).",
-            "x" = conditionMessage(e)
+          # Some MATLAB-written files carry a compressed section whose zlib
+          # stream never reaches its terminator. `memDecompress()` is one-shot
+          # and refuses the whole stream, but the deflate blocks before the end
+          # are intact and hold the data. `R.matlab` and `SciPy` both decode
+          # these incrementally and so read such files, so refusing them here
+          # would lose files that earlier versions of iRfcb could read.
+          recovered <- .inflate_incremental(blob)
+          if (length(recovered) < 8L) {
+            cli::cli_abort(c(
+              "Could not decompress {.file {basename(filename)}}.",
+              "i" = "A compressed section is truncated or corrupted (the file may have been written incompletely).",
+              "x" = conditionMessage(e)
+            ))
+          }
+          cli_warn(c(
+            "{.file {basename(filename)}} contains a compressed section that ends without its stream terminator.",
+            "i" = "The data was recovered by decoding the section incrementally. The file was likely written incompletely; consider rewriting it."
           ))
+          recovered
         }
       )
       # element is a full miMATRIX element: strip its 8-byte tag, parse the body

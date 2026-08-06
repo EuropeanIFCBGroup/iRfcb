@@ -388,6 +388,56 @@ test_that("read_mat_v5 rejects an array with more than two dimensions", {
   expect_mat_rejected(spliced, "3 dimensions.*2-D arrays are supported")
 })
 
+test_that("read_mat_v5 recovers a compressed section that lacks its terminator", {
+  # Some MATLAB-written classification files carry a compressed section whose
+  # zlib stream stops before its 4-byte Adler-32 trailer. The deflate blocks are
+  # intact, so `R.matlab` and `SciPy` both read such files, but `memDecompress()`
+  # is one-shot and rejects the stream outright. Reproduce that shape by writing
+  # a compressed file and dropping the trailer from its first element.
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  values <- matrix(as.double(rep(seq_len(50), 40)), ncol = 1)
+  write_mat_v5(path, list(classlist = mat_var_double(values)), do_compression = TRUE)
+
+  raw_all <- readBin(path, "raw", file.size(path))
+  typ <- readBin(raw_all[129:132], "integer", size = 4L, endian = "little")
+  expect_equal(typ, 15L)  # miCOMPRESSED, else the fixture is not what we think
+  ln <- readBin(raw_all[133:136], "integer", size = 4L, endian = "little")
+
+  # Drop the trailing Adler-32 and shrink the declared length to match, so the
+  # element is self-consistent and only the zlib stream is unterminated.
+  i32 <- function(x) writeBin(as.integer(x), raw(), size = 4L, endian = "little")
+  truncated <- c(
+    raw_all[1:132], i32(ln - 4L),
+    raw_all[137:(136L + ln - 4L)],
+    if (length(raw_all) > 136L + ln) raw_all[(137L + ln):length(raw_all)] else raw(0)
+  )
+
+  bad <- tempfile(fileext = ".mat")
+  on.exit(unlink(bad), add = TRUE)
+  writeBin(truncated, bad)
+
+  expect_warning(got <- read_mat_v5(bad), "without its stream terminator")
+  expect_equal(as.vector(got$classlist$data), as.vector(values))
+})
+
+test_that("read_mat_v5 still reports a compressed section it cannot recover", {
+  # The lenient path must not turn genuinely unreadable input into silence: with
+  # the deflate data itself destroyed there is nothing to recover, so the abort
+  # has to survive.
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  write_mat_v5(path, list(classlist = mat_var_double(matrix(as.double(1:200), ncol = 1))),
+               do_compression = TRUE)
+
+  raw_all <- readBin(path, "raw", file.size(path))
+  # Overwrite the compressed payload with bytes that are not a deflate stream.
+  ln <- readBin(raw_all[133:136], "integer", size = 4L, endian = "little")
+  raw_all[137:(136L + ln)] <- as.raw(rep(0xff, ln))
+
+  expect_mat_rejected(raw_all, "Could not decompress|[Mm]alformed|too short")
+})
+
 # ---- scipy interoperability (only when scipy is installed) ------------------
 
 test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", {
@@ -492,10 +542,10 @@ test_that("every accepted numeric class survives a read - write round-trip", {
   # The first 128 bytes are a header carrying a creation timestamp.
   expect_equal(out_bytes[129:length(out_bytes)], src_bytes[129:length(src_bytes)])
 
-  # And scipy still sees the original values in what we wrote.
-  # The comparison is made in float64: reticulate maps a numpy int32 onto an R
-  # integer, and -2147483648 is R's NA, so an int32 endpoint would fail on the
-  # way back into R even when the file holds it correctly.
+  # And scipy still sees the original values in what we wrote. The comparison
+  # is made in float64: reticulate maps a numpy int32 onto an R integer, and
+  # -2147483648 is R's NA, so an int32 endpoint would fail on the way back into
+  # R even when the file holds it correctly.
   m <- sio$loadmat(out)
   as_dbl <- function(x) as.vector(reticulate::py_to_r(np$asarray(x, dtype = "float64")))
   expect_equal(as_dbl(m$i8), c(-128, 127))
