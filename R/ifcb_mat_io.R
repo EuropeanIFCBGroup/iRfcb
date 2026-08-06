@@ -45,6 +45,7 @@
 .MX_DOUBLE <- 6L
 .MX_SINGLE <- 7L
 .MX_UINT16 <- 11L
+.MX_INT32  <- 12L
 .MX_UINT32 <- 13L
 
 # Array classes the reader can decode. Anything else (struct, object, sparse,
@@ -105,6 +106,35 @@
   writeBin(as.integer(x), raw(), size = 4L, endian = "little")
 }
 
+# Encode a 32-bit integer vector little-endian from doubles, covering the whole
+# int32 and uint32 ranges. R's integer type cannot express either endpoint -
+# `as.integer(-2147483648)` and `as.integer(2147483648)` are both NA, since R
+# reserves -2^31 for NA itself - so going through as.integer() silently turns
+# the extreme value of each type into a missing one. Splitting the double into
+# bytes avoids the conversion entirely.
+.raw_32vec_from_double <- function(x) {
+  x <- as.double(x) %% 4294967296  # fold into [0, 2^32), so int32 wraps to two's complement
+  bytes <- rbind(
+    x %% 256,
+    (x %/% 256) %% 256,
+    (x %/% 65536) %% 256,
+    (x %/% 16777216) %% 256
+  )
+  as.raw(as.vector(bytes))
+}
+
+# Decode a little-endian 32-bit integer vector as doubles in [0, 2^32). The
+# counterpart of .raw_32vec_from_double(): readBin() cannot return either
+# endpoint as an R integer, so the bytes are combined directly.
+.u32_from_raw <- function(data) {
+  # Drop any trailing partial word, as readBin(n = length(data) %/% 4L) did;
+  # matrix() would otherwise recycle it into a fabricated value.
+  n <- length(data) %/% 4L
+  if (n == 0L) return(numeric(0))
+  b <- matrix(as.integer(data[seq_len(n * 4L)]), nrow = 4L)
+  b[1, ] + b[2, ] * 256 + b[3, ] * 65536 + b[4, ] * 16777216
+}
+
 # Write one data element (tag + data). Uses the "small data element" format
 # when the data is 4 bytes or fewer, exactly as scipy does. For 0-byte data
 # the small and regular formats are byte-identical.
@@ -161,15 +191,10 @@
     "9"  = list(mi = .MI_UINT8,  enc = function(x) as.raw(bitwAnd(as.integer(round(x)), 255L))),  # mxUINT8
     "10" = list(mi = .MI_INT16,  enc = function(x) writeBin(as.integer(x), raw(), size = 2L, endian = "little")), # mxINT16
     "11" = list(mi = .MI_UINT16, enc = function(x) .raw_u16vec(x)),                               # mxUINT16
-    "12" = list(mi = .MI_INT32,  enc = function(x) .raw_i32vec(x)),                               # mxINT32
-    # mxUINT32. Values above 2^31-1 arrive as doubles (see .decode_numeric), and
-    # as.integer() would turn them into NA. Wrap them back into the signed range
-    # so the same low 32 bits are written out.
-    "13" = list(mi = .MI_UINT32, enc = function(x) {
-      x <- as.double(x)
-      x[!is.na(x) & x > 2147483647] <- x[!is.na(x) & x > 2147483647] - 4294967296
-      .raw_i32vec(x)
-    }),
+    # mxINT32 and mxUINT32 both arrive as doubles (see .decode_numeric) and
+    # between them span values R cannot hold as integers at either end.
+    "12" = list(mi = .MI_INT32,  enc = function(x) .raw_32vec_from_double(x)),                   # mxINT32
+    "13" = list(mi = .MI_UINT32, enc = function(x) .raw_32vec_from_double(x)),                   # mxUINT32
     cli::cli_abort("Unsupported numeric MAT array class: {.val {class_code}}")
   )
 }
@@ -377,16 +402,17 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
   switch(as.character(type),
     "9" = readBin(data, "double", n = length(data) %/% 8L, size = 8L, endian = "little"),       # miDOUBLE
     "7" = readBin(data, "double", n = length(data) %/% 4L, size = 4L, endian = "little"),       # miSINGLE
-    "5" = readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little"),      # miINT32
-    # miUINT32. R has no unsigned 32-bit type, so read the signed value and lift
-    # anything that came back negative by 2^32. The result is a double, since
-    # values above 2^31-1 do not fit an R integer.
-    "6" = {
-      v <- readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little")
-      v <- as.double(v)
-      v[!is.na(v) & v < 0] <- v[!is.na(v) & v < 0] + 4294967296
+    # miINT32. Decoded from the raw bytes rather than by readBin(), because R
+    # cannot hold -2147483648 as an integer (that bit pattern is NA_integer_),
+    # so the most negative int32 would read back as missing.
+    "5" = {
+      v <- .u32_from_raw(data)
+      v[v >= 2147483648] <- v[v >= 2147483648] - 4294967296
       v
     },
+    # miUINT32. R has no unsigned 32-bit type, and values above 2147483647 do
+    # not fit an R integer at all, so these stay doubles.
+    "6" = .u32_from_raw(data),
     "4" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little", signed = FALSE), # miUINT16
     "3" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little"),      # miINT16
     "2" = as.integer(data),                                                                     # miUINT8
@@ -541,9 +567,14 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
         "i" = "Reading it would recycle the data to fill the declared dimensions."
       ))
     }
-    # mxUINT32 spans values R cannot hold in an integer, so it stays a double;
-    # everything else narrower than a double is exact as an integer.
-    vals <- if (out_class %in% c(.MX_DOUBLE, .MX_SINGLE, .MX_UINT32)) as.double(vals) else as.integer(vals)
+    # The 32-bit integer classes reach values R cannot hold in an integer (-2^31
+    # for int32, everything above 2^31-1 for uint32), so they stay doubles.
+    # Everything narrower is exact as an integer.
+    vals <- if (out_class %in% c(.MX_DOUBLE, .MX_SINGLE, .MX_INT32, .MX_UINT32)) {
+      as.double(vals)
+    } else {
+      as.integer(vals)
+    }
     mat_var_numeric(matrix(vals, nrow = nr, ncol = nc), out_class)
   }
 

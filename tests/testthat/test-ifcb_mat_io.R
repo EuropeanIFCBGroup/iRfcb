@@ -436,8 +436,11 @@ test_that("read_mat_v5 decodes every numeric class it accepts", {
     list(name = "u8",  dtype = "uint8",   values = c(0, 255),             class = 9L),
     list(name = "i16", dtype = "int16",   values = c(-32768, 32767),      class = 10L),
     list(name = "u16", dtype = "uint16",  values = c(0, 65535),           class = 11L),
-    list(name = "i32", dtype = "int32",   values = c(-2147483647, 5),     class = 12L),
-    list(name = "u32", dtype = "uint32",  values = c(0, 4000000000),      class = 13L),
+    # Both 32-bit endpoints are included deliberately: R cannot hold either as
+    # an integer (-2^31 is the NA_integer_ bit pattern, and 2^31 overflows), so
+    # a decoder routed through as.integer() returns NA for exactly these.
+    list(name = "i32", dtype = "int32",   values = c(-2147483648, 2147483647), class = 12L),
+    list(name = "u32", dtype = "uint32",  values = c(0, 2147483648, 4294967295), class = 13L),
     list(name = "sgl", dtype = "float32", values = c(1.5, -2.25),         class = 7L),
     list(name = "dbl", dtype = "float64", values = c(0.1, -1e10),         class = 6L)
   )
@@ -477,7 +480,8 @@ test_that("every accepted numeric class survives a read - write round-trip", {
 
   sio$savemat(src, reticulate::dict(
     i8  = np$array(list(-128L, 127L), dtype = "int8")$reshape(reticulate::tuple(1L, 2L)),
-    u32 = np$array(list(1L, 4000000000), dtype = "uint32")$reshape(reticulate::tuple(1L, 2L)),
+    i32 = np$array(list(-2147483648, 2147483647), dtype = "int32")$reshape(reticulate::tuple(1L, 2L)),
+    u32 = np$array(list(2147483648, 4294967295), dtype = "uint32")$reshape(reticulate::tuple(1L, 2L)),
     sgl = np$array(list(1.5, -2.25), dtype = "float32")$reshape(reticulate::tuple(1L, 2L))
   ), do_compression = FALSE)
 
@@ -489,10 +493,15 @@ test_that("every accepted numeric class survives a read - write round-trip", {
   expect_equal(out_bytes[129:length(out_bytes)], src_bytes[129:length(src_bytes)])
 
   # And scipy still sees the original values in what we wrote.
+  # The comparison is made in float64: reticulate maps a numpy int32 onto an R
+  # integer, and -2147483648 is R's NA, so an int32 endpoint would fail on the
+  # way back into R even when the file holds it correctly.
   m <- sio$loadmat(out)
-  expect_equal(as.vector(m$i8), c(-128, 127))
-  expect_equal(as.vector(m$u32), c(1, 4000000000))
-  expect_equal(as.vector(m$sgl), c(1.5, -2.25))
+  as_dbl <- function(x) as.vector(reticulate::py_to_r(np$asarray(x, dtype = "float64")))
+  expect_equal(as_dbl(m$i8), c(-128, 127))
+  expect_equal(as_dbl(m$i32), c(-2147483648, 2147483647))
+  expect_equal(as_dbl(m$u32), c(2147483648, 4294967295))
+  expect_equal(as_dbl(m$sgl), c(1.5, -2.25))
 })
 
 test_that("read_mat_v5 rejects dimensions that disagree with the payload", {
