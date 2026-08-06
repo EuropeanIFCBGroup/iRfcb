@@ -12,6 +12,48 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' Python must be installed to use this function. The required Python packages can be
 #' installed in a virtual environment using `ifcb_py_install()`.
 #'
+#' @section Feature file version:
+#' The PSD is built from one feature, `EquivDiameter`, converted to microns with
+#' `micron_factor` and binned into 1 micron bins. The fitted curve, `max_ESD_diff`
+#' and every flag derived from them all follow from that single distribution.
+#'
+#' `EquivDiameter` is not directly comparable between feature set versions. The
+#' version 4 extractor (`ifcb-features`, see `ifcb_extract_features()`) segments a
+#' tighter blob boundary than the version 2 MATLAB extractor (`ifcb-analysis`), so
+#' it reports a smaller equivalent diameter for the same image. The difference is
+#' roughly a fixed number of pixels rather than a fixed proportion. It therefore
+#' converts to microns through `micron_factor`, and moves the whole ESD histogram
+#' towards smaller bins by about that many microns. Small particles lose a larger
+#' share of their diameter than large ones.
+#'
+#' The thresholds published by Hayashi et al. (2025) were calibrated on version 2
+#' features and do not carry over unchanged:
+#'
+#' \itemize{
+#'   \item `start_fit` selects a histogram bin. When the distribution moves, the fit
+#'     window sits at a different position relative to the peak, which changes the
+#'     fitted exponent as well as the multiplier. The `r_sqr` and `beads` flags read
+#'     those two values.
+#'   \item `bloom` and `bubbles` are evaluated against `max_ESD_diff`, which is
+#'     measured relative to `start_fit`. They move with the shifted distribution, and
+#'     again with any compensating change to `start_fit`.
+#'   \item `biomass` and `incomplete` depend on the height of the most populated bin,
+#'     which changes as the shift moves targets between bins.
+#' }
+#'
+#' With a version other than 2, measure the offset on your own data instead of
+#' assuming a published value: extract both feature versions for a set of
+#' representative bins, compare `EquivDiameter` per ROI, and lower `start_fit` by the
+#' median difference in whole microns. Re-derive the flag thresholds on that basis,
+#' and report the feature version together with any quality flags you publish.
+#' `micron_factor` sets what the offset amounts to in microns, so an instrument with
+#' a different pixel size needs its own value.
+#'
+#' The file name is the only other place the version is used: features are read as
+#' `<bin>_fea_v<fea_v>.csv`. `ifcb_extract_features()` writes `<bin>_features_v4.csv`
+#' by default, so pass `feature_tag = "fea"` there to get the names this function
+#' searches for.
+#'
 #' @param feature_folder The absolute path to a directory containing all of the feature
 #'   files for the dataset (version can be defined in `fea_v`).
 #' @param hdr_folder The absolute path to a directory containing all of the hdr files for
@@ -27,6 +69,9 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #'   plots are organized into subfolders based on their flag status.
 #' @param use_marker A logical indicating whether to show markers on the plot. Default is FALSE.
 #' @param start_fit An integer indicating the start fit value for the plot. Default is 10.
+#'   The value is the index of the first 1 micron ESD bin included in the curve fit,
+#'   calibrated for version 2 features. See the Feature file version section before
+#'   using it with another version.
 #' @param r_sqr The lower limit of acceptable R^2 values (any curves below it will be flagged).
 #'   Default is 0.5.
 #' @param beads The maximum multiplier for the curve fit. Any files with higher curve fit
@@ -48,7 +93,11 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' @param humidity The maximum percent humidity. Files with higher values will be flagged as
 #'   high humidity. Optional.
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
-#' @param fea_v The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. `r lifecycle::badge("experimental")`
+#' @param fea_v The version number of the IFCB feature file (e.g., 2, 4). Default is 2,
+#'   as described in Hayashi et al. 2025. The function reads other versions unchanged,
+#'   but the default `start_fit` and flag thresholds only apply to version 2. Re-derive
+#'   them first; see the Feature file version section.
+#'   `r lifecycle::badge("experimental")`
 #' @param use_plot_subfolders A logical indicating whether to save plots in subfolders
 #'   based on the sample's flag status. If TRUE (default), samples without flags are
 #'   saved in a "PSD.OK" subfolder, and samples with flags are saved in subfolders
@@ -66,7 +115,7 @@ utils::globalVariables(c("variable", "number", "Bin"))
 #' The `save_data` parameter only controls whether CSV files are written to disk; the
 #' function always returns this list.
 #'
-#' @seealso \code{\link{ifcb_py_install}},
+#' @seealso \code{\link{ifcb_py_install}}, \code{\link{ifcb_extract_features}},
 #'   \url{https://github.com/kudelalab/PSD}
 #'
 #' @references
