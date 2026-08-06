@@ -99,9 +99,9 @@ when <code>sample</code> is given as bare sample names. Searched recursively.</p
 <dd><p>Optional fixed upper bound (in millilitres) for a plausible
 analyzed volume, applied to every sample. Default <code>NULL</code> derives the ceiling
 per sample from the header syringe volume (<code>SyringeSampleVolume</code>, falling
-back to <code>syringeSize</code>, then the 5 mL IFCB standard) scaled by
-<code>volume_tolerance</code>. Set this only to override that instrument-reported
-value.</p></dd>
+back to <code>syringeSize</code>, then the 5 mL IFCB standard when neither is present
+or the reported volume is not positive) scaled by <code>volume_tolerance</code>. Set
+this only to override that instrument-reported value.</p></dd>
 
 
 <dt id="arg-volume-tolerance">volume_tolerance<a class="anchor" aria-label="anchor" href="#arg-volume-tolerance"></a></dt>
@@ -170,6 +170,15 @@ the last image's end offset (<code>max(StartByte + width * height)</code>) compu
 from the ADC. A smaller file indicates a truncated or aborted transfer
 (<code>roi_data_complete</code>).</p></dd>
 
+<dt>ROI dimension validity</dt>
+<dd><p>Every ROI width, height and start byte in the
+ADC must parse as a number (<code>roi_dims_valid</code>, with the offending row
+count in <code>n_roi_malformed</code>). A blank or <code>NaN</code> dimension is excluded from
+<code>n_rois</code> so that one damaged file cannot abort a whole survey, but the
+exclusion is reported rather than silent: without this check a width
+column that failed to parse would be indistinguishable from a sample that
+never triggered.</p></dd>
+
 <dt>Run time consistency</dt>
 <dd><p>The run time recorded at the ADC's last trigger
 must not exceed the header's total run time (within <code>runtime_tolerance</code>),
@@ -200,14 +209,16 @@ header's recorded <code>humidity</code> / <code>temperature</code> exceed <code>
 three are only evaluated when their threshold is supplied; otherwise they are
 <code>NA</code>. The measured <code>humidity</code> and <code>temperature</code> are always reported.</p>
 <p><code>qc_pass</code> is the conjunction of the integrity checks above
-(<code>files_complete</code>, <code>roi_count_match</code>, <code>roi_data_complete</code>,
+(<code>files_complete</code>, <code>roi_count_match</code>, <code>roi_data_complete</code>, <code>roi_dims_valid</code>,
 <code>runtime_consistent</code>, <code>volume_ok</code>). A check that cannot be evaluated for a
 given sample is reported as <code>NA</code> and treated as <em>not applicable</em>: it does not
 fail <code>qc_pass</code>. This matters for legacy IFCB headers, which omit the
 post-run <code>roiCount</code> summary field (so <code>roi_count_match</code> is <code>NA</code>); such samples
-can still pass on the checks that do apply. Only a check that actually
-evaluates to <code>FALSE</code> fails the sample. <code>files_complete</code> and <code>volume_ok</code> are
-always <code>TRUE</code>/<code>FALSE</code> (never <code>NA</code>) and so always count.</p>
+can still pass on the checks that do apply. It also applies to a sample that
+never triggered, where no volume can be computed and <code>volume_ok</code> is <code>NA</code>
+rather than <code>FALSE</code> (<code>is_empty</code> reports the condition instead). Only a check
+that actually evaluates to <code>FALSE</code> fails the sample. <code>files_complete</code> is
+always <code>TRUE</code>/<code>FALSE</code> (never <code>NA</code>) and so always counts.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

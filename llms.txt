@@ -33,7 +33,7 @@ researchers using, or partly using, the MATLAB
 - **Image Extraction**: Tools to extract and prepare images for
   publication.
 - **Image Classification**: Functions to classify IFCB images through a
-  CNN model served by a [Gradio](https://www.gradio.app/) application.
+  CNN model served by a [Gradio](https://gradio.app/) application.
 - **Taxonomical Data**: Tools for handling and analyzing taxonomic data
   and calculating biomass concentration from image data.
 
@@ -393,6 +393,9 @@ information, see the
   : Summarize TreeBagger Classifier Results
 - [`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md)
   : Convert Biovolume to Carbon for Diatoms (All Sizes)
+- [`vol2C_diatom_auto()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom_auto.md)
+  : Convert Biovolume to Carbon for Diatoms, Choosing the Equation by
+  Volume
 - [`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
   : Convert Biovolume to Carbon for Large Diatoms
 - [`vol2C_nondiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_nondiatom.md)

@@ -87,13 +87,17 @@ If NULL, all available metadata are downloaded.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Download metadata for a specific dataset</span></span></span>
-<span class="r-in"><span>  <span class="va">metadata_mvco</span> <span class="op">&lt;-</span> <span class="fu">ifcb_download_dashboard_metadata</span><span class="op">(</span><span class="st">"https://ifcb-data.whoi.edu/"</span>,</span></span>
-<span class="r-in"><span>                                                    dataset_name <span class="op">=</span> <span class="st">"mvco"</span>,</span></span>
-<span class="r-in"><span>                                                    quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="co"># Requires an internet connection and a reachable dashboard; wrapped in</span></span></span>
+<span class="r-in"><span>  <span class="co"># try() so the example degrades gracefully when the service is unavailable.</span></span></span>
+<span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="co"># Download metadata for a specific dataset</span></span></span>
+<span class="r-in"><span>    <span class="va">metadata_mvco</span> <span class="op">&lt;-</span> <span class="fu">ifcb_download_dashboard_metadata</span><span class="op">(</span><span class="st">"https://ifcb-data.whoi.edu/"</span>,</span></span>
+<span class="r-in"><span>                                                      dataset_name <span class="op">=</span> <span class="st">"mvco"</span>,</span></span>
+<span class="r-in"><span>                                                      quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Print result as tibble</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata_mvco</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="co"># Print result as tibble</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">metadata_mvco</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 348,552 × 24</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    dataset pid    sample_time          ifcb ml_analyzed latitude longitude depth</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>

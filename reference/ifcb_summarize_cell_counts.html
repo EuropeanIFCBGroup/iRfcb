@@ -88,7 +88,9 @@ statistics.</p>
 (<code>.mat</code>, <code>.h5</code> or <code>.csv</code>), or a single path to a folder containing such
 files. Any of these file types can carry the optional <code>cell_count</code> data
 written by the chain counter; files without it are treated as <code>NA</code> chain
-counts.</p></dd>
+counts. Supply a single file format per sample: a sample represented twice
+(e.g. by both a <code>.mat</code> and a <code>.h5</code>) would have its ROIs counted once per
+file, so this is rejected with an error naming the affected samples.</p></dd>
 
 
 <dt id="arg-hdr-folder">hdr_folder<a class="anchor" aria-label="anchor" href="#arg-hdr-folder"></a></dt>
@@ -105,7 +107,8 @@ were detected count as one cell. Values not listed are used verbatim.</p></dd>
 
 <dt id="arg-stats">stats<a class="anchor" aria-label="anchor" href="#arg-stats"></a></dt>
 <dd><p>Character vector selecting which chain-length statistics to
-include. Any of <code>"n_chains"</code>, <code>"mean"</code>, <code>"median"</code>, <code>"max"</code>, and <code>"sd"</code>.
+include. Any of <code>"n_chains"</code> (the number of chain-counted ROIs the other
+statistics are computed over), <code>"mean"</code>, <code>"median"</code>, <code>"max"</code>, and <code>"sd"</code>.
 Default is <code>c("n_chains", "mean", "median", "max")</code>. Use <code>character(0)</code> to
 return abundance only.</p></dd>
 
@@ -141,9 +144,14 @@ Python-based method (<code>SciPy</code>). Default is <code>FALSE</code>.</p></dd
     <p>A data frame with one row per sample and class. Columns always include
 <code>sample</code>, <code>classifier</code>, <code>class</code>, <code>counts</code> (number of ROIs), and
 <code>cell_counts</code> (total cell abundance). The requested chain-length statistics
-are added as <code>n_chains</code>, <code>mean_chain_length</code>, <code>median_chain_length</code>,
+are added as <code>n_chains</code> (number of chain-counted ROIs, i.e. those with
+<code>cell_count &gt;= 1</code>), <code>mean_chain_length</code>, <code>median_chain_length</code>,
 <code>max_chain_length</code>, and/or <code>sd_chain_length</code>. When <code>hdr_folder</code> is provided,
 <code>ml_analyzed</code> and <code>cell_counts_per_liter</code> are also returned.</p>
+<p><code>cell_counts</code> is <code>NA</code> for a sample whose classification file carries no
+<code>cell_count</code> data, since the cell total is unknown there. It is not
+reported as <code>0</code>, which would be indistinguishable from a taxon that was
+genuinely absent. <code>counts</code> is unaffected and still reports the ROIs.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -157,8 +165,15 @@ shares this logic to report <code>cell_counts</code>).</p>
 <p>Chain-length statistics (<code>mean</code>, <code>median</code>, <code>max</code>, <code>sd</code>) are computed only over
 ROIs that were genuinely chain-counted (<code>cell_count &gt;= 1</code>); ROIs with <code>-1</code>
 (not counted) or <code>0</code> (no cells detected) are excluded from the length
-statistics, although <code>0</code>-valued ROIs still contribute to abundance according
-to <code>single_cell_values</code>.</p>
+statistics, although both still contribute to abundance according to
+<code>single_cell_values</code> (by default one cell each).</p>
+<p><code>n_chains</code> reports how many ROIs those length statistics were computed over,
+i.e. the number of chain-counted ROIs (<code>cell_count &gt;= 1</code>). Despite the name it
+is a count of ROIs rather than of chains, and it includes ROIs found to hold a
+single cell, which are not chains. It is useful for telling a measured
+abundance from an imputed one: a class with <code>cell_counts &gt; 0</code> but
+<code>n_chains == 0</code> was never chain-counted, so its abundance is one cell per ROI
+by imputation rather than by measurement.</p>
 <p>Chain counting was introduced by Groves et al. (2026), who trained a
 "You Only Look Once" (YOLO) object detection model to enumerate the cells in
 diatom chains imaged by the IFCB. The per-ROI <code>cell_count</code> data summarized

@@ -42,7 +42,8 @@ ifcb_qc_sample(
   Optional fixed upper bound (in millilitres) for a plausible analyzed
   volume, applied to every sample. Default `NULL` derives the ceiling
   per sample from the header syringe volume (`SyringeSampleVolume`,
-  falling back to `syringeSize`, then the 5 mL IFCB standard) scaled by
+  falling back to `syringeSize`, then the 5 mL IFCB standard when
+  neither is present or the reported volume is not positive) scaled by
   `volume_tolerance`. Set this only to override that instrument-reported
   value.
 
@@ -117,6 +118,16 @@ cover four areas:
   smaller file indicates a truncated or aborted transfer
   (`roi_data_complete`).
 
+- ROI dimension validity:
+
+  Every ROI width, height and start byte in the ADC must parse as a
+  number (`roi_dims_valid`, with the offending row count in
+  `n_roi_malformed`). A blank or `NaN` dimension is excluded from
+  `n_rois` so that one damaged file cannot abort a whole survey, but the
+  exclusion is reported rather than silent: without this check a width
+  column that failed to parse would be indistinguishable from a sample
+  that never triggered.
+
 - Run time consistency:
 
   The run time recorded at the ADC's last trigger must not exceed the
@@ -152,14 +163,16 @@ their threshold is supplied; otherwise they are `NA`. The measured
 
 `qc_pass` is the conjunction of the integrity checks above
 (`files_complete`, `roi_count_match`, `roi_data_complete`,
-`runtime_consistent`, `volume_ok`). A check that cannot be evaluated for
-a given sample is reported as `NA` and treated as *not applicable*: it
-does not fail `qc_pass`. This matters for legacy IFCB headers, which
-omit the post-run `roiCount` summary field (so `roi_count_match` is
-`NA`); such samples can still pass on the checks that do apply. Only a
-check that actually evaluates to `FALSE` fails the sample.
-`files_complete` and `volume_ok` are always `TRUE`/`FALSE` (never `NA`)
-and so always count.
+`roi_dims_valid`, `runtime_consistent`, `volume_ok`). A check that
+cannot be evaluated for a given sample is reported as `NA` and treated
+as *not applicable*: it does not fail `qc_pass`. This matters for legacy
+IFCB headers, which omit the post-run `roiCount` summary field (so
+`roi_count_match` is `NA`); such samples can still pass on the checks
+that do apply. It also applies to a sample that never triggered, where
+no volume can be computed and `volume_ok` is `NA` rather than `FALSE`
+(`is_empty` reports the condition instead). Only a check that actually
+evaluates to `FALSE` fails the sample. `files_complete` is always
+`TRUE`/`FALSE` (never `NA`) and so always counts.
 
 ## References
 

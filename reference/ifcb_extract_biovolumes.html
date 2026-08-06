@@ -76,7 +76,7 @@ depending on whether the class is identified as a diatom.</p>
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
 <span>  diatom_include <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  marine_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  diatom_equation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"large"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
+<span>  diatom_equation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"large"</span>, <span class="st">"all"</span>, <span class="st">"auto"</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="st">"opt"</span>,</span>
 <span>  multiblob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_recursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -85,6 +85,7 @@ depending on whether the class is identified as a diatom.</p>
 <span>  feature_version <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use_cell_counts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  single_cell_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  carbon_conversion <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"roi"</span>, <span class="st">"cell"</span><span class="op">)</span>,</span>
 <span>  use_python <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  mat_folder <span class="op">=</span> <span class="fu">deprecated</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -104,7 +105,10 @@ depending on whether the class is identified as a diatom.</p>
 <dt id="arg-class-files">class_files<a class="anchor" aria-label="anchor" href="#arg-class-files"></a></dt>
 <dd><p>(Optional) A character vector of full paths to classification or manual
 annotation files (<code>.mat</code>, <code>.h5</code>, or <code>.csv</code>), or a single path to a folder
-containing such files.</p></dd>
+containing such files. Supply a single file format per sample: a sample
+represented twice (e.g. by both a <code>.mat</code> and a <code>.h5</code>) would have its ROIs
+counted once per file, so this is rejected with an error naming the
+affected samples.</p></dd>
 
 
 <dt id="arg-custom-images">custom_images<a class="anchor" aria-label="anchor" href="#arg-custom-images"></a></dt>
@@ -144,9 +148,18 @@ overriding the boolean result of <code>ifcb_is_diatom</code>. Default: NULL.</p>
 carbon-to-volume relationship to apply to diatoms. <code>"large"</code> (default) uses the
 large-diatom (&gt; 3000 micron^3) equation (<code>vol2C_lgdiatom</code>), matching the
 <code>ifcb-analysis</code> convention. <code>"all"</code> uses the all-sizes diatom equation
-(<code>vol2C_diatom</code>), which assigns more carbon to small cells. Note that
-biovolume is measured per region of interest (ROI/image), so this is not a
-per-cell volume: chains of small cells register a large ROI biovolume.
+(<code>vol2C_diatom</code>), which assigns more carbon to small cells. <code>"auto"</code>
+(<code>vol2C_diatom_auto</code>) selects between them per volume, using the
+large-diatom equation above 3000 micron^3 and the all-sizes equation at or
+below it, so each stays inside its calibrated size range. <code>"auto"</code> needs no
+<code>cell_count</code> data and is independent of <code>carbon_conversion</code>. Be aware that the
+two are discontinuous at that boundary (about 190 pgC against 135 pgC), so
+<code>"auto"</code> makes predicted carbon fall as a cell grows across it; that is why
+it is not the default. <code>"auto"</code> selects on whatever volume the conversion
+receives, which is the per-cell volume when <code>carbon_conversion = "cell"</code>.
+Note that biovolume is measured per region of interest (ROI/image), so it is
+not a per-cell volume unless <code>carbon_conversion = "cell"</code> is used: chains of
+small cells register a large ROI biovolume.
 Non-diatom protists always use <code>vol2C_nondiatom</code> regardless of this setting.</p></dd>
 
 
@@ -193,6 +206,21 @@ were not counted (<code>-1</code>) and ROIs where no cells were detected (<code>
 cell. Values not listed are used verbatim. Only used when <code>use_cell_counts = TRUE</code>.</p></dd>
 
 
+<dt id="arg-carbon-conversion">carbon_conversion<a class="anchor" aria-label="anchor" href="#arg-carbon-conversion"></a></dt>
+<dd><p>A character string controlling how the Menden-Deuer and
+Lessard (2000) relationships are applied. <code>"roi"</code> (default) applies the
+selected equation once to the whole ROI biovolume, matching the
+<code>ifcb-analysis</code> convention and reproducing previous results exactly.
+<code>"cell"</code> divides the ROI biovolume by the resolved cell count, applies
+the equation to that per-cell volume, and multiplies back by the count,
+which is how the relationships are defined (<code>log pgC cell^-1</code>). Requires
+<code>use_cell_counts = TRUE</code>. <code>carbon_pg</code> remains a per-ROI total in both
+cases, not carbon per cell. ROIs holding a single cell, ROIs that were
+never chain-counted, and ROIs from files carrying no <code>cell_count</code> data
+are all converted as one cell, so only ROIs with <code>cell_count &gt;= 2</code>
+change.</p></dd>
+
+
 <dt id="arg-use-python">use_python<a class="anchor" aria-label="anchor" href="#arg-use-python"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, attempts to read <code>.mat</code> files using a Python-based method (<code>SciPy</code>). Default: <code>FALSE</code>.</p></dd>
 
@@ -236,6 +264,21 @@ cell count and the resolved number of cells used for abundance.</p></li>
 </ul></li>
 <li><p><strong>MAT File Processing:</strong></p><ul><li><p>If <code>use_python = TRUE</code>, the function reads <code>.mat</code> files using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code> (requires Python + <code>SciPy</code>).</p></li>
 <li><p>Otherwise, it reads <code>.mat</code> files with the default R reader.</p></li>
+</ul></li>
+<li><p><strong>Per-cell carbon conversion:</strong></p><ul><li><p>The Menden-Deuer and Lessard (2000) relationships are fitted per cell
+(<code>log pgC cell^-1 = log a + b * log V</code>), but an IFCB biovolume describes a
+whole region of interest, which for a chain-forming diatom is the whole
+chain. Every one of these relationships has <code>b &lt; 1</code>, so applying one to an
+aggregated chain volume returns less carbon than applying it per cell and
+summing. The two differ by a factor of <code>n^(1-b)</code>: about 1.28 for an
+8-cell chain and 1.43 for 20 cells under the large-diatom equation.</p></li>
+<li><p><code>carbon_conversion = "cell"</code> divides the ROI biovolume evenly among the
+counted cells, which assumes the cells in a chain are of similar size.</p></li>
+<li><p>It further assumes the ROI biovolume is cell volume. This is weakest for
+<em>Chaetoceros</em>, whose setae add to the measured ROI biovolume without being
+cell material, so the per-cell volume is overestimated and per-cell carbon
+is biased high; whole-ROI conversion biases it low instead. Neither is
+corrected here.</p></li>
 </ul></li>
 </ul></div>
     <div class="section level2">

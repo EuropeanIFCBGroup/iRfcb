@@ -103,9 +103,22 @@ such as <code>"v1.0.0"</code> to pin a specific version.</p>
 <p>The choice of reference determines which raw-data reader is installed:
 <code>ifcb-features</code> v1.1.0 and later depend on <code>ifcbkit</code>, while v1.0.0 and
 earlier depend on <code>pyifcb</code>. <code>iRfcb</code> supports both, so either reference
-works and the two readers may coexist in one environment. The computed
-feature values are identical either way, because the feature code itself is
-unchanged between these releases; only the reader differs.</p>
+works and the two readers may coexist in one environment. The feature code
+itself is unchanged between these releases, so the choice does not in
+itself affect how a region of interest is measured, and for the D-style
+bins produced by current instruments the two readers agree. They differ for
+older I-style bins, which <code>ifcbkit</code> stitches and <code>pyifcb</code> does not, and on
+ROIs with a zero height; see <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code>, whose <code>backend</code>
+argument pins a reader when both are installed.</p>
+<p>The reference does, however, decide which <code>numpy</code> version is installed, and
+that changes how a degenerate (collinear) blob is measured. Pinning
+<code>"v1.0.0"</code> pulls in <code>pyifcb</code>, whose dependencies resolve <code>numpy</code> to below
+2.3, where <code>numpy.linalg.eig()</code> returns real eigenvalues and such a blob is
+reported as <code>NaN</code> in the <code>Eccentricity</code>, <code>MajorAxisLength</code> and
+<code>MinorAxisLength</code> columns. The <code>ifcbkit</code>-based releases leave <code>numpy</code>
+unconstrained, so a current install measures the same blob as <code>0</code>, matching
+upstream <code>ifcb-features</code>. Pin <code>"v1.0.0"</code>, or <code>numpy &lt; 2.3</code>, to reproduce a
+run made before <code>iRfcb</code> 0.10.0; see <code><a href="ifcb_extract_features.html">ifcb_extract_features()</a></code>.</p>
 <p>Note that installing v1.0.0 or earlier pulls in <code>pyifcb</code>, which requires
 binary wheels for <code>h5py</code> (available for Python 3.10-3.13). Installation
 fails on Python versions without such a wheel. The <code>ifcbkit</code>-based

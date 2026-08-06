@@ -21,7 +21,7 @@ ifcb_summarize_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
-  diatom_equation = c("large", "all"),
+  diatom_equation = c("large", "all", "auto"),
   threshold = "opt",
   feature_recursive = TRUE,
   class_recursive = TRUE,
@@ -30,6 +30,7 @@ ifcb_summarize_biovolumes(
   feature_version = NULL,
   use_cell_counts = FALSE,
   single_cell_values = c(-1, 0),
+  carbon_conversion = c("roi", "cell"),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -48,7 +49,10 @@ ifcb_summarize_biovolumes(
 
   (Optional) A character vector of full paths to classification or
   manual annotation files (`.mat`, `.h5`, or `.csv`), or a single path
-  to a folder containing such files.
+  to a folder containing such files. Supply a single file format per
+  sample: a sample represented twice (e.g. by both a `.mat` and a `.h5`)
+  would have its ROIs counted once per file, so this is rejected with an
+  error naming the affected samples.
 
 - class2use_file:
 
@@ -100,10 +104,15 @@ ifcb_summarize_biovolumes(
   carbon-to-volume relationship to apply to diatoms. `"large"` (default)
   uses the large-diatom (\> 3000 micron^3) equation, matching the
   `ifcb-analysis` convention. `"all"` uses the all-sizes diatom
-  equation, which assigns more carbon to small cells. Note that
-  biovolume is measured per region of interest (ROI/image), not per
-  cell, so chains of small cells register a large ROI biovolume. Passed
-  to `ifcb_extract_biovolumes`.
+  equation, which assigns more carbon to small cells. `"auto"` selects
+  between them per volume (large-diatom above 3000 micron^3, all-sizes
+  at or below), keeping each in its calibrated range at the cost of a
+  discontinuity at the boundary, where predicted carbon falls from about
+  190 to 135 pgC as volume increases. Note that biovolume is measured
+  per region of interest (ROI/image), not per cell, so chains of small
+  cells register a large ROI biovolume unless
+  `carbon_conversion = "cell"` is used. Passed to
+  `ifcb_extract_biovolumes`.
 
 - threshold:
 
@@ -165,6 +174,21 @@ ifcb_summarize_biovolumes(
   detected (`0`) each count as one cell. Values not listed are used
   verbatim. Only used when `use_cell_counts = TRUE`.
 
+- carbon_conversion:
+
+  A character string controlling how the Menden-Deuer and Lessard (2000)
+  relationships are applied. `"roi"` (default) applies the selected
+  equation once to the whole ROI biovolume, matching the `ifcb-analysis`
+  convention and reproducing previous results exactly. `"cell"` applies
+  it to the per-cell volume and sums over the chain, which is how the
+  relationships are defined; it requires `use_cell_counts = TRUE`.
+  `carbon_ug` remains a per-class total in both cases. Unlike
+  `cell_counts`, it is not `NA` for a sample whose classification file
+  carries no `cell_count` data: those ROIs are converted as single
+  cells, which is the value reported today rather than an unknown. See
+  [`ifcb_extract_biovolumes`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+  for the full rationale.
+
 - use_python:
 
   Logical. If `TRUE`, attempts to read the `.mat` file using a
@@ -194,7 +218,10 @@ class per sample. Columns include 'sample', 'classifier', 'class',
 'biovolume_mm3', 'carbon_ug', 'ml_analyzed', 'biovolume_mm3_per_liter',
 and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
 abundance columns 'cell_counts' (and 'cell_counts_per_liter' when
-`hdr_folder` is provided) are also included.
+`hdr_folder` is provided) are also included. `cell_counts` is `NA` for a
+sample whose classification file carries no `cell_count` data, since the
+cell total is unknown there; it is not reported as `0`, which would be
+indistinguishable from a taxon that was genuinely absent.
 
 ## Details
 

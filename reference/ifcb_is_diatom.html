@@ -148,8 +148,12 @@ a <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-l
 <span class="r-in"><span><span class="co"># Example taxa</span></span></span>
 <span class="r-in"><span><span class="va">taxa_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nitzschia_sp"</span>, <span class="st">"Chaetoceros_sp"</span>, <span class="st">"Dinophysis_norvegica"</span>, <span class="st">"Thalassiosira_sp"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ifcb_is_diatom</span><span class="op">(</span><span class="va">taxa_list</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Requires an internet connection to the WoRMS API; wrapped in try() so the</span></span></span>
+<span class="r-in"><span><span class="co"># example degrades gracefully when the service is unavailable.</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">ifcb_is_diatom</span><span class="op">(</span><span class="va">taxa_list</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE FALSE  TRUE</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

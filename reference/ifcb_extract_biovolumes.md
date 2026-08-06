@@ -22,7 +22,7 @@ ifcb_extract_biovolumes(
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
   marine_only = FALSE,
-  diatom_equation = c("large", "all"),
+  diatom_equation = c("large", "all", "auto"),
   threshold = "opt",
   multiblob = FALSE,
   feature_recursive = TRUE,
@@ -31,6 +31,7 @@ ifcb_extract_biovolumes(
   feature_version = NULL,
   use_cell_counts = FALSE,
   single_cell_values = c(-1, 0),
+  carbon_conversion = c("roi", "cell"),
   use_python = FALSE,
   verbose = TRUE,
   mat_folder = deprecated(),
@@ -50,7 +51,10 @@ ifcb_extract_biovolumes(
 
   (Optional) A character vector of full paths to classification or
   manual annotation files (`.mat`, `.h5`, or `.csv`), or a single path
-  to a folder containing such files.
+  to a folder containing such files. Supply a single file format per
+  sample: a sample represented twice (e.g. by both a `.mat` and a `.h5`)
+  would have its ROIs counted once per file, so this is rejected with an
+  error naming the affected samples.
 
 - custom_images:
 
@@ -98,10 +102,19 @@ ifcb_extract_biovolumes(
   uses the large-diatom (\> 3000 micron^3) equation (`vol2C_lgdiatom`),
   matching the `ifcb-analysis` convention. `"all"` uses the all-sizes
   diatom equation (`vol2C_diatom`), which assigns more carbon to small
-  cells. Note that biovolume is measured per region of interest
-  (ROI/image), so this is not a per-cell volume: chains of small cells
-  register a large ROI biovolume. Non-diatom protists always use
-  `vol2C_nondiatom` regardless of this setting.
+  cells. `"auto"` (`vol2C_diatom_auto`) selects between them per volume,
+  using the large-diatom equation above 3000 micron^3 and the all-sizes
+  equation at or below it, so each stays inside its calibrated size
+  range. `"auto"` needs no `cell_count` data and is independent of
+  `carbon_conversion`. Be aware that the two are discontinuous at that
+  boundary (about 190 pgC against 135 pgC), so `"auto"` makes predicted
+  carbon fall as a cell grows across it; that is why it is not the
+  default. `"auto"` selects on whatever volume the conversion receives,
+  which is the per-cell volume when `carbon_conversion = "cell"`. Note
+  that biovolume is measured per region of interest (ROI/image), so it
+  is not a per-cell volume unless `carbon_conversion = "cell"` is used:
+  chains of small cells register a large ROI biovolume. Non-diatom
+  protists always use `vol2C_nondiatom` regardless of this setting.
 
 - threshold:
 
@@ -152,6 +165,21 @@ ifcb_extract_biovolumes(
   `c(-1, 0)`, i.e. ROIs that were not counted (`-1`) and ROIs where no
   cells were detected (`0`) each count as one cell. Values not listed
   are used verbatim. Only used when `use_cell_counts = TRUE`.
+
+- carbon_conversion:
+
+  A character string controlling how the Menden-Deuer and Lessard (2000)
+  relationships are applied. `"roi"` (default) applies the selected
+  equation once to the whole ROI biovolume, matching the `ifcb-analysis`
+  convention and reproducing previous results exactly. `"cell"` divides
+  the ROI biovolume by the resolved cell count, applies the equation to
+  that per-cell volume, and multiplies back by the count, which is how
+  the relationships are defined (`log pgC cell^-1`). Requires
+  `use_cell_counts = TRUE`. `carbon_pg` remains a per-ROI total in both
+  cases, not carbon per cell. ROIs holding a single cell, ROIs that were
+  never chain-counted, and ROIs from files carrying no `cell_count` data
+  are all converted as one cell, so only ROIs with `cell_count >= 2`
+  change.
 
 - use_python:
 
@@ -214,6 +242,27 @@ A data frame containing:
     (requires Python + `SciPy`).
 
   - Otherwise, it reads `.mat` files with the default R reader.
+
+- **Per-cell carbon conversion:**
+
+  - The Menden-Deuer and Lessard (2000) relationships are fitted per
+    cell (`log pgC cell^-1 = log a + b * log V`), but an IFCB biovolume
+    describes a whole region of interest, which for a chain-forming
+    diatom is the whole chain. Every one of these relationships has
+    `b < 1`, so applying one to an aggregated chain volume returns less
+    carbon than applying it per cell and summing. The two differ by a
+    factor of `n^(1-b)`: about 1.28 for an 8-cell chain and 1.43 for 20
+    cells under the large-diatom equation.
+
+  - `carbon_conversion = "cell"` divides the ROI biovolume evenly among
+    the counted cells, which assumes the cells in a chain are of similar
+    size.
+
+  - It further assumes the ROI biovolume is cell volume. This is weakest
+    for *Chaetoceros*, whose setae add to the measured ROI biovolume
+    without being cell material, so the per-cell volume is overestimated
+    and per-cell carbon is biased high; whole-ROI conversion biases it
+    low instead. Neither is corrected here.
 
 ## References
 

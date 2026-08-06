@@ -62,9 +62,26 @@ ifcb_py_install(
   The choice of reference determines which raw-data reader is installed:
   `ifcb-features` v1.1.0 and later depend on `ifcbkit`, while v1.0.0 and
   earlier depend on `pyifcb`. `iRfcb` supports both, so either reference
-  works and the two readers may coexist in one environment. The computed
-  feature values are identical either way, because the feature code
-  itself is unchanged between these releases; only the reader differs.
+  works and the two readers may coexist in one environment. The feature
+  code itself is unchanged between these releases, so the choice does
+  not in itself affect how a region of interest is measured, and for the
+  D-style bins produced by current instruments the two readers agree.
+  They differ for older I-style bins, which `ifcbkit` stitches and
+  `pyifcb` does not, and on ROIs with a zero height; see
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md),
+  whose `backend` argument pins a reader when both are installed.
+
+  The reference does, however, decide which `numpy` version is
+  installed, and that changes how a degenerate (collinear) blob is
+  measured. Pinning `"v1.0.0"` pulls in `pyifcb`, whose dependencies
+  resolve `numpy` to below 2.3, where `numpy.linalg.eig()` returns real
+  eigenvalues and such a blob is reported as `NaN` in the
+  `Eccentricity`, `MajorAxisLength` and `MinorAxisLength` columns. The
+  `ifcbkit`-based releases leave `numpy` unconstrained, so a current
+  install measures the same blob as `0`, matching upstream
+  `ifcb-features`. Pin `"v1.0.0"`, or `numpy < 2.3`, to reproduce a run
+  made before `iRfcb` 0.10.0; see
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md).
 
   Note that installing v1.0.0 or earlier pulls in `pyifcb`, which
   requires binary wheels for `h5py` (available for Python 3.10-3.13).
