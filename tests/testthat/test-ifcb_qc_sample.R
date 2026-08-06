@@ -157,6 +157,184 @@ test_that("a zero-trigger sample is flagged is_empty rather than failing as unre
   expect_equal(qc$n_rois, 0)
   expect_true(qc$is_empty)            # advisory flag actually fires
   expect_true(qc$roi_count_match)     # 0 imaged == header roiCount 0
+
+  # No volume can be computed for a sample that never triggered, so the check is
+  # not applicable rather than failed. Being empty is reported by `is_empty`; it
+  # must not also fail the integrity checks.
+  expect_true(is.na(qc$volume_ok))
+  expect_true(qc$qc_pass)
+})
+
+test_that("a non-positive syringe volume in the header falls back to the standard", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+  hf <- file.path(work, paste0(nm, ".hdr"))
+  lines <- readLines(hf, warn = FALSE)
+  lines <- sub("^SyringeSampleVolume:.*$", "SyringeSampleVolume: 0", lines)
+  writeLines(lines, hf)
+
+  # A zero ceiling taken literally would fail every sample it appears on, so the
+  # 5 mL IFCB standard is used instead and this healthy sample still passes.
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_true(qc$ml_analyzed > 0)
+  expect_true(qc$volume_ok)
+  expect_true(qc$qc_pass)
+})
+
+test_that("a malformed ADC width does not abort the whole survey", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  data_dir <- file.path(temp_dir, "test_data", "data")
+  src <- file.path(data_dir, "D20220522T003051_IFCB134")
+
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+
+  # A healthy sample alongside one whose ADC carries a non-numeric ROI width.
+  good <- "D20220522T003051_IFCB134"
+  bad <- "D20220522T003051_IFCB999"
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(good, ext)))
+    file.copy(paste0(src, ext), file.path(work, paste0(bad, ext)))
+  }
+  af <- file.path(work, paste0(bad, ".adc"))
+  adc_lines <- readLines(af, warn = FALSE)
+  fields <- strsplit(adc_lines[1], ",", fixed = TRUE)[[1]]
+  fields[16] <- "NaN"
+  adc_lines[1] <- paste(fields, collapse = ",")
+  writeLines(adc_lines, af)
+
+  # The malformed width used to make n_rois NA, which threw and took every
+  # other result with it - in a function whose whole purpose is finding
+  # corrupt files.
+  qc <- ifcb_qc_sample(work)
+  expect_equal(nrow(qc), 2L)
+  expect_true(all(!is.na(qc$n_rois)))
+  expect_true(qc$qc_pass[qc$sample == good])
+
+  # Surviving the run is not enough: the damaged sample must also be reported as
+  # damaged rather than quietly counted as one ROI short.
+  expect_equal(qc$n_roi_malformed[qc$sample == bad], 1L)
+  expect_false(qc$roi_dims_valid[qc$sample == bad])
+  expect_false(qc$qc_pass[qc$sample == bad])
+  expect_equal(qc$n_roi_malformed[qc$sample == good], 0L)
+  expect_true(qc$roi_dims_valid[qc$sample == good])
+})
+
+test_that("a blank ROI dimension fails QC instead of masquerading as an empty sample", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  # `read_adc_columns()` is a plain `read.csv()`, so a blank, whitespace or NaN
+  # width is accepted as a numeric NA rather than raising. Every such row drops
+  # out of `imaged`, collapsing `n_rois` to 0 - which, on a legacy header with
+  # no `roiCount` to compare against, used to be indistinguishable from a sample
+  # that never triggered and so passed QC outright.
+  for (token in c("", " ", "NaN", "NA")) {
+    nm <- "D20220522T003051_IFCB134"
+    work <- tempfile()
+    dir.create(work)
+    on.exit(unlink(work, recursive = TRUE), add = TRUE)
+    for (ext in c(".hdr", ".adc", ".roi")) {
+      file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+    }
+
+    af <- file.path(work, paste0(nm, ".adc"))
+    adc_lines <- vapply(readLines(af, warn = FALSE), function(line) {
+      fields <- strsplit(line, ",", fixed = TRUE)[[1]]
+      fields[16] <- token
+      paste(fields, collapse = ",")
+    }, character(1), USE.NAMES = FALSE)
+    writeLines(adc_lines, af)
+
+    # Strip the post-run roiCount so `roi_count_match` cannot rescue the check.
+    hf <- file.path(work, paste0(nm, ".hdr"))
+    hdr_lines <- readLines(hf, warn = FALSE)
+    writeLines(hdr_lines[!grepl("^roiCount", hdr_lines, ignore.case = TRUE)], hf)
+
+    qc <- ifcb_qc_sample(file.path(work, nm))
+    expect_true(is.na(qc$roi_count_match), info = token)   # the legacy-header gap
+    expect_equal(qc$n_rois, 0)                             # looks empty...
+    expect_true(qc$is_empty, info = token)
+    expect_true(qc$n_roi_malformed > 0, info = token)      # ...but is reported
+    expect_false(qc$roi_dims_valid, info = token)
+    expect_false(qc$qc_pass, info = token)
+  }
+})
+
+test_that("an unreadable start byte on an imaged ROI is caught, not averaged away", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+
+  # Blank the start byte (column 18) of the first imaged ROI, leaving its width
+  # and height intact and a second imaged ROI untouched. `roi_bytes_expected`
+  # takes `max(..., na.rm = TRUE)` over the survivors, so it still returns a
+  # plausible extent and `roi_data_complete` stays TRUE - the damage is averaged
+  # away rather than detected. Only the malformed-row count catches it.
+  af <- file.path(work, paste0(nm, ".adc"))
+  adc <- read_adc_columns(af)
+  rc <- suppressWarnings(adc_get_roi_columns(adc))
+  target <- which(rc$x > 0)[1]
+
+  adc_lines <- readLines(af, warn = FALSE)
+  fields <- strsplit(adc_lines[target], ",", fixed = TRUE)[[1]]
+  fields[18] <- ""
+  adc_lines[target] <- paste(fields, collapse = ",")
+  writeLines(adc_lines, af)
+
+  qc <- suppressWarnings(ifcb_qc_sample(file.path(work, nm)))
+  expect_true(qc$roi_data_complete)      # the check that cannot see it
+  expect_equal(qc$n_roi_malformed, 1L)
+  expect_false(qc$roi_dims_valid)
+  expect_false(qc$qc_pass)
+})
+
+test_that("an unreadable ADC leaves roi_dims_valid NA and still fails on volume", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  src <- file.path(temp_dir, "test_data", "data", "D20220522T003051_IFCB134")
+
+  nm <- "D20220522T003051_IFCB134"
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(nm, ext)))
+  }
+
+  # An .adc holding nothing but line terminators - a write that opened the file
+  # and got no further - is non-empty, so it does not take the zero-length
+  # shortcut, but `read.csv()` cannot parse it either. Nothing about the ROI
+  # dimensions is then known, which is a different defect from a
+  # parseable-but-blank dimension and must not be reported as zero malformed
+  # rows.
+  af <- file.path(work, paste0(nm, ".adc"))
+  writeBin(charToRaw("\n\n\n"), af)
+
+  qc <- ifcb_qc_sample(file.path(work, nm))
+  expect_true(is.na(qc$n_roi_malformed))
+  expect_true(is.na(qc$roi_dims_valid))
+  expect_false(qc$qc_pass)   # volume_ok still catches it
 })
 
 test_that("a truncated .roi is flagged as incomplete", {

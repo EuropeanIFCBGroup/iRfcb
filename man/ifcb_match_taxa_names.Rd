@@ -51,15 +51,19 @@ It retries the operation if an error occurs, up to a specified number of attempt
 # Example: Retrieve WoRMS records for a list of taxa names
 taxa <- c("Calanus finmarchicus", "Thalassiosira pseudonana", "Phaeodactylum tricornutum")
 
-# Call the function
-records <- ifcb_match_taxa_names(taxa_names = taxa,
-                                 max_retries = 3,
-                                 sleep_time = 5,
-                                 marine_only = TRUE,
-                                 verbose = TRUE)
+# Requires an internet connection to the WoRMS API; wrapped in try() so the
+# example degrades gracefully when the service is unavailable.
+try({
+  # Call the function
+  records <- ifcb_match_taxa_names(taxa_names = taxa,
+                                   max_retries = 3,
+                                   sleep_time = 5,
+                                   marine_only = TRUE,
+                                   verbose = TRUE)
 
-# Print records as tibble
-print(records)
+  # Print records as tibble
+  print(records)
+})
 }
 
 }

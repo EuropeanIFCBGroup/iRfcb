@@ -5,17 +5,31 @@ reticulate (see ifcb_extract_features()). It adapts the upstream
 extract_slim_features.py from https://github.com/WHOIGit/ifcb-features so that:
 
   * features and blobs are written to separate, user-specified directories,
-  * existing outputs are skipped unless overwrite is requested, and
+  * existing outputs are skipped unless overwrite is requested,
   * bins can be processed in parallel via a process pool (Linux) or a thread
     pool (when ``use_threads`` is set, e.g. on Windows / macOS where an embedded
-    interpreter cannot spawn worker processes), and
+    interpreter cannot spawn worker processes),
   * raw data is read through the ``ifcb_reader`` adapter, so either the
     ``ifcbkit`` backend (ifcb-features >= 1.1.0) or the ``pyifcb`` backend
-    (ifcb-features <= 1.0.0) can be used.
+    (ifcb-features <= 1.0.0) can be used; ``backend`` forces one when both are
+    installed,
+  * a bin that cannot be read is reported as a per-bin error rather than
+    aborting the run, so one corrupt file does not discard the results of every
+    bin already processed, and
+  * complex feature values are reduced to real numbers before being written
+    (see ``_real_valued``), keeping the ellipse columns numeric on numpy >= 2.3.
 
-It still produces the same per-bin outputs as upstream: a
-``<lid>_features_v4.csv`` table (30 morphological features per ROI) and a
-``<lid>_blobs_v4.zip`` archive of 1-bit blob masks (one PNG per ROI).
+Per-bin outputs are the upstream pair: a ``<lid>_features_v4.csv`` table (30
+morphological features per ROI) and a ``<lid>_blobs_v4.zip`` archive of 1-bit
+blob masks (one PNG per ROI). Passing ``feature_tag="fea"`` renames the feature
+table to ``<lid>_fea_v4.csv``, the name the IFCB Dashboard looks for; the blob
+archive name is unaffected.
+
+Feature values match upstream. Where ifcb-features returns a complex number -
+it does from numpy 2.3 onwards - the real part is taken, which reproduces the
+clip-to-zero guard upstream applies to the same degenerate case (see
+``_real_valued``), so a given blob measures the same whichever ifcb-features
+release is installed.
 """
 
 import argparse
@@ -94,10 +108,30 @@ warnings.filterwarnings("ignore", category=RuntimeWarning,
 # ImportError or AttributeError instead.
 # Upstream removed these deprecated calls in ifcb-features PR #16, merged to
 # main 2026-07-23 but not yet released (the latest release, v1.1.1, still emits
-# the warnings). The filter is harmless on fixed versions (no such warning is
-# raised), so it stays for v1.1.1 compatibility.
+# the warnings). The filters are harmless on fixed versions (no such warning is
+# raised), so they stay for v1.1.1 compatibility.
 warnings.filterwarnings("ignore", category=FutureWarning,
                         module="ifcb_features")
+
+# A second filter is needed because module= matches the module a warning is
+# attributed to, not the one that started the call chain. The filter above
+# covers the functions ifcb_features calls itself. It cannot cover scikit-image
+# calling its own deprecated functions internally (morphology/binary.py:
+# binary_closing -> binary_erosion), which is attributed to
+# skimage.morphology.binary. scikit-image guards that inner call with
+# warnings.catch_warnings(), but that swaps the global filter list and is not
+# thread-safe: on the thread pool used when Python is embedded on Windows and
+# macOS, a worker leaving the block restores a snapshot taken before another
+# worker entered, and the warning escapes. Installing a filter here at import
+# time avoids the race and reaches every pool backend (fork inherits the
+# filters, spawn re-imports this module, threads share the interpreter).
+# Matching the message as well as the module keeps this limited to the
+# morphology deprecations, so any other scikit-image FutureWarning is still
+# shown. The backticks are scikit-image's: its deprecation decorator wraps the
+# function name in them, and the pattern is anchored at the start.
+warnings.filterwarnings("ignore", category=FutureWarning,
+                        message="`binary_(closing|opening|erosion|dilation)` is deprecated",
+                        module="skimage")
 
 # The "slim" feature columns produced by ifcb_features.all.compute_features,
 # in the same order as upstream extract_slim_features.py.
@@ -136,22 +170,38 @@ FEATURE_COLUMNS = [
 
 
 def _real_valued(roi_features):
-    """Drop zero imaginary parts from computed feature values.
+    """Reduce complex feature values to the real numbers upstream reports.
 
     ``ifcb_features`` derives the ellipse properties (Eccentricity,
     MajorAxisLength, MinorAxisLength) from ``numpy.linalg.eig``. For a real
     symmetric covariance matrix that used to yield real eigenvalues, but from
-    numpy 2.3 onwards eig returns complex ones, so those features arrive as
-    complex numbers whose imaginary part is exactly zero. Written straight to
-    CSV they become "(0.797+0j)" strings, silently turning numeric columns into
-    text. The imaginary part carries no information here, so take the real part.
+    numpy 2.3 onwards eig returns complex ones, so those three features arrive
+    as complex numbers. Written straight to CSV they become "(0.797+0j)"
+    strings, silently turning numeric columns into text. They are the only
+    complex columns: Orientation comes from a separate ``explicit_orientation``
+    routine, and the ``summed*`` variants are already real (see below).
 
-    Upstream fixed this in ifcb-features PR #20 (switch to numpy.linalg.eigh),
-    merged to main 2026-07-23 but not yet in a tagged release; the latest
-    release, v1.1.1, still returns complex values. This coercion is a no-op on
-    fixed versions (values are already real, so np.iscomplexobj is False), so it
-    stays for v1.1.1 compatibility and can be removed once the installed
-    ifcb-features release includes that fix.
+    Taking the real part matches upstream in both cases that arise, since
+    ``ellipse_properties`` computes ``L = 4 * sqrt(eVal)``. A non-negative
+    eigenvalue gives a real root with a zero imaginary part, so the real part is
+    the value itself. A degenerate (collinear) blob can make ``np.cov`` return a
+    slightly negative eigenvalue, and ``sqrt(-x)`` is ``0 + i*sqrt(x)`` on the
+    principal branch, whose real part is 0.0. That is the value upstream gets by
+    clipping the radicand: ``real(sqrt(z)) == sqrt(clip(z, 0, None))`` holds for
+    every real ``z``, so the two agree by construction. ``ifcb_features``
+    already relies on this itself, casting the same complex value to float in
+    ``summed_attr``, so summedMajorAxisLength and summedMinorAxisLength report
+    such a blob as 0 on numpy >= 2.3.
+
+    On numpy < 2.3 this is a no-op (``np.iscomplexobj`` is False). eig returns
+    real eigenvalues there, the root of a negative one is NaN, and since np.max
+    and np.min propagate NaN, one degenerate blob makes all three columns NaN.
+    That older behaviour passes through untouched, which is what reproducing an
+    ifcb-features v1.0.0 run depends on.
+
+    Upstream made the clip explicit in ifcb-features PR #20 (switching to
+    numpy.linalg.eigh), merged to main 2026-07-23 but not yet in a tagged
+    release; v1.1.1 still returns complex values.
 
     Args:
         roi_features: iterable of (name, value) pairs from compute_features.
@@ -159,8 +209,12 @@ def _real_valued(roi_features):
     Returns:
         list: the same pairs with complex values reduced to floats.
     """
-    return [(name, float(np.real(value)) if np.iscomplexobj(value) else value)
-            for name, value in roi_features]
+    out = []
+    for name, value in roi_features:
+        if np.iscomplexobj(value):
+            value = float(np.real(value))
+        out.append((name, value))
+    return out
 
 
 def _output_paths(lid, features_directory, blobs_directory,
@@ -180,7 +234,7 @@ def _output_paths(lid, features_directory, blobs_directory,
 
 
 def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
-                 overwrite, feature_tag="features"):
+                 overwrite, feature_tag="features", backend=None):
     """Extract features and blobs for a single bin.
 
     This is a module-level function so it can be pickled and dispatched to a
@@ -189,7 +243,8 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     bin objects are not picklable and to avoid sharing state between workers.
 
     ``feature_tag`` is forwarded to :func:`_output_paths` to control the
-    feature CSV name (e.g. ``"features"`` or ``"fea"``).
+    feature CSV name (e.g. ``"features"`` or ``"fea"``). ``backend`` forces a
+    particular raw-data reader; see :func:`ifcb_reader.open_data_directory`.
 
     Returns a dict with keys ``bin``, ``status`` ("processed", "skipped" or
     "error") and ``message``.
@@ -202,8 +257,11 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
         return {"bin": bin_name, "status": "skipped",
                 "message": "outputs already exist"}
 
+    # Resolving the bin and iterating its images fail in different ways and are
+    # kept apart so each can be reported accurately: only an unresolvable bin is
+    # "not found".
     try:
-        reader = open_data_directory(data_directory)
+        reader = open_data_directory(data_directory, backend=backend)
         images = reader.read_images(bin_name)
     except KeyError:
         return {"bin": bin_name, "status": "error",
@@ -211,10 +269,20 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     except Exception as e:  # noqa: BLE001 - report any access failure to R
         return {"bin": bin_name, "status": "error", "message": str(e)}
 
+    try:
+        # pyifcb's Mapping yields images lazily, so a corrupt or truncated .roi
+        # raises from the *iteration*, not from read_images(). Materialising the
+        # pairs here keeps that failure inside a try block; otherwise it escapes
+        # as an unhandled traceback and, in sequential mode, discards the
+        # results of every bin already processed.
+        image_items = list(images.items())
+    except Exception as e:  # noqa: BLE001 - a bad bin must not abort the run
+        return {"bin": bin_name, "status": "error", "message": str(e)}
+
     all_features = []
     all_blobs = {}
 
-    for number, image in images.items():
+    for number, image in image_items:
         features = {'roi_number': number}
         try:
             blobs_image, roi_features = compute_features(image)
@@ -246,14 +314,15 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     return {"bin": bin_name, "status": "processed", "message": ""}
 
 
-def _resolve_bins(data_directory, bins):
+def _resolve_bins(data_directory, bins, backend=None):
     """Return the list of bin lids to process.
 
     When ``bins`` is None, every bin in the data directory is returned.
     Otherwise the requested bins are filtered against the directory and any
-    missing ones are reported back to the caller.
+    missing ones are reported back to the caller. ``backend`` forces a
+    particular raw-data reader.
     """
-    reader = open_data_directory(data_directory)
+    reader = open_data_directory(data_directory, backend=backend)
     lids = reader.list_lids()
 
     if not bins:
@@ -266,20 +335,22 @@ def _resolve_bins(data_directory, bins):
     return found, missing
 
 
-def list_bins(data_directory, bins=None):
+def list_bins(data_directory, bins=None, backend=None):
     """Return the bins that would be processed for the given inputs.
 
     Args:
         data_directory (str): Path to the raw IFCB data directory.
         bins (list, optional): Bin lids to restrict to. If None, all bins are
             listed.
+        backend (str, optional): Force a specific raw-data reader, ``"ifcbkit"``
+            or ``"pyifcb"``.
 
     Returns:
         dict: ``{"found": [...], "missing": [...]}`` where ``found`` are the bin
         lids present in the data directory and ``missing`` are any requested bins
         that were not found.
     """
-    found, missing = _resolve_bins(data_directory, bins)
+    found, missing = _resolve_bins(data_directory, bins, backend=backend)
     return {"found": found, "missing": missing}
 
 
@@ -314,7 +385,7 @@ class ParallelExtractor:
     def __init__(self, data_directory, features_directory, blobs_directory,
                  bins=None, overwrite=False, num_workers=2,
                  found_bins=None, missing_bins=None, python_executable=None,
-                 use_threads=False, feature_tag="features"):
+                 use_threads=False, feature_tag="features", backend=None):
         os.makedirs(features_directory, exist_ok=True)
         os.makedirs(blobs_directory, exist_ok=True)
 
@@ -330,7 +401,8 @@ class ParallelExtractor:
             bin_names = [str(b) for b in found_bins]
             self.missing = [str(b) for b in (missing_bins or [])]
         else:
-            bin_names, self.missing = _resolve_bins(data_directory, bins)
+            bin_names, self.missing = _resolve_bins(data_directory, bins,
+                                                    backend=backend)
         self.total = len(bin_names)
 
         if use_threads:
@@ -353,7 +425,7 @@ class ParallelExtractor:
             (bin_name, self.pool.apply_async(
                 _process_bin,
                 (data_directory, features_directory, blobs_directory,
-                 bin_name, overwrite, feature_tag)))
+                 bin_name, overwrite, feature_tag, backend)))
             for bin_name in bin_names
         ]
 
@@ -395,7 +467,7 @@ class ParallelExtractor:
 def extract_features(data_directory, features_directory, blobs_directory,
                      bins=None, overwrite=False, num_workers=1, progress=None,
                      python_executable=None, use_threads=False,
-                     feature_tag="features"):
+                     feature_tag="features", backend=None):
     """Extract slim features and blobs for IFCB bins.
 
     Args:
@@ -428,6 +500,8 @@ def extract_features(data_directory, features_directory, blobs_directory,
             ``<lid>_features_v4.csv``; ``"fea"`` writes ``<lid>_fea_v4.csv``,
             the name served by the IFCB Dashboard. Blob archive names are
             unaffected.
+        backend (str, optional): Force a specific raw-data reader, ``"ifcbkit"``
+            or ``"pyifcb"``. If None, the preferred available reader is used.
 
     Returns:
         list[dict]: One result dict per bin with keys ``bin``, ``status`` and
@@ -436,7 +510,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
     os.makedirs(features_directory, exist_ok=True)
     os.makedirs(blobs_directory, exist_ok=True)
 
-    bin_names, missing = _resolve_bins(data_directory, bins)
+    bin_names, missing = _resolve_bins(data_directory, bins, backend=backend)
 
     results = [{"bin": b, "status": "error",
                 "message": "bin not found in data directory"}
@@ -456,7 +530,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
         for bin_name in bin_names:
             results.append(_process_bin(data_directory, features_directory,
                                         blobs_directory, bin_name, overwrite,
-                                        feature_tag))
+                                        feature_tag, backend))
             _report()
     else:
         # Delegate to ParallelExtractor and poll it to completion. On any
@@ -467,7 +541,8 @@ def extract_features(data_directory, features_directory, blobs_directory,
                                       num_workers,
                                       python_executable=python_executable,
                                       use_threads=use_threads,
-                                      feature_tag=feature_tag)
+                                      feature_tag=feature_tag,
+                                      backend=backend)
         try:
             while extractor.remaining() > 0:
                 for result in extractor.poll():

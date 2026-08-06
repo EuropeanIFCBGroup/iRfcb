@@ -9,7 +9,10 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param feature_folder Path to the folder containing feature files (e.g., CSV format).
 #' @param class_files (Optional) A character vector of full paths to classification or manual
 #'   annotation files (`.mat`, `.h5`, or `.csv`), or a single path to a folder
-#'   containing such files.
+#'   containing such files. Supply a single file format per sample: a sample
+#'   represented twice (e.g. by both a `.mat` and a `.h5`) would have its ROIs
+#'   counted once per file, so this is rejected with an error naming the
+#'   affected samples.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the class2use variable (default NULL). Only needed when summarizing manual MATLAB results.
 #' @param hdr_folder (Optional) Path to the folder containing HDR files. Needed for calculating cell, biovolume and carbon concentration per liter.
 #' @param custom_images (Optional) A character vector of image filenames in the format DYYYYMMDDTHHMMSS_IFCBXXX_ZZZZZ(.png),
@@ -26,8 +29,12 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   carbon-to-volume relationship to apply to diatoms. `"large"` (default) uses the
 #'   large-diatom (> 3000 micron^3) equation, matching the `ifcb-analysis` convention.
 #'   `"all"` uses the all-sizes diatom equation, which assigns more carbon to small
-#'   cells. Note that biovolume is measured per region of interest (ROI/image), not
-#'   per cell, so chains of small cells register a large ROI biovolume. Passed to
+#'   cells. `"auto"` selects between them per volume (large-diatom above
+#'   3000 micron^3, all-sizes at or below), keeping each in its calibrated range at
+#'   the cost of a discontinuity at the boundary, where predicted carbon falls from
+#'   about 190 to 135 pgC as volume increases. Note that biovolume is measured per
+#'   region of interest (ROI/image), not per cell, so chains of small cells register
+#'   a large ROI biovolume unless `carbon_conversion = "cell"` is used. Passed to
 #'   \code{ifcb_extract_biovolumes}.
 #' @param threshold A character string controlling which classification to use.
 #'   `"opt"` (default) uses the threshold-applied classification, where
@@ -53,6 +60,16 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   single cell when computing `cell_counts`. Default is `c(-1, 0)`, i.e. ROIs that were not
 #'   counted (`-1`) and ROIs where no cells were detected (`0`) each count as one cell. Values
 #'   not listed are used verbatim. Only used when `use_cell_counts = TRUE`.
+#' @param carbon_conversion A character string controlling how the Menden-Deuer and
+#'   Lessard (2000) relationships are applied. `"roi"` (default) applies the selected
+#'   equation once to the whole ROI biovolume, matching the `ifcb-analysis`
+#'   convention and reproducing previous results exactly. `"cell"` applies it to the
+#'   per-cell volume and sums over the chain, which is how the relationships are
+#'   defined; it requires `use_cell_counts = TRUE`. `carbon_ug` remains a per-class
+#'   total in both cases. Unlike `cell_counts`, it is not `NA` for a sample whose
+#'   classification file carries no `cell_count` data: those ROIs are converted as
+#'   single cells, which is the value reported today rather than an unknown. See
+#'   \code{\link{ifcb_extract_biovolumes}} for the full rationale.
 #' @param use_python Logical. If `TRUE`, attempts to read the `.mat` file using a Python-based method. Default is `FALSE`.
 #' @param verbose A logical indicating whether to print progress messages. Default is TRUE.
 #' @param mat_folder `r lifecycle::badge("deprecated")`
@@ -66,7 +83,9 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'   Columns include 'sample', 'classifier', 'class', 'biovolume_mm3', 'carbon_ug', 'ml_analyzed',
 #'   'biovolume_mm3_per_liter', and 'carbon_ug_per_liter'. When `use_cell_counts = TRUE`, the cell
 #'   abundance columns 'cell_counts' (and 'cell_counts_per_liter' when `hdr_folder` is provided) are
-#'   also included.
+#'   also included. `cell_counts` is `NA` for a sample whose classification file carries no
+#'   `cell_count` data, since the cell total is unknown there; it is not reported as `0`, which
+#'   would be indistinguishable from a taxon that was genuinely absent.
 #'
 #' @details This function performs the following steps:
 #' \enumerate{
@@ -120,12 +139,18 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2use_file = NULL,
                                       hdr_folder = NULL, custom_images = NULL, custom_classes = NULL,
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", diatom_include = NULL,
-                                      marine_only = FALSE, diatom_equation = c("large", "all"),
+                                      marine_only = FALSE, diatom_equation = c("large", "all", "auto"),
                                       threshold = "opt", feature_recursive = TRUE,
                                       class_recursive = TRUE, hdr_recursive = TRUE, drop_zero_volume = FALSE,
                                       feature_version = NULL, use_cell_counts = FALSE,
-                                      single_cell_values = c(-1, 0), use_python = FALSE, verbose = TRUE,
+                                      single_cell_values = c(-1, 0), carbon_conversion = c("roi", "cell"),
+                                      use_python = FALSE, verbose = TRUE,
                                       mat_folder = deprecated(), mat_files = deprecated(), mat_recursive = deprecated()) {
+
+  # Validate here as well as in ifcb_extract_biovolumes(), so the error names
+  # the function the user actually called.
+  carbon_conversion <- match.arg(carbon_conversion)
+  check_carbon_conversion(carbon_conversion, use_cell_counts)
 
   # Handle deprecated mat_folder argument
   if (lifecycle::is_present(mat_folder)) {
@@ -163,6 +188,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
                                         feature_version = feature_version,
                                         use_cell_counts = use_cell_counts,
                                         single_cell_values = single_cell_values,
+                                        carbon_conversion = carbon_conversion,
                                         use_python = use_python,
                                         verbose = verbose)
 
@@ -170,7 +196,12 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
   biovolume_aggregated <- biovolumes %>%
     group_by(sample, classifier, class) %>%
     summarise(counts = n(),
-              cell_counts = if (use_cell_counts) sum(cell_count_resolved, na.rm = TRUE) else NA_real_,
+              # ROIs from a file without a `cell_count` dataset carry NA. Summing
+              # them with na.rm = TRUE would report 0 cells for a taxon present
+              # in the images, so the group total is reported as NA instead.
+              cell_counts = if (!use_cell_counts) NA_real_
+                            else if (any(is.na(cell_count_resolved))) NA_real_
+                            else sum(cell_count_resolved),
               biovolume_mm3 = sum(biovolume_um3 * 10^-9, na.rm = TRUE),  # Convert from um3 to mm3
               carbon_ug = sum(carbon_pg * 10^-6, na.rm = TRUE),  # Convert from pg to ug
               .groups = 'drop')

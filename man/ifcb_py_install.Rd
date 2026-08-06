@@ -38,9 +38,23 @@ such as \code{"v1.0.0"} to pin a specific version.
 The choice of reference determines which raw-data reader is installed:
 \code{ifcb-features} v1.1.0 and later depend on \code{ifcbkit}, while v1.0.0 and
 earlier depend on \code{pyifcb}. \code{iRfcb} supports both, so either reference
-works and the two readers may coexist in one environment. The computed
-feature values are identical either way, because the feature code itself is
-unchanged between these releases; only the reader differs.
+works and the two readers may coexist in one environment. The feature code
+itself is unchanged between these releases, so the choice does not in
+itself affect how a region of interest is measured, and for the D-style
+bins produced by current instruments the two readers agree. They differ for
+older I-style bins, which \code{ifcbkit} stitches and \code{pyifcb} does not, and on
+ROIs with a zero height; see \code{\link[=ifcb_extract_features]{ifcb_extract_features()}}, whose \code{backend}
+argument pins a reader when both are installed.
+
+The reference does, however, decide which \code{numpy} version is installed, and
+that changes how a degenerate (collinear) blob is measured. Pinning
+\code{"v1.0.0"} pulls in \code{pyifcb}, whose dependencies resolve \code{numpy} to below
+2.3, where \code{numpy.linalg.eig()} returns real eigenvalues and such a blob is
+reported as \code{NaN} in the \code{Eccentricity}, \code{MajorAxisLength} and
+\code{MinorAxisLength} columns. The \code{ifcbkit}-based releases leave \code{numpy}
+unconstrained, so a current install measures the same blob as \code{0}, matching
+upstream \code{ifcb-features}. Pin \code{"v1.0.0"}, or \code{numpy < 2.3}, to reproduce a
+run made before \code{iRfcb} 0.10.0; see \code{\link[=ifcb_extract_features]{ifcb_extract_features()}}.
 
 Note that installing v1.0.0 or earlier pulls in \code{pyifcb}, which requires
 binary wheels for \code{h5py} (available for Python 3.10-3.13). Installation

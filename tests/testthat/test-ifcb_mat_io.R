@@ -221,6 +221,99 @@ test_that("read_mat_v5 reports a corrupted/truncated compressed file", {
   expect_error(read_mat_v5(path), "decompress|truncated|corrupted")
 })
 
+# ---- rejecting data the reader cannot represent faithfully ------------------
+#
+# These all used to be decoded silently into plausible-looking numbers. That
+# matters because ifcb_adjust_classes() reads a manual file and writes the
+# parsed variables straight back over it, so a misdecode is committed to the
+# user's annotation file rather than merely returned.
+
+# Write one uncompressed numeric variable and return its raw bytes. In this
+# layout the array-flags data word starts at byte 145: byte 145 is the array
+# class, byte 146 the flag bits (logical 0x02, complex 0x08).
+mat_flag_bytes <- function() {
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  write_mat_v5(path, list(classlist = mat_var_double(matrix(as.double(1:3), ncol = 1))),
+               do_compression = FALSE)
+  readBin(path, "raw", file.size(path))
+}
+
+# Write `raw` to a temp file and read it back, expecting an error.
+expect_mat_rejected <- function(raw, pattern) {
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  writeBin(raw, path)
+  expect_error(read_mat_v5(path), pattern)
+}
+
+test_that("read_mat_v5 rejects array classes it cannot represent", {
+  raw <- mat_flag_bytes()
+
+  # mxSTRUCT: previously decoded as a 1x1 numeric holding the field-name length.
+  struct <- raw
+  struct[145] <- as.raw(2L)
+  expect_mat_rejected(struct, "[Uu]nsupported MATLAB array class")
+
+  # mxOBJECT and mxSPARSE fall through the same branch.
+  object <- raw
+  object[145] <- as.raw(3L)
+  expect_mat_rejected(object, "[Uu]nsupported MATLAB array class")
+
+  sparse <- raw
+  sparse[145] <- as.raw(5L)
+  expect_mat_rejected(sparse, "[Uu]nsupported MATLAB array class")
+})
+
+test_that("read_mat_v5 names the class code even when it has no readable label", {
+  raw <- mat_flag_bytes()
+
+  # mxOPAQUE, how recent MATLAB releases store string arrays, tables,
+  # categoricals and class objects. It is not in the documented class list.
+  opaque <- raw
+  opaque[145] <- as.raw(17L)
+  expect_mat_rejected(opaque, "[Uu]nsupported MATLAB array class.*opaque")
+
+  # A code with no label at all - corrupt, or a class MATLAB has yet to define.
+  # Looking the label up used to raise "subscript out of bounds", losing the
+  # diagnostic entirely, so assert the intended message rather than just any
+  # error.
+  for (code in c(0L, 18L, 19L)) {
+    unknown <- raw
+    unknown[145] <- as.raw(code)
+    expect_mat_rejected(unknown, "[Uu]nsupported MATLAB array class")
+    expect_mat_rejected(unknown, as.character(code))
+  }
+})
+
+test_that("read_mat_v5 rejects complex and logical arrays rather than degrading them", {
+  raw <- mat_flag_bytes()
+
+  # Complex: the imaginary part would have been dropped silently.
+  cplx <- raw
+  cplx[146] <- as.raw(8L)
+  expect_mat_rejected(cplx, "complex")
+
+  # Logical: would have been demoted to uint8, breaking MATLAB logical indexing.
+  lgl <- raw
+  lgl[146] <- as.raw(2L)
+  expect_mat_rejected(lgl, "logical")
+})
+
+test_that("read_mat_v5 reports a truncated uncompressed file instead of zero-filling", {
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  write_mat_v5(path, list(classlist = mat_var_double(matrix(as.double(1:100), ncol = 1))),
+               do_compression = FALSE)
+
+  full <- readBin(path, "raw", file.size(path))
+  truncated <- full[seq_len(length(full) - 400L)]
+
+  # Out-of-range raw subsetting yields 00 bytes rather than an error, so this
+  # used to return all 100 values with 50 silent trailing zeros.
+  expect_mat_rejected(truncated, "truncated|[Mm]alformed")
+})
+
 # ---- scipy interoperability (only when scipy is installed) ------------------
 
 test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", {

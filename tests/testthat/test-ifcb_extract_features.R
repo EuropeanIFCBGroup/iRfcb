@@ -195,6 +195,63 @@ test_that("feature columns are numeric (complex eigenvalues are not written to C
   expect_true(all(vapply(features, is.numeric, logical(1))))
 })
 
+test_that("a degenerate blob measures zero, as it does with upstream ifcb-features", {
+  # ifcb-features <= v1.1.1 derives the axis lengths as 4 * sqrt(eigenvalue) via
+  # numpy.linalg.eig. A collinear blob can yield a slightly negative eigenvalue,
+  # putting the axis length on the imaginary axis. Upstream (PR #20) guards the
+  # same case by clipping the radicand to zero, so iRfcb must report 0 too:
+  # anything else would make the measurement depend on which ifcb-features
+  # release happens to be installed.
+  #
+  # This exercises _real_valued() directly rather than a whole extraction run,
+  # but still needs ifcb-features installed, because extract_slim_features.py
+  # imports ifcb_features.all at module scope.
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  extract <- reticulate::import_from_path(
+    "extract_slim_features",
+    path = system.file("python", package = "iRfcb"),
+    delay_load = FALSE
+  )
+
+  # _real_valued() takes and returns (name, value) pairs; flatten them to a
+  # named numeric vector so the values can be compared directly.
+  real_valued <- function(python_pairs) {
+    out <- extract$`_real_valued`(reticulate::py_eval(python_pairs, convert = FALSE))
+    stats::setNames(vapply(out, function(pair) pair[[2]], numeric(1)),
+                    vapply(out, function(pair) pair[[1]], character(1)))
+  }
+
+  # What ifcb-features v1.1.1 returns for a collinear blob: a purely imaginary
+  # minor axis, a real major axis carried in a complex type, and a plain float.
+  values <- real_valued(paste0(
+    '[("MinorAxisLength", complex(0, 7.62939453e-06)),',
+    ' ("MajorAxisLength", complex(720.2434592, 0)),',
+    ' ("Eccentricity", complex(1, 0)),',
+    ' ("Area", 42.0)]'
+  ))
+
+  expect_equal(values[["MinorAxisLength"]], 0)   # clipped, not NaN
+  expect_false(is.na(values[["MinorAxisLength"]]))
+  expect_equal(values[["MajorAxisLength"]], 720.2434592)
+  expect_equal(values[["Eccentricity"]], 1)
+  expect_equal(values[["Area"]], 42)             # non-complex, passed through
+
+  # The property that matters for reproducibility: once upstream tags a release
+  # with its fix, the same blob arrives already real and this coercion becomes a
+  # no-op. Both inputs must produce the same output, or upgrading
+  # ifcb-features would silently shift the reported values.
+  expect_equal(
+    real_valued('[("MinorAxisLength", complex(0, 7.62939453e-06))]'),
+    real_valued('[("MinorAxisLength", 0.0)]')
+  )
+})
+
 test_that("the raw-data reader supports both ifcb-features backends", {
   skip_if_no_python()
   skip_if_no_ifcb_features()
@@ -229,4 +286,45 @@ test_that("the raw-data reader supports both ifcb-features backends", {
     expect_equal(dd$backend, backend)
     expect_true(bin %in% dd$list_lids())
   }
+})
+
+test_that("ifcb_extract_features validates the backend argument", {
+  # Argument validation happens before the Python and data-folder checks, so
+  # this needs no Python environment.
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b", backend = "ifcbKit"),
+    "should be one of|'arg' should be"
+  )
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b", backend = "scipy"),
+    "should be one of|'arg' should be"
+  )
+})
+
+test_that("the backend override is read from R rather than from Python's environment", {
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  # Python captures os.environ when the interpreter starts, so a Sys.setenv()
+  # made from R afterwards is invisible to it. iRfcb therefore has to read the
+  # variable on the R side and forward it as an argument; assert the premise so
+  # this does not silently regress to reading it in Python.
+  reticulate::py_run_string("import os")
+  old <- Sys.getenv("IRFCB_IFCB_BACKEND", unset = NA)
+  on.exit({
+    if (is.na(old)) Sys.unsetenv("IRFCB_IFCB_BACKEND") else Sys.setenv(IRFCB_IFCB_BACKEND = old)
+  }, add = TRUE)
+
+  Sys.setenv(IRFCB_IFCB_BACKEND = "pyifcb")
+  expect_equal(Sys.getenv("IRFCB_IFCB_BACKEND"), "pyifcb")
+  expect_null(reticulate::py_eval('os.environ.get("IRFCB_IFCB_BACKEND")'))
+
+  # An unusable value set via the environment must still be rejected, which only
+  # happens if R reads it.
+  Sys.setenv(IRFCB_IFCB_BACKEND = "not-a-backend")
+  expect_error(
+    ifcb_extract_features("nonexistent", "f", "b"),
+    "should be one of|'arg' should be"
+  )
 })
