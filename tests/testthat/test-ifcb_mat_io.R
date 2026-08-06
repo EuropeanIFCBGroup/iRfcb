@@ -314,6 +314,80 @@ test_that("read_mat_v5 reports a truncated uncompressed file instead of zero-fil
   expect_mat_rejected(truncated, "truncated|[Mm]alformed")
 })
 
+# Write one uncompressed variable and return its raw bytes. In this layout the
+# 4-byte dimension words start at byte 161 (rows) and 165 (columns), directly
+# after the 8-byte dimensions tag at 153.
+mat_dim_bytes <- function(spec) {
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  write_mat_v5(path, list(v = spec), do_compression = FALSE)
+  readBin(path, "raw", file.size(path))
+}
+
+# Overwrite the two dimension words in place.
+mat_set_dims <- function(raw, nrow, ncol) {
+  raw[161:164] <- writeBin(as.integer(nrow), raw(), size = 4L, endian = "little")
+  raw[165:168] <- writeBin(as.integer(ncol), raw(), size = 4L, endian = "little")
+  raw
+}
+
+test_that("read_mat_v5 bounds a declared element count against the bytes available", {
+  cell <- mat_dim_bytes(mat_var_cell(matrix(c("a", "bb", "ccc"), nrow = 1)))
+
+  # A 208-byte element cannot hold 2e8 cells. The reader used to allocate
+  # character(2e8) - about 1.6 GB - and only then reach the bounds check inside
+  # the loop, so the clean diagnostic arrived long after the memory did.
+  expect_mat_rejected(mat_set_dims(cell, 1L, 200000000L), "[Mm]alformed MAT-file.*declares")
+
+  # Larger still: prod(dims) exceeds what character() can allocate at all, which
+  # used to escape as a bare "vector size specified is too large" naming neither
+  # the file nor the variable.
+  huge <- 2L^30L
+  expect_mat_rejected(mat_set_dims(cell, huge, huge), "[Mm]alformed MAT-file.*declares")
+
+  # A negative dimension from a flipped sign bit must not reach character().
+  expect_mat_rejected(mat_set_dims(cell, 1L, -3L), "[Mm]alformed MAT-file.*declares")
+
+  # The numeric branch is the worse case: matrix() neither errors nor warns
+  # audibly there, it allocates and recycles, so the read used to succeed and
+  # return 1.6 GB of fabricated values.
+  num <- mat_dim_bytes(mat_var_double(matrix(as.double(1:4), nrow = 2)))
+  expect_mat_rejected(mat_set_dims(num, 1L, 200000000L), "[Mm]alformed MAT-file.*declares")
+
+  # The honest dimensions still read back, so the bound does not reject valid input.
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  writeBin(cell, path)
+  expect_equal(as.vector(read_mat_v5(path)$v$data), c("a", "bb", "ccc"))
+})
+
+test_that("read_mat_v5 rejects a multi-row character array rather than flattening it", {
+  # A char array is held as one string, so a 2x3 array would be read in
+  # column-major order and written back as the single row "adbecf".
+  raw <- mat_dim_bytes(mat_var_char("abcdef"))
+  expect_mat_rejected(mat_set_dims(raw, 2L, 3L), "character array.*single-row")
+})
+
+test_that("read_mat_v5 rejects an array with more than two dimensions", {
+  # Byte-flipping cannot add a third dimension: the dimensions subelement has to
+  # grow from 8 to 12 bytes of data, which shifts everything after it. Splice a
+  # three-word dimensions element in and widen the enclosing miMATRIX to match.
+  raw <- mat_dim_bytes(mat_var_double(matrix(as.double(1:8), nrow = 2)))
+
+  i32 <- function(x) writeBin(as.integer(x), raw(), size = 4L, endian = "little")
+  # miINT32 tag declaring 12 bytes, three dimension words, then 4 bytes of
+  # padding back to the 8-byte boundary the format requires.
+  new_dims <- c(i32(5L), i32(12L), i32(2L), i32(2L), i32(2L), raw(4))
+
+  spliced <- c(raw[1:152], new_dims, raw[169:length(raw)])
+  # The outer miMATRIX byte count lives at 133-136 and must grow by the 8 bytes
+  # the new dimensions element added, or the name after it reads as truncated.
+  nbytes <- readBin(spliced[133:136], "integer", size = 4L, endian = "little")
+  spliced[133:136] <- i32(nbytes + 8L)
+
+  expect_mat_rejected(spliced, "3 dimensions.*2-D arrays are supported")
+})
+
 # ---- scipy interoperability (only when scipy is installed) ------------------
 
 test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", {
@@ -342,6 +416,90 @@ test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", 
   # The first 128 bytes are a text header that embeds a creation timestamp, so
   # compare everything after it.
   expect_equal(r_bytes[129:length(r_bytes)], py_bytes[129:length(py_bytes)])
+})
+
+test_that("read_mat_v5 decodes every numeric class it accepts", {
+  skip_on_cran()
+  skip_if_no_scipy()
+
+  np <- reticulate::import("numpy", convert = FALSE)
+  sio <- reticulate::import("scipy.io")
+
+  # .MX_SUPPORTED admits mxSINGLE and mxINT8..mxUINT32 as well as mxDOUBLE. The
+  # round-trip tests only ever exercised double and uint16, so accepting a class
+  # was never the same as reading it correctly: int8 came back unsigned (-1 as
+  # 255) and uint32 came back signed (4e9 as -294967296). Both matter because
+  # MATLAB stores a double array of small values in the narrowest type that
+  # fits, and because callers write what they read straight back.
+  cases <- list(
+    list(name = "i8",  dtype = "int8",    values = c(-128, -1, 0, 127),   class = 8L),
+    list(name = "u8",  dtype = "uint8",   values = c(0, 255),             class = 9L),
+    list(name = "i16", dtype = "int16",   values = c(-32768, 32767),      class = 10L),
+    list(name = "u16", dtype = "uint16",  values = c(0, 65535),           class = 11L),
+    list(name = "i32", dtype = "int32",   values = c(-2147483647, 5),     class = 12L),
+    list(name = "u32", dtype = "uint32",  values = c(0, 4000000000),      class = 13L),
+    list(name = "sgl", dtype = "float32", values = c(1.5, -2.25),         class = 7L),
+    list(name = "dbl", dtype = "float64", values = c(0.1, -1e10),         class = 6L)
+  )
+
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+
+  py_vars <- lapply(cases, function(cs) {
+    np$array(as.list(cs$values), dtype = cs$dtype)$reshape(
+      reticulate::tuple(1L, length(cs$values)))
+  })
+  names(py_vars) <- vapply(cases, function(cs) cs$name, character(1))
+  sio$savemat(path, do.call(reticulate::dict, py_vars), do_compression = FALSE)
+
+  got <- read_mat_v5(path)
+
+  for (cs in cases) {
+    expect_equal(got[[cs$name]]$class_code, cs$class, info = cs$dtype)
+    expect_equal(as.vector(got[[cs$name]]$data), cs$values, info = cs$dtype)
+  }
+})
+
+test_that("every accepted numeric class survives a read - write round-trip", {
+  skip_on_cran()
+  skip_if_no_scipy()
+
+  np <- reticulate::import("numpy", convert = FALSE)
+  sio <- reticulate::import("scipy.io")
+
+  # Write-back is the path the reader's guards exist to protect, so decoding
+  # correctly is only half of it: the value has to survive being written out
+  # again. uint32 above 2^31-1 is the sharp case, since it can only be held as
+  # a double on the R side.
+  src <- tempfile(fileext = ".mat")
+  out <- tempfile(fileext = ".mat")
+  on.exit(unlink(c(src, out)), add = TRUE)
+
+  sio$savemat(src, reticulate::dict(
+    i8  = np$array(list(-128L, 127L), dtype = "int8")$reshape(reticulate::tuple(1L, 2L)),
+    u32 = np$array(list(1L, 4000000000), dtype = "uint32")$reshape(reticulate::tuple(1L, 2L)),
+    sgl = np$array(list(1.5, -2.25), dtype = "float32")$reshape(reticulate::tuple(1L, 2L))
+  ), do_compression = FALSE)
+
+  write_mat_v5(out, read_mat_v5(src), do_compression = FALSE)
+
+  src_bytes <- readBin(src, "raw", file.size(src))
+  out_bytes <- readBin(out, "raw", file.size(out))
+  # The first 128 bytes are a header carrying a creation timestamp.
+  expect_equal(out_bytes[129:length(out_bytes)], src_bytes[129:length(src_bytes)])
+
+  # And scipy still sees the original values in what we wrote.
+  m <- sio$loadmat(out)
+  expect_equal(as.vector(m$i8), c(-128, 127))
+  expect_equal(as.vector(m$u32), c(1, 4000000000))
+  expect_equal(as.vector(m$sgl), c(1.5, -2.25))
+})
+
+test_that("read_mat_v5 rejects dimensions that disagree with the payload", {
+  # matrix() recycles a short vector to fill the declared dimensions without
+  # complaint, so a corrupt dimension used to fabricate values rather than fail.
+  raw <- mat_dim_bytes(mat_var_double(matrix(as.double(1:4), nrow = 2)))
+  expect_mat_rejected(mat_set_dims(raw, 2L, 3L), "declares 2x3 but carries 4 values")
 })
 
 test_that("scipy.io.loadmat can read a mixed structure written by write_mat_v5", {

@@ -37,13 +37,15 @@
 .MI_UTF8   <- 16L
 
 # ---- MAT-file array class codes ----
+# Only the classes the reader and writer act on get a constant. The codes it
+# merely refuses are named in .MX_CLASS_NAMES below, where the label alongside
+# each key already says which class it is.
 .MX_CELL   <- 1L
-.MX_STRUCT <- 2L
-.MX_OBJECT <- 3L
 .MX_CHAR   <- 4L
-.MX_SPARSE <- 5L
 .MX_DOUBLE <- 6L
+.MX_SINGLE <- 7L
 .MX_UINT16 <- 11L
+.MX_UINT32 <- 13L
 
 # Array classes the reader can decode. Anything else (struct, object, sparse,
 # function handle) must be rejected rather than fall through to the numeric
@@ -79,7 +81,6 @@
 
 # Array-flags bits (second byte of the flags word).
 .MX_FLAG_LOGICAL <- 0x02L
-.MX_FLAG_GLOBAL  <- 0x04L
 .MX_FLAG_COMPLEX <- 0x08L
 
 # =============================================================================
@@ -161,7 +162,14 @@
     "10" = list(mi = .MI_INT16,  enc = function(x) writeBin(as.integer(x), raw(), size = 2L, endian = "little")), # mxINT16
     "11" = list(mi = .MI_UINT16, enc = function(x) .raw_u16vec(x)),                               # mxUINT16
     "12" = list(mi = .MI_INT32,  enc = function(x) .raw_i32vec(x)),                               # mxINT32
-    "13" = list(mi = .MI_UINT32, enc = function(x) .raw_i32vec(x)),                               # mxUINT32
+    # mxUINT32. Values above 2^31-1 arrive as doubles (see .decode_numeric), and
+    # as.integer() would turn them into NA. Wrap them back into the signed range
+    # so the same low 32 bits are written out.
+    "13" = list(mi = .MI_UINT32, enc = function(x) {
+      x <- as.double(x)
+      x[!is.na(x) & x > 2147483647] <- x[!is.na(x) & x > 2147483647] - 4294967296
+      .raw_i32vec(x)
+    }),
     cli::cli_abort("Unsupported numeric MAT array class: {.val {class_code}}")
   )
 }
@@ -370,11 +378,22 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     "9" = readBin(data, "double", n = length(data) %/% 8L, size = 8L, endian = "little"),       # miDOUBLE
     "7" = readBin(data, "double", n = length(data) %/% 4L, size = 4L, endian = "little"),       # miSINGLE
     "5" = readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little"),      # miINT32
-    "6" = readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little"),      # miUINT32
+    # miUINT32. R has no unsigned 32-bit type, so read the signed value and lift
+    # anything that came back negative by 2^32. The result is a double, since
+    # values above 2^31-1 do not fit an R integer.
+    "6" = {
+      v <- readBin(data, "integer", n = length(data) %/% 4L, size = 4L, endian = "little")
+      v <- as.double(v)
+      v[!is.na(v) & v < 0] <- v[!is.na(v) & v < 0] + 4294967296
+      v
+    },
     "4" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little", signed = FALSE), # miUINT16
     "3" = readBin(data, "integer", n = length(data) %/% 2L, size = 2L, endian = "little"),      # miINT16
     "2" = as.integer(data),                                                                     # miUINT8
-    "1" = as.integer(data),                                                                     # miINT8
+    # miINT8. as.integer() on raw is unsigned, which read -128 back as 128 and
+    # -1 as 255. MATLAB stores a double array of small values compactly, so this
+    # is how an ordinary negative value can arrive.
+    "1" = readBin(data, "integer", n = length(data), size = 1L, signed = TRUE),                 # miINT8
     cli::cli_abort("Unsupported numeric MAT data type: {.val {type}}")
   )
 }
@@ -451,8 +470,25 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     ))
   }
 
+  # Bound the declared element count against the bytes actually present before
+  # anything allocates on the strength of it. prod() returns a double, so
+  # corrupt dimensions arrive here as values far beyond what the body could
+  # hold, or as NA. Left unchecked they are worse than a crash: the cell branch
+  # ties up gigabytes before .read_element()'s bounds check fires, or dies on a
+  # bare "vector size specified is too large" naming neither file nor variable,
+  # while matrix() in the numeric branch does not even error - it allocates and
+  # recycles the short data silently, fabricating values. No encoding stores an
+  # element in less than a byte, and the body also carries the flags, dimensions
+  # and name, so this bound never rejects an honest file.
+  nel <- prod(as.double(dims))
+  if (is.na(nel) || nel < 0 || nel > length(body)) {
+    cli::cli_abort(c(
+      "Malformed MAT-file: variable {.val {name}} declares {nel} elements.",
+      "i" = "The element data is {length(body)} bytes, which cannot hold that many."
+    ))
+  }
+
   spec <- if (class_code == .MX_CELL) {
-    nel <- prod(dims)
     strs <- character(nel)
     if (nel > 0L) {
       for (k in seq_len(nel)) {
@@ -495,7 +531,19 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     vals <- if (length(data_el$data) == 0L) numeric(0) else .decode_numeric(data_el$type, data_el$data)
     nr <- if (length(dims) > 0) dims[1] else 0L
     nc <- if (length(dims) > 1) dims[2] else 1L
-    vals <- if (out_class == .MX_DOUBLE || out_class == 7L) as.double(vals) else as.integer(vals)
+    # matrix() recycles rather than complaining when the data is shorter than
+    # the dimensions claim, so dimensions that disagree with the payload would
+    # be read back as repeated values. Refuse instead: the caller may write the
+    # result straight back over the source file.
+    if (length(vals) != nel) {
+      cli::cli_abort(c(
+        "Malformed MAT-file: variable {.val {name}} declares {nr}x{nc} but carries {length(vals)} values.",
+        "i" = "Reading it would recycle the data to fill the declared dimensions."
+      ))
+    }
+    # mxUINT32 spans values R cannot hold in an integer, so it stays a double;
+    # everything else narrower than a double is exact as an integer.
+    vals <- if (out_class %in% c(.MX_DOUBLE, .MX_SINGLE, .MX_UINT32)) as.double(vals) else as.integer(vals)
     mat_var_numeric(matrix(vals, nrow = nr, ncol = nc), out_class)
   }
 
