@@ -49,7 +49,10 @@ plots are organized into subfolders based on their flag status.}
 
 \item{use_marker}{A logical indicating whether to show markers on the plot. Default is FALSE.}
 
-\item{start_fit}{An integer indicating the start fit value for the plot. Default is 10.}
+\item{start_fit}{An integer indicating the start fit value for the plot. Default is 10.
+The value is the index of the first 1 micron ESD bin included in the curve fit,
+calibrated for version 2 features. See the Feature file version section before
+using it with another version.}
 
 \item{r_sqr}{The lower limit of acceptable R^2 values (any curves below it will be flagged).
 Default is 0.5.}
@@ -81,7 +84,11 @@ high humidity. Optional.}
 
 \item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
-\item{fea_v}{The version number of the IFCB feature file (e.g., 2, 4). Default is 2, as described in Hayashi et al. 2025. \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
+\item{fea_v}{The version number of the IFCB feature file (e.g., 2, 4). Default is 2,
+as described in Hayashi et al. 2025. The function reads other versions unchanged,
+but the default \code{start_fit} and flag thresholds only apply to version 2. Re-derive
+them first; see the Feature file version section.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}}
 
 \item{use_plot_subfolders}{A logical indicating whether to save plots in subfolders
 based on the sample's flag status. If TRUE (default), samples without flags are
@@ -114,6 +121,50 @@ which can be found at \url{https://github.com/kudelalab/PSD}.
 Python must be installed to use this function. The required Python packages can be
 installed in a virtual environment using \code{ifcb_py_install()}.
 }
+\section{Feature file version}{
+
+The PSD is built from one feature, \code{EquivDiameter}, converted to microns with
+\code{micron_factor} and binned into 1 micron bins. The fitted curve, \code{max_ESD_diff}
+and every flag derived from them all follow from that single distribution.
+
+\code{EquivDiameter} is not directly comparable between feature set versions. The
+version 4 extractor (\code{ifcb-features}, see \code{ifcb_extract_features()}) segments a
+tighter blob boundary than the version 2 MATLAB extractor (\code{ifcb-analysis}), so
+it reports a smaller equivalent diameter for the same image. The difference is
+roughly a fixed number of pixels rather than a fixed proportion. It therefore
+converts to microns through \code{micron_factor}, and moves the whole ESD histogram
+towards smaller bins by about that many microns. Small particles lose a larger
+share of their diameter than large ones.
+
+The thresholds published by Hayashi et al. (2025) were calibrated on version 2
+features and do not carry over unchanged:
+
+\itemize{
+\item \code{start_fit} selects a histogram bin. When the distribution moves, the fit
+window sits at a different position relative to the peak, which changes the
+fitted exponent as well as the multiplier. The \code{r_sqr} and \code{beads} flags read
+those two values.
+\item \code{bloom} and \code{bubbles} are evaluated against \code{max_ESD_diff}, which is
+measured relative to \code{start_fit}. They move with the shifted distribution, and
+again with any compensating change to \code{start_fit}.
+\item \code{biomass} and \code{incomplete} depend on the height of the most populated bin,
+which changes as the shift moves targets between bins.
+}
+
+With a version other than 2, measure the offset on your own data instead of
+assuming a published value: extract both feature versions for a set of
+representative bins, compare \code{EquivDiameter} per ROI, and lower \code{start_fit} by the
+median difference in whole microns. Re-derive the flag thresholds on that basis,
+and report the feature version together with any quality flags you publish.
+\code{micron_factor} sets what the offset amounts to in microns, so an instrument with
+a different pixel size needs its own value.
+
+The file name is the only other place the version is used: features are read as
+\verb{<bin>_fea_v<fea_v>.csv}. \code{ifcb_extract_features()} writes \verb{<bin>_features_v4.csv}
+by default, so pass \code{feature_tag = "fea"} there to get the names this function
+searches for.
+}
+
 \examples{
 \dontrun{
 # Initialize the Python session if not already set up
@@ -148,6 +199,6 @@ to automate imaging flow cytobot (IFCB) data quality in coastal California, USA.
 International Society for the Study of Harmful Algae. https://doi.org/10.15027/0002041270
 }
 \seealso{
-\code{\link{ifcb_py_install}},
+\code{\link{ifcb_py_install}}, \code{\link{ifcb_extract_features}},
 \url{https://github.com/kudelalab/PSD}
 }
