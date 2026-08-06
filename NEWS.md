@@ -3,7 +3,7 @@
 ## New features
 
 * Added support for the per-ROI `cell_count` data produced by the diatom chain counter (Groves et al. 2026, [doi:10.1093/plankt/fbaf064](https://doi.org/10.1093/plankt/fbaf064)) through the [`ifcb-pytorch-classify`](https://github.com/nodc-sweden/ifcb-pytorch-classify) pipeline and stored in `.mat`, `.h5` and `.csv` classification files. Abundance can now be reported in cells rather than images, so a chain of eight cells counts as eight.
-  * New `ifcb_summarize_cell_counts()` reports cell abundance and chain-length statistics (`n_chains`, `mean`, `median`, `max`, `sd`) per sample and class, and abundance per liter when given an `hdr_folder`.
+  * New `ifcb_summarize_cell_counts()` reports cell abundance and chain-length statistics (`n_counted`, `mean`, `median`, `max`, `sd`) per sample and class, and abundance per liter when given an `hdr_folder`. `n_counted` is the number of ROIs the chain counter measured, including those it found to hold a single cell.
   * `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` gain a `use_cell_counts` argument. When `TRUE`, `ifcb_summarize_biovolumes()` adds a `cell_counts` column, and `cell_counts_per_liter` when an `hdr_folder` is supplied.
   * `single_cell_values` (default `c(-1, 0)`) sets which `cell_count` values are read as one cell: by default the ROIs the counter skipped (`-1`) and those where it found no cells (`0`). Any other value is used as it stands.
   * `cell_counts` is `NA` rather than `0` for a sample whose classification file carries no `cell_count` data, since a zero would look the same as a taxon that was genuinely absent. `counts` still reports the images, and a warning says how many files were affected.

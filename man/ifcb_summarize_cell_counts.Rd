@@ -8,7 +8,7 @@ ifcb_summarize_cell_counts(
   class_files,
   hdr_folder = NULL,
   single_cell_values = c(-1, 0),
-  stats = c("n_chains", "mean", "median", "max"),
+  stats = c("n_counted", "mean", "median", "max"),
   threshold = "opt",
   class_recursive = TRUE,
   hdr_recursive = TRUE,
@@ -34,9 +34,10 @@ be treated as a single cell when computing abundance. Default is
 were detected count as one cell. Values not listed are used verbatim.}
 
 \item{stats}{Character vector selecting which chain-length statistics to
-include. Any of \code{"n_chains"} (the number of chain-counted ROIs the other
-statistics are computed over), \code{"mean"}, \code{"median"}, \code{"max"}, and \code{"sd"}.
-Default is \code{c("n_chains", "mean", "median", "max")}. Use \code{character(0)} to
+include. Any of \code{"n_counted"} (the number of ROIs the chain counter measured,
+which the other statistics are computed over), \code{"mean"}, \code{"median"}, \code{"max"},
+and \code{"sd"}.
+Default is \code{c("n_counted", "mean", "median", "max")}. Use \code{character(0)} to
 return abundance only.}
 
 \item{threshold}{A character string controlling which classification to use.
@@ -59,8 +60,9 @@ Python-based method (\code{SciPy}). Default is \code{FALSE}.}
 A data frame with one row per sample and class. Columns always include
 \code{sample}, \code{classifier}, \code{class}, \code{counts} (number of ROIs), and
 \code{cell_counts} (total cell abundance). The requested chain-length statistics
-are added as \code{n_chains} (number of chain-counted ROIs, i.e. those with
-\code{cell_count >= 1}), \code{mean_chain_length}, \code{median_chain_length},
+are added as \code{n_counted} (number of ROIs the chain counter measured, i.e.
+those with \code{cell_count >= 1}, including single-cell ones),
+\code{mean_chain_length}, \code{median_chain_length},
 \code{max_chain_length}, and/or \code{sd_chain_length}. When \code{hdr_folder} is provided,
 \code{ml_analyzed} and \code{cell_counts_per_liter} are also returned.
 
@@ -91,12 +93,12 @@ ROIs that were genuinely chain-counted (\code{cell_count >= 1}); ROIs with \code
 statistics, although both still contribute to abundance according to
 \code{single_cell_values} (by default one cell each).
 
-\code{n_chains} reports how many ROIs those length statistics were computed over,
-i.e. the number of chain-counted ROIs (\code{cell_count >= 1}). Despite the name it
-is a count of ROIs rather than of chains, and it includes ROIs found to hold a
+\code{n_counted} reports how many ROIs those length statistics were computed over,
+i.e. the number of ROIs the chain counter measured (\code{cell_count >= 1}). It is
+a count of ROIs rather than of chains, and it includes ROIs found to hold a
 single cell, which are not chains. It is useful for telling a measured
 abundance from an imputed one: a class with \code{cell_counts > 0} but
-\code{n_chains == 0} was never chain-counted, so its abundance is one cell per ROI
+\code{n_counted == 0} was never chain-counted, so its abundance is one cell per ROI
 by imputation rather than by measurement.
 
 Chain counting was introduced by Groves et al. (2026), who trained a
