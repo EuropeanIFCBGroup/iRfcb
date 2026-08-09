@@ -35,10 +35,7 @@ ifcb_classify_models <- function(
   gradio_url <- sub("/+$", "", gradio_url)
   info_url <- paste0(gradio_url, "/gradio_api/info")
 
-  resp <- tryCatch(
-    curl::curl_fetch_memory(info_url),
-    error = function(e) cli_abort("Failed to connect to Gradio API at {.url {info_url}}: {e$message}")
-  )
+  resp <- gradio_fetch(info_url, error_prefix = "Failed to connect to Gradio API")
 
   if (resp$status_code != 200) {
     cli_abort("Gradio API info request failed [{resp$status_code}]: {.url {info_url}}")

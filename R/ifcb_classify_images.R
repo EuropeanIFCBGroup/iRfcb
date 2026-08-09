@@ -9,6 +9,12 @@
 #' To classify all images in a raw IFCB sample (`.roi` file) without first
 #' extracting them manually, use [ifcb_classify_sample()] instead.
 #'
+#' Transient network failures (dropped connections and HTTP 429/5xx responses,
+#' as seen for example when the hosted server restarts) are retried
+#' automatically up to four times with exponential backoff before an image is
+#' reported as failed. Set `options(iRfcb.gradio_max_tries = )` to change the
+#' number of attempts.
+#'
 #' @param png_file A character vector of paths to PNG files to classify.
 #' @param gradio_url A character string specifying the base URL of the Gradio
 #'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
@@ -132,6 +138,45 @@ ifcb_classify_images <- function(
 
 # ── Private Gradio API helpers ────────────────────────────────────────────────
 
+# Fetch a URL, retrying transient failures.
+#
+# Connection-level errors (refused, reset, DNS, timeout) and HTTP 429/5xx
+# responses are retried with exponential backoff (1, 2, 4, ... seconds by
+# default); any other response is returned for the caller to handle. Rides out
+# the brief outages a hosted Gradio server shows during restarts, which
+# otherwise fail a run of images mid-sample. Tunable through
+# options(iRfcb.gradio_max_tries = , iRfcb.gradio_retry_delay = ).
+#
+# @param url Full URL to fetch.
+# @param handle A curl handle configured for the request.
+# @param error_prefix Message prefix used when every attempt fails with a
+#   connection error.
+# @return The curl response list.
+# @noRd
+gradio_fetch <- function(url, handle = curl::new_handle(),
+                         error_prefix = "Connection to Gradio failed") {
+  max_tries <- max(1L, as.integer(getOption("iRfcb.gradio_max_tries", 4L)))
+  base_delay <- getOption("iRfcb.gradio_retry_delay", 1)
+
+  resp <- NULL
+  for (attempt in seq_len(max_tries)) {
+    resp <- tryCatch(
+      curl::curl_fetch_memory(url, handle = handle),
+      error = identity
+    )
+    transient <- inherits(resp, "error") ||
+      resp$status_code >= 500L ||
+      resp$status_code == 429L
+    if (!transient) return(resp)
+    if (attempt < max_tries) Sys.sleep(base_delay * 2^(attempt - 1L))
+  }
+
+  if (inherits(resp, "error")) {
+    cli_abort("{error_prefix} at {.url {url}}: {resp$message}")
+  }
+  resp
+}
+
 # Submit an image to /gradio_api/call/predict_scores and return all class scores.
 #
 # Uploads the PNG, then POSTs to the predict_scores endpoint and parses the
@@ -156,10 +201,7 @@ gradio_predict_scores <- function(gradio_url, image_data, model_name) {
     httpheader = c("Content-Type: application/json", "Accept: application/json")
   )
 
-  post_resp <- tryCatch(
-    curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
-  )
+  post_resp <- gradio_fetch(call_url, h_post)
 
   if (post_resp$status_code != 200) {
     cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
@@ -178,10 +220,7 @@ gradio_predict_scores <- function(gradio_url, image_data, model_name) {
     httpheader = c("Accept: text/event-stream")
   )
 
-  get_resp <- tryCatch(
-    curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
-  )
+  get_resp <- gradio_fetch(result_url, h_get, "Failed to fetch Gradio SSE")
 
   if (get_resp$status_code != 200) {
     cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
@@ -217,10 +256,7 @@ gradio_get_thresholds <- function(gradio_url, model_name) {
     httpheader = c("Content-Type: application/json", "Accept: application/json")
   )
 
-  post_resp <- tryCatch(
-    curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
-  )
+  post_resp <- gradio_fetch(call_url, h_post)
 
   if (post_resp$status_code != 200) {
     cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
@@ -239,10 +275,7 @@ gradio_get_thresholds <- function(gradio_url, model_name) {
     httpheader = c("Accept: text/event-stream")
   )
 
-  get_resp <- tryCatch(
-    curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
-  )
+  get_resp <- gradio_fetch(result_url, h_get, "Failed to fetch Gradio SSE")
 
   if (get_resp$status_code != 200) {
     cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
@@ -300,10 +333,7 @@ gradio_upload_file <- function(png_path, gradio_url) {
     files = curl::form_file(png_path, type = "image/png")
   )
 
-  resp <- tryCatch(
-    curl::curl_fetch_memory(upload_url, handle = h),
-    error = function(e) cli_abort("File upload to Gradio failed at {.url {upload_url}}: {e$message}")
-  )
+  resp <- gradio_fetch(upload_url, h, "File upload to Gradio failed")
 
   if (resp$status_code != 200) {
     cli_abort("Gradio file upload failed [{resp$status_code}]: {.url {upload_url}}")
@@ -342,10 +372,7 @@ gradio_predict <- function(gradio_url, image_data, model_name) {
     httpheader = c("Content-Type: application/json", "Accept: application/json")
   )
 
-  post_resp <- tryCatch(
-    curl::curl_fetch_memory(call_url, handle = h_post),
-    error = function(e) cli_abort("Connection to Gradio failed at {.url {call_url}}: {e$message}")
-  )
+  post_resp <- gradio_fetch(call_url, h_post)
 
   if (post_resp$status_code != 200) {
     cli_abort("Gradio POST failed [{post_resp$status_code}]: {.url {call_url}}")
@@ -364,10 +391,7 @@ gradio_predict <- function(gradio_url, image_data, model_name) {
     httpheader = c("Accept: text/event-stream")
   )
 
-  get_resp <- tryCatch(
-    curl::curl_fetch_memory(result_url, handle = h_get),
-    error = function(e) cli_abort("Failed to fetch Gradio SSE from {.url {result_url}}: {e$message}")
-  )
+  get_resp <- gradio_fetch(result_url, h_get, "Failed to fetch Gradio SSE")
 
   if (get_resp$status_code != 200) {
     cli_abort("Gradio SSE failed [{get_resp$status_code}]: {.url {result_url}}")
