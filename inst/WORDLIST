@@ -126,6 +126,7 @@ argmax
 associatedMedia
 autoclass
 autotrophic
+backoff
 basisOfRecord
 biovolume
 biovolumes
@@ -134,6 +135,7 @@ classpath
 classxxxx
 collectionCode
 collinear
+conda's
 coordinateUncertaintyInMeters
 csv
 cytobot
@@ -202,6 +204,7 @@ selectable
 setae
 smhi
 spp
+struct
 subfolder
 subfolders
 subpath
