@@ -25,6 +25,93 @@ make_sse <- function(...) {
   }, character(1)), collapse = "\n\n")
 }
 
+# ── Internal helper: gradio_fetch ─────────────────────────────────────────────
+
+test_that("gradio_fetch retries connection errors and returns a later success", {
+  old <- options(iRfcb.gradio_retry_delay = 0)
+  on.exit(options(old))
+  attempts <- 0L
+  local_mocked_bindings(
+    curl_fetch_memory = function(url, handle = NULL) {
+      attempts <<- attempts + 1L
+      if (attempts < 3L) stop("Couldn't connect to server")
+      list(status_code = 200L, content = charToRaw("ok"))
+    },
+    .package = "curl"
+  )
+  resp <- iRfcb:::gradio_fetch("http://example.invalid", curl::new_handle())
+  expect_equal(attempts, 3L)
+  expect_equal(resp$status_code, 200L)
+})
+
+test_that("gradio_fetch retries HTTP 5xx and 429 responses", {
+  old <- options(iRfcb.gradio_retry_delay = 0)
+  on.exit(options(old))
+  codes <- c(503L, 429L, 200L)
+  attempts <- 0L
+  local_mocked_bindings(
+    curl_fetch_memory = function(url, handle = NULL) {
+      attempts <<- attempts + 1L
+      list(status_code = codes[attempts], content = raw(0))
+    },
+    .package = "curl"
+  )
+  resp <- iRfcb:::gradio_fetch("http://example.invalid", curl::new_handle())
+  expect_equal(attempts, 3L)
+  expect_equal(resp$status_code, 200L)
+})
+
+test_that("gradio_fetch does not retry non-transient responses", {
+  old <- options(iRfcb.gradio_retry_delay = 0)
+  on.exit(options(old))
+  attempts <- 0L
+  local_mocked_bindings(
+    curl_fetch_memory = function(url, handle = NULL) {
+      attempts <<- attempts + 1L
+      list(status_code = 404L, content = raw(0))
+    },
+    .package = "curl"
+  )
+  resp <- iRfcb:::gradio_fetch("http://example.invalid", curl::new_handle())
+  expect_equal(attempts, 1L)
+  expect_equal(resp$status_code, 404L)
+})
+
+test_that("gradio_fetch aborts with the error prefix after exhausting attempts", {
+  old <- options(iRfcb.gradio_retry_delay = 0, iRfcb.gradio_max_tries = 2)
+  on.exit(options(old))
+  attempts <- 0L
+  local_mocked_bindings(
+    curl_fetch_memory = function(url, handle = NULL) {
+      attempts <<- attempts + 1L
+      stop("Couldn't connect to server")
+    },
+    .package = "curl"
+  )
+  expect_error(
+    iRfcb:::gradio_fetch("http://example.invalid", curl::new_handle(),
+                         "File upload to Gradio failed"),
+    "File upload to Gradio failed"
+  )
+  expect_equal(attempts, 2L)
+})
+
+test_that("gradio_fetch returns the final response when a 5xx persists", {
+  old <- options(iRfcb.gradio_retry_delay = 0, iRfcb.gradio_max_tries = 2)
+  on.exit(options(old))
+  attempts <- 0L
+  local_mocked_bindings(
+    curl_fetch_memory = function(url, handle = NULL) {
+      attempts <<- attempts + 1L
+      list(status_code = 502L, content = raw(0))
+    },
+    .package = "curl"
+  )
+  resp <- iRfcb:::gradio_fetch("http://example.invalid", curl::new_handle())
+  expect_equal(attempts, 2L)
+  expect_equal(resp$status_code, 502L)
+})
+
 # ── Internal helper: gradio_parse_sse ─────────────────────────────────────────
 
 test_that("gradio_parse_sse extracts HTML from a Gradio 6 complete event", {

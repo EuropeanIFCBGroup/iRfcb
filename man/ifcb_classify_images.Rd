@@ -60,6 +60,12 @@ threshold for their class are labeled \code{"unclassified"} in \code{class_name}
 \details{
 To classify all images in a raw IFCB sample (\code{.roi} file) without first
 extracting them manually, use \code{\link[=ifcb_classify_sample]{ifcb_classify_sample()}} instead.
+
+Transient network failures (dropped connections and HTTP 429/5xx responses,
+as seen for example when the hosted server restarts) are retried
+automatically up to four times with exponential backoff before an image is
+reported as failed. Set \code{options(iRfcb.gradio_max_tries = )} to change the
+number of attempts.
 }
 \examples{
 \dontrun{

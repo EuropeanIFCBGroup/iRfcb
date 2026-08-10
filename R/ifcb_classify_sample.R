@@ -9,6 +9,12 @@
 #' To classify individual pre-extracted PNG files, use [ifcb_classify_images()]
 #' directly.
 #'
+#' Transient network failures (dropped connections and HTTP 429/5xx responses,
+#' as seen for example when the hosted server restarts) are retried
+#' automatically up to four times with exponential backoff before an image is
+#' reported as failed. Set `options(iRfcb.gradio_max_tries = )` to change the
+#' number of attempts.
+#'
 #' @param roi_file A character string specifying the path to the `.roi` file.
 #' @param gradio_url A character string specifying the base URL of the Gradio
 #'   application. Default is `"https://ifcb.serve.scilifelab.se"`, an instance
