@@ -89,6 +89,17 @@
 
 ### Minor improvements and fixes
 
+- [`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md),
+  [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)
+  and
+  [`ifcb_classify_models()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.md)
+  now retry transient network failures (dropped connections and HTTP
+  429/5xx responses) up to four times with exponential backoff. A brief
+  server outage, such as the hosted SciLifeLab Serve instance
+  restarting, used to fail every image it touched with
+  `Couldn't connect to server`, leaving a run of `NA` rows mid-sample.
+  Set `options(iRfcb.gradio_max_tries = )` to change the number of
+  attempts.
 - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md),
   [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
   and

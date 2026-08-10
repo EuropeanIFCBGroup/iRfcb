@@ -93,6 +93,12 @@ extracting them manually, use
 [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)
 instead.
 
+Transient network failures (dropped connections and HTTP 429/5xx
+responses, as seen for example when the hosted server restarts) are
+retried automatically up to four times with exponential backoff before
+an image is reported as failed. Set `options(iRfcb.gradio_max_tries = )`
+to change the number of attempts.
+
 ## See also
 
 [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)

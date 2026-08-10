@@ -139,6 +139,11 @@ When <code>top_n &gt; 1</code>, multiple rows are returned per image (one per pr
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>To classify all images in a raw IFCB sample (<code>.roi</code> file) without first
 extracting them manually, use <code><a href="ifcb_classify_sample.html">ifcb_classify_sample()</a></code> instead.</p>
+<p>Transient network failures (dropped connections and HTTP 429/5xx responses,
+as seen for example when the hosted server restarts) are retried
+automatically up to four times with exponential backoff before an image is
+reported as failed. Set <code>options(iRfcb.gradio_max_tries = )</code> to change the
+number of attempts.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
