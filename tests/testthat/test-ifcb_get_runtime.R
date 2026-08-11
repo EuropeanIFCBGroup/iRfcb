@@ -73,3 +73,36 @@ test_that("ifcb_get_runtime handles header file from URL", {
   expect_equal(hdr_info_db$runtime, 1198.002569)
   expect_equal(hdr_info_db$inhibittime, 151.315095)
 })
+
+test_that("legacy headers yield distinct runtime and inhibittime from one line", {
+  temp_dir <- file.path(tempdir(), "ifcb_get_runtime")
+  dir.create(temp_dir, showWarnings = FALSE, recursive = TRUE)
+  hdr <- file.path(temp_dir, "legacy.hdr")
+  on.exit(unlink(hdr), add = TRUE)
+
+  # Old IFCB headers carry both values on a single line. The MATLAB reference
+  # (IFCBxxx_readhdr.m) reads runtime from the first "="/"s" pair and
+  # inhibittime from the second; the R port used to read the first pair twice,
+  # so inhibittime silently equalled runtime and looktime came out as zero.
+  writeLines("run time = 1219.75 s, inhibit time = 316.15 s", hdr)
+
+  info <- ifcb_get_runtime(hdr)
+  expect_equal(info$runtime, 1219.75)
+  expect_equal(info$inhibittime, 316.15)
+})
+
+test_that("keys are matched at the start of the line, like the MATLAB strmatch", {
+  temp_dir <- file.path(tempdir(), "ifcb_get_runtime")
+  dir.create(temp_dir, showWarnings = FALSE, recursive = TRUE)
+  hdr <- file.path(temp_dir, "extra_key.hdr")
+  on.exit(unlink(hdr), add = TRUE)
+
+  # "AdcRunTime:" must not be picked up by the "runtime:" match; a substring
+  # grep used to return length-2 values here.
+  writeLines(c("AdcRunTime: 5", "runtime: 123.45", "inhibittime: 67.89"), hdr)
+
+  info <- ifcb_get_runtime(hdr)
+  expect_equal(info$runtime, 123.45)
+  expect_equal(info$inhibittime, 67.89)
+  expect_length(info$runtime, 1L)
+})

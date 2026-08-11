@@ -35,44 +35,47 @@ ifcb_get_runtime <- function(hdr_file) {
   hdr <- list()
 
   # Modern header format stores values as "runtime: <seconds>" (colon-delimited).
-  ii <- grep('runtime:', t, ignore.case = TRUE)
+  # Keys are matched at the start of the line, as the MATLAB reference's
+  # strmatch() does; a substring match would also hit unrelated keys such as
+  # "AdcRunTime:", yielding length-2 values that downstream tibble() calls
+  # would recycle into duplicated rows.
+  ii <- grep('^\\s*runtime:', t)
   if (length(ii) > 0) {
-    linestr <- t[ii]
+    linestr <- t[ii[1]]
     colonpos <- regexpr(':', linestr)[[1]]
     hdr$runtime <- as.numeric(trimws(substr(linestr, colonpos + 1, nchar(linestr))))
 
-    ii <- grep('inhibittime:', t, ignore.case = TRUE)
+    ii <- grep('^\\s*inhibittime:', t)
     if (length(ii) > 0) {
-      linestr <- t[ii]
+      linestr <- t[ii[1]]
       colonpos <- regexpr(':', linestr)[[1]]
       hdr$inhibittime <- as.numeric(trimws(substr(linestr, colonpos + 1, nchar(linestr))))
     }
-
-    ii <- grep('pmttriggerselection_daq_mcconly:', t, ignore.case = TRUE)
-    if (length(ii) > 0) {
-      linestr <- t[ii]
-      colonpos <- regexpr(':', linestr)[[1]]
-      # hdr$PMTtriggerSelection_DAQ_MCConly <- as.numeric(trimws(substr(linestr, colonpos + 1, nchar(linestr))))
-    }
   } else {
-    # Legacy header format stores the value as "run time = <seconds> s"; parse the
-    # number between the "=" and the trailing "s" unit. (Mirrors the MATLAB
-    # reference, which reads runtime and inhibittime from the same line.)
-    ii <- grep('run time', t, ignore.case = TRUE)
+    # Legacy header format stores both values on a single line,
+    # "run time = <x> s ... inhibit time = <y> s". The runtime sits between the
+    # first "=" and the first "s", the inhibittime between the second "=" and
+    # the second "s" - the same positions the MATLAB reference indexes with
+    # eqpos(1)/spos(1) and eqpos(2)/spos(2). ("inhibit time" contains no "s",
+    # so the second "s" is the inhibittime's unit.)
+    ii <- grep('^\\s*run time', t)
     if (length(ii) > 0) {
-      linestr <- t[ii]
-      eqpos <- regexpr('=', linestr)[[1]]
-      spos <- regexpr('s', linestr)[[1]]
-      hdr$runtime <- as.numeric(trimws(substr(linestr, eqpos + 1, spos - 1)))
-
-      eqpos2 <- regexpr('=', linestr)[[1]]
-      spos2 <- regexpr('s', linestr)[[1]]
-      hdr$inhibittime <- as.numeric(trimws(substr(linestr, eqpos2 + 1, spos2 - 1)))
+      linestr <- t[ii[1]]
+      eqpos <- gregexpr('=', linestr)[[1]]
+      spos <- gregexpr('s', linestr)[[1]]
+      if (eqpos[1] > 0 && spos[1] > 0) {
+        hdr$runtime <- as.numeric(trimws(substr(linestr, eqpos[1] + 1, spos[1] - 1)))
+      }
+      if (length(eqpos) >= 2 && length(spos) >= 2) {
+        hdr$inhibittime <- as.numeric(trimws(substr(linestr, eqpos[2] + 1, spos[2] - 1)))
+      }
     }
   }
 
-  ii <- grep('runtype:', t, ignore.case = TRUE)
+  ii <- grep('^\\s*runtype:', t)
   if (length(ii) > 0) {
+    # Last entry, matching the reference's "fudge for 2018 IFCB109 cases with
+    # two runType entries".
     linestr <- t[ii[length(ii)]]
     colonpos <- regexpr(':', linestr)[[1]]
     hdr$runType <- trimws(substr(linestr, colonpos + 2, nchar(linestr)))
