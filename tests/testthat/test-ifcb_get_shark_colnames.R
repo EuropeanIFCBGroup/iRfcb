@@ -33,5 +33,11 @@ test_that("ifcb_get_shark_colnames reads the minimal shark column names correctl
   expect_true(is.data.frame(shark_colnames))
 
   # Check that the column names are as expected
-  expect_equal(ncol(shark_colnames), 37)
+  expect_equal(ncol(shark_colnames), 38)
+
+  # IMAGE_COUNT must be in the minimal template too: with cell counts, COUNT
+  # is cells, and IMAGE_COUNT is what lets a consumer recover the image count.
+  expect_true("IMAGE_COUNT" %in% colnames(shark_colnames))
+  expect_equal(which(colnames(shark_colnames) == "IMAGE_COUNT"),
+               which(colnames(shark_colnames) == "COUNT") + 1L)
 })
