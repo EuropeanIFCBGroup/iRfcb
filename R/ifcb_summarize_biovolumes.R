@@ -266,11 +266,23 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
       cli_progress_done()
     }
 
-    # Combine into a single data frame
-    volumes <- bind_rows(volume_list)
+    # When no HDR file matches any classified sample, bind_rows() yields a 0x0
+    # tibble without a `sample` column and the join aborts with an error that
+    # names neither the cause nor the argument. Warn and report unknown
+    # volumes instead.
+    if (n_hdr == 0) {
+      cli_warn(c(
+        "No {.file .hdr} files in {.arg hdr_folder} match the classified samples.",
+        "i" = "{.field ml_analyzed} and the per-liter columns are {.code NA}."
+      ))
+      biovolume_aggregated$ml_analyzed <- NA_real_
+    } else {
+      # Combine into a single data frame
+      volumes <- bind_rows(volume_list)
 
-    # Join volume data with aggregated biovolumes based on 'sample' column
-    biovolume_aggregated <- left_join(biovolume_aggregated, volumes, by = "sample")
+      # Join volume data with aggregated biovolumes based on 'sample' column
+      biovolume_aggregated <- left_join(biovolume_aggregated, volumes, by = "sample")
+    }
 
     # Calculate biovolume and carbon content per liter of sample analyzed
     biovolume_aggregated$counts_per_liter <- biovolume_aggregated$counts / (biovolume_aggregated$ml_analyzed / 1000)

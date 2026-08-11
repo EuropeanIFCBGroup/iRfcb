@@ -386,6 +386,8 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
       tb_list <- vector("list", n_files)
       has_chain <- logical(n_files)
+      na_gaps <- integer(n_files)
+      file_samples <- character(n_files)
 
       # Set up the progress bar
       if (verbose && n_files > 0) {
@@ -403,10 +405,18 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
         })
 
         sample_name <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(matching_class_files[i]))
-        # Also handle CSV files where the filename is just the sample name
-        sample_name <- sub("\\.csv$", "", sample_name)
+        # Also handle CSV files, stripping a _class(_vN) suffix there too so a
+        # label file named {sample}_class.csv joins under the same sample as
+        # {sample}.csv (and as the selection regex above already assumes).
+        sample_name <- sub("(_class(_v\\d+)?)?\\.csv$", "", sample_name)
 
         has_chain[i] <- !is.null(temp$cell_count)
+        # A missing value inside a file that does carry cell_count data (a
+        # blank CSV cell, an HDF5 NaN, a value that failed to parse) nulls the
+        # whole sample-class group below; count the gaps so that can be said
+        # out loud rather than surface as an unexplained NA.
+        na_gaps[i] <- if (use_cell_counts && has_chain[i]) sum(is.na(temp$cell_count)) else 0L
+        file_samples[i] <- sample_name
 
         tb_list[[i]] <- tibble(
           sample = sample_name,
@@ -440,6 +450,12 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
           cli_warn(c(
             "{sum(!has_chain)} of {n_files} classification file{?s} {qty(sum(!has_chain))}{?does/do} not contain chain-count data.",
             "i" = "ROIs from {qty(sum(!has_chain))}{?this file/these files} are treated as {.code NA} chain counts, so {.field cell_counts} is {.code NA} for the affected samples."
+          ))
+        }
+        if (any(na_gaps > 0)) {
+          cli_warn(c(
+            "{sum(na_gaps)} ROI{?s} in {sum(na_gaps > 0)} classification file{?s} with chain-count data {qty(sum(na_gaps))}{?has/have} a missing {.code cell_count} value.",
+            "i" = "{.field cell_counts} is {.code NA} for the affected sample{?s}: {.val {file_samples[na_gaps > 0]}}."
           ))
         }
       }

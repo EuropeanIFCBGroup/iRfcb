@@ -414,3 +414,41 @@ test_that("ifcb_extract_biovolumes aborts when a sample resolves to two class fi
 })
 
 unlink(temp_dir, recursive = TRUE)
+
+test_that("a missing cell_count inside a chain-counted file warns in ifcb_extract_biovolumes", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_not_installed("hdf5r")
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # Self-sufficient fixture: earlier tests remove the file-level temp_dir.
+  nagap_dir <- file.path(tempdir(), "ifcb_extract_biovolumes_nagap")
+  on.exit(unlink(nagap_dir, recursive = TRUE), add = TRUE)
+  unzip(zip_path, exdir = nagap_dir)
+  feature_folder <- file.path(nagap_dir, "test_data/features")
+
+  chain_dir <- file.path(nagap_dir, "chain")
+  dir.create(chain_dir, showWarnings = FALSE)
+
+  f <- hdf5r::H5File$new(file.path(chain_dir, "D20220522T003051_IFCB134_class.h5"), mode = "w")
+  cl <- "Chaetoceros_sp"
+  f[["class_labels"]] <- cl
+  f[["roi_numbers"]] <- c(2L, 3L)
+  f[["output_scores"]] <- matrix(0.9, nrow = 1, ncol = 2)
+  f[["classifier_name"]] <- "test_clf"
+  f[["class_name_auto"]] <- rep(cl, 2)
+  f[["class_name"]] <- rep(cl, 2)
+  f[["thresholds"]] <- 0.5
+  # The file carries cell_count data, but one ROI's value is missing. This
+  # used to null the sample's cell_counts downstream with no diagnostic.
+  f[["cell_count"]] <- c(4, NaN)
+  f$close_all()
+
+  expect_warning(
+    res <- ifcb_extract_biovolumes(feature_folder, chain_dir,
+                                   use_cell_counts = TRUE, verbose = FALSE),
+    "missing"
+  )
+  expect_true(is.na(res$cell_count[res$roi_number == 3]))
+  expect_equal(res$cell_count[res$roi_number == 2], 4)
+})
