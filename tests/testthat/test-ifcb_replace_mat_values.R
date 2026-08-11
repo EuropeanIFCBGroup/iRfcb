@@ -145,3 +145,24 @@ test_that("ifcb_replace_mat_values errors clearly on an out-of-range column_inde
   unlink(manual_folder, recursive = TRUE)
   unlink(out_folder, recursive = TRUE)
 })
+
+test_that("a classlist MATLAB stored as uint8 is widened rather than wrapped", {
+  manual_folder <- file.path(tempdir(), "manual_uint8")
+  out_folder <- file.path(tempdir(), "out_uint8")
+  on.exit(unlink(c(manual_folder, out_folder), recursive = TRUE), add = TRUE)
+  dir.create(manual_folder, showWarnings = FALSE, recursive = TRUE)
+
+  # MATLAB stores a classlist whose values all fit in uint8 exactly like this;
+  # writing a large id (ifcb_merge_manual() uses 50000 + i as placeholders)
+  # used to wrap it silently: 50001 stored as 81.
+  test_file <- file.path(manual_folder, "test.mat")
+  write_mat_v5(test_file, list(
+    classlist = mat_var_numeric(matrix(c(1, 99, 3), ncol = 1), 9L) # mxUINT8
+  ))
+
+  ifcb_replace_mat_values(manual_folder, out_folder, target_id = 99, new_id = 50001, column_index = 0)
+
+  back <- read_mat_v5(file.path(out_folder, "test.mat"))
+  expect_equal(as.vector(back$classlist$data), c(1, 50001, 3))
+  expect_equal(back$classlist$class_code, 6L) # widened to mxDOUBLE
+})

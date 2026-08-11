@@ -80,6 +80,19 @@
   "17" = "opaque (string, table, categorical or object)"
 )
 
+# Value ranges of the integer array classes, used by the writer to refuse a
+# value that cannot be stored in the class it is being written as. Without the
+# check the encoders wrap silently: 300 written into a uint8 classlist (the
+# storage MATLAB picks when every value is small) comes back as 44.
+.MX_INT_RANGES <- list(
+  "8"  = list(label = "int8",   min = -128,        max = 127),
+  "9"  = list(label = "uint8",  min = 0,           max = 255),
+  "10" = list(label = "int16",  min = -32768,      max = 32767),
+  "11" = list(label = "uint16", min = 0,           max = 65535),
+  "12" = list(label = "int32",  min = -2147483648, max = 2147483647),
+  "13" = list(label = "uint32", min = 0,           max = 4294967295)
+)
+
 # Array-flags bits (second byte of the flags word).
 .MX_FLAG_LOGICAL <- 0x02L
 .MX_FLAG_COMPLEX <- 0x08L
@@ -168,7 +181,11 @@
 # Used both for top-level char variables and for the elements of a cell array
 # (where `name` is "").
 .mat_char_matrix <- function(name, s) {
-  if (is.na(s)) s <- ""
+  if (!is.character(s) || length(s) != 1L || is.na(s)) {
+    cli::cli_abort(
+      "Char data for {.val {name}} must be a single non-{.val {NA}} string, not {.cls {class(s)}} of length {length(s)}."
+    )
+  }
   bytes <- charToRaw(enc2utf8(s))
   nch <- nchar(s, type = "chars")
   dims <- if (nch == 0L) c(0L, 0L) else c(1L, nch)
@@ -201,8 +218,26 @@
 
 # Build a top-level numeric matrix variable of the given MATLAB array class.
 .mat_numeric_matrix <- function(name, mat, class_code) {
+  if (!is.numeric(mat)) {
+    cli::cli_abort(
+      "Variable {.val {name}} must be numeric to be written as a numeric MAT array, not {.cls {class(mat)}}."
+    )
+  }
   if (is.null(dim(mat))) mat <- matrix(mat, ncol = 1L)
   dims <- dim(mat)
+  rng <- .MX_INT_RANGES[[as.character(class_code)]]
+  if (!is.null(rng)) {
+    vals <- as.vector(mat)
+    bad <- !is.finite(vals) | vals < rng$min | vals > rng$max | vals != round(vals)
+    if (any(bad)) {
+      first <- vals[which(bad)[1L]]
+      cli::cli_abort(c(
+        "Variable {.val {name}} holds {sum(bad)} value{?s} that cannot be stored as {.field {rng$label}}.",
+        "x" = "First offending value: {.val {first}} ({rng$label} holds whole numbers from {rng$min} to {rng$max}).",
+        "i" = "Write the variable as double instead, or keep its values inside the {.field {rng$label}} range."
+      ))
+    }
+  }
   codec <- .mat_numeric_codec(class_code)
   body <- c(
     .mat_array_flags(class_code),
@@ -218,6 +253,19 @@
 # `char_mat` is a character matrix (or vector); elements are taken in
 # column-major order and each becomes an mxCHAR element.
 .mat_cell_array <- function(name, char_mat) {
+  # NULL slips in easily - e.g. indexing a read file for a variable it does not
+  # hold - and would otherwise serialise as a plausible-looking empty cell,
+  # erasing whatever the file held before.
+  if (!is.character(char_mat)) {
+    cli::cli_abort(
+      "Cell array {.val {name}} must be character data, not {.cls {class(char_mat)}}."
+    )
+  }
+  if (anyNA(char_mat)) {
+    cli::cli_abort(
+      "Cell array {.val {name}} holds {sum(is.na(char_mat))} {.val {NA}} value{?s}; every element must be a string."
+    )
+  }
   dims <- dim(char_mat)
   if (is.null(dims)) dims <- c(length(char_mat), 1L)
   elems <- as.vector(char_mat)
@@ -286,6 +334,22 @@ mat_var_uint16 <- function(data) mat_var_numeric(data, .MX_UINT16)
 mat_var_cell   <- function(data) list(type = "cell", data = data)
 mat_var_char   <- function(data) list(type = "char", data = data)
 
+# Widen a numeric variable read from a file to double when its data no longer
+# fits the storage class it arrived with. Callers that modify data in place
+# (ifcb_correct_annotation, ifcb_replace_mat_values) run their edits through
+# this so that assigning, say, class id 300 into a classlist MATLAB stored as
+# uint8 writes a double array - which MATLAB reads fine - instead of tripping
+# the writer's range refusal.
+.mat_widen_numeric <- function(spec) {
+  if (!identical(spec$type, "numeric")) return(spec)
+  rng <- .MX_INT_RANGES[[as.character(spec$class_code)]]
+  if (is.null(rng)) return(spec)
+  vals <- as.vector(spec$data)
+  fits <- is.finite(vals) & vals >= rng$min & vals <= rng$max & vals == round(vals)
+  if (!all(fits)) spec$class_code <- .MX_DOUBLE
+  spec
+}
+
 #' Write a MATLAB v5 MAT-file from R (internal)
 #'
 #' @param filename Output path.
@@ -295,6 +359,18 @@ mat_var_char   <- function(data) list(type = "char", data = data)
 #' @param do_compression Logical; compress each variable with zlib.
 #' @noRd
 write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
+  # An unnamed element would silently be skipped by the `names(vars)` loop
+  # below, producing a valid-looking file with a variable missing.
+  if (!is.list(vars)) {
+    cli::cli_abort("{.arg vars} must be a named list of variable specifications, not {.cls {class(vars)}}.")
+  }
+  nms <- names(vars)
+  if (length(vars) > 0L && (is.null(nms) || any(!nzchar(nms)) || anyNA(nms))) {
+    cli::cli_abort("Every element of {.arg vars} must be named; the names become the MATLAB variable names.")
+  }
+  if (anyDuplicated(nms)) {
+    cli::cli_abort("Variable names in {.arg vars} must be unique; duplicated: {.val {unique(nms[duplicated(nms)])}}.")
+  }
   # Serialise to a temporary file in the same directory and rename it into place
   # only once the whole file has been written. This keeps the write atomic: if
   # serialisation aborts part-way (e.g. an unsupported variable type), an
@@ -707,6 +783,20 @@ read_mat_v5 <- function(filename) {
     }
 
     vars[[parsed$name]] <- parsed$spec
+  }
+
+  # The loop exits when fewer than 8 bytes remain - not necessarily at the end
+  # of the file. Stray trailing bytes are the start of an element that was cut
+  # off mid-tag; reading such a file as a success would silently drop that
+  # variable, and a subsequent write-back would make the loss permanent.
+  # (pos beyond n + 1 is fine: it only means the final element's 8-byte
+  # padding was omitted at EOF, which loses nothing.)
+  if (pos <= n) {
+    cli::cli_abort(c(
+      "{.file {basename(filename)}} is truncated.",
+      "x" = "{n - pos + 1L} stray byte{?s} follow{?s/} the last complete element - the start of an element that was cut off.",
+      "i" = "The file may have been written incompletely."
+    ))
   }
 
   vars

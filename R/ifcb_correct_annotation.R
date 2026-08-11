@@ -115,6 +115,13 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
     # Guard against a correction file that references an ROI beyond the end of
     # the classlist; without this the assignment below fails with an opaque
     # "subscript out of bounds" that names neither the file nor the ROI.
+    if (ncol(classlist) < 2) {
+      cli_abort(c(
+        "The classlist in {.file {basename(file_path_in)}} has {ncol(classlist)} column{?s}.",
+        "x" = "Manual classifications live in column 2, so at least 2 columns are required."
+      ))
+    }
+
     out_of_range <- roi_list[roi_list < 1 | roi_list > nrow(classlist)]
     if (length(out_of_range) > 0) {
       cli_abort(c(
@@ -125,6 +132,10 @@ ifcb_correct_annotation <- function(manual_folder, out_folder, correction = NULL
 
     classlist[roi_list, 2] <- as.integer(correct_classid)
     mat_data$classlist$data <- classlist
+    # A classlist MATLAB stored in a narrow integer type (e.g. uint8) may no
+    # longer hold the new class id; widen it to double rather than let the
+    # writer refuse the value.
+    mat_data$classlist <- .mat_widen_numeric(mat_data$classlist)
 
     write_mat_v5(
       file.path(out_folder, paste0(filename, ".mat")),

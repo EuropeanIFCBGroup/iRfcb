@@ -180,3 +180,55 @@ test_that("ifcb_correct_annotation errors clearly on an out-of-range ROI", {
   unlink(out_folder, recursive = TRUE)
   unlink(manual_folder, recursive = TRUE)
 })
+
+test_that("a correction larger than the stored integer class widens the classlist", {
+  manual_folder <- file.path(tempdir(), "manual_uint8_corr")
+  out_folder <- file.path(tempdir(), "out_uint8_corr")
+  on.exit(unlink(c(manual_folder, out_folder), recursive = TRUE), add = TRUE)
+  dir.create(manual_folder, showWarnings = FALSE, recursive = TRUE)
+  dir.create(out_folder, showWarnings = FALSE, recursive = TRUE)
+
+  sample_name <- "D20220101T000000_IFCB001"
+  write_mat_v5(file.path(manual_folder, paste0(sample_name, ".mat")), list(
+    classlist = mat_var_numeric(cbind(1:3, c(1, 1, 1), c(1, 1, 1)), 9L) # mxUINT8
+  ))
+
+  correction_file <- tempfile(fileext = ".txt")
+  on.exit(unlink(correction_file), add = TRUE)
+  corrections <- data.frame(
+    class_folder = "manual",
+    image_filename = paste0(sample_name, "_00002.png")
+  )
+  write.table(corrections, correction_file, row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+  # 300 does not fit uint8; it used to be written back as 44.
+  ifcb_correct_annotation(manual_folder, out_folder, correction_file, correct_classid = 300)
+
+  back <- read_mat_v5(file.path(out_folder, paste0(sample_name, ".mat")))
+  expect_equal(back$classlist$data[, 2], c(1, 300, 1))
+  expect_equal(back$classlist$class_code, 6L) # widened to mxDOUBLE
+})
+
+test_that("a classlist with fewer than 2 columns aborts with a named message", {
+  manual_folder <- file.path(tempdir(), "manual_1col")
+  out_folder <- file.path(tempdir(), "out_1col")
+  on.exit(unlink(c(manual_folder, out_folder), recursive = TRUE), add = TRUE)
+  dir.create(manual_folder, showWarnings = FALSE, recursive = TRUE)
+
+  sample_name <- "D20220101T000000_IFCB001"
+  write_mat_v5(file.path(manual_folder, paste0(sample_name, ".mat")),
+               list(classlist = mat_var_double(matrix(1:3, ncol = 1))))
+
+  correction_file <- tempfile(fileext = ".txt")
+  on.exit(unlink(correction_file), add = TRUE)
+  write.table(data.frame(class_folder = "manual",
+                         image_filename = paste0(sample_name, "_00002.png")),
+              correction_file, row.names = FALSE, col.names = TRUE, quote = FALSE)
+
+  # Used to die with the bare "subscript out of bounds" the 0.10.0 validation
+  # was added to replace.
+  expect_error(
+    ifcb_correct_annotation(manual_folder, out_folder, correction_file, correct_classid = 5),
+    "at least 2 columns"
+  )
+})

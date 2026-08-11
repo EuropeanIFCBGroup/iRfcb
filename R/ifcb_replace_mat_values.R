@@ -74,6 +74,10 @@ ifcb_replace_mat_values <- function(manual_folder, out_folder, target_id, new_id
     mask[is.na(mask)] <- FALSE
     classlist[mask, r_col] <- as.integer(new_id)
     mat_data$classlist$data <- classlist
+    # A classlist MATLAB stored in a narrow integer type (e.g. uint8) may no
+    # longer hold new_id - ifcb_merge_manual() routinely writes ids above
+    # 50000 here - so widen it to double rather than let the writer refuse.
+    mat_data$classlist <- .mat_widen_numeric(mat_data$classlist)
 
     write_mat_v5(file_path_out, mat_data, do_compression = do_compression)
   }
