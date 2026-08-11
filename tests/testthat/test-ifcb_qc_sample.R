@@ -186,7 +186,15 @@ test_that("a zero analyzed volume fails even when the sample is empty", {
   adc <- utils::read.csv(af, header = FALSE)
   adc[[16]] <- 0            # RoiWidth  - nothing imaged
   adc[[17]] <- 0            # RoiHeight
-  adc[[24]] <- adc[[23]]    # InhibitTime == RunTime - zero look time
+  # A saturated inhibit clock: small, well-behaved increments (so the rows pass
+  # the reference's corrupt-row filter and the value is used as-is) that reach
+  # the final run time - the trigger was inhibited for the whole run, so the
+  # look time computes to exactly zero. Setting the column equal to RunTime
+  # outright would not do: those steps (45 s, 670 s) fail the filter, and the
+  # reference then discards the column as corrupt and falls back to the
+  # header's inhibittime.
+  n <- nrow(adc)
+  adc[[24]] <- adc[[n, 23]] - (n - seq_len(n)) * 0.05
   utils::write.table(adc, af, sep = ",", row.names = FALSE, col.names = FALSE)
 
   qc <- ifcb_qc_sample(file.path(work, nm))
@@ -568,4 +576,96 @@ test_that("bead runs are flagged via the header runBeads field", {
   expect_true(qc$is_bead_run)
   # a bead run is still a valid, complete sample: integrity QC may still pass
   expect_true(qc$files_complete)
+})
+
+test_that("an ADC with too few columns yields NA checks instead of aborting the survey", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  data_dir <- file.path(temp_dir, "test_data", "data")
+  src <- file.path(data_dir, "D20220522T003051_IFCB134")
+
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+
+  good <- "D20220522T003051_IFCB134"
+  bad <- "D20220522T003051_IFCB999"
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(good, ext)))
+    file.copy(paste0(src, ext), file.path(work, paste0(bad, ext)))
+  }
+  # A structurally broken ADC: parses as a data frame, but with far fewer
+  # columns than any ADC format holds. Indexing the ROI columns used to throw
+  # `subscript out of bounds`, taking every other sample's row with it.
+  writeLines(c("1,2,3", "4,5,6"), file.path(work, paste0(bad, ".adc")))
+
+  # Two distinct diagnostics for the same broken file: the volume path reports
+  # the absent run/inhibit clocks, the ROI path reports the missing dimensions.
+  expect_warning(
+    expect_warning(qc <- ifcb_qc_sample(work), "run/inhibit"),
+    "ROI columns"
+  )
+
+  expect_equal(nrow(qc), 2L)
+  expect_true(qc$qc_pass[qc$sample == good])
+  bad_row <- qc[qc$sample == bad, ]
+  expect_true(is.na(bad_row$n_rois))
+  expect_true(is.na(bad_row$roi_dims_valid))
+  expect_true(is.na(bad_row$roi_count_match))
+})
+
+test_that("a header ADCFileFormat without a ROI height column does not abort the survey", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  data_dir <- file.path(temp_dir, "test_data", "data")
+  src <- file.path(data_dir, "D20220522T003051_IFCB134")
+
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+
+  good <- "D20220522T003051_IFCB134"
+  bad <- "D20220522T003051_IFCB999"
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(good, ext)))
+    file.copy(paste0(src, ext), file.path(work, paste0(bad, ext)))
+  }
+  # Rename the RoiHeight column in the header's ADC column listing. Resolving
+  # the ROI columns by name then used to throw instead of reporting NA.
+  hf <- file.path(work, paste0(bad, ".hdr"))
+  hdr_lines <- readLines(hf, warn = FALSE)
+  hdr_lines <- gsub("ROIheight", "SomethingElse", hdr_lines, ignore.case = TRUE)
+  writeLines(hdr_lines, hf)
+
+  qc <- suppressWarnings(ifcb_qc_sample(work))
+  expect_equal(nrow(qc), 2L)
+  expect_true(qc$qc_pass[qc$sample == good])
+})
+
+test_that("a header with a second runtime-like key yields one row, not two recycled ones", {
+  temp_dir <- setup_mock_directory()
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  data_dir <- file.path(temp_dir, "test_data", "data")
+  src <- file.path(data_dir, "D20220522T003051_IFCB134")
+
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+
+  sample <- "D20220522T003051_IFCB134"
+  for (ext in c(".hdr", ".adc", ".roi")) {
+    file.copy(paste0(src, ext), file.path(work, paste0(sample, ext)))
+  }
+  # ifcb_get_runtime() used to grep the substring "runtime:", so an extra key
+  # such as AdcRunTime: matched too and returned length-2 values, which
+  # tibble() recycled into a duplicated, failing row for this sample. The
+  # anchored match ignores the extra key, as MATLAB's strmatch() does, so the
+  # sample parses cleanly.
+  hf <- file.path(work, paste0(sample, ".hdr"))
+  cat("AdcRunTime: 5\n", file = hf, append = TRUE)
+
+  qc <- ifcb_qc_sample(work)
+  expect_equal(nrow(qc), 1L)
+  expect_false(is.na(qc$looktime_s))
+  expect_true(qc$qc_pass)
 })
