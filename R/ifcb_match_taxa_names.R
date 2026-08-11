@@ -66,7 +66,12 @@ ifcb_match_taxa_names <- function(taxa_names, best_match_only = TRUE, max_retrie
       # Ensure all taxa are represented, filling missing responses with NA
       worms_records <- lapply(seq_along(taxa_names), function(i) {
         if (length(worms_records[[i]]) == 0) {
-          tibble(name = taxa_names[i], status = "no content", AphiaID = NA, rank = NA, valid_name = NA)
+          # `class` must be present even here: if *every* taxon is unmatched,
+          # bind_rows() otherwise yields a frame with no class column at all
+          # and ifcb_is_diatom() aborts on a class list of non-taxonomic
+          # labels ("unclassified", "detritus", ...).
+          tibble(name = taxa_names[i], status = "no content", AphiaID = NA,
+                 rank = NA, valid_name = NA, class = NA_character_)
         } else {
           # Select only the best match if requested
           match_data <- worms_records[[i]]

@@ -704,8 +704,24 @@ scipy_available <- function(initialize = TRUE) {
   # `use_python = TRUE`. Probing the import answers the question actually being
   # asked, and is cheaper too: `py_list_packages()` shells out to pip or conda,
   # while the import is cached by Python after the first call.
-  isTRUE(tryCatch(reticulate::py_module_available("scipy"),
-                  error = function(e) FALSE))
+  available <- isTRUE(tryCatch(reticulate::py_module_available("scipy"),
+                               error = function(e) FALSE))
+  if (!available) {
+    # Reaching here means the caller explicitly asked for the Python path
+    # (every call site guards with `use_python &&`), so falling back to the
+    # native reader must be said out loud - `use_python = TRUE` is the
+    # documented way to read a file the R reader refuses. Once per session:
+    # several callers probe per .mat file inside loops.
+    cli_warn(
+      c(
+        "{.code use_python = TRUE} was requested, but Python with {.pkg scipy} is not available.",
+        "i" = "Falling back to the native R reader. Set up Python with {.fn ifcb_py_install}."
+      ),
+      .frequency = "once",
+      .frequency_id = "iRfcb_scipy_unavailable"
+    )
+  }
+  available
 }
 
 #' Install Missing Python Packages

@@ -88,8 +88,13 @@ create_temp_hdr_from_example <- function(exdir, hdr_file_path) {
     .py_pkg_cache[[pkg]] <- FALSE
     testthat::skip(paste(pkg, "not available for testing"))
   }
-  available_packages <- reticulate::py_list_packages(python = reticulate::py_discover_config()$python)
-  .py_pkg_cache[[pkg]] <- pkg %in% available_packages$package
+  # Probe the import, exactly as the code under test does (scipy_available()).
+  # py_list_packages() asks the environment manager instead, and on a conda
+  # environment that listing can omit an installed, importable module - which
+  # would skip every scipy test on precisely the setup the 0.10.0 probe fix
+  # targets.
+  .py_pkg_cache[[pkg]] <- isTRUE(tryCatch(reticulate::py_module_available(pkg),
+                                          error = function(e) FALSE))
   if (!.py_pkg_cache[[pkg]])
     testthat::skip(paste(pkg, "not available for testing"))
 }
