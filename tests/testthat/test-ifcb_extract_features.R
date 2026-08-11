@@ -252,6 +252,53 @@ test_that("a degenerate blob measures zero, as it does with upstream ifcb-featur
   )
 })
 
+test_that("the compute_features result is unpacked for both ifcb-features APIs", {
+  # ifcb-features v1.2.0 (multiblob output, upstream PR #22) changed
+  # compute_features from returning (blobs_image, features) to
+  # (blobs_image, features, multiblob_rows). A direct 2-tuple unpack raises
+  # ValueError on v1.2.0 for every ROI, and the per-ROI error handling would
+  # swallow that into feature rows containing only roi_number — an extraction
+  # that "succeeds" with empty output. _unpack_compute_features must accept
+  # both shapes and return the same (blobs_image, features) pair for each.
+  skip_if_no_python()
+  skip_if_no_ifcb_features()
+  skip_on_cran()
+
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  extract <- reticulate::import_from_path(
+    "extract_slim_features",
+    path = system.file("python", package = "iRfcb"),
+    delay_load = FALSE
+  )
+
+  unpack <- function(python_tuple) {
+    extract$`_unpack_compute_features`(
+      reticulate::py_eval(python_tuple, convert = FALSE)
+    )
+  }
+
+  # The 2-tuple returned by ifcb-features v1.1.x and earlier.
+  old_api <- unpack('("BLOBS_IMAGE", [("Area", 42.0)])')
+
+  # The 3-tuple returned by v1.2.0; the multiblob rows are discarded because
+  # they are not part of the slim output.
+  new_api <- unpack(paste0(
+    '("BLOBS_IMAGE", [("Area", 42.0)],',
+    ' [(1, {"Area": 21.0}), (2, {"Area": 21.0})])'
+  ))
+
+  expect_length(old_api, 2)
+  expect_equal(old_api[[1]], "BLOBS_IMAGE")
+  expect_equal(old_api[[2]][[1]][[1]], "Area")
+  expect_equal(old_api[[2]][[1]][[2]], 42)
+
+  # Both API versions must yield identical results, or upgrading
+  # ifcb-features would silently change what the extraction writes.
+  expect_equal(old_api, new_api)
+})
+
 test_that("the raw-data reader supports both ifcb-features backends", {
   skip_if_no_python()
   skip_if_no_ifcb_features()

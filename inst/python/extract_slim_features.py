@@ -217,6 +217,20 @@ def _real_valued(roi_features):
     return out
 
 
+def _unpack_compute_features(result):
+    """Return (blobs_image, roi_features) from a compute_features result.
+
+    ifcb-features v1.2.0 changed compute_features to return a 3-tuple
+    ``(blobs_image, features, multiblob_rows)``; v1.1.x and earlier return
+    ``(blobs_image, features)``. A direct 2-tuple unpack raises ValueError on
+    v1.2.0 for every ROI, which the per-ROI error handling would swallow into
+    feature rows containing only roi_number. The multiblob rows (per-blob
+    features for ROIs with more than one blob) are not part of the slim
+    output and are discarded.
+    """
+    return result[0], result[1]
+
+
 def _output_paths(lid, features_directory, blobs_directory,
                   feature_tag="features"):
     """Return the (features_csv, blobs_zip) output paths for a bin lid.
@@ -285,7 +299,8 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     for number, image in image_items:
         features = {'roi_number': number}
         try:
-            blobs_image, roi_features = compute_features(image)
+            blobs_image, roi_features = _unpack_compute_features(
+                compute_features(image))
             features.update(_real_valued(roi_features))
 
             img_buffer = io.BytesIO()
