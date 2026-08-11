@@ -316,15 +316,30 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
         return {"bin": bin_name, "status": "error",
                 "message": "no ROIs found in bin"}
 
-    df = pd.DataFrame.from_records(all_features,
-                                   columns=['roi_number'] + FEATURE_COLUMNS)
-    df.to_csv(features_path, index=False, float_format="%.10g")
+    # Writing the outputs can fail like anything else (read-only or full
+    # volume, quota, MemoryError on a large bin). The parallel path already
+    # contains worker exceptions; without this guard the same failure in
+    # sequential mode escapes extract_features() and discards the results of
+    # every bin already processed.
+    try:
+        df = pd.DataFrame.from_records(all_features,
+                                       columns=['roi_number'] + FEATURE_COLUMNS)
+        df.to_csv(features_path, index=False, float_format="%.10g")
 
-    if all_blobs:
-        with zipfile.ZipFile(blobs_path, 'w') as zf:
-            for roi_number, blob_data in all_blobs.items():
-                filename = f"{bin_name}_{roi_number:05d}.png"
-                zf.writestr(filename, blob_data)
+        if all_blobs:
+            with zipfile.ZipFile(blobs_path, 'w') as zf:
+                for roi_number, blob_data in all_blobs.items():
+                    filename = f"{bin_name}_{roi_number:05d}.png"
+                    zf.writestr(filename, blob_data)
+    except Exception as e:  # noqa: BLE001 - a failed write must not abort the run
+        # Drop any partial output so a rerun does not skip this bin.
+        for path in (features_path, blobs_path):
+            try:
+                if os.path.exists(path):
+                    os.remove(path)
+            except OSError:
+                pass
+        return {"bin": bin_name, "status": "error", "message": str(e)}
 
     return {"bin": bin_name, "status": "processed", "message": ""}
 
