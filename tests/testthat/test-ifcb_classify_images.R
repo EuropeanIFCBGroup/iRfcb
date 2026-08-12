@@ -277,7 +277,7 @@ test_that("ifcb_classify_images applies thresholds: class_name may differ from c
 })
 
 test_that("malformed retry options are reported clearly, naming the option", {
-  old <- options(iRfcb.gradio_max_tries = "3x")
+  old <- options(iRfcb.gradio_max_tries = "3x", iRfcb.gradio_retry_delay = NULL)
   on.exit(options(old), add = TRUE)
   # Used to surface as a cryptic seq_len() error far from the option.
   expect_error(gradio_fetch("http://localhost:1/nope"), "gradio_max_tries")
