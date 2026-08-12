@@ -23,7 +23,10 @@ Per-bin outputs are the upstream pair: a ``<lid>_features_v4.csv`` table (30
 morphological features per ROI) and a ``<lid>_blobs_v4.zip`` archive of 1-bit
 blob masks (one PNG per ROI). Passing ``feature_tag="fea"`` renames the feature
 table to ``<lid>_fea_v4.csv``, the name the IFCB Dashboard looks for; the blob
-archive name is unaffected.
+archive name is unaffected. Passing ``multiblob=True`` additionally writes the
+``multiblob/<lid>_multiblob_v4.csv`` sidecar upstream introduced in
+ifcb-features v1.2.0 (per-blob features for ROIs with more than one blob),
+and requires that release or later.
 
 Feature values match upstream. Where ifcb-features returns a complex number -
 it does from numpy 2.3 onwards - the real part is taken, which reproduces the
@@ -46,6 +49,14 @@ import pandas as pd
 from PIL import Image
 
 from ifcb_features.all import compute_features
+
+# Per-blob column names for the multiblob sidecar CSV. Upstream added both the
+# list and the multiblob output in ifcb-features v1.2.0, so failing to import
+# it identifies an older release (which cannot produce multiblob rows at all).
+try:
+    from ifcb_features.all import BLOB_FEATURE_COLUMNS
+except ImportError:  # ifcb-features < 1.2.0
+    BLOB_FEATURE_COLUMNS = None
 
 # Sibling module, imported at module scope so it resolves while this file's
 # directory is still on sys.path (reticulate's import_from_path puts it there
@@ -218,17 +229,18 @@ def _real_valued(roi_features):
 
 
 def _unpack_compute_features(result):
-    """Return (blobs_image, roi_features) from a compute_features result.
+    """Normalise a compute_features result to (blobs_image, features, multiblob).
 
     ifcb-features v1.2.0 changed compute_features to return a 3-tuple
     ``(blobs_image, features, multiblob_rows)``; v1.1.x and earlier return
     ``(blobs_image, features)``. A direct 2-tuple unpack raises ValueError on
     v1.2.0 for every ROI, which the per-ROI error handling would swallow into
-    feature rows containing only roi_number. The multiblob rows (per-blob
-    features for ROIs with more than one blob) are not part of the slim
-    output and are discarded.
+    feature rows containing only roi_number. Both shapes are accepted here;
+    on older releases, which never compute per-blob rows, the multiblob
+    element is an empty list.
     """
-    return result[0], result[1]
+    multiblob_rows = result[2] if len(result) > 2 else []
+    return result[0], result[1], multiblob_rows
 
 
 def _output_paths(lid, features_directory, blobs_directory,
@@ -247,8 +259,48 @@ def _output_paths(lid, features_directory, blobs_directory,
     return features_path, blobs_path
 
 
+def _multiblob_path(lid, features_directory):
+    """Return the multiblob sidecar CSV path for a bin lid.
+
+    Upstream extract_slim_features.py writes these into a ``multiblob``
+    subdirectory of its output directory; iRfcb keeps that layout under the
+    features directory. The name is fixed (no ``feature_tag`` token): upstream
+    defines it, and the IFCB Dashboard has no alternative naming for it.
+    """
+    return os.path.join(features_directory, "multiblob",
+                        f"{lid}_multiblob_v4.csv")
+
+
+def _expects_multiblob(features_path):
+    """Whether an existing feature CSV reports any multi-blob ROI.
+
+    Reads only the numBlobs column, so the check stays cheap enough to run
+    per bin while deciding whether to skip it. Returns True or False, or None
+    when the file cannot be read or carries no numBlobs column; callers treat
+    None as "unknown, recompute". A ROI whose extraction failed has an empty
+    numBlobs cell, which compares as not-greater-than-1 here and is fine
+    either way: such a bin has no trustworthy sidecar expectation, but
+    re-extracting it would fail the same ROI again.
+    """
+    try:
+        num_blobs = pd.read_csv(features_path, usecols=["numBlobs"])["numBlobs"]
+        return bool((num_blobs > 1).any())
+    except Exception:  # noqa: BLE001 - unreadable/legacy CSV means "unknown"
+        return None
+
+
+def _require_multiblob_support():
+    """Raise when the installed ifcb-features cannot produce multiblob rows."""
+    if BLOB_FEATURE_COLUMNS is None:
+        raise ValueError(
+            "multiblob output requires ifcb-features >= 1.2.0; the installed "
+            "release does not provide it. Reinstall the latest release with "
+            "ifcb_py_install(features = TRUE).")
+
+
 def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
-                 overwrite, feature_tag="features", backend=None):
+                 overwrite, feature_tag="features", backend=None,
+                 multiblob=False):
     """Extract features and blobs for a single bin.
 
     This is a module-level function so it can be pickled and dispatched to a
@@ -259,17 +311,39 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
     ``feature_tag`` is forwarded to :func:`_output_paths` to control the
     feature CSV name (e.g. ``"features"`` or ``"fea"``). ``backend`` forces a
     particular raw-data reader; see :func:`ifcb_reader.open_data_directory`.
+    ``multiblob`` additionally writes a ``multiblob/<lid>_multiblob_v4.csv``
+    sidecar with per-blob features for ROIs holding more than one blob; as
+    upstream, a bin without such ROIs gets no sidecar at all. Requires
+    ifcb-features >= 1.2.0.
 
     Returns a dict with keys ``bin``, ``status`` ("processed", "skipped" or
     "error") and ``message``.
     """
+    if multiblob and BLOB_FEATURE_COLUMNS is None:
+        return {"bin": bin_name, "status": "error",
+                "message": "multiblob output requires ifcb-features >= 1.2.0"}
+
     features_path, blobs_path = _output_paths(bin_name, features_directory,
                                               blobs_directory, feature_tag)
+    mb_path = _multiblob_path(bin_name, features_directory) if multiblob else None
+    output_paths = [features_path, blobs_path] + ([mb_path] if multiblob else [])
 
-    # Skip when both outputs already exist (unless overwrite is requested).
+    # Skip when the outputs already exist (unless overwrite is requested).
+    # The multiblob sidecar follows upstream in existing only for bins that
+    # hold at least one multi-blob ROI, so its absence alone does not mean the
+    # bin needs re-extracting: the numBlobs column of the existing feature CSV
+    # says whether a sidecar is expected at all. A multiblob re-run over a
+    # directory extracted without it therefore recomputes only the bins whose
+    # sidecar is genuinely missing.
     if not overwrite and os.path.exists(features_path) and os.path.exists(blobs_path):
-        return {"bin": bin_name, "status": "skipped",
-                "message": "outputs already exist"}
+        if not multiblob or os.path.exists(mb_path):
+            return {"bin": bin_name, "status": "skipped",
+                    "message": "outputs already exist"}
+        if _expects_multiblob(features_path) is False:
+            return {"bin": bin_name, "status": "skipped",
+                    "message": "outputs already exist (no multi-blob ROIs)"}
+        # The sidecar is missing but expected - or the feature CSV could not
+        # be read, leaving the expectation unknown - so re-extract the bin.
 
     # Resolving the bin and iterating its images fail in different ways and are
     # kept apart so each can be reported accurately: only an unresolvable bin is
@@ -295,11 +369,12 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
 
     all_features = []
     all_blobs = {}
+    all_multiblob = []
 
     for number, image in image_items:
         features = {'roi_number': number}
         try:
-            blobs_image, roi_features = _unpack_compute_features(
+            blobs_image, roi_features, multiblob_rows = _unpack_compute_features(
                 compute_features(image))
             features.update(_real_valued(roi_features))
 
@@ -307,6 +382,12 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
             Image.fromarray((blobs_image > 0).astype(np.uint8) * 255).save(
                 img_buffer, format="PNG")
             all_blobs[number] = img_buffer.getvalue()
+
+            if multiblob:
+                for blob_number, blob_feats in multiblob_rows:
+                    row = {'roi_number': number, 'blob_number': blob_number}
+                    row.update(dict(_real_valued(blob_feats.items())))
+                    all_multiblob.append(row)
         except Exception as e:  # noqa: BLE001 - skip a bad ROI, keep the rest
             print(f"Error processing ROI {number} in sample {bin_name}: {e}")
 
@@ -331,9 +412,22 @@ def _process_bin(data_directory, features_directory, blobs_directory, bin_name,
                 for roi_number, blob_data in all_blobs.items():
                     filename = f"{bin_name}_{roi_number:05d}.png"
                     zf.writestr(filename, blob_data)
+
+        if multiblob:
+            if all_multiblob:
+                os.makedirs(os.path.dirname(mb_path), exist_ok=True)
+                mb_df = pd.DataFrame.from_records(
+                    all_multiblob,
+                    columns=['roi_number', 'blob_number'] + BLOB_FEATURE_COLUMNS)
+                mb_df.to_csv(mb_path, index=False, float_format="%.10g")
+            elif os.path.exists(mb_path):
+                # No multi-blob ROIs this run: as upstream, no file is
+                # written; also drop a stale sidecar left by an earlier run,
+                # which would otherwise contradict the fresh feature CSV.
+                os.remove(mb_path)
     except Exception as e:  # noqa: BLE001 - a failed write must not abort the run
         # Drop any partial output so a rerun does not skip this bin.
-        for path in (features_path, blobs_path):
+        for path in output_paths:
             try:
                 if os.path.exists(path):
                     os.remove(path)
@@ -415,7 +509,10 @@ class ParallelExtractor:
     def __init__(self, data_directory, features_directory, blobs_directory,
                  bins=None, overwrite=False, num_workers=2,
                  found_bins=None, missing_bins=None, python_executable=None,
-                 use_threads=False, feature_tag="features", backend=None):
+                 use_threads=False, feature_tag="features", backend=None,
+                 multiblob=False):
+        if multiblob:
+            _require_multiblob_support()
         os.makedirs(features_directory, exist_ok=True)
         os.makedirs(blobs_directory, exist_ok=True)
 
@@ -455,7 +552,7 @@ class ParallelExtractor:
             (bin_name, self.pool.apply_async(
                 _process_bin,
                 (data_directory, features_directory, blobs_directory,
-                 bin_name, overwrite, feature_tag, backend)))
+                 bin_name, overwrite, feature_tag, backend, multiblob)))
             for bin_name in bin_names
         ]
 
@@ -497,7 +594,7 @@ class ParallelExtractor:
 def extract_features(data_directory, features_directory, blobs_directory,
                      bins=None, overwrite=False, num_workers=1, progress=None,
                      python_executable=None, use_threads=False,
-                     feature_tag="features", backend=None):
+                     feature_tag="features", backend=None, multiblob=False):
     """Extract slim features and blobs for IFCB bins.
 
     Args:
@@ -532,11 +629,20 @@ def extract_features(data_directory, features_directory, blobs_directory,
             unaffected.
         backend (str, optional): Force a specific raw-data reader, ``"ifcbkit"``
             or ``"pyifcb"``. If None, the preferred available reader is used.
+        multiblob (bool): If True, additionally write a
+            ``multiblob/<lid>_multiblob_v4.csv`` sidecar under
+            ``features_directory`` holding per-blob features for ROIs with more
+            than one blob; bins without such ROIs get no sidecar (upstream
+            behaviour). Requires ifcb-features >= 1.2.0 (raises ValueError
+            on older releases).
 
     Returns:
         list[dict]: One result dict per bin with keys ``bin``, ``status`` and
         ``message``. Missing requested bins are reported with status "error".
     """
+    if multiblob:
+        _require_multiblob_support()
+
     os.makedirs(features_directory, exist_ok=True)
     os.makedirs(blobs_directory, exist_ok=True)
 
@@ -560,7 +666,7 @@ def extract_features(data_directory, features_directory, blobs_directory,
         for bin_name in bin_names:
             results.append(_process_bin(data_directory, features_directory,
                                         blobs_directory, bin_name, overwrite,
-                                        feature_tag, backend))
+                                        feature_tag, backend, multiblob))
             _report()
     else:
         # Delegate to ParallelExtractor and poll it to completion. On any
@@ -572,7 +678,8 @@ def extract_features(data_directory, features_directory, blobs_directory,
                                       python_executable=python_executable,
                                       use_threads=use_threads,
                                       feature_tag=feature_tag,
-                                      backend=backend)
+                                      backend=backend,
+                                      multiblob=multiblob)
         try:
             while extractor.remaining() > 0:
                 for result in extractor.poll():
@@ -615,13 +722,18 @@ def _main(argv=None):
                         help="Token in the feature CSV name: 'features' -> "
                              "<lid>_features_v4.csv (default), 'fea' -> "
                              "<lid>_fea_v4.csv (IFCB Dashboard naming).")
+    parser.add_argument("--multiblob", action="store_true",
+                        help="Also write multiblob/<lid>_multiblob_v4.csv "
+                             "sidecars (per-blob features for multi-blob ROIs;"
+                             " requires ifcb-features >= 1.2.0).")
 
     args = parser.parse_args(argv)
 
     beginning = time.time()
     out = extract_features(args.data_directory, args.features_directory,
                            args.blobs_directory, args.bins, args.overwrite,
-                           args.workers, feature_tag=args.feature_tag)
+                           args.workers, feature_tag=args.feature_tag,
+                           multiblob=args.multiblob)
     elapsed = time.time() - beginning
 
     processed = sum(1 for r in out if r["status"] == "processed")

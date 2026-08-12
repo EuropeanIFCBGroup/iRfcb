@@ -43,6 +43,23 @@ utils::globalVariables("bin")
 #' use `ifcb_py_install(features = TRUE)` to install into a compatible
 #' environment.
 #'
+#' **Multiblob output:** the slim feature table describes each ROI's largest
+#' blob (plus `summed*` columns over all blobs). With `multiblob = TRUE`, the
+#' per-blob features of every blob in a multi-blob ROI are additionally written
+#' to `multiblob/<bin>_multiblob_v4.csv` inside `features_folder`, one row per
+#' blob with `roi_number`, `blob_number` and 18 morphological columns - the
+#' sidecar output `ifcb-features` introduced in v1.2.0, which is also the
+#' minimum version required (older releases never compute per-blob rows, and
+#' the function stops with an error if one is installed; update with
+#' `ifcb_py_install(features = TRUE)`). As upstream, a bin in which no ROI has
+#' more than one blob gets no sidecar file at all, so the presence of a
+#' `<bin>_multiblob_v4.csv` means that bin genuinely contains multi-blob ROIs.
+#' The skip logic accounts for this by reading the `numBlobs` column of a
+#' bin's existing feature CSV to tell whether a sidecar is expected:
+#' re-running with `multiblob = TRUE` over a directory previously extracted
+#' without it therefore skips the bins with single-blob ROIs only and
+#' re-extracts just those that need a sidecar, without `overwrite = TRUE`.
+#'
 #' Bins are processed sequentially by default. When `parallel = TRUE`, bins are
 #' distributed across `n_cores` workers, which can substantially reduce runtime
 #' for large datasets. Existing outputs are skipped unless `overwrite = TRUE`,
@@ -84,6 +101,11 @@ utils::globalVariables("bin")
 #'   the output is destined for an IFCB Dashboard instance; remember the dataset
 #'   directory there must be registered with product version 4 to match the
 #'   `_v4` suffix. The blob archive name (`<bin>_blobs_v4.zip`) is unaffected.
+#' @param multiblob A logical indicating whether to additionally write
+#'   `multiblob/<bin>_multiblob_v4.csv` files (per-blob features for regions of
+#'   interest with more than one blob) inside `features_folder`. Bins without
+#'   multi-blob ROIs get no sidecar file, as in upstream `ifcb-features`.
+#'   Requires `ifcb-features` v1.2.0 or later; see Details. Default is `FALSE`.
 #' @param backend An optional string forcing the raw-data reader, either
 #'   `"ifcbkit"` or `"pyifcb"`. If `NULL` (default), the `IRFCB_IFCB_BACKEND`
 #'   environment variable is used when set, otherwise the preferred available
@@ -130,6 +152,16 @@ utils::globalVariables("bin")
 #'   blobs_folder = "path/to/blobs",
 #'   feature_tag = "fea"
 #' )
+#'
+#' # Also write per-blob features for multi-blob ROIs
+#' # (path/to/features/multiblob/<bin>_multiblob_v4.csv;
+#' # requires ifcb-features >= 1.2.0)
+#' ifcb_extract_features(
+#'   data_folder = "path/to/data",
+#'   features_folder = "path/to/features",
+#'   blobs_folder = "path/to/blobs",
+#'   multiblob = TRUE
+#' )
 #' }
 #'
 #' @export
@@ -141,6 +173,7 @@ ifcb_extract_features <- function(data_folder,
                                   n_cores = NULL,
                                   overwrite = FALSE,
                                   feature_tag = c("features", "fea"),
+                                  multiblob = FALSE,
                                   backend = NULL,
                                   verbose = TRUE) {
 
@@ -230,6 +263,19 @@ ifcb_extract_features <- function(data_folder,
     delay_load = FALSE
   )
 
+  # Multiblob output exists from ifcb-features v1.2.0 on; older releases never
+  # compute per-blob rows, so this cannot be emulated for them. The version is
+  # identified structurally: BLOB_FEATURE_COLUMNS was added to ifcb_features.all
+  # in v1.2.0 together with the multiblob output, and the Python module sets it
+  # to None when the import fails.
+  if (isTRUE(multiblob) && is.null(py_mod$BLOB_FEATURE_COLUMNS)) {
+    cli_abort(c(
+      "{.code multiblob = TRUE} requires {.pkg ifcb-features} v1.2.0 or later.",
+      "x" = "The installed release does not produce multiblob output.",
+      "i" = "Update to the latest release with {.code ifcb_py_install(features = TRUE)}."
+    ))
+  }
+
   py_bins <- if (is.null(bins)) NULL else as.list(as.character(bins))
 
   if (parallel) {
@@ -272,7 +318,8 @@ ifcb_extract_features <- function(data_folder,
       python_executable  = reticulate::py_exe(),
       use_threads        = use_threads,
       feature_tag        = feature_tag,
-      backend            = backend
+      backend            = backend,
+      multiblob          = multiblob
     )
     on.exit(try(extractor$terminate(), silent = TRUE), add = TRUE)
 
@@ -317,7 +364,8 @@ ifcb_extract_features <- function(data_folder,
       num_workers = 1L,
       progress = progress_cb,
       feature_tag = feature_tag,
-      backend = backend
+      backend = backend,
+      multiblob = multiblob
     )
 
     if (!is.null(pb)) cli_progress_done(id = pb)

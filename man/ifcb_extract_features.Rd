@@ -13,6 +13,7 @@ ifcb_extract_features(
   n_cores = NULL,
   overwrite = FALSE,
   feature_tag = c("features", "fea"),
+  multiblob = FALSE,
   backend = NULL,
   verbose = TRUE
 )
@@ -52,6 +53,12 @@ version in the feature file name. \code{"features"} (default) writes
 the output is destined for an IFCB Dashboard instance; remember the dataset
 directory there must be registered with product version 4 to match the
 \verb{_v4} suffix. The blob archive name (\verb{<bin>_blobs_v4.zip}) is unaffected.}
+
+\item{multiblob}{A logical indicating whether to additionally write
+\verb{multiblob/<bin>_multiblob_v4.csv} files (per-blob features for regions of
+interest with more than one blob) inside \code{features_folder}. Bins without
+multi-blob ROIs get no sidecar file, as in upstream \code{ifcb-features}.
+Requires \code{ifcb-features} v1.2.0 or later; see Details. Default is \code{FALSE}.}
 
 \item{backend}{An optional string forcing the raw-data reader, either
 \code{"ifcbkit"} or \code{"pyifcb"}. If \code{NULL} (default), the \code{IRFCB_IFCB_BACKEND}
@@ -112,6 +119,23 @@ binary \code{h5py} wheel (available for Python 3.10-3.13). See
 use \code{ifcb_py_install(features = TRUE)} to install into a compatible
 environment.
 
+\strong{Multiblob output:} the slim feature table describes each ROI's largest
+blob (plus \verb{summed*} columns over all blobs). With \code{multiblob = TRUE}, the
+per-blob features of every blob in a multi-blob ROI are additionally written
+to \verb{multiblob/<bin>_multiblob_v4.csv} inside \code{features_folder}, one row per
+blob with \code{roi_number}, \code{blob_number} and 18 morphological columns - the
+sidecar output \code{ifcb-features} introduced in v1.2.0, which is also the
+minimum version required (older releases never compute per-blob rows, and
+the function stops with an error if one is installed; update with
+\code{ifcb_py_install(features = TRUE)}). As upstream, a bin in which no ROI has
+more than one blob gets no sidecar file at all, so the presence of a
+\verb{<bin>_multiblob_v4.csv} means that bin genuinely contains multi-blob ROIs.
+The skip logic accounts for this by reading the \code{numBlobs} column of a
+bin's existing feature CSV to tell whether a sidecar is expected:
+re-running with \code{multiblob = TRUE} over a directory previously extracted
+without it therefore skips the bins with single-blob ROIs only and
+re-extracts just those that need a sidecar, without \code{overwrite = TRUE}.
+
 Bins are processed sequentially by default. When \code{parallel = TRUE}, bins are
 distributed across \code{n_cores} workers, which can substantially reduce runtime
 for large datasets. Existing outputs are skipped unless \code{overwrite = TRUE},
@@ -154,6 +178,16 @@ ifcb_extract_features(
   features_folder = "path/to/features",
   blobs_folder = "path/to/blobs",
   feature_tag = "fea"
+)
+
+# Also write per-blob features for multi-blob ROIs
+# (path/to/features/multiblob/<bin>_multiblob_v4.csv;
+# requires ifcb-features >= 1.2.0)
+ifcb_extract_features(
+  data_folder = "path/to/data",
+  features_folder = "path/to/features",
+  blobs_folder = "path/to/blobs",
+  multiblob = TRUE
 )
 }
 
