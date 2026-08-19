@@ -9,15 +9,21 @@ test_that("ifcb_get_mat_variable correctly retrieves a specified variable from a
   # Call the function to get the 'class2use' variable
   classes <- ifcb_get_mat_variable(mat_file, "classifierName")
 
-  # Call the function to get the 'class2use' variable using Python
+  # Check if the retrieved classes are as expected (assuming you know the expected classes)
+  expected_classes <- "Z:\\data\\manual\\Skagerrak-Kattegat\\summary\\results_21May202421May2024"
+  expect_equal(classes[1], expected_classes, info = "Retrieved classes should match expected values")
+})
+
+test_that("ifcb_get_mat_variable returns identical results with the Python reader", {
+  skip_if_no_scipy()
+
+  mat_file <- system.file("exdata/example.mat", package = "iRfcb")
+
+  classes <- ifcb_get_mat_variable(mat_file, "classifierName")
   classes_py <- ifcb_get_mat_variable(mat_file, "classifierName", use_python = TRUE)
 
   # Expect that the .mat data from R and Python are identical
   expect_identical(classes, classes_py)
-
-  # Check if the retrieved classes are as expected (assuming you know the expected classes)
-  expected_classes <- "Z:\\data\\manual\\Skagerrak-Kattegat\\summary\\results_21May202421May2024"
-  expect_equal(classes[1], expected_classes, info = "Retrieved classes should match expected values")
 })
 
 test_that("ifcb_get_mat_variable handles missing variable gracefully", {
