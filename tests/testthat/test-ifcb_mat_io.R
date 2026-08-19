@@ -361,11 +361,39 @@ test_that("read_mat_v5 bounds a declared element count against the bytes availab
   expect_equal(as.vector(read_mat_v5(path)$v$data), c("a", "bb", "ccc"))
 })
 
-test_that("read_mat_v5 rejects a multi-row character array rather than flattening it", {
-  # A char array is held as one string, so a 2x3 array would be read in
-  # column-major order and written back as the single row "adbecf".
-  raw <- mat_dim_bytes(mat_var_char("abcdef"))
-  expect_mat_rejected(mat_set_dims(raw, 2L, 3L), "character array.*single-row")
+test_that("read_mat_v5 reads a multi-row character array as one string per row", {
+  # ifcb-analysis summary files (countcells_allTBnew_user_training) store
+  # filelistTB as an N x 24 char matrix, one fixed-width row per sample, with
+  # the characters in column-major order. Reuse the dimension-flipping
+  # helpers: "adbecf" stored as 2x3 is rows "abc" and "def".
+  raw <- mat_dim_bytes(mat_var_char("adbecf"))
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  writeBin(mat_set_dims(raw, 2L, 3L), path)
+
+  got <- read_mat_v5(path)$v
+  expect_equal(got$type, "char")
+  expect_equal(got$data, c("abc", "def"))
+
+  # Dimensions that disagree with the decoded character count are refused;
+  # matrix() would otherwise recycle the data into fabricated rows.
+  expect_mat_rejected(mat_set_dims(raw, 2L, 4L), "carries")
+})
+
+test_that("multi-row char arrays round-trip, padding rows to a fixed width", {
+  rows <- c("D20220522T003051_IFCB134", "D20220712T210855_IFCB134")
+
+  for_each_compression(function(compress) {
+    back <- roundtrip_mat(list(filelistTB = mat_var_char(rows)), compress)
+    expect_equal(back$filelistTB$type, "char")
+    expect_equal(back$filelistTB$data, rows)
+  })
+
+  # Unequal widths are space-padded on write, as MATLAB's char() pads them,
+  # so the padding survives the round-trip rather than the short row growing
+  # stray characters from its neighbour.
+  back <- roundtrip_mat(list(v = mat_var_char(c("abc", "z"))), FALSE)
+  expect_equal(back$v$data, c("abc", "z  "))
 })
 
 test_that("read_mat_v5 rejects an array with more than two dimensions", {
@@ -468,6 +496,27 @@ test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", 
   # The first 128 bytes are a text header that embeds a creation timestamp, so
   # compare everything after it.
   expect_equal(r_bytes[129:length(r_bytes)], py_bytes[129:length(py_bytes)])
+})
+
+test_that("scipy-written multi-row char arrays decode row-wise", {
+  skip_on_cran()
+  skip_if_no_scipy()
+
+  np <- reticulate::import("numpy", convert = FALSE)
+  sio <- reticulate::import("scipy.io")
+
+  # A numpy unicode array of equal-width strings is what a filelistTB written
+  # from Python looks like: scipy stores it as an N x W mxCHAR matrix, the same
+  # layout MATLAB uses for its char matrices.
+  samples <- c("D20220522T003051_IFCB134", "D20220712T210855_IFCB134")
+  py_path <- tempfile(fileext = ".mat")
+  on.exit(unlink(py_path), add = TRUE)
+  sio$savemat(py_path, reticulate::dict(filelistTB = np$array(samples)),
+              do_compression = TRUE)
+
+  got <- read_mat_v5(py_path)$filelistTB
+  expect_equal(got$type, "char")
+  expect_equal(got$data, samples)
 })
 
 test_that("read_mat_v5 decodes every numeric class it accepts", {

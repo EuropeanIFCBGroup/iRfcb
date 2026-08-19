@@ -867,9 +867,11 @@ resolve_ifcb_features_url <- function(features_ref = NULL) {
 #' MATLAB-reader packages. The variable specifications returned by the reader
 #' are flattened to plain R values so the output matches the shape previously
 #' produced by `R.matlab::readMat(fixNames = FALSE)`: numeric variables become
-#' matrices, cell arrays of strings become character vectors, and single char
-#' arrays become length-one character vectors. MATLAB variable names (which use
-#' underscores) are preserved verbatim.
+#' matrices, cell arrays of strings become character vectors, single char
+#' arrays become length-one character vectors, and multi-row char arrays (e.g.
+#' `filelistTB` in ifcb-analysis summary files) become character vectors with
+#' one element per row. MATLAB variable names (which use underscores) are
+#' preserved verbatim.
 #'
 #' @param file_path Character. Path to the `.mat` file.
 #' @param fixNames Logical. Retained for backward compatibility only; native
@@ -891,8 +893,12 @@ read_mat <- function(file_path, fixNames = FALSE) {
       # mirroring the old `as.character(unlist(x))` conversion.
       cell    = as.character(as.vector(spec$data)),
       # Single char arrays become a 1x1 character matrix, the shape produced by
-      # R.matlab::readMat() and ifcb_read_mat() (so use_python = TRUE/FALSE agree).
-      char    = matrix(as.character(spec$data), nrow = 1L, ncol = 1L),
+      # R.matlab::readMat() and ifcb_read_mat() (so use_python = TRUE/FALSE
+      # agree). Multi-row char arrays stay a plain character vector, one string
+      # per row, which is also what scipy's chars_as_strings hands the Python
+      # path.
+      char    = if (length(spec$data) > 1L) as.character(spec$data)
+                else matrix(as.character(spec$data), nrow = 1L, ncol = 1L),
       # Any other type: best-effort flatten to character.
       as.character(unlist(spec$data))
     )

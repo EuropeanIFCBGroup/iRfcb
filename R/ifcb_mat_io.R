@@ -15,7 +15,9 @@
 #   - numeric matrices of any MATLAB class (double, single, int/uint of any
 #     width), including empty 0x0 arrays and NaN
 #   - cell arrays of character strings (any dimensions)
-#   - character arrays (single strings)
+#   - character arrays: a single string (1xN), or a multi-row char matrix
+#     (e.g. filelistTB in ifcb-analysis summary files), held as one string
+#     per row
 #
 # The serialisation follows the MAT-file v5 format documented in the MATLAB
 # "MAT-File Format" reference, matching the exact choices scipy makes:
@@ -179,16 +181,28 @@
 
 # Build a single MATLAB char array (class mxCHAR), stored as miUTF8.
 # Used both for top-level char variables and for the elements of a cell array
-# (where `name` is "").
+# (where `name` is ""). A vector of several strings becomes a multi-row char
+# matrix, one string per row: rows are space-padded to a common width (as
+# MATLAB's char() pads them) and the characters serialised in column-major
+# order, matching how MATLAB and scipy lay out 2-D char arrays.
 .mat_char_matrix <- function(name, s) {
-  if (!is.character(s) || length(s) != 1L || is.na(s)) {
+  if (!is.character(s) || length(s) == 0L || anyNA(s)) {
     cli::cli_abort(
-      "Char data for {.val {name}} must be a single non-{.val {NA}} string, not {.cls {class(s)}} of length {length(s)}."
+      "Char data for {.val {name}} must be one or more non-{.val {NA}} strings, not {.cls {class(s)}} of length {length(s)}."
     )
   }
-  bytes <- charToRaw(enc2utf8(s))
-  nch <- nchar(s, type = "chars")
-  dims <- if (nch == 0L) c(0L, 0L) else c(1L, nch)
+  if (length(s) > 1L) {
+    s <- enc2utf8(s)
+    widths <- nchar(s, type = "chars")
+    padded <- paste0(s, strrep(" ", max(widths) - widths))
+    codes <- do.call(rbind, lapply(padded, utf8ToInt))
+    bytes <- charToRaw(intToUtf8(as.vector(codes)))
+    dims <- c(length(s), max(widths))
+  } else {
+    bytes <- charToRaw(enc2utf8(s))
+    nch <- nchar(s, type = "chars")
+    dims <- if (nch == 0L) c(0L, 0L) else c(1L, nch)
+  }
   body <- c(
     .mat_array_flags(.MX_CHAR),
     .mat_dims(dims),
@@ -651,17 +665,27 @@ write_mat_v5 <- function(filename, vars, do_compression = TRUE) {
     cm <- matrix(strs, nrow = dims[1], ncol = if (length(dims) > 1) dims[2] else 1L)
     mat_var_cell(cm)
   } else if (class_code == .MX_CHAR) {
-    # A char array is held as one string, so only the 1xN (and empty) forms
-    # round-trip. A multi-row array would be flattened in column-major order
-    # and rewritten as a single row.
-    if (length(dims) > 1L && dims[1] > 1L) {
-      cli::cli_abort(c(
-        "Variable {.val {name}} is a {dims[1]}x{dims[2]} character array; only single-row character arrays are supported.",
-        "i" = "Reading it would flatten and transpose the rows into one string."
-      ))
-    }
     data_el <- .read_element(body, off)
-    mat_var_char(.decode_char(data_el$type, data_el$data))
+    decoded <- .decode_char(data_el$type, data_el$data)
+    nr <- if (length(dims) > 0L) dims[1] else 0L
+    if (nr > 1L) {
+      # Multi-row char array, e.g. filelistTB in ifcb-analysis summary files
+      # (one fixed-width, space-padded row per sample). The characters are
+      # stored in column-major order, so string i is row i of the reshaped
+      # code-point matrix. Rows keep their padding, matching scipy and R.matlab.
+      codes <- utf8ToInt(decoded)
+      # matrix() below recycles a short vector silently, so dimensions that
+      # disagree with the decoded data would fabricate rows; refuse instead.
+      if (length(codes) != nel) {
+        cli::cli_abort(c(
+          "Malformed MAT-file: variable {.val {name}} declares a {dims[1]}x{dims[2]} character array but carries {length(codes)} character{?s}.",
+          "i" = "Reading it would recycle the data to fill the declared rows."
+        ))
+      }
+      mat_var_char(apply(matrix(codes, nrow = nr), 1L, intToUtf8))
+    } else {
+      mat_var_char(decoded)
+    }
   } else {
     # Any numeric array (double, single, int/uint of any width). MATLAB stores
     # numeric data compactly (e.g. a "double" array of small integers can be

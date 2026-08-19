@@ -63,6 +63,41 @@ test_that("ifcb_read_summary correctly reads and processes the summary file with
   expect_equal(summary_data$counts_per_liter[summary_data$sample == expected_sample][1], 315.27394, tolerance = 1e-8)
 })
 
+test_that("ifcb_read_summary reads a summary holding more than one sample", {
+  # countcells_allTBnew_user_training stores filelistTB as an N x 24 char
+  # matrix, one fixed-width row per sample. The example_summary.mat fixture
+  # holds a single sample, where that collapses to an ordinary 1 x 24 char
+  # array, so only a multi-sample summary exercises the multi-row layout.
+  samples <- c("D20220522T003051_IFCB134", "D20220712T210855_IFCB134")
+  counts <- matrix(c(5, 3, 0, 7), nrow = 2)
+  summary_path <- tempfile(fileext = ".mat")
+  on.exit(unlink(summary_path), add = TRUE)
+  write_mat_v5(summary_path, list(
+    class2useTB = mat_var_cell(matrix(c("Mesodinium_rubrum", "unclassified"), ncol = 1)),
+    classcountTB = mat_var_double(counts),
+    classcountTB_above_optthresh = mat_var_double(counts),
+    ml_analyzedTB = mat_var_double(matrix(c(3, 4), ncol = 1)),
+    mdateTB = mat_var_double(matrix(c(738662, 738713), ncol = 1)),
+    filelistTB = mat_var_char(samples),
+    adhocthresh = mat_var_double(matrix(c(0.5, 0.5), ncol = 1)),
+    classpath_generic = mat_var_char("C:\\classifier\\classxxxx_v1")
+  ))
+
+  summary_data <- ifcb_read_summary(summary_path, biovolume = FALSE, threshold = "opt")
+
+  expect_setequal(unique(summary_data$sample), samples)
+  expect_equal(
+    summary_data$counts[summary_data$sample == samples[1] &
+                          summary_data$species == "Mesodinium_rubrum"],
+    5
+  )
+  expect_equal(
+    summary_data$counts[summary_data$sample == samples[2] &
+                          summary_data$species == "unclassified"],
+    7
+  )
+})
+
 test_that("ifcb_read_summary handles non-existent file gracefully", {
   # Define a non-existent file path
   non_existent_file <- "non_existent_file.mat"
