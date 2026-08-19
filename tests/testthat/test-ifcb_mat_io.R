@@ -417,7 +417,9 @@ test_that("read_mat_v5 recovers a compressed section that lacks its terminator",
   on.exit(unlink(bad), add = TRUE)
   writeBin(truncated, bad)
 
-  expect_warning(got <- read_mat_v5(bad), "without its stream terminator")
+  # Single word: cli wraps the message at console width, and a multi-word
+  # pattern fails when the wrap lands inside it (seen on r-hub's nosuggests).
+  expect_warning(got <- read_mat_v5(bad), "terminator")
   expect_equal(as.vector(got$classlist$data), as.vector(values))
 })
 

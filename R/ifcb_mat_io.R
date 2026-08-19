@@ -730,8 +730,16 @@ read_mat_v5 <- function(filename) {
 
     if (typ == .MI_COMPRESSED) {
       blob <- raw_all[data_start:(data_start + ln - 1L)]
+      # The 4 pad bytes protect against R builds linked to zlib-ng (Fedora's
+      # system zlib): its inflate answers a stream cut off before its Adler-32
+      # trailer with "give me more output space" rather than an error, so
+      # `memDecompress()` doubles its buffer forever until the OOM killer stops
+      # the process. With the pad, the deflate data still ends inside the input
+      # and the bytes after it fail the Adler-32 check, turning the runaway
+      # into the ordinary error handled below. A complete stream ignores
+      # trailing bytes, so intact sections decode as before.
       element <- tryCatch(
-        memDecompress(blob, type = "gzip"),
+        memDecompress(c(blob, raw(4L)), type = "gzip"),
         error = function(e) {
           # Some MATLAB-written files carry a compressed section whose zlib
           # stream never reaches its terminator. `memDecompress()` is one-shot
