@@ -20,6 +20,7 @@ ifcb_extract_features(
   n_cores = NULL,
   overwrite = FALSE,
   feature_tag = c("features", "fea"),
+  multiblob = FALSE,
   backend = NULL,
   verbose = TRUE
 )
@@ -81,6 +82,15 @@ ifcb_extract_features(
   to match the `_v4` suffix. The blob archive name
   (`<bin>_blobs_v4.zip`) is unaffected.
 
+- multiblob:
+
+  A logical indicating whether to additionally write
+  `multiblob/<bin>_multiblob_v4.csv` files (per-blob features for
+  regions of interest with more than one blob) inside `features_folder`.
+  Bins without multi-blob ROIs get no sidecar file, as in upstream
+  `ifcb-features`. Requires `ifcb-features` v1.2.0 or later; see
+  Details. Default is `FALSE`.
+
 - backend:
 
   An optional string forcing the raw-data reader, either `"ifcbkit"` or
@@ -139,6 +149,24 @@ needs a binary `h5py` wheel (available for Python 3.10-3.13). See
 use `ifcb_py_install(features = TRUE)` to install into a compatible
 environment.
 
+**Multiblob output:** the slim feature table describes each ROI's
+largest blob (plus `summed*` columns over all blobs). With
+`multiblob = TRUE`, the per-blob features of every blob in a multi-blob
+ROI are additionally written to `multiblob/<bin>_multiblob_v4.csv`
+inside `features_folder`, one row per blob with `roi_number`,
+`blob_number` and 18 morphological columns - the sidecar output
+`ifcb-features` introduced in v1.2.0, which is also the minimum version
+required (older releases never compute per-blob rows, and the function
+stops with an error if one is installed; update with
+`ifcb_py_install(features = TRUE)`). As upstream, a bin in which no ROI
+has more than one blob gets no sidecar file at all, so the presence of a
+`<bin>_multiblob_v4.csv` means that bin genuinely contains multi-blob
+ROIs. The skip logic accounts for this by reading the `numBlobs` column
+of a bin's existing feature CSV to tell whether a sidecar is expected:
+re-running with `multiblob = TRUE` over a directory previously extracted
+without it therefore skips the bins with single-blob ROIs only and
+re-extracts just those that need a sidecar, without `overwrite = TRUE`.
+
 Bins are processed sequentially by default. When `parallel = TRUE`, bins
 are distributed across `n_cores` workers, which can substantially reduce
 runtime for large datasets. Existing outputs are skipped unless
@@ -191,6 +219,16 @@ ifcb_extract_features(
   features_folder = "path/to/features",
   blobs_folder = "path/to/blobs",
   feature_tag = "fea"
+)
+
+# Also write per-blob features for multi-blob ROIs
+# (path/to/features/multiblob/<bin>_multiblob_v4.csv;
+# requires ifcb-features >= 1.2.0)
+ifcb_extract_features(
+  data_folder = "path/to/data",
+  features_folder = "path/to/features",
+  blobs_folder = "path/to/blobs",
+  multiblob = TRUE
 )
 } # }
 ```

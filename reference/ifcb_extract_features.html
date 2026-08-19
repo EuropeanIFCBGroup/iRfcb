@@ -17,7 +17,7 @@ ROI). Features and blobs are written to separate, user-specified directories.'><
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,6 +78,7 @@ ROI). Features and blobs are written to separate, user-specified directories.</p
 <span>  n_cores <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  feature_tag <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"features"</span>, <span class="st">"fea"</span><span class="op">)</span>,</span>
+<span>  multiblob <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  backend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -138,6 +139,14 @@ directory there must be registered with product version 4 to match the
 <code>_v4</code> suffix. The blob archive name (<code>&lt;bin&gt;_blobs_v4.zip</code>) is unaffected.</p></dd>
 
 
+<dt id="arg-multiblob">multiblob<a class="anchor" aria-label="anchor" href="#arg-multiblob"></a></dt>
+<dd><p>A logical indicating whether to additionally write
+<code>multiblob/&lt;bin&gt;_multiblob_v4.csv</code> files (per-blob features for regions of
+interest with more than one blob) inside <code>features_folder</code>. Bins without
+multi-blob ROIs get no sidecar file, as in upstream <code>ifcb-features</code>.
+Requires <code>ifcb-features</code> v1.2.0 or later; see Details. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt id="arg-backend">backend<a class="anchor" aria-label="anchor" href="#arg-backend"></a></dt>
 <dd><p>An optional string forcing the raw-data reader, either
 <code>"ifcbkit"</code> or <code>"pyifcb"</code>. If <code>NULL</code> (default), the <code>IRFCB_IFCB_BACKEND</code>
@@ -190,6 +199,22 @@ binary <code>h5py</code> wheel (available for Python 3.10-3.13). See
 <a href="https://github.com/WHOIGit/ifcb-features" class="external-link">https://github.com/WHOIGit/ifcb-features</a> for current requirements, and
 use <code>ifcb_py_install(features = TRUE)</code> to install into a compatible
 environment.</p>
+<p><strong>Multiblob output:</strong> the slim feature table describes each ROI's largest
+blob (plus <code>summed*</code> columns over all blobs). With <code>multiblob = TRUE</code>, the
+per-blob features of every blob in a multi-blob ROI are additionally written
+to <code>multiblob/&lt;bin&gt;_multiblob_v4.csv</code> inside <code>features_folder</code>, one row per
+blob with <code>roi_number</code>, <code>blob_number</code> and 18 morphological columns - the
+sidecar output <code>ifcb-features</code> introduced in v1.2.0, which is also the
+minimum version required (older releases never compute per-blob rows, and
+the function stops with an error if one is installed; update with
+<code>ifcb_py_install(features = TRUE)</code>). As upstream, a bin in which no ROI has
+more than one blob gets no sidecar file at all, so the presence of a
+<code>&lt;bin&gt;_multiblob_v4.csv</code> means that bin genuinely contains multi-blob ROIs.
+The skip logic accounts for this by reading the <code>numBlobs</code> column of a
+bin's existing feature CSV to tell whether a sidecar is expected:
+re-running with <code>multiblob = TRUE</code> over a directory previously extracted
+without it therefore skips the bins with single-blob ROIs only and
+re-extracts just those that need a sidecar, without <code>overwrite = TRUE</code>.</p>
 <p>Bins are processed sequentially by default. When <code>parallel = TRUE</code>, bins are
 distributed across <code>n_cores</code> workers, which can substantially reduce runtime
 for large datasets. Existing outputs are skipped unless <code>overwrite = TRUE</code>,
@@ -238,6 +263,16 @@ processed: it finishes and writes its outputs before the run stops.</p>
 <span class="r-in"><span>  features_folder <span class="op">=</span> <span class="st">"path/to/features"</span>,</span></span>
 <span class="r-in"><span>  blobs_folder <span class="op">=</span> <span class="st">"path/to/blobs"</span>,</span></span>
 <span class="r-in"><span>  feature_tag <span class="op">=</span> <span class="st">"fea"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Also write per-blob features for multi-blob ROIs</span></span></span>
+<span class="r-in"><span><span class="co"># (path/to/features/multiblob/&lt;bin&gt;_multiblob_v4.csv;</span></span></span>
+<span class="r-in"><span><span class="co"># requires ifcb-features &gt;= 1.2.0)</span></span></span>
+<span class="r-in"><span><span class="fu">ifcb_extract_features</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  data_folder <span class="op">=</span> <span class="st">"path/to/data"</span>,</span></span>
+<span class="r-in"><span>  features_folder <span class="op">=</span> <span class="st">"path/to/features"</span>,</span></span>
+<span class="r-in"><span>  blobs_folder <span class="op">=</span> <span class="st">"path/to/blobs"</span>,</span></span>
+<span class="r-in"><span>  multiblob <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>

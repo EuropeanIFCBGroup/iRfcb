@@ -46,12 +46,12 @@ print(shark_colnames)
 
 shark_colnames_minimal <- ifcb_get_shark_colnames(minimal = TRUE)
 print(shark_colnames_minimal)
-#> # A tibble: 0 × 37
-#> # ℹ 37 variables: MYEAR <dbl>, STATN <chr>, PROJ <chr>, ORDERER <chr>,
+#> # A tibble: 0 × 38
+#> # ℹ 38 variables: MYEAR <dbl>, STATN <chr>, PROJ <chr>, ORDERER <chr>,
 #> #   SHIPC <chr>, SDATE <date>, STIME <time>, LATIT <dbl>, LONGI <dbl>,
 #> #   POSYS <chr>, MNDEP <dbl>, MXDEP <dbl>, SLABO <chr>, ACKR_SMP <chr>,
 #> #   SMTYP <chr>, SMVOL <dbl>, IFCBNO <chr>, SMPNO <chr>, LATNM <chr>,
 #> #   SFLAG <chr>, TRPHY <chr>, IMAGE_VERIFICATION <chr>, VERIFIED_BY <lgl>,
-#> #   COUNT <dbl>, QFLAG <lgl>, COEFF <dbl>, CLASS_F1 <dbl>,
+#> #   COUNT <dbl>, IMAGE_COUNT <dbl>, QFLAG <lgl>, COEFF <dbl>, CLASS_F1 <dbl>,
 #> #   UNCLASSIFIED_COUNTS <dbl>, METOA <chr>, ASSOCIATED_MEDIA <chr>, …
 ```

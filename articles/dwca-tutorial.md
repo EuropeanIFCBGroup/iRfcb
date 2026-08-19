@@ -308,16 +308,16 @@ tibble(event_df)
     ## # A tibble: 10 × 26
     ##    parentEventID    eventID eventType datasetName eventDate ownerInstitutionCode
     ##    <chr>            <chr>   <chr>     <chr>       <chr>     <chr>               
-    ##  1 NA               c73850… Project   iRfcb-DwC-A 2022-05-… NA                  
-    ##  2 c73850dc-39ee-4… 21e995… Sample    NA          2022-05-… SMHI                
-    ##  3 c73850dc-39ee-4… 4f1cd7… Sample    NA          2022-05-… SMHI                
-    ##  4 c73850dc-39ee-4… 5dbff0… Sample    NA          2022-07-… SMHI                
-    ##  5 c73850dc-39ee-4… c02bca… Sample    NA          2022-07-… SMHI                
-    ##  6 c73850dc-39ee-4… 338634… Sample    NA          2023-03-… SMHI                
-    ##  7 c73850dc-39ee-4… a5386f… Sample    NA          2023-03-… SMHI                
-    ##  8 c73850dc-39ee-4… f59315… Sample    NA          2023-08-… SMHI                
-    ##  9 c73850dc-39ee-4… b27cb1… Sample    NA          2023-09-… SMHI                
-    ## 10 c73850dc-39ee-4… 9de03d… Sample    NA          2023-09-… SMHI                
+    ##  1 NA               29ffe4… Project   iRfcb-DwC-A 2022-05-… NA                  
+    ##  2 29ffe4c7-b2db-4… abcf23… Sample    NA          2022-05-… SMHI                
+    ##  3 29ffe4c7-b2db-4… 2ebb6a… Sample    NA          2022-05-… SMHI                
+    ##  4 29ffe4c7-b2db-4… df2d82… Sample    NA          2022-07-… SMHI                
+    ##  5 29ffe4c7-b2db-4… 30de2d… Sample    NA          2022-07-… SMHI                
+    ##  6 29ffe4c7-b2db-4… 949538… Sample    NA          2023-03-… SMHI                
+    ##  7 29ffe4c7-b2db-4… 4177c2… Sample    NA          2023-03-… SMHI                
+    ##  8 29ffe4c7-b2db-4… c15b18… Sample    NA          2023-08-… SMHI                
+    ##  9 29ffe4c7-b2db-4… f59637… Sample    NA          2023-09-… SMHI                
+    ## 10 29ffe4c7-b2db-4… cdfe13… Sample    NA          2023-09-… SMHI                
     ## # ℹ 20 more variables: institutionCode <chr>, institutionID <chr>,
     ## #   license <chr>, samplingProtocol <chr>, sampleSizeValue <dbl>,
     ## #   sampleSizeUnit <chr>, eventTime <time>, year <dbl>, month <dbl>, day <int>,
@@ -511,16 +511,16 @@ tibble(occurrence_df)
     ## # A tibble: 101 × 22
     ##    occurrenceID         eventID eventDate  occurrenceStatus collectionCode type 
     ##    <chr>                <chr>   <date>     <chr>            <chr>          <chr>
-    ##  1 6cdc2623-ca33-4ded-… 21e995… 2022-05-22 present          iRfcb          Stil…
-    ##  2 d057a4be-3d02-4fcd-… 21e995… 2022-05-22 present          iRfcb          Stil…
-    ##  3 9628a450-7615-4862-… 21e995… 2022-05-22 present          iRfcb          Stil…
-    ##  4 6d2ffc12-b561-428e-… 21e995… 2022-05-22 present          iRfcb          Stil…
-    ##  5 add4501a-f5dd-40cc-… 4f1cd7… 2022-05-22 present          iRfcb          Stil…
-    ##  6 fc9e4b1d-7067-45cf-… 5dbff0… 2022-07-12 present          iRfcb          Stil…
-    ##  7 2c32c716-80e7-414d-… 5dbff0… 2022-07-12 present          iRfcb          Stil…
-    ##  8 828c218d-c205-40c9-… 5dbff0… 2022-07-12 present          iRfcb          Stil…
-    ##  9 51a1f983-3d4f-44f8-… c02bca… 2022-07-12 present          iRfcb          Stil…
-    ## 10 ff9a0f6a-d7c5-4580-… c02bca… 2022-07-12 present          iRfcb          Stil…
+    ##  1 df6fb6f9-bedd-448d-… abcf23… 2022-05-22 present          iRfcb          Stil…
+    ##  2 4b56a835-0eb2-4e92-… abcf23… 2022-05-22 present          iRfcb          Stil…
+    ##  3 762db09c-ec5b-4809-… abcf23… 2022-05-22 present          iRfcb          Stil…
+    ##  4 5f087fb9-8908-4027-… abcf23… 2022-05-22 present          iRfcb          Stil…
+    ##  5 d181b8aa-2b5a-4471-… 2ebb6a… 2022-05-22 present          iRfcb          Stil…
+    ##  6 63c0cdc9-2313-48a8-… df2d82… 2022-07-12 present          iRfcb          Stil…
+    ##  7 893b058f-e429-4047-… df2d82… 2022-07-12 present          iRfcb          Stil…
+    ##  8 a8a7cfc3-09fa-4099-… df2d82… 2022-07-12 present          iRfcb          Stil…
+    ##  9 72aed67b-f27a-4a0c-… 30de2d… 2022-07-12 present          iRfcb          Stil…
+    ## 10 2cfe86ac-ca18-4ab6-… 30de2d… 2022-07-12 present          iRfcb          Stil…
     ## # ℹ 91 more rows
     ## # ℹ 16 more variables: basisOfRecord <chr>,
     ## #   identificationVerificationStatus <chr>, identificationReferences <chr>,
@@ -727,16 +727,16 @@ tibble(mof_df)
     ## # A tibble: 415 × 10
     ##    measurementID              eventID parentEventID occurrenceID measurementType
     ##    <chr>                      <chr>   <chr>         <chr>        <chr>          
-    ##  1 c862c2de-f0b6-4483-8636-e… c73850… NA            NA           Imaging instru…
-    ##  2 bd7811ce-fa84-4f19-a99f-e… c73850… NA            NA           Instrument ide…
-    ##  3 4640d60a-d193-44ca-b3cc-d… 21e995… c73850dc-39e… NA           Sample volume  
-    ##  4 fe676a03-f98d-43db-befa-d… 4f1cd7… c73850dc-39e… NA           Sample volume  
-    ##  5 55c63cd8-e035-4536-abc7-7… 5dbff0… c73850dc-39e… NA           Sample volume  
-    ##  6 0213e391-84e0-4412-a78b-5… c02bca… c73850dc-39e… NA           Sample volume  
-    ##  7 49728518-5b96-46b5-bc6f-0… 338634… c73850dc-39e… NA           Sample volume  
-    ##  8 8efd758b-c4d5-4fb6-8456-8… a5386f… c73850dc-39e… NA           Sample volume  
-    ##  9 279eafec-5df3-4e03-a3aa-a… f59315… c73850dc-39e… NA           Sample volume  
-    ## 10 7eae7fe6-dadb-4bf5-b256-e… b27cb1… c73850dc-39e… NA           Sample volume  
+    ##  1 a0f5dab3-a85e-4ed9-8b1b-5… 29ffe4… NA            NA           Imaging instru…
+    ##  2 37fbe725-202b-4b91-ae88-d… 29ffe4… NA            NA           Instrument ide…
+    ##  3 d92c897f-ab13-4b0e-a957-1… abcf23… 29ffe4c7-b2d… NA           Sample volume  
+    ##  4 83d5bc48-9b8d-48b6-a384-a… 2ebb6a… 29ffe4c7-b2d… NA           Sample volume  
+    ##  5 8ac44556-32a6-4fb2-a349-0… df2d82… 29ffe4c7-b2d… NA           Sample volume  
+    ##  6 5d5eee13-d8a7-426a-b0bf-e… 30de2d… 29ffe4c7-b2d… NA           Sample volume  
+    ##  7 422de9d7-986d-47b6-91e7-7… 949538… 29ffe4c7-b2d… NA           Sample volume  
+    ##  8 b4cdf429-7452-4baf-ba44-c… 4177c2… 29ffe4c7-b2d… NA           Sample volume  
+    ##  9 065e3912-658d-4ff6-a872-e… c15b18… 29ffe4c7-b2d… NA           Sample volume  
+    ## 10 288a0cb0-5109-491d-961e-d… f59637… 29ffe4c7-b2d… NA           Sample volume  
     ## # ℹ 405 more rows
     ## # ℹ 5 more variables: measurementTypeID <chr>, measurementValue <chr>,
     ## #   measurementValueID <chr>, measurementUnit <chr>, measurementUnitID <chr>
@@ -819,7 +819,7 @@ analyzing!
     ## To cite package 'iRfcb' in publications use:
     ## 
     ##   Anders Torstensson (2026). iRfcb: Tools for Managing Imaging
-    ##   FlowCytobot (IFCB) Data. R package version 0.9.0.
+    ##   FlowCytobot (IFCB) Data. R package version 0.10.0.
     ##   https://CRAN.R-project.org/package=iRfcb
     ## 
     ## A BibTeX entry for LaTeX users is
@@ -828,7 +828,7 @@ analyzing!
     ##     title = {iRfcb: Tools for Managing Imaging FlowCytobot (IFCB) Data},
     ##     author = {Anders Torstensson},
     ##     year = {2026},
-    ##     note = {R package version 0.9.0},
+    ##     note = {R package version 0.10.0},
     ##     url = {https://CRAN.R-project.org/package=iRfcb},
     ##   }
 

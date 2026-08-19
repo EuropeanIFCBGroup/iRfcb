@@ -15,7 +15,7 @@ the R equivalent function of IFCB_volume_analyzed_fromADC from the ifcb-analysis
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,7 +82,11 @@ the R equivalent function of <code>IFCB_volume_analyzed_fromADC</code> from the 
     <p>A list containing:</p><ul><li><p><strong>ml_analyzed</strong>: A numeric vector of estimated sample volume analyzed for each ADC file.</p></li>
 <li><p><strong>inhibittime</strong>: A numeric vector of inhibittime values extracted from ADC files.</p></li>
 <li><p><strong>runtime</strong>: A numeric vector of runtime values extracted from ADC files.</p></li>
-</ul></div>
+</ul><p>A value is <code>NA</code> when it cannot be derived from the file, for example when
+the ADC lacks the run/inhibit time columns (with a warning) or records no
+nonzero inhibit time, matching the <code>NaN</code> the MATLAB reference returns in
+those cases.</p>
+    </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification of phytoplankton sampled with imaging-in-flow cytometry. Limnol. Oceanogr: Methods 5, 204–216.</p>

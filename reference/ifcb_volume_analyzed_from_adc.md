@@ -34,6 +34,11 @@ A list containing:
 - **runtime**: A numeric vector of runtime values extracted from ADC
   files.
 
+A value is `NA` when it cannot be derived from the file, for example
+when the ADC lacks the run/inhibit time columns (with a warning) or
+records no nonzero inhibit time, matching the `NaN` the MATLAB reference
+returns in those cases.
+
 ## References
 
 Sosik, H. M. and Olson, R. J. (2007), Automated taxonomic classification

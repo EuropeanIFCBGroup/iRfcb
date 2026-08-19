@@ -4,265 +4,398 @@
 
 ### New features
 
-- Added support for the optional per-ROI `cell_count` data produced by
-  the diatom chain counter (Groves et al. 2026,
+- Added support for the per-ROI `cell_count` data produced by the diatom
+  chain counter (Groves et al. 2026,
   [doi:10.1093/plankt/fbaf064](https://doi.org/10.1093/plankt/fbaf064))
-  via the
+  through the
   [`ifcb-pytorch-classify`](https://github.com/nodc-sweden/ifcb-pytorch-classify)
-  inference pipeline, and stored in `.mat`/`.h5`/`.csv` classification
-  files. This enables reporting cell abundance (accounting for chains)
-  in addition to ROI counts.
+  pipeline and stored in `.mat`, `.h5` and `.csv` classification files.
+  Abundance can now be reported in cells rather than images, so a chain
+  of eight cells counts as eight.
   - New
     [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
-    summarizes cell abundance and user-selectable chain-length
-    statistics (`mean`, `median`, `max`, `sd`, `n_chains`) per sample
-    and class, with optional per-liter abundance via an `hdr_folder`.
-  - [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
+    reports cell abundance and chain-length statistics (`n_counted`,
+    `mean`, `median`, `max`, `sd`) per sample and class, and abundance
+    per liter when given an `hdr_folder`. `n_counted` is the number of
+    ROIs the chain counter measured, including those it found to hold a
+    single cell.
+  - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
     and
-    [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+    [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
     gain a `use_cell_counts` argument. When `TRUE`,
     [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
-    adds `cell_counts` (and `cell_counts_per_liter` when an `hdr_folder`
-    is supplied) to the output.
-  - A `single_cell_values` argument (default `c(-1, 0)`) lets the user
-    define which `cell_count` values are treated as a single cell. By
-    default, ROIs that were not chain-counted (`-1`) and ROIs where no
-    cells were detected (`0`) each count as one cell; any other value is
-    used verbatim.
-  - `cell_counts` is `NA` for a sample whose classification file carries
-    no `cell_count` data at all, since the cell total is unknown there.
-    It is deliberately not reported as `0`, which would be
-    indistinguishable from a taxon that was genuinely absent, and
-    `counts` still reports the ROIs. A warning names how many of the
-    supplied files were affected.
-  - The bundled SHARK column template
-    ([`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)/[`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md))
-    gains an `IMAGE_COUNT` column (number of ROIs/images), placed after
-    `COUNT`. When `COUNT`/`ABUND` report cells, the mean chain length
-    per taxon is `COUNT / IMAGE_COUNT`.
+    adds a `cell_counts` column, and `cell_counts_per_liter` when an
+    `hdr_folder` is supplied.
+  - `single_cell_values` (default `c(-1, 0)`) sets which `cell_count`
+    values are read as one cell: by default the ROIs the counter skipped
+    (`-1`) and those where it found no cells (`0`). Any other value is
+    used as it stands.
+  - `cell_counts` is `NA` rather than `0` for a sample whose
+    classification file carries no `cell_count` data, since a zero would
+    look the same as a taxon that was genuinely absent. `counts` still
+    reports the images, and a warning says how many files were affected.
+    A missing value inside a file that does carry `cell_count` data,
+    such as a blank CSV cell, also makes the affected sample’s
+    `cell_counts` `NA`, and is likewise reported with a warning naming
+    the samples and how many ROIs were missing a value.
+  - The SHARK column template
+    ([`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)
+    and
+    [`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md))
+    gains an `IMAGE_COUNT` column after `COUNT`. Dividing `COUNT` by
+    `IMAGE_COUNT` gives the average cells per image. That is not the
+    same as `mean_chain_length`, which averages only over the images the
+    counter actually measured, whereas the ratio includes the images it
+    never looked at.
 - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
   and
   [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
-  gain a `diatom_equation` argument selecting which Menden-Deuer and
-  Lessard (2000) carbon-to-volume relationship to apply to diatoms. The
-  default (`"large"`) uses the large-diatom (\> 3000 micron^3) equation,
-  matching the `ifcb-analysis` convention and preserving previous
-  behavior; `"all"` uses the all-sizes diatom equation, which assigns
-  more carbon to small cells. A new exported helper
-  [`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md)
-  implements the all-sizes relationship (log a = -0.541, b = 0.811).
-  Note that biovolume is measured per region of interest (image), not
-  per cell, so chains of small cells register a large ROI biovolume.
+  gain two arguments controlling how the Menden-Deuer and Lessard (2000)
+  carbon equations are applied. Both keep the previous behavior by
+  default, so carbon values do not change unless you set one.
+  - `diatom_equation` chooses the diatom equation. `"large"` (the
+    default) uses the large-diatom equation, as `ifcb-analysis` does;
+    `"all"` uses the all-sizes equation, which gives small cells more
+    carbon; `"auto"` chooses per ROI by volume, keeping each equation
+    inside the size range it was fitted for. The two disagree at the
+    3000 micron^3 boundary, predicting about 190 against 135 pgC, so
+    `"auto"` makes carbon fall as a cell grows past it. That is why it
+    is not the default. New helpers
+    [`vol2C_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom.md)
+    and
+    [`vol2C_diatom_auto()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_diatom_auto.md)
+    are exported.
+  - `carbon_conversion` chooses the volume the equation is applied to.
+    The equations are fitted per cell, but an IFCB biovolume covers a
+    whole image, which for a chain-forming diatom is the whole chain, so
+    converting the chain volume in one go under-reports carbon. `"cell"`
+    converts per cell and sums over the chain, and requires
+    `use_cell_counts = TRUE`. See
+    [`?ifcb_extract_biovolumes`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
+    for how large the difference gets.
+  - Biovolume itself is unchanged by either argument. It is still
+    measured per image, so a chain of small cells still gives one large
+    biovolume.
 - Added
   [`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md),
-  which validates the integrity and self-consistency of raw IFCB samples
-  (the `.hdr`/`.adc`/`.roi` triplet) and returns a tidy tibble of QC
-  metrics and flags, one row per sample. Checks cover triplet
-  completeness, ROI count consistency (imaged ROIs in the ADC versus the
-  header `roiCount`), ROI data completeness (detecting truncated/aborted
-  `.roi` files by comparing the file size to the last image’s end
-  offset), header/ADC run time consistency, and flow/volume sanity via
-  [`ifcb_volume_analyzed()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed.md)
-  (the volume ceiling is derived per sample from the header
-  `SyringeSampleVolume`, reported as `syringe_ml`, rather than a fixed
-  value, falling back to the 5 mL IFCB standard when the header reports
-  no positive value; a constant ceiling can be forced with `max_ml`).
-  Bead/calibration runs (`is_bead_run`) and empty samples (`is_empty`)
-  are flagged separately as advisory, as are, via the optional
-  `max_roi_mb`, `max_humidity` and `max_temperature` arguments,
-  oversized `.roi` files (`roi_oversized`) and high recorded humidity or
-  temperature (`humidity_high` / `temperature_high`). Advisory flags
-  describe valid samples that a user may nonetheless wish to exclude and
-  so do not affect the overall `qc_pass` column. A check that cannot be
-  evaluated for a given sample is reported as `NA` and treated as not
-  applicable, so it does not fail `qc_pass`: legacy headers omitting
-  `roiCount` cannot be checked for ROI count consistency, and a sample
-  that never triggered has no analyzed volume to check (`is_empty`
-  reports that condition instead). Malformed, non-numeric ROI dimensions
-  in an `.adc` are treated as not imaged, so one damaged file cannot
-  abort a whole survey. The function accepts a directory, sample names
-  with a `data_folder`, or explicit file paths, and builds entirely on
-  existing native-R readers (no Python required).
+  which checks raw IFCB samples (the `.hdr`, `.adc` and `.roi` triplet)
+  and returns one row of QC metrics and flags per sample. It looks for
+  missing files, ROI counts that disagree with the header, truncated
+  `.roi` files, run times that contradict the ADC, implausible analyzed
+  volumes, and ROI dimensions that failed to parse. Bead runs, empty
+  samples, oversized `.roi` files and high recorded humidity or
+  temperature are reported as advisory flags and do not fail `qc_pass`.
+  A check that cannot be run on a sample is reported as `NA` and does
+  not fail it either, so legacy headers without a `roiCount` field are
+  not penalized for a check that could never apply. The function accepts
+  a directory, sample names with a `data_folder`, or explicit file
+  paths, and needs no Python.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  gains a `multiblob` argument. With `multiblob = TRUE` it additionally
+  writes `multiblob/<bin>_multiblob_v4.csv` files inside the features
+  folder, holding the per-blob features of every blob in a region of
+  interest with more than one blob (the slim table describes only the
+  largest, plus `summed*` totals), one row per blob with `roi_number`,
+  `blob_number` and 18 morphological columns. This is the sidecar output
+  `ifcb-features` introduced in v1.2.0, which is also the minimum
+  version required; the function stops with a clear error on older
+  releases, since they never compute per-blob features. As upstream, a
+  bin in which no ROI has more than one blob gets no sidecar file, so
+  the file’s presence means the bin genuinely holds multi-blob ROIs; the
+  skip logic reads the `numBlobs` column of a bin’s existing feature CSV
+  to tell whether a sidecar is expected, so a re-run with
+  `multiblob = TRUE` over a directory extracted without it re-extracts
+  only the bins that actually need one, without `overwrite = TRUE`.
+  [`ifcb_read_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_features.md)
+  reads these files as it stands, with `multiblob = TRUE`; its multiblob
+  filter now matches on the file name rather than the whole path, so a
+  feature folder located somewhere under a directory with `multiblob` in
+  its name no longer reads as all-multiblob (or, with the default
+  `multiblob = FALSE`, as empty).
 
 ### Minor improvements and fixes
 
-- The classification-file readers used by
-  [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md),
-  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md),
+- [`ifcb_save_classification()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.md)
+  now reports a missing `roi_file` before requiring `hdf5r`. Its tests
+  no longer depend on the suggested `hdf5r` package, fixing the CRAN
+  check failures on platforms without it.
+- Tests using `use_python = TRUE` now skip when `scipy` is unavailable,
+  instead of letting `reticulate` download an ephemeral Python
+  environment mid-check.
+- The native MAT reader no longer runs out of memory on a truncated
+  compressed section when R is built against zlib-ng (the system zlib on
+  recent Fedora), where
+  [`memDecompress()`](https://rdrr.io/r/base/memCompress.html) grows its
+  buffer indefinitely instead of erroring. Such sections now fall
+  through to the incremental recovery path as intended.
+- [`ifcb_classify_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_images.md),
+  [`ifcb_classify_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_sample.md)
+  and
+  [`ifcb_classify_models()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_classify_models.md)
+  now retry transient network failures (dropped connections and HTTP
+  429/5xx responses) up to four times with exponential backoff. A brief
+  server outage, such as the hosted SciLifeLab Serve instance
+  restarting, used to fail every image it touched with
+  `Couldn't connect to server`, leaving a run of `NA` rows mid-sample.
+  Set `options(iRfcb.gradio_max_tries = )` to change the number of
+  attempts; a malformed value for either retry option is reported by
+  name rather than surfacing as a cryptic error elsewhere.
+- [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md),
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
   and
   [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
-  are now robust to non-class `.csv` files in a class directory.
-  Previously a directory that also contained an IFCB-Dashboard
-  class_scores export (`{sample}_class.csv`, with a `pid` column plus
-  one score column per class, and no `file_name`/`class_name` columns)
-  could be picked up and either silently tolerated or fail later with a
-  cryptic `Unknown or uninitialised column: 'class'` error followed by a
-  WoRMS (400) Bad Request. When a folder is supplied, such files are now
-  skipped with a warning naming the file and the missing columns, so a
-  directory mixing dashboard score exports with ClassiPyR label files
-  runs cleanly using only the valid label files. When a non-class `.csv`
-  is passed explicitly, the reader aborts with a clear message
-  identifying the file and the missing columns.
+  now stop with an error when one sample resolves to more than one
+  classification file, for example a folder holding both a `.mat` and an
+  `.h5` for the same sample, and name the samples involved. Previously
+  both files were read and joined, which silently doubled that sample’s
+  counts, biovolume and carbon.
+- The classification-file readers no longer trip over non-class `.csv`
+  files in a class directory. An IFCB Dashboard `class_scores` export
+  (`{sample}_class.csv`) could be picked up and then fail with a
+  confusing `Unknown or uninitialised column: 'class'` error followed by
+  a WoRMS 400 response. Such files are now skipped with a warning naming
+  the missing columns when a folder is supplied, and raise a clear error
+  when passed explicitly. A *valid* label file named
+  `{sample}_class.csv` now resolves to the same sample as
+  `{sample}.csv`, so it joins under the right sample instead of
+  appearing as a phantom `{sample}_class` sample no HDR file could
+  match. Relatedly, an `hdr_folder` whose files match none of the
+  classified samples now warns and reports `NA` per-liter values instead
+  of aborting with an unexplained join error, and the `classifier`
+  column read from `.mat` files is a plain character vector rather than
+  a one-column matrix.
 - [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md)
-  gains a `details` argument. When `TRUE`, it returns a data frame with
-  the resolved WoRMS class (`worms_class`) for each taxon instead of a
-  logical vector, making it possible to audit genus homonyms,
-  i.e. diatom genera such as `Navicula` or `Actinocyclus` whose names
-  are shared with animals and therefore resolve to a non-diatom class in
-  WoRMS. Inspect the `worms_class` column to identify such cases and add
-  the affected taxa to `diatom_include`.
+  gains a `details` argument. When `TRUE` it returns a data frame with
+  the WoRMS class resolved for each taxon instead of a logical vector.
+  Use it to find genus homonyms, that is diatom genera such as
+  `Navicula` or `Actinocyclus` that share a name with an animal and so
+  resolve to a non-diatom class, then add those taxa to
+  `diatom_include`. A class list in which nothing resolves in WoRMS at
+  all, such as one holding only labels like `unclassified` or
+  `detritus`, returns `NA` classes instead of failing.
 - [`ifcb_extract_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_biovolumes.md)
   and
   [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md)
-  now report the diatom classification more usefully when
-  `verbose = TRUE`: the (typically short) list of classes treated as
-  diatoms is printed in full, classes that could not be found in WoRMS
-  are listed separately, and the (typically long) list of non-diatom
-  classes is summarized as a count with a pointer to
-  `ifcb_is_diatom(details = TRUE)` for auditing homonyms. Previously the
-  full non-diatom list was printed and truncated with an ellipsis,
-  making it hard to tell whether a class expected to be a diatom had
-  actually been recognized as one.
-- Removed the Python dependency from all functions that create or edit
-  MATLAB `ifcb-analysis` manual classification files.
+  report the diatom classification more clearly when `verbose = TRUE`.
+  The classes treated as diatoms are listed in full, classes missing
+  from WoRMS are listed separately, and the long list of non-diatoms is
+  reduced to a count. Previously that list was printed and truncated,
+  making it hard to see whether a class you expected to be a diatom had
+  been recognized as one.
+- Creating and editing MATLAB `ifcb-analysis` manual classification
+  files no longer requires Python.
   [`ifcb_create_class2use()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_class2use.md),
-  [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md)
-  (and the deprecated
-  [`ifcb_create_empty_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_empty_manual_file.md)),
+  [`ifcb_create_manual_file()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_create_manual_file.md),
   [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md),
   [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md),
-  [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md),
+  [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
   and the `format = "mat"` output of
   [`ifcb_save_classification()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_save_classification.md)
-  now write `.mat` files with a native R implementation of the MATLAB
-  Level 5 MAT-file format, producing output identical to the previous
-  `scipy.io.savemat`-based approach (byte-for-byte identical when
-  uncompressed, and identical in content when compressed). The wrapper
-  functions
-  [`ifcb_annotate_batch()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_batch.md),
-  [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md),
-  [`ifcb_merge_manual()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_merge_manual.md),
+  write `.mat` files with a native R implementation, producing the same
+  output as the previous `scipy.io.savemat` approach. The wrapper
+  functions that call them are Python-free as a result, so `scipy` and
+  `numpy` are no longer needed for annotation work.
+- Removed `R.matlab` as a dependency. Reading `.mat` files without
+  Python now uses the native R reader as well, which decodes MATLAB
+  UTF-16 text correctly, so accented class or path names survive where
+  [`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html)
+  could mangle them. It reads every numeric storage type MATLAB uses to
+  hold an array compactly (`int8` through `uint32`, `single` and
+  `double`), preserving each across a read-write round-trip, including
+  values at the signed and unsigned 32-bit limits that R cannot hold in
+  an integer. Multi-row character matrices, such as the `filelistTB`
+  sample list that `ifcb-analysis` summary files hold as one fixed-width
+  row per sample, are read as one string per row, so
+  [`ifcb_read_summary()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_summary.md)
+  handles multi-sample summaries the same way with either reader. The
+  reader also refuses input it cannot represent faithfully, naming the
+  variable and the reason, reports a truncated file instead of reading
+  it back quietly padded with zeros, and rejects declared dimensions
+  that disagree with the data carried rather than recycling values to
+  fill them out. The writer applies the same standard: a value that does
+  not fit the storage type a variable was read with is refused rather
+  than silently wrapped, and
+  [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
   and
-  [`ifcb_prepare_whoi_plankton()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_prepare_whoi_plankton.md),
-  which delegate to the above, are therefore also Python-free. This
-  removes the `scipy`/`numpy` requirement for creating and editing
-  manual annotation files.
-- Removed the `R.matlab` package as a dependency. The default
-  (non-Python) path for *reading* `.mat` files now also uses the native
-  R MAT-file reader instead of
-  [`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html),
-  affecting
+  [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
+  widen a classlist to double when a new class id outgrows the compact
+  integer type MATLAB stored it in. All of this matters because
+  [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
+  and
+  [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
+  write what they read back over the same file. One thing it tolerates
+  rather than refuses: a compressed section that ends without its stream
+  terminator, which some classification files written by MATLAB contain.
+  The data in those is intact, so it is decoded incrementally and read,
+  with a warning naming the file. `R.matlab` has moved to `Suggests`.
+  - Note that this makes reading stricter than in 0.9.0, so a file that
+    used to open may now stop with an error. `R.matlab` would read a
+    `.mat` containing a struct, an object, a sparse or complex array, a
+    logical array, more than two dimensions, or a MATLAB string array
+    (as saved by `class2use = ["a" "b"]` in a recent MATLAB release),
+    and iRfcb would then quietly write back something that was not what
+    it read. Those files are now named and refused instead. The formats
+    iRfcb itself deals with are unaffected: manual files, `class2use`
+    files and classifier output written by MATLAB `ifcb-analysis` or the
+    Python pipelines all read as before. If you do have a third-party
+    file that no longer opens,
+    [`ifcb_get_mat_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.md)
+    and
+    [`ifcb_get_mat_variable()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.md)
+    read it with `use_python = TRUE`, which goes through `SciPy`
+    instead, once a Python environment has been set up with
+    [`ifcb_py_install()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  now works with both raw-data readers used by WHOI
+  [`ifcb-features`](https://github.com/WHOIGit/ifcb-features). Release
+  v1.1.0 swapped `pyifcb` for the lighter
+  [`ifcbkit`](https://github.com/WHOIGit/ifcbkit), which broke `iRfcb`
+  against v1.1.0 and later, and since `ifcb_py_install(features = TRUE)`
+  installs the newest release by default this affected new
+  installations. Either reader now works, and a new `backend` argument
+  (or the `IRFCB_IFCB_BACKEND` environment variable) pins one.
+  Measurements are unaffected for the D-style bins current instruments
+  produce. The readers differ only on older I-style bins and on ROIs
+  with zero height, so pin a reader if you need results comparable to an
+  earlier I-style run. Installing v1.1.0 or later also drops the `h5py`
+  dependency, which had restricted which Python versions could be used.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  now works with `ifcb-features` v1.2.0, which changed what
+  `compute_features` returns to carry the new multiblob output. Without
+  this change every ROI failed to unpack, and because a failed ROI is
+  skipped rather than fatal, the extraction would report success while
+  writing feature files holding only `roi_number` and no blob images.
+  All earlier `ifcb-features` releases still work, and the extracted
+  measurements are unchanged. The per-blob multiblob rows themselves are
+  not used, since they are not part of the slim feature set.
+- Fixed
+  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  writing text instead of numbers into the `Eccentricity`,
+  `MajorAxisLength` and `MinorAxisLength` columns of
+  `<bin>_features_v4.csv`. On `numpy` 2.3 and later these values arrived
+  as complex numbers and were written as strings such as `(0.797+0j)`,
+  quietly turning three numeric columns into text. They are numeric
+  again and the values are unchanged, with one exception worth knowing
+  about for size spectra and biovolume sums: a degenerate,
+  one-pixel-wide blob is now measured as `0` rather than `NaN`, so it
+  contributes a zero instead of a missing value you could filter out.
+  That matches upstream `ifcb-features` and the `summed*` columns. To
+  reproduce an earlier run, pin `ifcb-features` v1.0.0 or `numpy < 2.3`;
+  see
+  [`?ifcb_py_install`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_py_install.md).
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  no longer prints a `FutureWarning` for every region of interest from
+  recent `scikit-image` releases, which had been breaking up the
+  progress bar. `ifcb_py_install(features = TRUE)` also holds
+  `scikit-image` below 0.28, the release that removes the deprecated
+  functions `ifcb_features` calls.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  no longer discards a whole sequential run when one bin cannot be read.
+  A corrupt or truncated `.roi` used to escape as a Python traceback,
+  taking every bin already processed with it. Such a bin is now reported
+  as a per-bin error like any other.
+- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
+  gains a `feature_tag` argument controlling the feature file name. The
+  default (`"features"`) writes `<bin>_features_v4.csv` as before;
+  `"fea"` writes `<bin>_fea_v4.csv`, the name the IFCB Dashboard serves.
+- Fixed
+  [`ifcb_volume_analyzed_from_adc()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.md)
+  failing when given more than one ADC file, or a URL. The existence
+  check was not vectorized, so a vector of files stopped with
+  `the condition has length > 1` even though the rest of the function
+  already looped over them, and it rejected URLs outright even though
+  the rest of the function handles remote files. Local paths are now
+  checked one by one, with every missing path reported at once, and URLs
+  pass straight through.
+- Realigned
+  [`ifcb_get_runtime()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_runtime.md)
+  and
+  [`ifcb_volume_analyzed_from_adc()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.md)
+  with their MATLAB `ifcb-analysis` counterparts (`IFCBxxx_readhdr.m`,
+  `IFCB_volume_analyzed_fromADC.m`), fixing five places where the R port
+  had drifted from the reference.
+  - Legacy headers, which carry `run time` and `inhibit time` on a
+    single line, were read with the inhibit time set to a copy of the
+    run time, so every legacy sample reported a look time of zero and an
+    analyzed volume of zero. The two values are now read from their own
+    positions on the line, as the reference does.
+  - Header keys are matched at the start of the line, as the reference’s
+    `strmatch` does. A header holding an extra key that merely ends in
+    `runtime:` used to make
+    [`ifcb_get_runtime()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_runtime.md)
+    return two values, which
+    [`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md)
+    then recycled into a duplicated, failing row for that sample.
+  - The startup-offset correction for instruments whose run/inhibit
+    clocks lead the ADC timestamp called
+    [`mode()`](https://rdrr.io/r/base/mode.html), which in R is
+    [`base::mode()`](https://rdrr.io/r/base/mode.html) and not the
+    statistical mode the MATLAB reference computes, so the correction
+    always failed with `non-numeric argument to binary operator` on
+    exactly the instruments it was written for.
+  - Corrupted inhibit-time rows are repaired the way the reference
+    repairs them, from the last well-behaved row plus one typical
+    increment per bad row, instead of using the corrupted final value as
+    it stands. The timestamp-derived run-time fallback is now applied
+    when the run-time clock disagrees with it, where previously it was
+    computed and then overwritten.
+  - A volume that cannot be derived, for example from an ADC without
+    run/inhibit time columns, is now `NA` with a warning instead of a
+    silent `0`, matching the `NaN` the reference returns. A zero looked
+    exactly like an instrument that analyzed no water, and made
+    [`ifcb_qc_sample()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_qc_sample.md)
+    fail such samples for an implausible volume.
+- [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
+  and
+  [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
+  now check their inputs and fail with a message you can act on. An
+  out-of-range ROI number or `column_index` reports the value and the
+  valid range instead of `subscript out of bounds`, a classlist with
+  fewer than two columns is reported as such, and a missing input file
+  or a `.mat` file without a `classlist` variable is named explicitly.
+  [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
+  likewise passes the reader’s own refusal message through when it skips
+  a file, instead of relabeling every problem “empty or corrupted”.
+- Fixed `use_python = TRUE` being ignored when Python and `SciPy` were
+  in fact available.
   [`ifcb_get_mat_names()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_names.md),
   [`ifcb_get_mat_variable()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_mat_variable.md),
   [`ifcb_read_summary()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_read_summary.md),
   [`ifcb_count_mat_annotations()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_count_mat_annotations.md),
-  [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md),
-  and the reading of `.mat` classification files. The native reader
-  decodes MATLAB-generated UTF-16 character data correctly, so non-ASCII
-  strings (e.g. accented class or path names) that
-  [`R.matlab::readMat()`](https://rdrr.io/pkg/R.matlab/man/readMat.html)
-  could mangle are now preserved. It rejects input it cannot represent
-  faithfully rather than decoding it as numeric data: MATLAB structs,
-  objects, sparse arrays, complex and logical arrays, arrays with more
-  than two dimensions, and multi-row character arrays each raise an
-  error naming the variable and the unsupported feature. It also
-  bounds-checks element lengths against the file, so a truncated `.mat`
-  file is reported rather than read back zero-filled. Both matter
-  because
+  [`ifcb_extract_annotated_images()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_annotated_images.md)
+  and
   [`ifcb_adjust_classes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_adjust_classes.md)
+  decided whether they could use Python by looking for `scipy` in
+  [`reticulate::py_list_packages()`](https://rstudio.github.io/reticulate/reference/py_list_packages.html),
+  and fell back to the R reader without saying so when it was not
+  listed. Two things went wrong with that: on a `conda` environment the
+  listing reports conda’s own base packages, so an installed and
+  perfectly importable `scipy` was absent from it; and the check did not
+  initialize Python, so in a fresh session it failed whatever the
+  environment held. Availability is now settled by asking Python to
+  import the module, and when `use_python = TRUE` is requested but
+  Python with `scipy` is genuinely unavailable, the fallback to the R
+  reader is announced with a warning (once per session) instead of
+  happening silently. This matters most when a `.mat` file cannot be
+  read by the R reader, since `use_python = TRUE` is the documented way
+  to read it.
+- Clarified the deprecation of `ifcb_read_hdr_data(hdr_folder = )` and
+  `ifcb_annotate_batch(adc_folder = )`. Both read as though the package
+  had renamed `hdr_folder` and `adc_folder` everywhere, which it has
+  not: those two functions were changed to accept a vector of file
+  paths, so their argument was renamed to match. Functions that
+  genuinely take a single directory, such as
+  [`ifcb_psd()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_psd.md),
+  [`ifcb_summarize_biovolumes()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_biovolumes.md),
+  [`ifcb_summarize_cell_counts()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md)
   and
-  [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
-  write the variables they read back over the same file. `R.matlab` has
-  been moved from `Imports` to `Suggests` (used only as an independent
-  cross-check in the test suite).
-- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  now supports both raw-data readers used by the WHOI
-  [`ifcb-features`](https://github.com/WHOIGit/ifcb-features) package.
-  Release v1.1.0 replaced its `pyifcb` dependency with the much lighter
-  [`ifcbkit`](https://github.com/WHOIGit/ifcbkit), which exposes a
-  different API; `iRfcb` previously required `pyifcb` and therefore
-  failed against v1.1.0 and later. Since
-  `ifcb_py_install(features = TRUE)` installs the latest release by
-  default, this affected new installations. Raw data is now read through
-  an adapter that uses whichever reader is available (`ifcbkit`
-  preferred when both are), so `ifcb-features` v1.0.0 and v1.1.x both
-  work, including with both readers installed in the same environment. A
-  new `backend` argument (or the `IRFCB_IFCB_BACKEND` environment
-  variable) forces a specific reader. The `ifcb_features` code is
-  unchanged between these releases, so the choice of reader does not
-  affect how a region of interest is measured, and for the D-style bins
-  produced by current instruments the two readers agree on ROI numbering
-  and pixel data. They differ in two respects, both confined to older or
-  malformed data: `pyifcb` skips a ROI whose recorded width is zero
-  while `ifcbkit` skips one whose width *or* height is zero, and
-  `ifcbkit` stitches overlapping ROI pairs in I-style bins that `pyifcb`
-  returns separately. Pin a reader with `backend` if results must be
-  comparable to an earlier run on I-style data. Note that installing
-  `ifcb-features` v1.1.0 or later no longer pulls in `h5py` (via
-  `pyifcb`), removing the binary-wheel constraint that previously
-  limited which Python versions could be used.
-- Fixed
-  [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  writing non-numeric values into the `Eccentricity`, `MajorAxisLength`
-  and `MinorAxisLength` columns of `<bin>_features_v4.csv`.
-  `ifcb_features` derives these from `numpy.linalg.eig`, which returns
-  complex eigenvalues (with a zero imaginary part) for real symmetric
-  input from `numpy` 2.3 and later; they were written as strings such as
-  `(0.797+0j)`, silently turning three numeric columns into text. A zero
-  imaginary part is now dropped, so the columns are numeric again and
-  the values are unchanged. Where the imaginary part is *not* zero - a
-  near-collinear blob can yield a slightly negative eigenvalue and hence
-  a purely imaginary axis length - the value is now reported as `NaN`
-  rather than coerced to `0`, which would have been indistinguishable
-  from a genuine measurement. This only affected environments with
-  `numpy` \>= 2.3, which became reachable when `ifcb-features` v1.1.0
-  dropped the `pyifcb` dependency whose pinned `scipy` had previously
-  capped `numpy`. Feature values and blob masks are otherwise unchanged
-  across old and new `numpy`/`scikit-image`/`scipy` versions.
-- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  no longer emits a `FutureWarning` per region of interest from recent
-  `scikit-image` releases, which had obscured the progress bar.
-  `ifcb_py_install(features = TRUE)` additionally constrains
-  `scikit-image` to `< 0.28`, the release that removes the deprecated
-  morphology functions `ifcb_features` calls; without the bound, a
-  future `scikit-image` release would break `ifcb-features` v1.1.x
-  installs, which (unlike v1.0.0, pinned via `pyifcb`) leave the version
-  unconstrained.
-- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  gains a `feature_tag` argument to control the feature file naming. The
-  default (`"features"`) writes `<bin>_features_v4.csv` as before;
-  `"fea"` writes `<bin>_fea_v4.csv`, the name served by the IFCB
-  Dashboard (pyifcb’s `FeaturesDirectory`).
-- Fixed
-  [`ifcb_volume_analyzed_from_adc()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_volume_analyzed_from_adc.md)
-  failing when given more than one ADC file, or a URL. The existence
-  check was not vectorized, so a character vector of ADC files aborted
-  with `the condition has length > 1` even though the body already
-  looped over each file, and the check rejected URLs outright because
-  [`file.exists()`](https://rdrr.io/r/base/files.html) is always `FALSE`
-  for one, despite the body handling remote files. Local paths are now
-  validated individually (with all missing paths reported at once) and
-  URLs are passed straight through.
-- [`ifcb_correct_annotation()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_correct_annotation.md)
-  and
-  [`ifcb_replace_mat_values()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_replace_mat_values.md)
-  now validate their inputs and fail with actionable messages instead of
-  an opaque error. Out-of-range ROI numbers and an out-of-range
-  `column_index` report the value and the valid range (previously
-  `subscript out of bounds`), and a missing input file or a `.mat` file
-  without a `classlist` variable is now named explicitly.
-- [`ifcb_extract_features()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_extract_features.md)
-  no longer aborts an entire sequential run when a bin cannot be read.
-  With `pyifcb`, images are produced lazily, so a corrupt or truncated
-  `.roi` raised during iteration rather than from the read call and
-  escaped the per-bin error handling as an unhandled Python traceback,
-  discarding the results of every bin already processed. Such failures
-  are now reported as a per-bin error like any other.
+  [`ifcb_annotate_samples()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_annotate_samples.md),
+  keep `hdr_folder` and `adc_folder` and are not deprecated.
 - Corrected the
   [`vol2C_lgdiatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/vol2C_lgdiatom.md)
-  documentation, which incorrectly stated the relationship applied to
-  diatoms \> 2000 micron^3 (the Menden-Deuer and Lessard 2000
-  large-diatom equation is for cells \> 3000 micron^3).
+  documentation, which said the relationship applied to diatoms above
+  2000 micron^3. The Menden-Deuer and Lessard (2000) large-diatom
+  equation is for cells above 3000 micron^3.
 - Examples that call remote services
   ([`ifcb_download_dashboard_data()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_data.md),
   [`ifcb_download_dashboard_metadata()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_download_dashboard_metadata.md),
@@ -270,4 +403,4 @@
   and
   [`ifcb_is_diatom()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_is_diatom.md))
   are now wrapped in [`try()`](https://rdrr.io/r/base/try.html) so they
-  degrade gracefully when the service is unreachable.
+  fail gracefully when the service is unreachable.
