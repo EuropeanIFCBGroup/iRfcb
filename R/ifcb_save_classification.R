@@ -83,15 +83,15 @@ ifcb_save_classification <- function(
 
   format <- match.arg(format)
 
+  if (!file.exists(roi_file)) {
+    cli_abort("{.arg roi_file} not found: {.file {roi_file}}")
+  }
+
   if (format == "h5" && !requireNamespace("hdf5r", quietly = TRUE)) {
     cli_abort(c(
       "Package {.pkg hdf5r} is required for {.code format = \"h5\"}.",
       "i" = "Install it with {.run install.packages(\"hdf5r\")}"
     ))
-  }
-
-  if (!file.exists(roi_file)) {
-    cli_abort("{.arg roi_file} not found: {.file {roi_file}}")
   }
 
   gradio_url <- sub("/+$", "", gradio_url)
