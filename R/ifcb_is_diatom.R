@@ -76,7 +76,13 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom
                                       return_list = FALSE,
                                       verbose = verbose)
 
-  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_data$class)
+  # Defensive: an unexpected WoRMS response shape without a class column must
+  # degrade to "class unknown" per taxon, not a length-zero vector that
+  # silently mis-subsets (default path) or aborts tibble() (details path).
+  worms_class <- worms_data[["class"]]
+  if (is.null(worms_class)) worms_class <- rep(NA_character_, length(taxa_list_clean))
+
+  result_df <- data.frame(taxa_list_clean = taxa_list_clean, class = worms_class)
 
   # Check if the class is the specified diatom class
   is_diatom <- result_df$class %in% diatom_class
@@ -93,7 +99,7 @@ ifcb_is_diatom <- function(taxa_list, diatom_class = "Bacillariophyceae", diatom
   if (details) {
     return(tibble(taxa = taxa_list,
                   genus = word(taxa_list_clean, 1),
-                  worms_class = worms_data$class,
+                  worms_class = worms_class,
                   is_diatom = is_diatom))
   }
 

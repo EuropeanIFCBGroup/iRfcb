@@ -34,8 +34,8 @@ ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25
       cli_abort("Cannot open HDR file {.file {hdr_file[[count]]}}: File not found.")
     }
     hdr <- ifcb_get_runtime(hdr_file[[count]])
-    runtime <- hdr$runtime
-    inhibittime <- hdr$inhibittime
+    runtime <- if (is.null(hdr$runtime)) NA_real_ else hdr$runtime
+    inhibittime <- if (is.null(hdr$inhibittime)) NA_real_ else hdr$inhibittime
 
     if (!hdrOnly_flag) {
       adcfilename <- sub("\\.hdr$", ".adc", hdr_file[[count]])
@@ -50,10 +50,16 @@ ifcb_volume_analyzed <- function(hdr_file, hdrOnly_flag = FALSE, flowrate = 0.25
       inhibittime_adc <- adc_info$inhibittime
       runtime_adc <- adc_info$runtime
 
-      if ((runtime / runtime_adc < 0.98) & runtime_adc > 0 || (runtime / runtime_adc > 1.02) & runtime_adc > 0) {
+      # The ADC estimate replaces the header value when the two disagree by
+      # more than 2%. isTRUE() keeps the header value when the ADC estimate is
+      # NA (e.g. an ADC without run/inhibit columns), which is what the MATLAB
+      # reference does implicitly: its NaN comparisons are always false.
+      if (isTRUE(runtime / runtime_adc < 0.98 && runtime_adc > 0) ||
+          isTRUE(runtime / runtime_adc > 1.02 && runtime_adc > 0)) {
         runtime <- runtime_adc
       }
-      if ((inhibittime / inhibittime_adc < 0.98) & inhibittime_adc > 0 || (inhibittime / inhibittime_adc > 1.02) & inhibittime_adc > 0 ) {
+      if (isTRUE(inhibittime / inhibittime_adc < 0.98 && inhibittime_adc > 0) ||
+          isTRUE(inhibittime / inhibittime_adc > 1.02 && inhibittime_adc > 0)) {
         inhibittime <- inhibittime_adc
       }
     }

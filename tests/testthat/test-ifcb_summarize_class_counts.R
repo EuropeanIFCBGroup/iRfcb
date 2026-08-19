@@ -14,12 +14,6 @@ test_that("ifcb_summarize_class_counts works correctly", {
   # Call the function to summarize class counts
   summary_data <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range)
 
-  # Call the function using Python
-  summary_data_py <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range, use_python = TRUE)
-
-  # Expect that the .mat data from R and Python are identical
-  expect_identical(summary_data, summary_data_py)
-
   # Check that the summary data has the correct structure and elements
   expect_type(summary_data, "list")
   expect_named(summary_data, c("class2useTB", "classcountTB", "classcountTB_above_optthresh", "ml_analyzedTB", "mdateTB", "filelistTB", "classpath_generic", "classcountTB_above_adhocthresh", "adhocthresh"))
@@ -41,4 +35,23 @@ test_that("ifcb_summarize_class_counts works correctly", {
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)
+})
+
+test_that("ifcb_summarize_class_counts returns identical results with the Python reader", {
+  skip_if_no_scipy()
+
+  test_data_zip <- test_path("test_data/test_data.zip")
+  temp_dir <- file.path(tempdir(), "ifcb_summarize_class_counts_py")
+  unzip(test_data_zip, exdir = temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  classpath_generic <- file.path(temp_dir, "test_data", "class", "classxxxx_v1")
+  hdr_folder <- file.path(temp_dir, "test_data", "data")
+  year_range <- 2022
+
+  summary_data <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range)
+  summary_data_py <- ifcb_summarize_class_counts(classpath_generic, hdr_folder, year_range, use_python = TRUE)
+
+  # Expect that the .mat data from R and Python are identical
+  expect_identical(summary_data, summary_data_py)
 })

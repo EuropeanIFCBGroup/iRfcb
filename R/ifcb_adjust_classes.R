@@ -46,8 +46,18 @@ ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = 
     class2use_file <- paste0(class2use_file, ".mat")
   }
 
-  # Read the class2use cell array (1 x N) from the config file
-  class2use <- read_mat_v5(class2use_file)$class2use$data
+  # Read the class2use cell array (1 x N) from the config file. `[[` rather
+  # than `$`: partial matching would silently pick class2use_manual or
+  # class2use_auto from a manual file passed here by mistake.
+  class2use_vars <- read_mat_v5(class2use_file)
+  class2use <- class2use_vars[["class2use"]]$data
+  if (!is.character(class2use) || length(class2use) == 0) {
+    cli_abort(c(
+      "No usable {.field class2use} variable in {.file {basename(class2use_file)}}.",
+      "x" = "Expected a non-empty cell array of class names under the variable name {.field class2use}.",
+      "i" = "The file holds: {.field {names(class2use_vars)}}."
+    ))
+  }
 
   # Process every manual file (those starting with 'D') in the folder, in place
   files <- list.files(manual_folder, pattern = "^D", full.names = TRUE)
@@ -59,9 +69,15 @@ ifcb_adjust_classes <- function(class2use_file, manual_folder, do_compression = 
       next
     }
 
-    manual_data <- tryCatch(read_mat_v5(file_path), error = function(e) NULL)
-    if (is.null(manual_data)) {
-      cli_warn("The manual file {.file {basename(file_path)}} is empty or corrupted.")
+    manual_data <- tryCatch(read_mat_v5(file_path), error = function(e) e)
+    if (inherits(manual_data, "error")) {
+      # Keep the reader's own message: it names the variable and the reason
+      # (an unsupported struct, a truncated file, ...), which "empty or
+      # corrupted" would hide.
+      cli_warn(c(
+        "Skipping manual file {.file {basename(file_path)}}.",
+        "x" = conditionMessage(manual_data)
+      ))
       next
     }
 

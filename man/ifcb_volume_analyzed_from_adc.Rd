@@ -16,6 +16,10 @@ A list containing:
 \item \strong{inhibittime}: A numeric vector of inhibittime values extracted from ADC files.
 \item \strong{runtime}: A numeric vector of runtime values extracted from ADC files.
 }
+A value is \code{NA} when it cannot be derived from the file, for example when
+the ADC lacks the run/inhibit time columns (with a warning) or records no
+nonzero inhibit time, matching the \code{NaN} the MATLAB reference returns in
+those cases.
 }
 \description{
 This function reads an IFCB ADC file to extract sample run time and inhibittime,

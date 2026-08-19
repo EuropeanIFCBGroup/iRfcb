@@ -148,11 +148,15 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
   tb_list <- vector("list", n_files)
   has_chain <- logical(n_files)
   is_automated <- logical(n_files)
+  na_gaps <- integer(n_files)
 
   # Sample names depend only on the file name; compute up front so we can detect
   # a sample resolving to more than one classification file below.
+  # Strip the _class(_vN) suffix from .csv names too: a label file named
+  # {sample}_class.csv must resolve to the same sample as {sample}.csv, or the
+  # duplicate guard below and the per-sample join disagree about its identity.
   sample_names <- sub("_class(_v\\d+)?\\.(mat|h5)$", "", basename(class_files))
-  sample_names <- sub("\\.csv$", "", sample_names)
+  sample_names <- sub("(_class(_v\\d+)?)?\\.csv$", "", sample_names)
 
   if (verbose) {
     cli_progress_bar("Reading classification files", total = n_files)
@@ -177,10 +181,18 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
 
     is_automated[i] <- TRUE
     has_chain[i] <- !is.null(temp$cell_count)
+    # A missing value inside a file that does carry cell_count data (a blank
+    # CSV cell, an HDF5 NaN, a value that failed to parse) nulls the whole
+    # sample-class group in the summary; count the gaps so that can be said
+    # out loud rather than surface as an unexplained NA.
+    na_gaps[i] <- if (has_chain[i]) sum(is.na(temp$cell_count)) else 0L
 
     tb_list[[i]] <- tibble(
       sample = sample_names[i],
-      classifier = temp$classifierName,
+      # read_mat() returns classifierName as a 1x1 character matrix; without
+      # as.character() tibble() recycles it into a matrix *column*, which
+      # breaks bind_rows() against .h5-derived results and tidyr reshaping.
+      classifier = as.character(temp$classifierName)[1],
       roi_number = temp$roinum,
       class = if (threshold == "opt") {
         unlist(temp$TBclass_above_threshold)
@@ -235,6 +247,12 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
     cli_warn(c(
       "{n_no_chain} of {sum(is_automated)} classification file{?s} {qty(n_no_chain)}{?does/do} not contain chain-count data.",
       "i" = "ROIs from {qty(n_no_chain)}{?this file/these files} are treated as {.code NA} chain counts, so {.field cell_counts} is {.code NA} for the affected samples."
+    ))
+  }
+  if (any(na_gaps > 0)) {
+    cli_warn(c(
+      "{sum(na_gaps)} ROI{?s} in {sum(na_gaps > 0)} classification file{?s} with chain-count data {qty(sum(na_gaps))}{?has/have} a missing {.code cell_count} value.",
+      "i" = "{.field cell_counts} is {.code NA} for the affected sample{?s}: {.val {sample_names[na_gaps > 0]}}."
     ))
   }
 
@@ -308,9 +326,20 @@ ifcb_summarize_cell_counts <- function(class_files, hdr_folder = NULL,
       cli_progress_done()
     }
 
-    volumes <- bind_rows(volume_list)
-
-    summary_df <- left_join(summary_df, volumes, by = "sample")
+    # When no HDR file matches any classified sample (wrong folder, or files
+    # from a different period), bind_rows() yields a 0x0 tibble without a
+    # `sample` column and the join aborts with an error that names neither the
+    # cause nor the argument. Warn and report unknown volumes instead.
+    if (n_hdr == 0) {
+      cli_warn(c(
+        "No {.file .hdr} files in {.arg hdr_folder} match the classified samples.",
+        "i" = "{.field ml_analyzed} and {.field cell_counts_per_liter} are {.code NA}."
+      ))
+      summary_df$ml_analyzed <- NA_real_
+    } else {
+      volumes <- bind_rows(volume_list)
+      summary_df <- left_join(summary_df, volumes, by = "sample")
+    }
     summary_df$cell_counts_per_liter <- summary_df$cell_counts / (summary_df$ml_analyzed / 1000)
   }
 

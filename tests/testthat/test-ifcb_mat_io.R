@@ -361,11 +361,39 @@ test_that("read_mat_v5 bounds a declared element count against the bytes availab
   expect_equal(as.vector(read_mat_v5(path)$v$data), c("a", "bb", "ccc"))
 })
 
-test_that("read_mat_v5 rejects a multi-row character array rather than flattening it", {
-  # A char array is held as one string, so a 2x3 array would be read in
-  # column-major order and written back as the single row "adbecf".
-  raw <- mat_dim_bytes(mat_var_char("abcdef"))
-  expect_mat_rejected(mat_set_dims(raw, 2L, 3L), "character array.*single-row")
+test_that("read_mat_v5 reads a multi-row character array as one string per row", {
+  # ifcb-analysis summary files (countcells_allTBnew_user_training) store
+  # filelistTB as an N x 24 char matrix, one fixed-width row per sample, with
+  # the characters in column-major order. Reuse the dimension-flipping
+  # helpers: "adbecf" stored as 2x3 is rows "abc" and "def".
+  raw <- mat_dim_bytes(mat_var_char("adbecf"))
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+  writeBin(mat_set_dims(raw, 2L, 3L), path)
+
+  got <- read_mat_v5(path)$v
+  expect_equal(got$type, "char")
+  expect_equal(got$data, c("abc", "def"))
+
+  # Dimensions that disagree with the decoded character count are refused;
+  # matrix() would otherwise recycle the data into fabricated rows.
+  expect_mat_rejected(mat_set_dims(raw, 2L, 4L), "carries")
+})
+
+test_that("multi-row char arrays round-trip, padding rows to a fixed width", {
+  rows <- c("D20220522T003051_IFCB134", "D20220712T210855_IFCB134")
+
+  for_each_compression(function(compress) {
+    back <- roundtrip_mat(list(filelistTB = mat_var_char(rows)), compress)
+    expect_equal(back$filelistTB$type, "char")
+    expect_equal(back$filelistTB$data, rows)
+  })
+
+  # Unequal widths are space-padded on write, as MATLAB's char() pads them,
+  # so the padding survives the round-trip rather than the short row growing
+  # stray characters from its neighbour.
+  back <- roundtrip_mat(list(v = mat_var_char(c("abc", "z"))), FALSE)
+  expect_equal(back$v$data, c("abc", "z  "))
 })
 
 test_that("read_mat_v5 rejects an array with more than two dimensions", {
@@ -417,7 +445,9 @@ test_that("read_mat_v5 recovers a compressed section that lacks its terminator",
   on.exit(unlink(bad), add = TRUE)
   writeBin(truncated, bad)
 
-  expect_warning(got <- read_mat_v5(bad), "without its stream terminator")
+  # Single word: cli wraps the message at console width, and a multi-word
+  # pattern fails when the wrap lands inside it (seen on r-hub's nosuggests).
+  expect_warning(got <- read_mat_v5(bad), "terminator")
   expect_equal(as.vector(got$classlist$data), as.vector(values))
 })
 
@@ -466,6 +496,27 @@ test_that("uncompressed output is byte-for-byte identical to scipy.io.savemat", 
   # The first 128 bytes are a text header that embeds a creation timestamp, so
   # compare everything after it.
   expect_equal(r_bytes[129:length(r_bytes)], py_bytes[129:length(py_bytes)])
+})
+
+test_that("scipy-written multi-row char arrays decode row-wise", {
+  skip_on_cran()
+  skip_if_no_scipy()
+
+  np <- reticulate::import("numpy", convert = FALSE)
+  sio <- reticulate::import("scipy.io")
+
+  # A numpy unicode array of equal-width strings is what a filelistTB written
+  # from Python looks like: scipy stores it as an N x W mxCHAR matrix, the same
+  # layout MATLAB uses for its char matrices.
+  samples <- c("D20220522T003051_IFCB134", "D20220712T210855_IFCB134")
+  py_path <- tempfile(fileext = ".mat")
+  on.exit(unlink(py_path), add = TRUE)
+  sio$savemat(py_path, reticulate::dict(filelistTB = np$array(samples)),
+              do_compression = TRUE)
+
+  got <- read_mat_v5(py_path)$filelistTB
+  expect_equal(got$type, "char")
+  expect_equal(got$data, samples)
 })
 
 test_that("read_mat_v5 decodes every numeric class it accepts", {
@@ -585,4 +636,163 @@ test_that("scipy.io.loadmat can read a mixed structure written by write_mat_v5",
   expect_equal(as.integer(m$roinum), c(1L, 2L, 3L, 4L))
   # NaN in the third column survives the round-trip through scipy.
   expect_true(all(is.nan(m$classlist[, 3])))
+})
+
+test_that("the writer refuses values that do not fit the declared integer class", {
+  for_each_compression(function(compress) {
+    path <- tempfile(fileext = ".mat")
+    on.exit(unlink(path), add = TRUE)
+
+    # One case per bound: above uint8, below int8, above uint16, non-integral.
+    expect_error(
+      write_mat_v5(path, list(v = mat_var_numeric(matrix(c(1, 300)), 9L)), compress),
+      "cannot be stored as"
+    )
+    expect_error(
+      write_mat_v5(path, list(v = mat_var_numeric(matrix(-200), 8L)), compress),
+      "cannot be stored as"
+    )
+    expect_error(
+      write_mat_v5(path, list(v = mat_var_uint16(matrix(70000))), compress),
+      "cannot be stored as"
+    )
+    expect_error(
+      write_mat_v5(path, list(v = mat_var_uint16(matrix(1.5))), compress),
+      "cannot be stored as"
+    )
+    # NaN is representable in double but in no integer class.
+    expect_error(
+      write_mat_v5(path, list(v = mat_var_numeric(matrix(NaN), 9L)), compress),
+      "cannot be stored as"
+    )
+    # An abort must not leave a partial file behind.
+    expect_false(file.exists(path))
+  })
+})
+
+test_that("the writer refuses variable specifications it would previously mangle", {
+  path <- tempfile(fileext = ".mat")
+  on.exit(unlink(path), add = TRUE)
+
+  # NULL cell data - e.g. indexing a read file for a variable it does not
+  # hold - used to serialise as an empty cell, erasing real data on write-back.
+  expect_error(write_mat_v5(path, list(c2u = mat_var_cell(NULL))), "must be character")
+  # NA elements used to be written as empty strings.
+  expect_error(
+    write_mat_v5(path, list(c2u = mat_var_cell(matrix(c("a", NA), nrow = 1)))),
+    "NA"
+  )
+  # Unnamed elements used to be skipped silently, dropping the variable.
+  expect_error(write_mat_v5(path, list(mat_var_double(matrix(1)))), "must be named")
+  expect_error(
+    write_mat_v5(path, setNames(list(mat_var_double(matrix(1)), mat_var_double(matrix(2))), c("a", "a"))),
+    "unique"
+  )
+  expect_error(write_mat_v5(path, "not a list"), "named list")
+  expect_false(file.exists(path))
+})
+
+test_that(".mat_widen_numeric promotes a narrow class only when the data outgrew it", {
+  fits <- mat_var_numeric(matrix(c(1, 255)), 9L)
+  expect_identical(.mat_widen_numeric(fits), fits)
+
+  outgrown <- mat_var_numeric(matrix(c(1, 300)), 9L)
+  expect_equal(.mat_widen_numeric(outgrown)$class_code, 6L) # mxDOUBLE
+
+  # Non-numeric and already-double specs pass through untouched.
+  dbl <- mat_var_double(matrix(1e10))
+  expect_identical(.mat_widen_numeric(dbl), dbl)
+  cell <- mat_var_cell(matrix("a"))
+  expect_identical(.mat_widen_numeric(cell), cell)
+})
+
+# ---- CRAN-runnable decoder fixtures -----------------------------------------
+# Hand-crafted MAT-file bytes, built with writeBin directly rather than the
+# package's own encoders, so a symmetric encode/decode bug cannot cancel out.
+# These run everywhere (no scipy, no skip): they guard the int8/int32/uint32
+# endpoint decoding fixed in 0.10.0, which previously had scipy-gated tests
+# only.
+build_numeric_mat_file <- function(class_code, mi_type, data_raw) {
+  u32 <- function(x) writeBin(as.integer(x), raw(), size = 4L, endian = "little")
+  header <- raw(128)
+  txt <- charToRaw("MATLAB 5.0 MAT-file, handcrafted test fixture")
+  header[seq_along(txt)] <- txt
+  header[125:128] <- as.raw(c(0x00, 0x01, 0x49, 0x4D)) # version 0x0100 + "IM"
+
+  flags <- c(u32(6L), u32(8L), u32(class_code), u32(0L))  # miUINT32, 8 bytes
+  n_el <- length(data_raw) / c("1" = 1, "3" = 2, "5" = 4, "6" = 4, "7" = 4)[[as.character(mi_type)]]
+  dims <- c(u32(5L), u32(8L), u32(n_el), u32(1L))          # miINT32, Nx1
+  name <- c(u32(1L), u32(1L), charToRaw("v"), raw(7))      # miINT8 "v" + pad
+  pad <- (8L - (length(data_raw) %% 8L)) %% 8L
+  data <- c(u32(mi_type), u32(length(data_raw)), data_raw, raw(pad))
+
+  body <- c(flags, dims, name, data)
+  path <- tempfile(fileext = ".mat")
+  writeBin(c(header, u32(14L), u32(length(body)), body), path)
+  path
+}
+
+test_that("hand-crafted int8/int16/single bytes decode to the exact values", {
+  cases <- list(
+    list(class = 8L, mi = 1L,
+         bytes = writeBin(c(-128L, -1L, 0L, 127L), raw(), size = 1L, endian = "little"),
+         values = c(-128, -1, 0, 127)),
+    list(class = 10L, mi = 3L,
+         bytes = writeBin(c(-32768L, 32767L), raw(), size = 2L, endian = "little"),
+         values = c(-32768, 32767)),
+    list(class = 7L, mi = 7L,
+         bytes = writeBin(c(1.5, -2.25), raw(), size = 4L, endian = "little"),
+         values = c(1.5, -2.25))
+  )
+  for (cs in cases) {
+    path <- build_numeric_mat_file(cs$class, cs$mi, cs$bytes)
+    on.exit(unlink(path), add = TRUE)
+    back <- read_mat_v5(path)
+    expect_equal(back$v$class_code, cs$class)
+    expect_equal(as.vector(back$v$data), cs$values)
+    # and the writer reproduces the same values under the same class
+    write_mat_v5(path, back)
+    again <- read_mat_v5(path)
+    expect_equal(again$v$class_code, cs$class)
+    expect_equal(as.vector(again$v$data), cs$values)
+  }
+})
+
+test_that("int32/uint32 endpoints that R cannot hold as integers decode exactly", {
+  # -2147483648 and values above 2^31 - 1 cannot be written via as.integer()
+  # (R reserves -2^31 for NA), so their little-endian bytes are spelled out.
+  int32_bytes <- as.raw(c(0x00, 0x00, 0x00, 0x80,   # -2147483648
+                          0xFF, 0xFF, 0xFF, 0x7F))  #  2147483647
+  path <- build_numeric_mat_file(12L, 5L, int32_bytes)
+  on.exit(unlink(path), add = TRUE)
+  back <- read_mat_v5(path)
+  expect_equal(as.vector(back$v$data), c(-2147483648, 2147483647))
+  write_mat_v5(path, back)
+  expect_equal(as.vector(read_mat_v5(path)$v$data), c(-2147483648, 2147483647))
+
+  uint32_bytes <- as.raw(c(0x00, 0x00, 0x00, 0x00,   # 0
+                           0x00, 0x00, 0x00, 0x80,   # 2147483648
+                           0xFF, 0xFF, 0xFF, 0xFF))  # 4294967295
+  path2 <- build_numeric_mat_file(13L, 6L, uint32_bytes)
+  on.exit(unlink(path2), add = TRUE)
+  back2 <- read_mat_v5(path2)
+  expect_equal(as.vector(back2$v$data), c(0, 2147483648, 4294967295))
+  write_mat_v5(path2, back2)
+  expect_equal(as.vector(read_mat_v5(path2)$v$data), c(0, 2147483648, 4294967295))
+})
+
+test_that("stray bytes after the last complete element are reported, not dropped", {
+  for_each_compression(function(compress) {
+    path <- tempfile(fileext = ".mat")
+    on.exit(unlink(path), add = TRUE)
+    write_mat_v5(path, list(a = mat_var_double(matrix(1:4, 2)),
+                            b = mat_var_double(matrix(5))), compress)
+
+    # 1-7 stray bytes are the start of an element cut off mid-tag. The loop
+    # used to exit quietly, reading the file as a success with a variable
+    # silently missing - and a write-back then made the loss permanent.
+    stray <- readBin(path, "raw", file.size(path))
+    writeBin(c(stray, as.raw(c(0x0F, 0x00, 0x00))), path)
+    expect_error(read_mat_v5(path), "stray byte")
+  })
 })

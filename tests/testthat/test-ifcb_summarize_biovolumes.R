@@ -201,3 +201,25 @@ test_that("ifcb_summarize_biovolumes handles no class2use file gracefully", {
   unlink(temp_dir, recursive = TRUE)
 })
 
+
+test_that("an hdr_folder matching no samples warns instead of aborting the join", {
+  temp_dir <- file.path(tempdir(), "summarize_biovol_nohdr")
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+  feature_folder <- file.path(temp_dir, "test_data/features")
+  class_folder <- file.path(temp_dir, "test_data/class/class2022_v1")
+  empty_hdr <- file.path(temp_dir, "no_hdr_here")
+  dir.create(empty_hdr)
+
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  expect_warning(
+    res <- ifcb_summarize_biovolumes(feature_folder, class_folder,
+                                     hdr_folder = empty_hdr, verbose = FALSE),
+    "match the classified samples"
+  )
+  expect_true(all(is.na(res$ml_analyzed)))
+  expect_true(all(is.na(res$counts_per_liter)))
+})

@@ -2,7 +2,8 @@
 
 test_that("ifcb_save_classification errors when roi_file does not exist", {
   expect_error(
-    ifcb_save_classification("nonexistent.roi", output_folder = tempdir()),
+    ifcb_save_classification("nonexistent.roi", output_folder = tempdir(),
+                             format = "csv"),
     "`roi_file` not found"
   )
 })
@@ -30,7 +31,8 @@ test_that("ifcb_save_classification errors when no PNGs are extracted", {
   mockery::stub(ifcb_save_classification, "ifcb_extract_pngs", function(...) invisible(NULL))
 
   expect_error(
-    ifcb_save_classification(fake_roi, output_folder = tempdir(), verbose = FALSE),
+    ifcb_save_classification(fake_roi, output_folder = tempdir(),
+                             format = "csv", verbose = FALSE),
     "No PNG images were extracted"
   )
 })

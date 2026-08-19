@@ -14,7 +14,7 @@ test_that("ifcb_count_mat_annotations works correctly", {
   expect_true(file.exists(class2use_file))
 
   # Run the function without skipping any classes
-  result <- ifcb_count_mat_annotations(manual_folder, class2use_file, use_python = TRUE)
+  result <- ifcb_count_mat_annotations(manual_folder, class2use_file)
 
   # Verify the structure of the result
   expect_s3_class(result, "data.frame")
@@ -68,4 +68,22 @@ test_that("ifcb_count_mat_annotations works correctly", {
 
   # Cleanup temporary files
   unlink(temp_dir, recursive = TRUE)
+})
+
+test_that("ifcb_count_mat_annotations returns identical results with the Python reader", {
+  skip_if_no_scipy()
+
+  test_data_zip <- test_path("test_data/test_data.zip")
+  temp_dir <- file.path(tempdir(), "ifcb_count_mat_annotations_py")
+  unzip(test_data_zip, exdir = temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  manual_folder <- file.path(temp_dir, "test_data", "manual")
+  class2use_file <- file.path(temp_dir, "test_data", "config", "class2use.mat")
+
+  result <- ifcb_count_mat_annotations(manual_folder, class2use_file)
+  result_py <- ifcb_count_mat_annotations(manual_folder, class2use_file, use_python = TRUE)
+
+  # Expect that the .mat data from R and Python are identical
+  expect_identical(result, result_py)
 })

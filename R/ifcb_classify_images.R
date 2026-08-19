@@ -155,8 +155,17 @@ ifcb_classify_images <- function(
 # @noRd
 gradio_fetch <- function(url, handle = curl::new_handle(),
                          error_prefix = "Connection to Gradio failed") {
-  max_tries <- max(1L, as.integer(getOption("iRfcb.gradio_max_tries", 4L)))
-  base_delay <- getOption("iRfcb.gradio_retry_delay", 1)
+  # Validate both options up front: a stray value in a user profile otherwise
+  # surfaces far away, as a cryptic seq_len() or Sys.sleep() error that names
+  # neither the option nor the function.
+  max_tries <- suppressWarnings(as.integer(getOption("iRfcb.gradio_max_tries", 4L)[1]))
+  if (length(max_tries) != 1L || is.na(max_tries) || max_tries < 1L) {
+    cli_abort("{.code options(iRfcb.gradio_max_tries)} must be a single positive integer.")
+  }
+  base_delay <- suppressWarnings(as.numeric(getOption("iRfcb.gradio_retry_delay", 1)[1]))
+  if (length(base_delay) != 1L || is.na(base_delay) || base_delay < 0) {
+    cli_abort("{.code options(iRfcb.gradio_retry_delay)} must be a single non-negative number.")
+  }
 
   resp <- NULL
   for (attempt in seq_len(max_tries)) {

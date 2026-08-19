@@ -333,27 +333,39 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
       adc <- tryCatch(read_adc_columns(adc_file), error = function(e) NULL)
       if (!is.null(adc)) {
         n_targets <- nrow(adc)
-        rc <- adc_get_roi_columns(adc)
-        # A ROI dimension that is blank or NaN reads back as NA. Those rows stay
-        # out of `imaged`, since an NA in `n_rois` would abort the sample and
-        # with it the whole survey. They are counted rather than just dropped: a
-        # width column that failed to parse otherwise looks identical to a
-        # sample that never triggered, and on a legacy header, with no
-        # `roiCount` to compare against, nothing else would catch it.
-        dims_malformed <- is.na(rc$x) | is.na(rc$y)
-        imaged <- !dims_malformed & rc$x > 0
-        # An imaged row with an unreadable start byte counts as malformed too.
-        # It drops out of the `roi_bytes_expected` maximum below, understating
-        # how far the .roi must extend and weakening `roi_data_complete`.
-        n_roi_malformed <- sum(dims_malformed | (imaged & is.na(rc$startbyte)))
-        n_rois <- sum(imaged)
-        roi_bytes_expected <- if (n_rois > 0) {
-          ends <- rc$startbyte[imaged] + rc$x[imaged] * rc$y[imaged]
-          if (all(is.na(ends))) NA_real_ else max(ends, na.rm = TRUE)
-        } else {
-          0
+        # Guarded like the read above: an .adc with too few columns, or a
+        # header whose ADCFileFormat lacks a ROI dimension column, must yield
+        # NA checks for this sample, not abort the whole survey.
+        rc <- tryCatch(adc_get_roi_columns(adc), error = function(e) NULL)
+        if (is.null(rc)) {
+          cli_warn(c(
+            "Could not locate the ROI columns of {.file {adc_file}}.",
+            "i" = "ADC-based checks will be reported as {.code NA} for this sample."
+          ))
         }
-        adc_runtime <- adc_get_runtime(adc)
+        if (!is.null(rc)) {
+          # A ROI dimension that is blank or NaN reads back as NA. Those rows
+          # stay out of `imaged`, since an NA in `n_rois` would abort the
+          # sample and with it the whole survey. They are counted rather than
+          # just dropped: a width column that failed to parse otherwise looks
+          # identical to a sample that never triggered, and on a legacy header,
+          # with no `roiCount` to compare against, nothing else would catch it.
+          dims_malformed <- is.na(rc$x) | is.na(rc$y)
+          imaged <- !dims_malformed & rc$x > 0
+          # An imaged row with an unreadable start byte counts as malformed
+          # too. It drops out of the `roi_bytes_expected` maximum below,
+          # understating how far the .roi must extend and weakening
+          # `roi_data_complete`.
+          n_roi_malformed <- sum(dims_malformed | (imaged & is.na(rc$startbyte)))
+          n_rois <- sum(imaged)
+          roi_bytes_expected <- if (n_rois > 0) {
+            ends <- rc$startbyte[imaged] + rc$x[imaged] * rc$y[imaged]
+            if (all(is.na(ends))) NA_real_ else max(ends, na.rm = TRUE)
+          } else {
+            0
+          }
+        }
+        adc_runtime <- tryCatch(adc_get_runtime(adc), error = function(e) NA_real_)
       }
     }
   }
@@ -415,8 +427,16 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
   temperature_high <- if (!is.null(max_temperature) && !is.na(temperature)) temperature > max_temperature else NA
 
   looktime_s <- if (has_hdr) {
-    rt <- ifcb_get_runtime(hdr_file)
-    if (!is.null(rt$runtime) && !is.null(rt$inhibittime)) rt$runtime - rt$inhibittime else NA_real_
+    # Guarded, and held to scalars: a header with a second key ending in
+    # "runtime:" makes ifcb_get_runtime() return length-2 values, which
+    # dplyr::tibble() below would recycle into a duplicated row for this
+    # sample rather than error.
+    rt <- tryCatch(ifcb_get_runtime(hdr_file), error = function(e) NULL)
+    if (length(rt$runtime) == 1L && length(rt$inhibittime) == 1L) {
+      rt$runtime - rt$inhibittime
+    } else {
+      NA_real_
+    }
   } else NA_real_
 
   dplyr::tibble(

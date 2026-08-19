@@ -427,3 +427,87 @@ test_that("samples from a file without cell_count report NA, not zero cells", {
   expect_equal(res$counts[2], 5L)
   expect_true(is.na(res$cell_counts[2]))
 })
+
+test_that("a missing cell_count inside a chain-counted file warns and reports NA", {
+  skip_if_not_installed("hdf5r")
+  dir <- fresh_dir()
+
+  # The file carries chain-count data, but one ROI's value is missing (a blank
+  # CSV cell or HDF5 NaN in the wild). The group total used to silently become
+  # NA with no diagnostic at all - the "no chain data" warning only covers
+  # files with no cell_count dataset whatsoever.
+  write_test_class_h5(file.path(dir, "D20220101T000000_IFCB001_class_v1.h5"),
+                      roi = 1:4, classes = rep("Skeletonema", 4),
+                      chain = c(2, NaN, 3, 4))
+
+  expect_warning(
+    res <- ifcb_summarize_cell_counts(dir, verbose = FALSE),
+    "missing"
+  )
+
+  # The abundance is unknown, not zero, and the chain statistics still cover
+  # the three measured ROIs.
+  expect_true(is.na(res$cell_counts))
+  expect_equal(res$counts, 4L)
+  expect_equal(res$n_counted, 3L)
+  expect_equal(res$mean_chain_length, 3)
+})
+
+test_that("a valid label file named {sample}_class.csv resolves to the bare sample", {
+  sample <- "D20220101T000000_IFCB001"
+  dir <- fresh_dir()
+  write_label_csv(file.path(dir, paste0(sample, "_class.csv")), sample,
+                  1:3, rep("Skeletonema", 3), c(2, 3, 4))
+
+  res <- ifcb_summarize_cell_counts(dir, verbose = FALSE)
+  # The suffix used to leak into the sample id, creating a phantom
+  # "D..._IFCB001_class" sample that no HDR file could ever match.
+  expect_equal(unique(res$sample), sample)
+})
+
+test_that("two valid label CSVs for one sample abort as duplicates, not phantom rows", {
+  sample <- "D20220101T000000_IFCB001"
+  dir <- fresh_dir()
+  write_label_csv(file.path(dir, paste0(sample, ".csv")), sample,
+                  1:3, rep("Skeletonema", 3), c(2, 3, 4))
+  write_label_csv(file.path(dir, paste0(sample, "_class.csv")), sample,
+                  1:3, rep("Skeletonema", 3), c(2, 3, 4))
+
+  # Under the old suffix handling these read as two different samples and both
+  # rows were returned; ifcb_extract_biovolumes() aborted on the same input.
+  expect_error(
+    ifcb_summarize_cell_counts(dir, verbose = FALSE),
+    "more than one classification file"
+  )
+})
+
+test_that("an hdr_folder matching no samples warns and reports NA per-liter values", {
+  sample <- "D20220101T000000_IFCB001"
+  dir <- fresh_dir()
+  write_label_csv(file.path(dir, paste0(sample, ".csv")), sample,
+                  1:3, rep("Skeletonema", 3), c(2, 3, 4))
+  empty_hdr <- fresh_dir()
+
+  # This used to abort with "Join columns in `y` must be present in the data".
+  expect_warning(
+    res <- ifcb_summarize_cell_counts(dir, hdr_folder = empty_hdr, verbose = FALSE),
+    "match the classified samples"
+  )
+  expect_true(all(is.na(res$ml_analyzed)))
+  expect_true(all(is.na(res$cell_counts_per_liter)))
+  expect_false(all(is.na(res$cell_counts)))
+})
+
+test_that("classifier is a plain character column when reading .mat files", {
+  skip_if_not_installed("R.matlab")
+  dir <- fresh_dir()
+  write_test_class_mat(file.path(dir, "D20220101T000000_IFCB001_class_v1.mat"),
+                       roi = 1:3, classes = rep("Skeletonema", 3), chain = c(2, 3, 4))
+
+  res <- ifcb_summarize_cell_counts(dir, verbose = FALSE)
+  # read_mat() returns classifierName as a 1x1 matrix; it used to become a
+  # matrix *column*, breaking bind_rows() against .h5-derived results.
+  expect_false(is.matrix(res$classifier))
+  expect_type(res$classifier, "character")
+  expect_equal(unique(res$classifier), "test_clf")
+})

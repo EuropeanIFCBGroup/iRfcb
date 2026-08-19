@@ -43,11 +43,15 @@ ifcb_read_features <- function(feature_files = NULL,
     feature_files <- list.files(feature_files, pattern = "D.*\\.csv", full.names = TRUE, recursive = TRUE)
   }
 
-  # Filter based on multiblob or single blob
+  # Filter based on multiblob or single blob. Match on the file name, not the
+  # whole path: multiblob files are named "<bin>_multiblob_v<N>.csv" in every
+  # convention that produces them (MATLAB ifcb-analysis, ifcb-features
+  # >= 1.2.0), whereas a folder along the path may contain "multiblob" without
+  # its files being per-blob tables.
   if (multiblob) {
-    feature_files <- feature_files[grepl("multiblob", feature_files, ignore.case = TRUE)]
+    feature_files <- feature_files[grepl("multiblob", basename(feature_files), ignore.case = TRUE)]
   } else {
-    feature_files <- feature_files[!grepl("multiblob", feature_files, ignore.case = TRUE)]
+    feature_files <- feature_files[!grepl("multiblob", basename(feature_files), ignore.case = TRUE)]
   }
 
   # Filter by feature version if specified

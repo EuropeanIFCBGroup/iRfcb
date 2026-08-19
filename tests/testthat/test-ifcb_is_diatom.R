@@ -105,3 +105,27 @@ test_that("ifcb_is_diatom details surfaces the resolved WoRMS class for homonyms
   expect_true(chaetoceros$is_diatom)
   expect_identical(chaetoceros$worms_class, "Bacillariophyceae")
 })
+
+test_that("a class list where nothing resolves in WoRMS degrades to NA, offline", {
+  # Simulate WoRMS finding no record for any taxon (empty per-name responses).
+  testthat::local_mocked_bindings(
+    wm_records_names = function(taxa_names, ...) lapply(taxa_names, function(x) list()),
+    .package = "iRfcb"
+  )
+
+  labels <- c("unclassified", "detritus")
+
+  # details = TRUE used to abort with a tibble size error because the
+  # no-content rows carried no `class` column; the default path returned
+  # logical(0) and silently mis-subset callers.
+  res <- ifcb_is_diatom(labels, details = TRUE)
+  expect_equal(nrow(res), 2L)
+  expect_true(all(is.na(res$worms_class)))
+  expect_false(any(res$is_diatom))
+
+  expect_equal(ifcb_is_diatom(labels), c(FALSE, FALSE))
+
+  # diatom_include still overrides an unresolved class.
+  res_incl <- ifcb_is_diatom(labels, diatom_include = "detritus", details = TRUE)
+  expect_equal(res_incl$is_diatom, c(FALSE, TRUE))
+})
