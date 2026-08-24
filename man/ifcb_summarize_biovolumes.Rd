@@ -11,6 +11,7 @@ ifcb_summarize_biovolumes(
   hdr_folder = NULL,
   custom_images = NULL,
   custom_classes = NULL,
+  custom_cell_counts = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
@@ -53,6 +54,12 @@ used as a substitute for classification files.}
 
 \item{custom_classes}{(Optional) A character vector of corresponding class labels for \code{custom_images}.}
 
+\item{custom_cell_counts}{(Optional) An integer vector of raw per-ROI chain counts
+corresponding to \code{custom_images} by position, as produced by the diatom chain counter
+(the \code{cell_count} data in \code{.mat}/\code{.h5}/\code{.csv} classification files). Sentinel values
+(\code{-1}, \code{0}) and \code{NA} are allowed and resolved exactly as when reading \code{class_files}.
+Requires \code{use_cell_counts = TRUE}. Passed to \code{ifcb_extract_biovolumes}. Default: NULL.}
+
 \item{micron_factor}{Conversion factor from microns per pixel (default: 1/3.4).}
 
 \item{diatom_class}{A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".}
@@ -93,8 +100,9 @@ class without any threshold applied.}
 \item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count} data
 stored by the diatom chain counter in \code{.mat}/\code{.h5}/\code{.csv} classification files and adds
 \code{cell_counts} (and \code{cell_counts_per_liter} when \code{hdr_folder} is supplied) to the output,
-reporting cell abundance alongside ROI counts. Only supported with automated \code{class_files}.
-The function aborts if enabled but no classification file contains chain-count data. For
+reporting cell abundance alongside ROI counts. Supported with automated \code{class_files},
+or with \code{custom_images} when the counts are supplied via \code{custom_cell_counts}.
+The function aborts if enabled but no chain-count data is available. For
 chain-length statistics (mean, median, max chain length) use
 \code{\link{ifcb_summarize_cell_counts}}. Note that \code{cell_counts} here is summed only over
 ROIs that also have matching feature (biovolume) data (the same ROI population as \code{counts});
