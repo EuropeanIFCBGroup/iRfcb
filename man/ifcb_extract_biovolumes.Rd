@@ -9,6 +9,7 @@ ifcb_extract_biovolumes(
   class_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
+  custom_cell_counts = NULL,
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
@@ -47,6 +48,14 @@ These filenames should match the \code{roi_number} assignment in the \code{featu
 used as a substitute for classification files.}
 
 \item{custom_classes}{(Optional) A character vector of corresponding class labels for \code{custom_images}.}
+
+\item{custom_cell_counts}{(Optional) An integer vector of raw per-ROI chain counts
+corresponding to \code{custom_images} by position, as produced by the diatom chain
+counter (the \code{cell_count} data in \code{.mat}/\code{.h5}/\code{.csv} classification files).
+Sentinel values (\code{-1} for ROIs the counter skipped, \code{0} where it found no
+cells) and \code{NA} (no chain-count data for that ROI) are allowed and resolved
+exactly as when reading \code{class_files}; see \code{single_cell_values}. Requires
+\code{use_cell_counts = TRUE}. Default: NULL.}
 
 \item{class2use_file}{(Optional) A character string specifying the path to the file containing the \code{class2use} variable. Only required for manual results (default: NULL).}
 
@@ -96,8 +105,9 @@ class without any threshold applied.}
 \item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count}
 data stored by the diatom chain counter in \code{.mat}/\code{.h5}/\code{.csv} classification files and
 adds \code{cell_count} (raw) and \code{cell_count_resolved} (resolved abundance) columns to the
-output. Only supported with automated \code{class_files}; not with manual files
-or \code{custom_images}. Default: \code{FALSE}.}
+output. Supported with automated \code{class_files}, or with \code{custom_images} when
+the counts are supplied via \code{custom_cell_counts}; not with manual files.
+Default: \code{FALSE}.}
 
 \item{single_cell_values}{Integer vector of \code{cell_count} values that should be treated
 as a single cell when resolving \code{cell_count_resolved}. Default is \code{c(-1, 0)}, i.e. ROIs that
@@ -156,6 +166,7 @@ depending on whether the class is identified as a diatom.
 \itemize{
 \item If \code{class_files} is provided, the function reads class annotations from \code{.mat}, \code{.h5}, or \code{.csv} files.
 \item If \code{custom_images} and \code{custom_classes} are supplied, they override classification file data (e.g. data from a CNN model).
+Chain counts can then be supplied per image via \code{custom_cell_counts} to use \code{use_cell_counts = TRUE}.
 \item If both \code{class_files} and \code{custom_images/custom_classes} are given, \code{class_files} takes precedence.
 }
 \item \strong{MAT File Processing:}

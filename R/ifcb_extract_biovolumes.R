@@ -19,6 +19,13 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
 #'        used as a substitute for classification files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
+#' @param custom_cell_counts (Optional) An integer vector of raw per-ROI chain counts
+#'        corresponding to `custom_images` by position, as produced by the diatom chain
+#'        counter (the `cell_count` data in `.mat`/`.h5`/`.csv` classification files).
+#'        Sentinel values (`-1` for ROIs the counter skipped, `0` where it found no
+#'        cells) and `NA` (no chain-count data for that ROI) are allowed and resolved
+#'        exactly as when reading `class_files`; see `single_cell_values`. Requires
+#'        `use_cell_counts = TRUE`. Default: NULL.
 #' @param class2use_file (Optional) A character string specifying the path to the file containing the `class2use` variable. Only required for manual results (default: NULL).
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param diatom_class A character vector specifying diatom class names in WoRMS. Default: `"Bacillariophyceae"`.
@@ -55,8 +62,9 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count`
 #'        data stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and
 #'        adds `cell_count` (raw) and `cell_count_resolved` (resolved abundance) columns to the
-#'        output. Only supported with automated `class_files`; not with manual files
-#'        or `custom_images`. Default: `FALSE`.
+#'        output. Supported with automated `class_files`, or with `custom_images` when
+#'        the counts are supplied via `custom_cell_counts`; not with manual files.
+#'        Default: `FALSE`.
 #' @param single_cell_values Integer vector of `cell_count` values that should be treated
 #'        as a single cell when resolving `cell_count_resolved`. Default is `c(-1, 0)`, i.e. ROIs that
 #'        were not counted (`-1`) and ROIs where no cells were detected (`0`) each count as one
@@ -96,6 +104,7 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' - **Classification Data Handling:**
 #'   - If `class_files` is provided, the function reads class annotations from `.mat`, `.h5`, or `.csv` files.
 #'   - If `custom_images` and `custom_classes` are supplied, they override classification file data (e.g. data from a CNN model).
+#'     Chain counts can then be supplied per image via `custom_cell_counts` to use `use_cell_counts = TRUE`.
 #'   - If both `class_files` and `custom_images/custom_classes` are given, `class_files` takes precedence.
 #'
 #' - **MAT File Processing:**
@@ -150,6 +159,7 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #'
 #' @seealso \code{\link{ifcb_read_features}} \code{\link{ifcb_is_diatom}} \code{\link{ifcb_summarize_cell_counts}} \url{https://github.com/nodc-sweden/ifcb-pytorch-classify} \url{https://www.marinespecies.org/}
 ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_images = NULL, custom_classes = NULL,
+                                    custom_cell_counts = NULL,
                                     class2use_file = NULL, micron_factor = 1 / 3.4,
                                     diatom_class = "Bacillariophyceae", diatom_include = NULL, marine_only = FALSE,
                                     diatom_equation = c("large", "all", "auto"),
@@ -190,10 +200,17 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   }
 
   if (!is.null(class_files) && (!is.null(custom_images) || !is.null(custom_classes))) {
-    cli_warn(c(
-      "Both {.arg class_files} and {.arg custom_images}/{.arg custom_classes} were provided.",
-      "i" = "Using {.arg class_files} and ignoring {.arg custom_images}/{.arg custom_classes}."
-    ))
+    if (is.null(custom_cell_counts)) {
+      cli_warn(c(
+        "Both {.arg class_files} and {.arg custom_images}/{.arg custom_classes} were provided.",
+        "i" = "Using {.arg class_files} and ignoring {.arg custom_images}/{.arg custom_classes}."
+      ))
+    } else {
+      cli_warn(c(
+        "Both {.arg class_files} and {.arg custom_images}/{.arg custom_classes} were provided.",
+        "i" = "Using {.arg class_files} and ignoring {.arg custom_images}/{.arg custom_classes}/{.arg custom_cell_counts}."
+      ))
+    }
   }
 
   if (is.character(feature_files)) {
@@ -255,10 +272,31 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     }
   }
 
-  if (use_cell_counts && !is.null(custom_images)) {
+  if (use_cell_counts && !is.null(custom_images) && is.null(custom_cell_counts)) {
     cli_abort(c(
-      "{.arg use_cell_counts = TRUE} cannot be combined with {.arg custom_images}/{.arg custom_classes}.",
-      "i" = "Chain-count data is read from {.arg class_files} ({.file .h5} or {.file .csv})."
+      "{.arg use_cell_counts = TRUE} requires {.arg custom_cell_counts} when {.arg custom_images}/{.arg custom_classes} are used.",
+      "i" = "Chain-count data is read from {.arg class_files} ({.file .h5} or {.file .csv}), or supplied per image via {.arg custom_cell_counts}."
+    ))
+  }
+
+  if (!is.null(custom_cell_counts) && is.null(custom_images)) {
+    cli_abort(c(
+      "{.arg custom_cell_counts} requires {.arg custom_images}/{.arg custom_classes}.",
+      "i" = "Chain counts supplied this way are matched to {.arg custom_images} by position."
+    ))
+  }
+
+  if (!is.null(custom_cell_counts) && !use_cell_counts) {
+    cli_abort(c(
+      "{.arg custom_cell_counts} was supplied but {.arg use_cell_counts} is {.code FALSE}.",
+      "i" = "Set {.arg use_cell_counts = TRUE} to use the supplied chain counts."
+    ))
+  }
+
+  if (use_cell_counts && !is.null(custom_cell_counts) && all(is.na(custom_cell_counts))) {
+    cli_abort(c(
+      "{.arg use_cell_counts = TRUE} but every {.arg custom_cell_counts} value is {.code NA}.",
+      "i" = "Supply the {.code cell_count} data from the classification files, or set {.arg use_cell_counts = FALSE}."
     ))
   }
 
@@ -336,12 +374,38 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
       ))
     }
 
+    if (!is.null(custom_cell_counts) && length(custom_cell_counts) != length(custom_images)) {
+      cli_abort(c(
+        "The number of images does not match the number of chain counts.",
+        "x" = "{.arg custom_images} has length {length(custom_images)}",
+        "x" = "{.arg custom_cell_counts} has length {length(custom_cell_counts)}"
+      ))
+    }
+
     image_df <- ifcb_convert_filenames(custom_images)
     class_df <- image_df %>%
       mutate(classifier = NA,
              class = custom_classes) %>%
       select(sample, classifier, roi, class) %>%
       rename(roi_number = roi)
+
+    if (use_cell_counts) {
+      class_df$cell_count <- as.integer(custom_cell_counts)
+
+      # Mirror the class_files diagnostics: a missing count nulls the whole
+      # sample-class group in ifcb_summarize_biovolumes(), so say which
+      # samples are affected rather than surface an unexplained NA. Not gated
+      # on `verbose`: this reports a data-integrity condition that changes
+      # the returned numbers, not progress.
+      n_na <- sum(is.na(class_df$cell_count))
+      if (n_na > 0) {
+        na_samples <- unique(class_df$sample[is.na(class_df$cell_count)])
+        cli_warn(c(
+          "{n_na} of {nrow(class_df)} {.arg custom_cell_counts} value{qty(n_na)}{?s} {?is/are} {.code NA}.",
+          "i" = "{.field cell_counts} is {.code NA} for the affected sample{qty(length(na_samples))}{?s}: {.val {na_samples}}."
+        ))
+      }
+    }
 
   } else {
     # Find unique samples in biovolume_df

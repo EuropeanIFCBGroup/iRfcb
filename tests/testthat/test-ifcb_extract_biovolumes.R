@@ -413,6 +413,162 @@ test_that("ifcb_extract_biovolumes aborts when a sample resolves to two class fi
   # same class folder.
 })
 
+test_that("custom_cell_counts input is validated", {
+  images <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+  classes <- rep("Chaetoceros_sp", 2)
+
+  # The 0.10.0 abort survives when no counts are supplied, with new guidance.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, custom_images = images,
+                            custom_classes = classes, use_cell_counts = TRUE,
+                            verbose = FALSE),
+    "requires.*custom_cell_counts"
+  )
+
+  # Counts are positional against custom_images, so they mean nothing without them.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, class_folder,
+                            custom_cell_counts = c(4L, 5L),
+                            use_cell_counts = TRUE, verbose = FALSE),
+    "requires.*custom_images"
+  )
+
+  # Counts without use_cell_counts = TRUE would be silently ignored otherwise.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, custom_images = images,
+                            custom_classes = classes,
+                            custom_cell_counts = c(4L, 5L), verbose = FALSE),
+    "use_cell_counts"
+  )
+
+  # All-NA counts mirror the "none of the classification files contain
+  # chain-count data" abort of the class_files path.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, custom_images = images,
+                            custom_classes = classes,
+                            custom_cell_counts = c(NA_integer_, NA_integer_),
+                            use_cell_counts = TRUE, verbose = FALSE),
+    "every.*NA"
+  )
+
+  # Length mismatch, like the images/classes check.
+  expect_error(
+    ifcb_extract_biovolumes(feature_folder, custom_images = images,
+                            custom_classes = classes,
+                            custom_cell_counts = 4L,
+                            use_cell_counts = TRUE, verbose = FALSE),
+    "number of images does not match the number of chain counts"
+  )
+
+  # ifcb_summarize_biovolumes() passes the argument through, so it must
+  # reject the same input.
+  expect_error(
+    ifcb_summarize_biovolumes(feature_folder, custom_images = images,
+                              custom_classes = classes, use_cell_counts = TRUE,
+                              verbose = FALSE),
+    "requires.*custom_cell_counts"
+  )
+})
+
+test_that("custom_cell_counts reproduces the class_files chain-count results", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_not_installed("hdf5r")
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  # A synthetic .h5 covering the ROIs of the real feature file gives the
+  # class_files reference; the custom path is fed the same classes and counts
+  # per image and must return identical numbers.
+  chain_dir <- file.path(tempdir(), "ifcb_extract_biovolumes_custom")
+  dir.create(chain_dir, showWarnings = FALSE)
+  on.exit(unlink(chain_dir, recursive = TRUE), add = TRUE)
+
+  cl <- "Chaetoceros_sp"
+  f <- hdf5r::H5File$new(file.path(chain_dir, "D20220522T003051_IFCB134_class.h5"),
+                         mode = "w")
+  f[["class_labels"]] <- cl
+  f[["roi_numbers"]] <- c(2L, 3L)
+  f[["output_scores"]] <- matrix(0.9, nrow = 1, ncol = 2)
+  f[["classifier_name"]] <- "test_clf"
+  f[["class_name_auto"]] <- rep(cl, 2)
+  f[["class_name"]] <- rep(cl, 2)
+  f[["thresholds"]] <- 0.5
+  f[["cell_count"]] <- c(4L, 5L)
+  f$close_all()
+
+  images <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  from_files <- ifcb_extract_biovolumes(feature_folder, chain_dir,
+                                        use_cell_counts = TRUE,
+                                        carbon_conversion = "cell",
+                                        verbose = FALSE)
+  from_custom <- ifcb_extract_biovolumes(feature_folder,
+                                         custom_images = images,
+                                         custom_classes = rep(cl, 2),
+                                         custom_cell_counts = c(4L, 5L),
+                                         use_cell_counts = TRUE,
+                                         carbon_conversion = "cell",
+                                         verbose = FALSE)
+
+  expect_identical(names(from_files), names(from_custom))
+  expect_equal(from_custom$cell_count, from_files$cell_count)
+  expect_equal(from_custom$cell_count_resolved, from_files$cell_count_resolved)
+  expect_equal(from_custom$biovolume_um3, from_files$biovolume_um3)
+  expect_equal(from_custom$carbon_pg, from_files$carbon_pg)
+
+  # Sentinels resolve to one cell exactly as when read from files.
+  sentinels <- ifcb_extract_biovolumes(feature_folder,
+                                       custom_images = images,
+                                       custom_classes = rep(cl, 2),
+                                       custom_cell_counts = c(-1L, 0L),
+                                       use_cell_counts = TRUE,
+                                       verbose = FALSE)
+  expect_equal(sentinels$cell_count_resolved, c(1L, 1L))
+
+  # And the summarize wrapper carries the counts into cell_counts.
+  summary_custom <- ifcb_summarize_biovolumes(feature_folder,
+                                              custom_images = images,
+                                              custom_classes = rep(cl, 2),
+                                              custom_cell_counts = c(4L, 5L),
+                                              use_cell_counts = TRUE,
+                                              carbon_conversion = "cell",
+                                              verbose = FALSE)
+  expect_true("cell_counts" %in% names(summary_custom))
+  expect_equal(summary_custom$cell_counts[summary_custom$class == cl], 9)
+})
+
+test_that("a missing custom_cell_counts value warns and nulls the sample's cell_counts", {
+  skip_if_offline()
+  skip_on_cran()
+  skip_if_resource_unavailable("https://marinespecies.org")
+
+  cl <- "Chaetoceros_sp"
+  images <- c("D20220522T003051_IFCB134_00002", "D20220522T003051_IFCB134_00003")
+
+  expect_warning(
+    res <- ifcb_extract_biovolumes(feature_folder,
+                                   custom_images = images,
+                                   custom_classes = rep(cl, 2),
+                                   custom_cell_counts = c(4L, NA_integer_),
+                                   use_cell_counts = TRUE,
+                                   verbose = FALSE),
+    "NA"
+  )
+  expect_equal(res$cell_count[res$roi_number == 2], 4L)
+  expect_true(is.na(res$cell_count[res$roi_number == 3]))
+
+  # The partly-NA group is reported as NA cell_counts, never a partial sum.
+  suppressWarnings(
+    summary_na <- ifcb_summarize_biovolumes(feature_folder,
+                                            custom_images = images,
+                                            custom_classes = rep(cl, 2),
+                                            custom_cell_counts = c(4L, NA_integer_),
+                                            use_cell_counts = TRUE,
+                                            verbose = FALSE)
+  )
+  expect_true(is.na(summary_na$cell_counts[summary_na$class == cl]))
+})
+
 unlink(temp_dir, recursive = TRUE)
 
 test_that("a missing cell_count inside a chain-counted file warns in ifcb_extract_biovolumes", {
