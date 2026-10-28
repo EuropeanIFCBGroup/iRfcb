@@ -1101,53 +1101,31 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
       ))
     }
 
-    h5file <- hdf5r::H5File$new(filepath, mode = "r")
-    on.exit(h5file$close_all(), add = TRUE)
-
-    # Read classifier name (support both new and legacy field names)
-    classifier_name <- if (h5file$exists("classifier_name")) {
-      h5file[["classifier_name"]]$read()
-    } else if (h5file$exists("classifierName")) {
-      h5file[["classifierName"]]$read()
-    } else {
-      NA_character_
-    }
-
-    # Read class_name_auto (fallback to legacy class_labels_auto)
-    class_auto <- if (h5file$exists("class_name_auto")) {
-      h5file[["class_name_auto"]]$read()
-    } else {
-      h5file[["class_labels_auto"]]$read()
-    }
-
-    # Read class_name (fallback to legacy class_labels_above_threshold)
-    class_threshold <- if (h5file$exists("class_name")) {
-      h5file[["class_name"]]$read()
-    } else {
-      h5file[["class_labels_above_threshold"]]$read()
-    }
-
-    result <- list(
-      classifierName = classifier_name,
-      class2useTB = h5file[["class_labels"]]$read(),
-      roinum = h5file[["roi_numbers"]]$read(),
-      TBscores = t(h5file[["output_scores"]]$read()),
-      TBclass = class_auto,
-      TBclass_above_threshold = class_threshold,
-      TBclass_above_adhocthresh = NULL,
-      cell_count = if (h5file$exists("cell_count")) {
-        as.integer(h5file[["cell_count"]]$read())
-      } else {
-        NULL
+    h5file <- tryCatch(
+      hdf5r::H5File$new(filepath, mode = "r"),
+      error = function(e) {
+        cli_abort(c(
+          "{.file {basename(filepath)}} is not a readable HDF5 file.",
+          "i" = "The file may be empty or truncated, e.g. by an interrupted classification run."
+        ), parent = e, call = NULL)
       }
     )
+    # Every dataset is closed as soon as it has been read, so close() releases
+    # the file. close_all() would as well, but it starts with a full gc() that
+    # made up most of the read time over thousands of files, so it is kept only
+    # as the fallback for anything still open.
+    on.exit(
+      if (length(h5file$get_obj_ids()) > 1) h5file$close_all() else h5file$close(),
+      add = TRUE
+    )
 
-    # Optionally surface any additional requested datasets verbatim
-    for (name in extra_datasets) {
-      if (h5file$exists(name) && is.null(result[[name]])) {
-        result[[name]] <- h5file[[name]]$read()
-      }
-    }
+    # A dataset that cannot be read, typically one an interrupted write never
+    # created, is reported with the file name and what the file is missing
+    result <- tryCatch(
+      read_h5_class_datasets(h5file, extra_datasets),
+      error = function(e) abort_incomplete_h5(h5file, filepath, e)
+    )
+    check_h5_class_dimensions(result, filepath)
 
     return(result)
   }
@@ -1172,6 +1150,160 @@ read_class_file <- function(filepath, use_python = FALSE, extra_datasets = NULL)
 
   result
 }
+
+#' Read One Dataset From an Open `.h5` File and Close It Again
+#'
+#' Closing each dataset straight away lets the file be closed with `close()`
+#' rather than `close_all()`, which runs a full garbage collection.
+#'
+#' @param h5file An open `hdf5r::H5File`.
+#' @param name Character. Name of the dataset.
+#' @param ... Passed to the dataset's `read()` method, e.g. `drop = FALSE`.
+#'
+#' @return The contents of the dataset.
+#'
+#' @noRd
+read_h5_dataset <- function(h5file, name, ...) {
+  dataset <- h5file[[name]]
+  on.exit(dataset$close(), add = TRUE)
+  dataset$read(...)
+}
+
+#' Read the Datasets of an `.h5` Classification File
+#'
+#' Reads both the current dataset names and the legacy GPU-format names
+#' (`classifierName`, `class_labels_auto` and `class_labels_above_threshold`).
+#'
+#' @param h5file An open `hdf5r::H5File`.
+#' @param extra_datasets Character vector or `NULL`. See `read_class_file()`.
+#'
+#' @return A named list as described in `read_class_file()`.
+#'
+#' @noRd
+read_h5_class_datasets <- function(h5file, extra_datasets = NULL) {
+  # Read classifier name (support both new and legacy field names)
+  classifier_name <- if (h5file$exists("classifier_name")) {
+    read_h5_dataset(h5file, "classifier_name")
+  } else if (h5file$exists("classifierName")) {
+    read_h5_dataset(h5file, "classifierName")
+  } else {
+    NA_character_
+  }
+
+  # Read class_name_auto (fallback to legacy class_labels_auto)
+  class_auto <- if (h5file$exists("class_name_auto")) {
+    read_h5_dataset(h5file, "class_name_auto")
+  } else {
+    read_h5_dataset(h5file, "class_labels_auto")
+  }
+
+  # Read class_name (fallback to legacy class_labels_above_threshold)
+  class_threshold <- if (h5file$exists("class_name")) {
+    read_h5_dataset(h5file, "class_name")
+  } else {
+    read_h5_dataset(h5file, "class_labels_above_threshold")
+  }
+
+  result <- list(
+    classifierName = classifier_name,
+    class2useTB = read_h5_dataset(h5file, "class_labels"),
+    roinum = read_h5_dataset(h5file, "roi_numbers"),
+    # drop = FALSE: hdf5r otherwise reads the scores of a single-class file as a
+    # plain vector, which t() would turn into one row instead of one column
+    TBscores = t(read_h5_dataset(h5file, "output_scores", drop = FALSE)),
+    TBclass = class_auto,
+    TBclass_above_threshold = class_threshold,
+    TBclass_above_adhocthresh = NULL,
+    cell_count = if (h5file$exists("cell_count")) {
+      as.integer(read_h5_dataset(h5file, "cell_count"))
+    } else {
+      NULL
+    }
+  )
+
+  # Optionally surface any additional requested datasets verbatim
+  for (name in extra_datasets) {
+    if (h5file$exists(name) && is.null(result[[name]])) {
+      result[[name]] <- read_h5_dataset(h5file, name)
+    }
+  }
+
+  result
+}
+
+#' Report an `.h5` Classification File That Could Not Be Read
+#'
+#' Called only once a dataset read has failed, so listing what the file holds
+#' costs nothing for files that read normally.
+#'
+#' @param h5file An open `hdf5r::H5File`.
+#' @param filepath Character. Path to the file, used in the message.
+#' @param parent The error raised by the failed read.
+#'
+#' @noRd
+abort_incomplete_h5 <- function(h5file, filepath, parent) {
+  # Each required dataset, with its legacy GPU-format name where it has one
+  required <- list(
+    "class_labels", "roi_numbers", "output_scores",
+    c("class_name_auto", "class_labels_auto"),
+    c("class_name", "class_labels_above_threshold")
+  )
+  datasets <- h5file$names
+  present <- vapply(required, function(x) any(x %in% datasets), logical(1))
+  missing <- vapply(required[!present], paste, character(1), collapse = " or ")
+
+  problem <- if (length(datasets) == 0) {
+    "The file contains no datasets."
+  } else if (length(missing) > 0) {
+    "Missing required dataset{?s}: {.field {missing}}."
+  } else {
+    "A dataset could not be read."
+  }
+  # The underlying error only helps when the diagnosis above found nothing
+  # missing; otherwise it repeats the lookup of whichever name was tried last
+  if (length(missing) > 0) {
+    parent <- NULL
+  }
+
+  cli_abort(c(
+    "{.file {basename(filepath)}} is not a complete classification file.",
+    "x" = problem,
+    "i" = "The file may have been written incompletely, e.g. by an interrupted classification run."
+  ), parent = parent, call = NULL)
+}
+
+#' Check That the Datasets of an `.h5` Classification File Agree in Size
+#'
+#' @param result A list as returned by `read_h5_class_datasets()`.
+#' @param filepath Character. Path to the file, used in the message.
+#'
+#' @return `result`, invisibly.
+#'
+#' @noRd
+check_h5_class_dimensions <- function(result, filepath) {
+  n_rois <- length(result$roinum)
+  per_roi <- c(
+    nrow(result$TBscores),
+    length(result$TBclass),
+    length(result$TBclass_above_threshold),
+    if (!is.null(result$cell_count)) length(result$cell_count)
+  )
+
+  if (any(per_roi != n_rois) || ncol(result$TBscores) != length(result$class2useTB)) {
+    cli_abort(c(
+      "{.file {basename(filepath)}} has inconsistent dataset dimensions.",
+      "i" = paste0(
+        "ROI numbers: {n_rois}; scores: {nrow(result$TBscores)} x {ncol(result$TBscores)}; ",
+        "winning classes: {length(result$TBclass)}; ",
+        "thresholded classes: {length(result$TBclass_above_threshold)}; ",
+        "class labels: {length(result$class2useTB)}."
+      )
+    ), call = NULL)
+  }
+
+  invisible(result)
+}
+
 #' Extract the Class from the First Row of Each worms_records Tibble
 #'
 #' @description
