@@ -2,6 +2,8 @@
 
 ## iRfcb 0.10.0
 
+CRAN release: 2026-08-19
+
 ### New features
 
 - Added support for the per-ROI `cell_count` data produced by the diatom
