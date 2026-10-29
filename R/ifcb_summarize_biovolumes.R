@@ -20,6 +20,11 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #'        These filenames should match the `roi_number` assignment in the `feature_files` and can be
 #'        used as a substitute for classification files.
 #' @param custom_classes (Optional) A character vector of corresponding class labels for `custom_images`.
+#' @param custom_cell_counts (Optional) An integer vector of raw per-ROI chain counts
+#'   corresponding to `custom_images` by position, as produced by the diatom chain counter
+#'   (the `cell_count` data in `.mat`/`.h5`/`.csv` classification files). Sentinel values
+#'   (`-1`, `0`) and `NA` are allowed and resolved exactly as when reading `class_files`.
+#'   Requires `use_cell_counts = TRUE`. Passed to \code{ifcb_extract_biovolumes}. Default: NULL.
 #' @param micron_factor Conversion factor from microns per pixel (default: 1/3.4).
 #' @param diatom_class A character vector of diatom class names in the World Register of Marine Species (WoRMS). Default is "Bacillariophyceae".
 #' @param diatom_include Optional character vector of class names that should always be treated as diatoms,
@@ -49,8 +54,9 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
 #'   stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and adds
 #'   `cell_counts` (and `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,
-#'   reporting cell abundance alongside ROI counts. Only supported with automated `class_files`.
-#'   The function aborts if enabled but no classification file contains chain-count data. For
+#'   reporting cell abundance alongside ROI counts. Supported with automated `class_files`,
+#'   or with `custom_images` when the counts are supplied via `custom_cell_counts`.
+#'   The function aborts if enabled but no chain-count data is available. For
 #'   chain-length statistics (mean, median, max chain length) use
 #'   \code{\link{ifcb_summarize_cell_counts}}. Note that `cell_counts` here is summed only over
 #'   ROIs that also have matching feature (biovolume) data (the same ROI population as `counts`);
@@ -138,6 +144,7 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @export
 ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2use_file = NULL,
                                       hdr_folder = NULL, custom_images = NULL, custom_classes = NULL,
+                                      custom_cell_counts = NULL,
                                       micron_factor = 1 / 3.4, diatom_class = "Bacillariophyceae", diatom_include = NULL,
                                       marine_only = FALSE, diatom_equation = c("large", "all", "auto"),
                                       threshold = "opt", feature_recursive = TRUE,
@@ -175,6 +182,7 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
                                         class_files = class_files,
                                         custom_images = custom_images,
                                         custom_classes = custom_classes,
+                                        custom_cell_counts = custom_cell_counts,
                                         class2use_file = class2use_file,
                                         micron_factor = micron_factor,
                                         diatom_class = diatom_class,
