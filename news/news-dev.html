@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,6 +49,11 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="irfcb-development-version">iRfcb (development version)<a class="anchor" aria-label="anchor" href="#irfcb-development-version"></a></h2>
+<div class="section level3">
+<h3 id="new-features-development-version">New features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li>
+<code><a href="../reference/ifcb_extract_biovolumes.html">ifcb_extract_biovolumes()</a></code> and <code><a href="../reference/ifcb_summarize_biovolumes.html">ifcb_summarize_biovolumes()</a></code> gain a <code>custom_cell_counts</code> argument, so <code>use_cell_counts = TRUE</code> (and with it <code>carbon_conversion = "cell"</code>) now works with <code>custom_images</code>/<code>custom_classes</code>, which previously could not use chain-count abundance or per-cell carbon at all. The counts are matched to <code>custom_images</code> by position and follow the same semantics as counts read from classification files, including <code>NA</code> marking a ROI without chain-count data, which makes the affected sample’s <code>cell_counts</code> <code>NA</code> rather than a silent partial sum. Invalid input (wrong length, all-<code>NA</code>, counts without <code>custom_images</code> or without <code>use_cell_counts = TRUE</code>) fails with an error saying what to change.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="minor-improvements-and-fixes-development-version">Minor improvements and fixes<a class="anchor" aria-label="anchor" href="#minor-improvements-and-fixes-development-version"></a></h3>
 <ul><li>

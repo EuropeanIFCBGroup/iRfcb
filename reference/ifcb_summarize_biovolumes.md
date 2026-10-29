@@ -17,6 +17,7 @@ ifcb_summarize_biovolumes(
   hdr_folder = NULL,
   custom_images = NULL,
   custom_classes = NULL,
+  custom_cell_counts = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
   diatom_include = NULL,
@@ -77,6 +78,16 @@ ifcb_summarize_biovolumes(
 
   (Optional) A character vector of corresponding class labels for
   `custom_images`.
+
+- custom_cell_counts:
+
+  (Optional) An integer vector of raw per-ROI chain counts corresponding
+  to `custom_images` by position, as produced by the diatom chain
+  counter (the `cell_count` data in `.mat`/`.h5`/`.csv` classification
+  files). Sentinel values (`-1`, `0`) and `NA` are allowed and resolved
+  exactly as when reading `class_files`. Requires
+  `use_cell_counts = TRUE`. Passed to `ifcb_extract_biovolumes`.
+  Default: NULL.
 
 - micron_factor:
 
@@ -154,10 +165,11 @@ ifcb_summarize_biovolumes(
   stored by the diatom chain counter in `.mat`/`.h5`/`.csv`
   classification files and adds `cell_counts` (and
   `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,
-  reporting cell abundance alongside ROI counts. Only supported with
-  automated `class_files`. The function aborts if enabled but no
-  classification file contains chain-count data. For chain-length
-  statistics (mean, median, max chain length) use
+  reporting cell abundance alongside ROI counts. Supported with
+  automated `class_files`, or with `custom_images` when the counts are
+  supplied via `custom_cell_counts`. The function aborts if enabled but
+  no chain-count data is available. For chain-length statistics (mean,
+  median, max chain length) use
   [`ifcb_summarize_cell_counts`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_summarize_cell_counts.md).
   Note that `cell_counts` here is summed only over ROIs that also have
   matching feature (biovolume) data (the same ROI population as

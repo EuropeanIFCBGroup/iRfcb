@@ -17,6 +17,7 @@ ifcb_extract_biovolumes(
   class_files = NULL,
   custom_images = NULL,
   custom_classes = NULL,
+  custom_cell_counts = NULL,
   class2use_file = NULL,
   micron_factor = 1/3.4,
   diatom_class = "Bacillariophyceae",
@@ -68,6 +69,17 @@ ifcb_extract_biovolumes(
 
   (Optional) A character vector of corresponding class labels for
   `custom_images`.
+
+- custom_cell_counts:
+
+  (Optional) An integer vector of raw per-ROI chain counts corresponding
+  to `custom_images` by position, as produced by the diatom chain
+  counter (the `cell_count` data in `.mat`/`.h5`/`.csv` classification
+  files). Sentinel values (`-1` for ROIs the counter skipped, `0` where
+  it found no cells) and `NA` (no chain-count data for that ROI) are
+  allowed and resolved exactly as when reading `class_files`; see
+  `single_cell_values`. Requires `use_cell_counts = TRUE`. Default:
+  NULL.
 
 - class2use_file:
 
@@ -154,9 +166,10 @@ ifcb_extract_biovolumes(
   Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
   stored by the diatom chain counter in `.mat`/`.h5`/`.csv`
   classification files and adds `cell_count` (raw) and
-  `cell_count_resolved` (resolved abundance) columns to the output. Only
-  supported with automated `class_files`; not with manual files or
-  `custom_images`. Default: `FALSE`.
+  `cell_count_resolved` (resolved abundance) columns to the output.
+  Supported with automated `class_files`, or with `custom_images` when
+  the counts are supplied via `custom_cell_counts`; not with manual
+  files. Default: `FALSE`.
 
 - single_cell_values:
 
@@ -230,7 +243,9 @@ A data frame containing:
     from `.mat`, `.h5`, or `.csv` files.
 
   - If `custom_images` and `custom_classes` are supplied, they override
-    classification file data (e.g. data from a CNN model).
+    classification file data (e.g. data from a CNN model). Chain counts
+    can then be supplied per image via `custom_cell_counts` to use
+    `use_cell_counts = TRUE`.
 
   - If both `class_files` and `custom_images/custom_classes` are given,
     `class_files` takes precedence.

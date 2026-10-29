@@ -15,7 +15,7 @@ depending on whether the class is identified as a diatom."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">iRfcb</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,7 @@ depending on whether the class is identified as a diatom.</p>
 <span>  class_files <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_images <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  custom_classes <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  custom_cell_counts <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  class2use_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  micron_factor <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3.4</span>,</span>
 <span>  diatom_class <span class="op">=</span> <span class="st">"Bacillariophyceae"</span>,</span>
@@ -120,6 +121,16 @@ used as a substitute for classification files.</p></dd>
 
 <dt id="arg-custom-classes">custom_classes<a class="anchor" aria-label="anchor" href="#arg-custom-classes"></a></dt>
 <dd><p>(Optional) A character vector of corresponding class labels for <code>custom_images</code>.</p></dd>
+
+
+<dt id="arg-custom-cell-counts">custom_cell_counts<a class="anchor" aria-label="anchor" href="#arg-custom-cell-counts"></a></dt>
+<dd><p>(Optional) An integer vector of raw per-ROI chain counts
+corresponding to <code>custom_images</code> by position, as produced by the diatom chain
+counter (the <code>cell_count</code> data in <code>.mat</code>/<code>.h5</code>/<code>.csv</code> classification files).
+Sentinel values (<code>-1</code> for ROIs the counter skipped, <code>0</code> where it found no
+cells) and <code>NA</code> (no chain-count data for that ROI) are allowed and resolved
+exactly as when reading <code>class_files</code>; see <code>single_cell_values</code>. Requires
+<code>use_cell_counts = TRUE</code>. Default: NULL.</p></dd>
 
 
 <dt id="arg-class-use-file">class2use_file<a class="anchor" aria-label="anchor" href="#arg-class-use-file"></a></dt>
@@ -195,8 +206,9 @@ class without any threshold applied.</p></dd>
 <dd><p>Logical. If <code>TRUE</code>, reads the optional per-ROI <code>cell_count</code>
 data stored by the diatom chain counter in <code>.mat</code>/<code>.h5</code>/<code>.csv</code> classification files and
 adds <code>cell_count</code> (raw) and <code>cell_count_resolved</code> (resolved abundance) columns to the
-output. Only supported with automated <code>class_files</code>; not with manual files
-or <code>custom_images</code>. Default: <code>FALSE</code>.</p></dd>
+output. Supported with automated <code>class_files</code>, or with <code>custom_images</code> when
+the counts are supplied via <code>custom_cell_counts</code>; not with manual files.
+Default: <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-single-cell-values">single_cell_values<a class="anchor" aria-label="anchor" href="#arg-single-cell-values"></a></dt>
@@ -259,7 +271,8 @@ cell count and the resolved number of cells used for abundance.</p></li>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
 <ul><li><p><strong>Classification Data Handling:</strong></p><ul><li><p>If <code>class_files</code> is provided, the function reads class annotations from <code>.mat</code>, <code>.h5</code>, or <code>.csv</code> files.</p></li>
-<li><p>If <code>custom_images</code> and <code>custom_classes</code> are supplied, they override classification file data (e.g. data from a CNN model).</p></li>
+<li><p>If <code>custom_images</code> and <code>custom_classes</code> are supplied, they override classification file data (e.g. data from a CNN model).
+Chain counts can then be supplied per image via <code>custom_cell_counts</code> to use <code>use_cell_counts = TRUE</code>.</p></li>
 <li><p>If both <code>class_files</code> and <code>custom_images/custom_classes</code> are given, <code>class_files</code> takes precedence.</p></li>
 </ul></li>
 <li><p><strong>MAT File Processing:</strong></p><ul><li><p>If <code>use_python = TRUE</code>, the function reads <code>.mat</code> files using <code><a href="ifcb_read_mat.html">ifcb_read_mat()</a></code> (requires Python + <code>SciPy</code>).</p></li>
