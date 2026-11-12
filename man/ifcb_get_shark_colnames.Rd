@@ -18,6 +18,12 @@ These columns are used for submitting IFCB data to \url{https://shark.smhi.se/en
 }
 \details{
 For a detailed example of a data submission, see \code{\link{ifcb_get_shark_example}}.
+
+\code{COUNT_UNIT} gives the unit that \code{COUNT} and \code{ABUND} are
+reported in, for example \code{"cell"}, \code{"chain"}, \code{"colony"},
+\code{"filament"} or \code{"coenobium"}. \code{IMAGE_COUNT} is always the
+number of images, whatever the unit. \code{COUNT_UNIT} is optional and not
+part of the \code{minimal} template.
 }
 \examples{
 shark_colnames <- ifcb_get_shark_colnames()

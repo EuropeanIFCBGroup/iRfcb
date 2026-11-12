@@ -6,7 +6,7 @@ test_that("ifcb_get_shark_colnames reads the shark column names correctly", {
                          "POSYS","WADEP","MPROG","MNDEP","MXDEP",
                          "SLABO","ACKR_SMP","SMTYP","PDMET","SMVOL","METFP",
                          "IFCBNO","SMPNO","LATNM","SFLAG","LATNM_SFLAG","TRPHY","APHIA_ID",
-                         "IMAGE_VERIFICATION", "VERIFIED_BY", "COUNT","IMAGE_COUNT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
+                         "IMAGE_VERIFICATION", "VERIFIED_BY", "COUNT","IMAGE_COUNT","COUNT_UNIT","ABUND","BIOVOL","C_CONC","QFLAG","COEFF",
                          "CLASS_NAME","CLASS_F1","UNCLASSIFIED_COUNTS","UNCLASSIFIED_ABUNDANCE",
                          "UNCLASSIFIED_VOLUME","METOA", "ASSOCIATED_MEDIA",
                          "CLASSPROG","ALABO","ACKR_ANA","ANADATE","METDC",
@@ -40,4 +40,15 @@ test_that("ifcb_get_shark_colnames reads the minimal shark column names correctl
   expect_true("IMAGE_COUNT" %in% colnames(shark_colnames))
   expect_equal(which(colnames(shark_colnames) == "IMAGE_COUNT"),
                which(colnames(shark_colnames) == "COUNT") + 1L)
+
+  # COUNT_UNIT is optional, so it stays out of the minimal template.
+  expect_false("COUNT_UNIT" %in% colnames(shark_colnames))
+})
+
+test_that("ifcb_get_shark_example fills COUNT_UNIT for every counted row", {
+  shark_example <- ifcb_get_shark_example()
+
+  counted <- !is.na(shark_example$COUNT)
+  expect_true(all(!is.na(shark_example$COUNT_UNIT[counted])))
+  expect_true(all(shark_example$COUNT_UNIT[counted] == "cell"))
 })
