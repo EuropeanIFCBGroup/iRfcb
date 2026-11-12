@@ -18,6 +18,15 @@
   (wrong length, all-`NA`, counts without `custom_images` or without
   `use_cell_counts = TRUE`) fails with an error saying what to change.
 
+- The SHARK column template
+  ([`ifcb_get_shark_colnames()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_colnames.md)
+  and
+  [`ifcb_get_shark_example()`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md))
+  gains a `COUNT_UNIT` column after `IMAGE_COUNT`, giving the unit
+  `COUNT` and `ABUND` are reported in, such as `cell`, `chain`,
+  `colony`, `filament` or `coenobium`. The column is optional and is not
+  part of the `minimal = TRUE` template.
+
 ### Minor improvements and fixes
 
 - `.h5` classification files are read several times faster, by skipping

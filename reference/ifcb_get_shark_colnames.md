@@ -26,6 +26,12 @@ An empty data frame containing the SHARK column names.
 For a detailed example of a data submission, see
 [`ifcb_get_shark_example`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md).
 
+`COUNT_UNIT` gives the unit that `COUNT` and `ABUND` are reported in,
+for example `"cell"`, `"chain"`, `"colony"`, `"filament"` or
+`"coenobium"`. `IMAGE_COUNT` is always the number of images, whatever
+the unit. `COUNT_UNIT` is optional and not part of the `minimal`
+template.
+
 ## See also
 
 [`ifcb_get_shark_example`](https://europeanifcbgroup.github.io/iRfcb/reference/ifcb_get_shark_example.md)
@@ -35,8 +41,8 @@ For a detailed example of a data submission, see
 ``` r
 shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
-#> # A tibble: 0 × 68
-#> # ℹ 68 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
+#> # A tibble: 0 × 69
+#> # ℹ 69 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
 #> #   PROJ <chr>, ORDERER <chr>, SHIPC <chr>, CRUISE_NO <dbl>, DATE_TIME <dbl>,
 #> #   SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>, LONGI <dbl>,
 #> #   POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>, MXDEP <dbl>,

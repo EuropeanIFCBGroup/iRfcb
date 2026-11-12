@@ -569,8 +569,8 @@ shark_colnames <- ifcb_get_shark_colnames()
 print(shark_colnames)
 ```
 
-    ## # A tibble: 0 × 68
-    ## # ℹ 68 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
+    ## # A tibble: 0 × 69
+    ## # ℹ 69 variables: MYEAR <dbl>, STATN <chr>, SAMPLING_PLATFORM <chr>,
     ## #   PROJ <chr>, ORDERER <chr>, SHIPC <chr>, CRUISE_NO <dbl>, DATE_TIME <dbl>,
     ## #   SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>, LONGI <dbl>,
     ## #   POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>, MXDEP <dbl>,
@@ -587,7 +587,7 @@ shark_example <- ifcb_get_shark_example()
 print(shark_example)
 ```
 
-    ## # A tibble: 5 × 68
+    ## # A tibble: 5 × 69
     ##   MYEAR STATN          SAMPLING_PLATFORM PROJ  ORDERER SHIPC CRUISE_NO DATE_TIME
     ##   <dbl> <chr>          <chr>             <chr> <chr>   <chr>     <dbl> <chr>    
     ## 1  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
@@ -595,13 +595,13 @@ print(shark_example)
     ## 3  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
     ## 4  2022 RV_FB_D202207… IFCB              IFCB… SMHI    77SE         12 2.02e+15 
     ## 5  2022 RV_FB_D202207… SveaFB            IFCB… SMHI    77SE         12 2.02e+15 
-    ## # ℹ 60 more variables: SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>,
+    ## # ℹ 61 more variables: SDATE <date>, STIME <time>, TIMEZONE <chr>, LATIT <dbl>,
     ## #   LONGI <dbl>, POSYS <chr>, WADEP <lgl>, MPROG <chr>, MNDEP <dbl>,
     ## #   MXDEP <dbl>, SLABO <chr>, ACKR_SMP <chr>, SMTYP <chr>, PDMET <chr>,
     ## #   SMVOL <dbl>, METFP <chr>, IFCBNO <chr>, SMPNO <chr>, LATNM <chr>,
     ## #   SFLAG <chr>, LATNM_SFLAG <chr>, TRPHY <chr>, APHIA_ID <dbl>,
     ## #   IMAGE_VERIFICATION <chr>, VERIFIED_BY <lgl>, COUNT <dbl>,
-    ## #   IMAGE_COUNT <dbl>, ABUND <dbl>, BIOVOL <dbl>, C_CONC <dbl>, QFLAG <lgl>, …
+    ## #   IMAGE_COUNT <dbl>, COUNT_UNIT <chr>, ABUND <dbl>, BIOVOL <dbl>, …
 
 This concludes this tutorial for the `iRfcb` package. For additional
 guides—such as quality control of IFCB data, data sharing, and
