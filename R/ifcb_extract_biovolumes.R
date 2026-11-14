@@ -211,6 +211,11 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
         "i" = "Using {.arg class_files} and ignoring {.arg custom_images}/{.arg custom_classes}/{.arg custom_cell_counts}."
       ))
     }
+
+    # Make the warning true: everything below branches on these being NULL
+    custom_images <- NULL
+    custom_classes <- NULL
+    custom_cell_counts <- NULL
   }
 
   if (is.character(feature_files)) {

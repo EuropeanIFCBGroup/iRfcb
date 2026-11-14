@@ -226,7 +226,8 @@ ifcb_summarize_biovolumes <- function(feature_folder, class_files = NULL, class2
     # Extract sample names from HDR files
     hdr_sample_names <- sub(".*/(D\\d+T\\d+_IFCB\\d+)\\.hdr", "\\1", hdr_files)
 
-    if (!is.null(custom_images)) {
+    # class_files take precedence over custom_images, as in ifcb_extract_biovolumes()
+    if (is.null(class_files) && !is.null(custom_images)) {
       # Extract date-time from class file paths
       class_sample_names <- sub("^(D\\d{8}T\\d{6}_IFCB\\d+)_.*", "\\1", custom_images)
     } else {

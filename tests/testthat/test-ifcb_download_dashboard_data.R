@@ -160,3 +160,38 @@ test_that("ifcb_download_dashboard_data handles errors gracefully", {
   # Clean up
   unlink(dest_dir, recursive = TRUE)
 })
+
+test_that("ifcb_download_dashboard_data retries a failed chunk once per attempt", {
+  dest_dir <- tempfile("ifcb_download_retry")
+  on.exit(unlink(dest_dir, recursive = TRUE), add = TRUE)
+
+  samples <- paste0("D20220522T00", sprintf("%02d", 1:5), "00_IFCB134")
+  calls <- list()
+
+  # First attempt: the third file fails. Second attempt: everything succeeds.
+  fake_multi_download <- function(urls, destfiles, ...) {
+    calls[[length(calls) + 1]] <<- urls
+    status <- rep(200L, length(urls))
+    if (length(calls) == 1) status[3] <- 500L
+    file.create(destfiles)
+    dplyr::tibble(success = status == 200L, status_code = status, url = urls,
+                  destfile = destfiles,
+                  headers = rep(list(character(0)), length(urls)))
+  }
+  mockery::stub(ifcb_download_dashboard_data, "curl::multi_download", fake_multi_download)
+
+  expect_no_warning(ifcb_download_dashboard_data(
+    dashboard_url = "https://example.org/data",
+    samples = samples,
+    file_types = "hdr",
+    dest_dir = dest_dir,
+    max_retries = 3,
+    sleep_time = 0,
+    quiet = TRUE
+  ))
+
+  # One retry, and only for the file that failed
+  expect_length(calls, 2)
+  expect_length(calls[[1]], 5)
+  expect_equal(calls[[2]], paste0("https://example.org/data/", samples[3], ".hdr"))
+})

@@ -257,7 +257,7 @@ ifcb_download_dashboard_data <- function(dashboard_url,
       # If no files left to process, skip to the next chunk
       if (nrow(chunk) == 0) next
 
-      # Retry logic (max 5 attempts)
+      # Retry logic (up to max_retries attempts)
       attempt <- 1
       success <- FALSE
 
@@ -308,27 +308,24 @@ ifcb_download_dashboard_data <- function(dashboard_url,
             }
           }
 
-          # Check if all downloads were successful
-          unsuccessful <- res %>%
-            filter(!status_code == 200)
+        }
 
-          # Check results
-          if (nrow(unsuccessful) == 0) {
-            success <- TRUE
-          } else {
-            # url_df_complete <- dplyr::filter(url_df, basename(dirname(url)) %in% basename(dirname(complete$url)))
-            chunk <- dplyr::filter(chunk, file_url %in% unsuccessful$url)
+        # Check if all downloads were successful, once per attempt
+        bad_files <- dplyr::filter(res, !status_code == 200)
 
-            # Remove partial downloads
-            bad_files <- dplyr::filter(res, !status_code == 200)
-            if (!is.null(bad_files) && nrow(bad_files) > 0) {
-              unlink(bad_files$destfile)
-            }
+        if (nrow(bad_files) == 0) {
+          success <- TRUE
+        } else {
+          # Retry only the files that failed
+          chunk <- dplyr::filter(chunk, file_url %in% bad_files$url)
 
-            attempt <- attempt + 1
-            # Wait the next attempt
-            Sys.sleep(sleep_time)
-          }
+          # Remove partial downloads
+          unlink(bad_files$destfile)
+
+          attempt <- attempt + 1
+
+          # Wait before the next attempt, if there is one
+          if (attempt <= max_retries) Sys.sleep(sleep_time)
         }
       }
 
@@ -342,11 +339,6 @@ ifcb_download_dashboard_data <- function(dashboard_url,
           "i" = "Retry the download in case of transient network issues.",
           "i" = "Consider adjusting {.arg parallel_downloads}, {.arg multi_timeout}, or {.arg sleep_time}."
         ))
-        # Remove partial downloads
-        if (!is.null(bad_files) && nrow(bad_files) > 0) {
-          unlink(bad_files$destfile)
-        }
-        unlink(bad_files$destfile)
       }
 
       # Wait the next batch of downloads

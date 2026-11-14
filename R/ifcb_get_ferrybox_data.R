@@ -21,7 +21,7 @@ utils::globalVariables(c("date_from", "date_to", "in_range", "timestamp_minute",
 #'
 #' The function also handles cases where the exact timestamp is missing by attempting to interpolate the data using floor and ceiling rounding methods. The final output will ensure that all specified parameters are numeric.
 #'
-#' @return A data frame containing the input timestamps and corresponding data for the specified parameters.
+#' @return A data frame with one row per input timestamp, in the order supplied, and the corresponding data for the specified parameters.
 #' Columns include 'timestamp', 'gpsLatitude', 'gpsLongitude' (if applicable), and the specified parameters.
 #'
 #' @examples
@@ -147,14 +147,16 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
     cli_abort("No valid position data could be extracted from the ferrybox data.")
   }
 
-  # Merge the ferrybox position data with the input timestamps
-  output <- tibble(timestamp = timestamps) %>%
+  # Merge the ferrybox position data with the input timestamps. Rows are
+  # tracked by their position in `timestamps`, so repeated timestamps and
+  # timestamps sharing a rounded minute each keep their own row.
+  output <- tibble(timestamp = timestamps, row_id = seq_along(timestamps)) %>%
     mutate(timestamp_minute = round_date(timestamp, unit = "minute")) %>%
     left_join(ferrybox_position, by = "timestamp_minute") %>%
-    group_by(timestamp_minute) %>%
+    group_by(.data$row_id) %>%
     slice_min(time_difference, with_ties = FALSE) %>%
     ungroup() %>%
-    arrange(match(timestamp, timestamps)) %>%  # Restore original input order
+    arrange(.data$row_id) %>%  # Restore original input order
     select(timestamp, all_of(parameters))
 
   # Convert ferrybox timestamps to POSIXct if not already
@@ -174,38 +176,15 @@ ifcb_get_ferrybox_data <- function(timestamps, ferrybox_folder, parameters = c("
   closest_ferrybox <- ferrybox_position[closest_indices, ]
   closest_ferrybox$time_difference <- abs(as.numeric(difftime(ferrybox_times[closest_indices], output$timestamp, units = "secs")))
 
-  # Combine with output
-  missing_data <- output %>%
-    select(timestamp) %>%
-    dplyr::bind_cols(closest_ferrybox %>% select(all_of(parameters)))
-
-  # Update the output with missing data
-  output <- output %>%
-    left_join(missing_data, by = "timestamp") %>%
-    # Dynamically coalesce columns with .x and .y suffixes
-    mutate(across(
-      .cols = contains(".x"),
-      .fns = ~ coalesce(.x, get(gsub(".x", ".y", cur_column()))),
-      .names = "{str_remove(.col, '.x')}"
-    )) %>%
-    select(-contains(".y"), -contains(".x"))
+  # Fill parameters still missing from the closest ferrybox row, which is
+  # aligned with `output` row by row
+  for (parameter in parameters) {
+    output[[parameter]] <- coalesce(output[[parameter]], closest_ferrybox[[parameter]])
+  }
 
   # Ensure all parameters are numeric
   output <- output %>%
     mutate(across(all_of(parameters), as.numeric))
-
-  # Check for multiple rows per minute and issue a warning
-  duplicate_rows <- output %>%
-    dplyr::group_by(timestamp) %>%
-    dplyr::summarize(n = n()) %>%
-    dplyr::filter(n > 1)
-
-  if (nrow(duplicate_rows) > 0) {
-    cli_warn(c(
-      "Multiple rows detected for the following {qty(nrow(duplicate_rows))}minute timestamp{?s}:",
-      "x" = "{.val {as.character(duplicate_rows$timestamp)}}"
-    ))
-  }
 
   # Check if latitude_param and longitude_param are in parameters and rename accordingly
   names(output)[names(output) == latitude_param] <- ifelse(latitude_param %in% parameters, "gpsLatitude", names(output)[names(output) == latitude_param])

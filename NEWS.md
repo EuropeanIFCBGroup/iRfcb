@@ -11,6 +11,11 @@
 * `.h5` classification files are read several times faster, by skipping a full garbage collection per file.
 * A damaged or incomplete `.h5` classification file now stops with an error naming the file and what is wrong with it, instead of a misleading `class_labels_auto does not exist` or a raw HDF5 error.
 * Fixed the scores of single-class `.h5` classification files being read transposed.
+* `ifcb_merge_manual()` no longer relabels annotations when `skip_class` is used. Dropping the skipped classes shifted the index of every class after them, so ROIs in the additions files ended up under the wrong class. ROIs annotated with a skipped class are now left unannotated (`NaN`), unless the class also exists in the base set.
+* `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` now use `class_files` when both `class_files` and `custom_images`/`custom_classes` are supplied, as the documentation and the warning have always said. Previously the custom classification was used instead.
+* `ifcb_get_ferrybox_data()` now returns one row per input timestamp. Repeated timestamps, and timestamps rounding to the same minute, were previously collapsed into a single row, so the result no longer lined up with the input.
+* `ifcb_summarize_png_metadata()` now joins feature files of any version. Only `_fea_v2.csv` files were matched, so features from `_fea_v4.csv` or `_features_v4.csv` files were returned as `NA`.
+* `ifcb_download_dashboard_data()` now retries a failed download once per attempt. A single failure in a batch previously used up several attempts at once, and slept between each, so `max_retries` was rarely honoured.
 
 # iRfcb 0.10.0
 
