@@ -127,9 +127,12 @@ three are only evaluated when their threshold is supplied; otherwise they are
 given sample is reported as \code{NA} and treated as \emph{not applicable}: it does not
 fail \code{qc_pass}. This matters for legacy IFCB headers, which omit the
 post-run \code{roiCount} summary field (so \code{roi_count_match} is \code{NA}); such samples
-can still pass on the checks that do apply. It also applies to a sample that
-never triggered, where no volume can be computed and \code{volume_ok} is \code{NA}
-rather than \code{FALSE} (\code{is_empty} reports the condition instead). A sample
+can still pass on the checks that do apply. It also applies to an empty
+sample for which no volume can be derived, where \code{volume_ok} is \code{NA} rather
+than \code{FALSE} (\code{is_empty} reports the condition instead). A sample that never
+triggered has an empty \code{.adc} file, so its volume is taken from the run and
+inhibit times in the header, as \code{\link[=ifcb_volume_analyzed]{ifcb_volume_analyzed()}} does, and is checked
+like any other. A sample
 whose analyzed volume comes out as exactly \code{0} is a different case and does
 fail: that is a computed answer saying the instrument ran and analyzed no
 water, rather than a check that could not be run. Only a check

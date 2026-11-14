@@ -81,6 +81,12 @@ ifcb_volume_analyzed_from_adc <- function(adc_file) {
       adc <- read_adc_columns(adc_file[[count]])
     }
 
+    # A sample that never triggered has an empty ADC: there is nothing to
+    # derive a volume from, so its results stay NA.
+    if (nrow(adc) == 0) {
+      next
+    }
+
     # Access columns by name if available (named via the HDR ADCFileFormat),
     # otherwise fall back to the fixed legacy column positions.
     adc_time <- if ("ADCtime" %in% names(adc)) adc$ADCtime else adc$V2

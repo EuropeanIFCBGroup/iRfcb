@@ -59,6 +59,8 @@ utils::globalVariables(c("biovolume", "roi", "roi_number", "Biovolume", "cell_co
 #' @param class_recursive Logical. If `TRUE` and `class_files` is a folder, searches recursively for classification files. Default: `TRUE`.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
+#'   A sample with more than one feature file (e.g. both `_fea_v2.csv` and `_fea_v4.csv`) is an error, since its ROIs would be counted twice;
+#'   set `feature_version` to select one.
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count`
 #'        data stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and
 #'        adds `cell_count` (raw) and `cell_count_resolved` (resolved abundance) columns to the
@@ -330,6 +332,18 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
     cli_abort("No feature data files found.")
   }
 
+  # Guard against one sample having more than one feature file (e.g. both a
+  # `_fea_v2.csv` and a `_fea_v4.csv`). Every file is read, so that sample's
+  # ROIs would be counted twice.
+  feature_samples <- feature_sample_name(names(features), multiblob)
+  dup_samples <- unique(feature_samples[duplicated(feature_samples)])
+  if (length(dup_samples) > 0) {
+    cli_abort(c(
+      "{length(dup_samples)} sample{?s} ha{?s/ve} more than one feature file: {.val {dup_samples}}.",
+      "i" = "Use {.arg feature_version} to select a single feature version and avoid double-counting."
+    ))
+  }
+
   data_list <- vector("list", length(features))
   idx <- 1
 
@@ -343,11 +357,7 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
 
     if (nrow(file_data) > 0) {
 
-      sample_name <- if (multiblob) {
-        str_replace(file_name, "_multiblob_v\\d+.csv", "")
-      } else {
-        str_replace(file_name, "_fe[a-z]*_v\\d+\\.csv", "")
-      }
+      sample_name <- feature_sample_name(file_name, multiblob)
 
       data_list[[idx]] <- tibble(
         sample = sample_name,
@@ -642,4 +652,11 @@ ifcb_extract_biovolumes <- function(feature_files, class_files = NULL, custom_im
   }
 
   type_convert(biovolume_df, col_types = cols())
+}
+
+# Sample name of a feature file, e.g. "D20220522T003051_IFCB134" for
+# "D20220522T003051_IFCB134_fea_v2.csv".
+feature_sample_name <- function(file_name, multiblob = FALSE) {
+  pattern <- if (multiblob) "_multiblob_v\\d+.csv" else "_fe[a-z]*_v\\d+\\.csv"
+  str_replace(file_name, pattern, "")
 }

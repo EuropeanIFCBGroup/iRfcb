@@ -17,7 +17,8 @@ ifcb_which_basin(latitudes, longitudes, plot = FALSE, shape_file = NULL)
 Defaults to the Baltic Sea, Kattegat, and Skagerrak basins included in the \code{iRfcb} package.}
 }
 \value{
-A vector indicating the basin each point belongs to, or a ggplot object if \code{plot = TRUE}.
+A character vector indicating the basin each point belongs to, with \code{NA} for points outside every basin or
+where a coordinate is missing, or a ggplot object if \code{plot = TRUE}.
 }
 \description{
 This function identifies which sub-basin a set of latitude and longitude points belong to, using a user-specified or default shapefile.

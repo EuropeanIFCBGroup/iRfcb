@@ -523,8 +523,11 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
   }
 
   # Step 1: Unzip the large file
-  unzip_dir <- file.path(tempdir(), "split_zip_temp")
-  dir.create(unzip_dir, showWarnings = FALSE)
+  # A folder of its own, removed again on exit: a fixed folder under tempdir()
+  # would carry the contents of an earlier, failed run into the new parts.
+  unzip_dir <- tempfile("split_zip_")
+  dir.create(unzip_dir)
+  on.exit(unlink(unzip_dir, recursive = TRUE), add = TRUE)
   unzip(zip_file, exdir = unzip_dir)
 
   # Step 2: Get list of subfolders and their sizes
@@ -611,8 +614,6 @@ split_large_zip <- function(zip_file, max_size = 500, quiet = FALSE) {
     # Add the created zipfile to the list
     created_zip_files <- c(created_zip_files, zipfile_name)
   }
-
-  unlink(unzip_dir, recursive = TRUE)
 
   if (!quiet) {
     cli_alert_success("Created {length(subfolder_groups)} smaller zip file{?s}:")
@@ -1428,10 +1429,17 @@ process_ifcb_string <- function(ifcb_string, quiet = FALSE) {
 #' default `V1`, `V2`, ... names if no HDR or no `ADCFileFormat` is found.
 #'
 #' @param adc_file Character. Path to the `.adc` file.
-#' @return A data frame of ADC data, with named columns if available.
+#' @return A data frame of ADC data, with named columns if available. An empty
+#'   (zero-byte) ADC file gives a data frame with no rows and no columns.
 #' @noRd
 read_adc_columns <- function(adc_file) {
   hdr_file <- sub("\\.adc$", ".hdr", adc_file)
+
+  # A sample that never triggered has a zero-byte ADC file, which read.csv()
+  # rejects with "no lines available in input". It holds zero ROIs.
+  if (isTRUE(file.size(adc_file) == 0)) {
+    return(data.frame())
+  }
 
   adc_data <- read.csv(adc_file, header = FALSE)
 
@@ -1463,6 +1471,11 @@ read_adc_columns <- function(adc_file) {
 #' @noRd
 adc_get_roi_columns <- function(adc_data) {
   cnames <- tolower(colnames(adc_data))
+
+  # An empty ADC file has no columns to pick from
+  if (nrow(adc_data) == 0) {
+    return(list(x = numeric(0), y = numeric(0), startbyte = numeric(0)))
+  }
 
   if ("roiwidth" %in% cnames) {
     width_col  <- which(cnames == "roiwidth")

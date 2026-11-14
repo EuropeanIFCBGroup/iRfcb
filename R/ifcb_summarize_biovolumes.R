@@ -51,6 +51,8 @@ utils::globalVariables(c("biovolume_um3", "carbon_pg", "counts", "classifier", "
 #' @param hdr_recursive Logical. If TRUE, the function will search for HDR files recursively within the `hdr_folder` (if provided). Default is TRUE.
 #' @param drop_zero_volume Logical. If `TRUE`, rows where `Biovolume` equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: `FALSE`.
 #' @param feature_version Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
+#'   A sample with more than one feature file (e.g. both `_fea_v2.csv` and `_fea_v4.csv`) is an error, since its ROIs would be counted twice;
+#'   set `feature_version` to select one.
 #' @param use_cell_counts Logical. If `TRUE`, reads the optional per-ROI `cell_count` data
 #'   stored by the diatom chain counter in `.mat`/`.h5`/`.csv` classification files and adds
 #'   `cell_counts` (and `cell_counts_per_liter` when `hdr_folder` is supplied) to the output,

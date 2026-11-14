@@ -357,7 +357,9 @@ ifcb_download_dashboard_data <- function(dashboard_url,
 
       for (file in destfile) {
 
-        if (!file.exists(file)) {
+        # Nothing to convert in a missing file, or in the empty file of a
+        # sample that never triggered
+        if (!file.exists(file) || file.size(file) == 0) {
           next
         }
 

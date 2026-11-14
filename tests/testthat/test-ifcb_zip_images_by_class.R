@@ -110,3 +110,22 @@ test_that("creates output directory if it does not exist", {
 
 # Clean up temporary files
 unlink(temp_dir, recursive = TRUE)
+
+test_that("ignores leftovers in the session temp folder", {
+  src <- tempfile("zip_by_class_staging_")
+  dir.create(file.path(src, "Staging_by_class_001"), recursive = TRUE)
+  on.exit(unlink(src, recursive = TRUE), add = TRUE)
+  file.create(file.path(src, "Staging_by_class_001", "D20220522T003051_IFCB134_00001.png"))
+
+  stale_dir <- file.path(tempdir(), "Staging_by_class")
+  dir.create(stale_dir, showWarnings = FALSE)
+  file.create(file.path(stale_dir, "D19990101T000000_IFCB000_00001.png"))
+  on.exit(unlink(stale_dir, recursive = TRUE), add = TRUE)
+
+  output_dir <- file.path(src, "zips")
+  ifcb_zip_images_by_class(src, output_dir, quiet = TRUE)
+
+  contents <- zip::zip_list(file.path(output_dir, "Staging_by_class.zip"))$filename
+  expect_false(any(grepl("D19990101T000000", contents)))
+  expect_true(any(grepl("D20220522T003051_IFCB134_00001.png", contents, fixed = TRUE)))
+})

@@ -114,8 +114,8 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
   }
 
   # List the existing manual files and extract the sample names
-  manualfiles <- list.files(manual_folder, pattern = "mat$", full.names = TRUE, recursive = manual_recursive)
-  manual_sample <- gsub(".mat", "", basename(manualfiles))
+  manualfiles <- list.files(manual_folder, pattern = "\\.mat$", full.names = TRUE, recursive = manual_recursive)
+  manual_sample <- tools::file_path_sans_ext(basename(manualfiles))
 
   # Prepare the annotations dataframe
   annotations <- data.frame(image_filename = png_name, ifcb_convert_filenames(png_name))
@@ -127,8 +127,11 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
 
     # Check if this sample already has a corresponding manual file
     if (sample_name %in% manual_sample) {
-      # Correct the existing manual file
-      ifcb_correct_annotation(manual_folder,
+      # Correct the existing manual file, in the folder it was found in: with
+      # `manual_recursive` that can be a subfolder of `manual_folder`.
+      existing_file <- manualfiles[manual_sample == sample_name][1]
+
+      ifcb_correct_annotation(dirname(existing_file),
                               manual_output,
                               annotations_sample$image_filename,
                               as.integer(class),
@@ -159,9 +162,14 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
         next
       }
 
-      # Read the ADC data
-      adcdata <- read.csv(adcfile, header = FALSE, sep = ",")
-      rois <- nrow(adcdata)
+      # Read the ADC data. A sample that never triggered has an empty ADC
+      # file and no ROIs to annotate.
+      rois <- nrow(read_adc_columns(adcfile))
+
+      if (rois == 0) {
+        cli_warn("ADC file is empty for sample {.val {sample_name}}, skipping.")
+        next
+      }
 
       # Create an unclassifed manual file
       ifcb_create_manual_file(roi_length = as.integer(rois),
@@ -170,8 +178,9 @@ ifcb_annotate_batch <- function(png_images, class, manual_folder, adc_files, cla
                               classlist = as.integer(unclassified_id),
                               do_compression = do_compression)
 
-      # Apply corrections to the new manual file
-      ifcb_correct_annotation(manual_folder,
+      # Apply corrections to the new manual file, which was just written to
+      # `manual_output`
+      ifcb_correct_annotation(manual_output,
                               manual_output,
                               annotations_sample$image_filename,
                               as.integer(class),

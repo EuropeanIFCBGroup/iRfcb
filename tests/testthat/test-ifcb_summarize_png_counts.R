@@ -115,3 +115,41 @@ test_that("ifcb_summarize_png_counts calculates n_images correctly for different
 
   expect_equal(summary_class, expected_class_counts)
 })
+
+test_that("ifcb_summarize_png_counts handles samples with and without a header file", {
+  png_dir <- tempfile("png_counts_mixed_")
+  dir.create(file.path(png_dir, "Foo_001"), recursive = TRUE)
+  on.exit(unlink(png_dir, recursive = TRUE), add = TRUE)
+
+  # The first sample has a header file in hdr_folder, the second does not
+  file.create(file.path(png_dir, "Foo_001",
+                        c("D20220522T003051_IFCB134_00001.png",
+                          "D20190101T000000_IFCB134_00001.png")))
+
+  with_hdr <- ifcb_summarize_png_counts(png_dir, hdr_folder = hdr_folder, verbose = FALSE)
+  without_hdr <- ifcb_summarize_png_counts(png_dir, verbose = FALSE)
+
+  expect_equal(nrow(with_hdr), 2)
+  expect_equal(with_hdr$class_name, c("Foo", "Foo"))
+
+  # The time columns do not depend on whether header files were supplied
+  time_cols <- c("timestamp", "date", "year", "month", "day", "time")
+  expect_equal(with_hdr[time_cols], without_hdr[time_cols])
+  expect_type(without_hdr$gpsLatitude, "double")
+})
+
+test_that("ifcb_summarize_png_counts skips class folders without images", {
+  png_dir <- tempfile("png_counts_empty_class_")
+  dir.create(file.path(png_dir, "Foo_001"), recursive = TRUE)
+  dir.create(file.path(png_dir, "Empty_002"))
+  on.exit(unlink(png_dir, recursive = TRUE), add = TRUE)
+
+  file.create(file.path(png_dir, "Foo_001", "D20220522T003051_IFCB134_00001.png"))
+
+  by_sample <- ifcb_summarize_png_counts(png_dir, verbose = FALSE)
+  expect_equal(by_sample$class_name, "Foo")
+
+  by_class <- ifcb_summarize_png_counts(png_dir, sum_level = "class", verbose = FALSE)
+  expect_equal(by_class$class_name, "Foo")
+  expect_equal(by_class$n_images, 1)
+})

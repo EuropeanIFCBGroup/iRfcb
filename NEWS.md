@@ -16,6 +16,16 @@
 * `ifcb_get_ferrybox_data()` now returns one row per input timestamp. Repeated timestamps, and timestamps rounding to the same minute, were previously collapsed into a single row, so the result no longer lined up with the input.
 * `ifcb_summarize_png_metadata()` now joins feature files of any version. Only `_fea_v2.csv` files were matched, so features from `_fea_v4.csv` or `_features_v4.csv` files were returned as `NA`.
 * `ifcb_download_dashboard_data()` now retries a failed download once per attempt. A single failure in a batch previously used up several attempts at once, and slept between each, so `max_retries` was rarely honoured.
+* `ifcb_psd()` now runs with its default arguments. Flag thresholds left at `NULL` were passed on to Python, where the comparison failed, and `plot_folder` failed when no sample was flagged.
+* `ifcb_annotate_batch()` now creates manual files for new samples when `manual_output` differs from `manual_folder`, and updates files found in subfolders with `manual_recursive = TRUE`. Both previously stopped with "Manual file not found".
+* `ifcb_read_summary()` no longer depends on `use_python` for the orientation of the class matrices. `use_python = TRUE` failed when the file was read by the native reader after all, for a summary supplied as a list, for a summary holding several samples, and with `biovolume = TRUE`.
+* `ifcb_volume_analyzed()` now accepts URLs to `.hdr` files, as documented. They were rejected as missing files.
+* `ifcb_summarize_png_counts()` no longer fails when only some samples have a header file in `hdr_folder`, or when a class folder holds no images. The `time` column is now an `hms` value whether or not `hdr_folder` is supplied; with `hdr_folder` it used to be a character string.
+* `ifcb_zip_matlab()` now includes `MANIFEST.txt` in the archive when no `readme_file` is supplied.
+* `ifcb_zip_matlab()`, `ifcb_zip_pngs()`, `ifcb_zip_images_by_class()` and `split_large_zip()` now stage their files in a folder of their own, removed when the function exits. They used fixed folders in the session temporary directory, so files left behind by a failed run could end up in the next archive.
+* An empty `.adc` file, as written for a sample that never triggered, is now read as a sample without ROIs instead of stopping with "no lines available in input". `ifcb_volume_analyzed()` falls back to the header values, as the MATLAB reference does, so `ifcb_qc_sample()` now reports and checks a volume for such a sample instead of leaving `volume_ok` as `NA`. `ifcb_annotate_batch()` skips the sample with a warning and `ifcb_download_dashboard_data(convert_adc = TRUE)` leaves the file alone.
+* `ifcb_extract_biovolumes()` and `ifcb_summarize_biovolumes()` now stop when a sample has more than one feature file, such as both `_fea_v2.csv` and `_fea_v4.csv`, instead of counting its ROIs twice. Set `feature_version` to select one.
+* `ifcb_is_in_basin()` and `ifcb_which_basin()` now return `NA` for points with a missing latitude or longitude instead of stopping, like `ifcb_is_near_land()`.
 
 # iRfcb 0.10.0
 

@@ -124,3 +124,60 @@ test_that("ifcb_psd fails gracefully if folders do not exist", {
   expect_error(ifcb_psd(tempdir(), "not_a_dir"),
                "does not exist")
 })
+
+test_that("psd_flag_args keeps only the thresholds that were set", {
+  # Every flag threshold defaults to NULL; passing those on to Python made
+  # get_flags() compare against None and fail.
+  expect_length(psd_flag_args(), 0)
+
+  args <- psd_flag_args(bubbles = 150, incomplete = c(1500, 3), humidity = 70)
+  expect_named(args, c("bubbles", "incomplete", "humidity"))
+  expect_identical(args$incomplete, c(1500L, 3L))
+  expect_identical(args$humidity, 70)
+})
+
+test_that("psd_plot_subfolder uses PSD.OK when a sample has no flag", {
+  flags <- dplyr::tibble(sample = "D20220522T003051_IFCB134", flag = "Low R^2")
+
+  # No sample flagged at all: flags is NULL
+  expect_equal(psd_plot_subfolder("D20220522T003051_IFCB134", NULL, "plots"),
+               file.path("plots", "PSD.OK"))
+  expect_equal(psd_plot_subfolder("D20220522T000439_IFCB134", flags, "plots"),
+               file.path("plots", "PSD.OK"))
+  expect_equal(psd_plot_subfolder("D20220522T003051_IFCB134", flags, "plots"),
+               file.path("plots", make.names("Low R^2")))
+})
+
+test_that("ifcb_psd runs without flag thresholds and without flagged samples", {
+  skip_if_no_scipy()
+  skip_if_no_pandas()
+  skip_if_no_matplotlib()
+  skip_on_cran()
+  skip_if(Sys.getenv("SKIP_PYTHON_TESTS") == "true",
+          "Skipping Python-dependent tests: missing Python packages or running on CRAN.")
+
+  temp_dir <- tempfile("ifcb_psd_defaults_")
+  hdr_folder <- file.path(temp_dir, "data", "D20220522")
+  feature_folder <- file.path(temp_dir, "features")
+  plot_folder <- file.path(temp_dir, "plots")
+  dir.create(hdr_folder, recursive = TRUE)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  unzip(test_path("test_data/test_data.zip"),
+        files = c("test_data/data/D20220522T003051_IFCB134.hdr",
+                  "test_data/data/D20220522T003051_IFCB134.adc"),
+        exdir = hdr_folder, junkpaths = TRUE)
+  unzip(test_path("test_data/test_data.zip"),
+        files = "test_data/features/D20220522T003051_IFCB134_fea_v2.csv",
+        exdir = feature_folder, junkpaths = TRUE)
+
+  # Every flag threshold left at its NULL default
+  psd <- suppressMessages(ifcb_psd(feature_folder, file.path(temp_dir, "data")))
+  expect_named(psd, c("data", "fits", "flags"))
+
+  # No sample is flagged, so `flags` is NULL and the plot goes to PSD.OK
+  psd <- suppressMessages(ifcb_psd(feature_folder, file.path(temp_dir, "data"),
+                                   plot_folder = plot_folder, r_sqr = -Inf))
+  expect_null(psd$flags)
+  expect_true(file.exists(file.path(plot_folder, "PSD.OK", "D20220522T003051_IFCB134.png")))
+})

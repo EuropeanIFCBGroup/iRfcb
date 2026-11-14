@@ -90,9 +90,7 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
   # Extract species names from class2useTB
   class2useTB <- unlist(mat$class2useTB)
 
-  if (use_python) {
-    classcountTB <- as.matrix(t(classcountTB))
-  }
+  classcountTB <- orient_class_matrix(classcountTB, length(class2useTB))
 
   # Assign column names for class counts
   colnames(classcountTB) <- paste("counts", class2useTB, sep = "_")
@@ -121,6 +119,8 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
     if (is.null(classbiovolTB)) {
       cli_abort("Biovolume data for threshold {.val {threshold}} does not exist in the file.")
     }
+
+    classbiovolTB <- orient_class_matrix(classbiovolTB, length(class2useTB))
 
     # Assign column names for biovolume
     colnames(classbiovolTB) <- paste("biovolume", class2useTB, sep = "_")
@@ -176,4 +176,19 @@ ifcb_read_summary <- function(summary, hdr_directory = NULL, biovolume = FALSE, 
 
   # Return the finalized summary_long data frame
   summary_long
+}
+
+# Class counts and biovolumes are stored as one row per sample and one column
+# per class. The Python reader squeezes a single-sample summary to one value
+# per class, which arrives as a column (or a plain vector); turn that back into
+# a single row. A matrix that already has one column per class is left alone,
+# so the result does not depend on which reader produced it.
+orient_class_matrix <- function(x, n_classes) {
+  x <- as.matrix(x)
+
+  if (ncol(x) != n_classes && nrow(x) == n_classes) {
+    return(t(x))
+  }
+
+  x
 }

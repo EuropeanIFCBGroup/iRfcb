@@ -63,3 +63,13 @@ test_that("ifcb_which_basin correctly handles a custom shapefile", {
 
   unlink(exdir, recursive = TRUE)
 })
+
+test_that("ifcb_which_basin returns NA for missing coordinates", {
+  result <- ifcb_which_basin(c(58.0, NA, 58.0, 55.5), c(18.0, 19.0, NA, 16.0))
+  single <- ifcb_which_basin(c(58.0, 55.5), c(18.0, 16.0))
+
+  expect_false(anyNA(single))
+  expect_identical(result, c(single[1], NA, NA, single[2]))
+  expect_identical(ifcb_which_basin(NA_real_, NA_real_), NA_character_)
+  expect_s3_class(ifcb_which_basin(c(58.0, NA), c(18.0, 19.0), plot = TRUE), "ggplot")
+})

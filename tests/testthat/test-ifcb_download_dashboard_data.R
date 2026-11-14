@@ -195,3 +195,27 @@ test_that("ifcb_download_dashboard_data retries a failed chunk once per attempt"
   expect_length(calls[[1]], 5)
   expect_equal(calls[[2]], paste0("https://example.org/data/", samples[3], ".hdr"))
 })
+
+test_that("convert_adc leaves an empty ADC file alone", {
+  dest_dir <- tempfile("dashboard_empty_adc_")
+  dir.create(dest_dir)
+  on.exit(unlink(dest_dir, recursive = TRUE), add = TRUE)
+
+  # A sample that never triggered downloads as a zero-byte .adc
+  mockery::stub(ifcb_download_dashboard_data, "curl::multi_download",
+                function(urls, destfiles, ...) {
+                  file.create(destfiles)
+                  data.frame(url = urls, destfile = destfiles, status_code = 200L)
+                })
+
+  expect_no_error(
+    ifcb_download_dashboard_data(
+      dashboard_url = "https://example.org/mvco/",
+      samples = "D20220522T003051_IFCB134",
+      file_types = "adc",
+      dest_dir = dest_dir,
+      convert_adc = TRUE,
+      quiet = TRUE
+    )
+  )
+})

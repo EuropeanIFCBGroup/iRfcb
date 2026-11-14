@@ -194,27 +194,21 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
   # Plot the PSD
   b$plot_PSD(use_marker = use_marker, plot_folder = NULL, start_fit = as.integer(start_fit))
 
-  if (save_data) {
-    # Prepare arguments for save_data
-    args <- list(name = as.character(output_file), r_sqr = as.numeric(r_sqr))
-    if (!is.null(beads)) args$beads <- as.numeric(beads)
-    if (!is.null(bubbles)) args$bubbles <- as.integer(bubbles)
-    if (!is.null(incomplete)) args$incomplete <- as.integer(incomplete)
-    if (!is.null(missing_cells)) args$missing_cells <- missing_cells
-    if (!is.null(biomass)) args$biomass <- as.integer(biomass)
-    if (!is.null(bloom)) args$bloom <- as.integer(bloom)
-    if (!is.null(humidity)) args$humidity <- humidity
+  # Only the flag thresholds that were set are passed on: Python has no default
+  # for an unset one, and comparing against None fails.
+  flag_args <- psd_flag_args(beads = beads, bubbles = bubbles, incomplete = incomplete,
+                             missing_cells = missing_cells, biomass = biomass,
+                             bloom = bloom, humidity = humidity)
 
-    # Save the data
-    do.call(b$save_data, args)
+  if (save_data) {
+    do.call(b$save_data, c(list(name = as.character(output_file), r_sqr = as.numeric(r_sqr)),
+                           flag_args))
   }
 
   # Retrieve data from Python
   data <- b$get_data()
   fits <- b$get_fits()
-  flags <- b$get_flags(r_sqr = r_sqr, beads = beads, bubbles = bubbles, incomplete = incomplete,
-                       missing_cells = missing_cells, biomass = biomass, bloom = bloom, humidity = humidity)
-
+  flags <- do.call(b$get_flags, c(list(r_sqr = as.numeric(r_sqr)), flag_args))
 
   # Flatten nested lists and combine into a data frame
   data_df <- as.data.frame(lapply(data, function(x) unlist(x)), check.names = FALSE)
@@ -263,18 +257,10 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
     for (sample in sample_names) {
 
       # Specify plot subfolder
-      if (use_plot_subfolders) {
-        # Find the potential flag
-        flag <- flags_df[grepl(sample, flags_df$sample),]
-
-
-        if (nrow(flag) == 0) {
-          sample_plot_folder <- file.path(plot_folder, "PSD.OK")
-        } else {
-          sample_plot_folder <- file.path(plot_folder, make.names(flag$flag))
-        }
+      sample_plot_folder <- if (use_plot_subfolders) {
+        psd_plot_subfolder(sample, flags_df, plot_folder)
       } else {
-        sample_plot_folder <- plot_folder
+        plot_folder
       }
 
       # Create plot subfolder
@@ -304,4 +290,34 @@ ifcb_psd <- function(feature_folder, hdr_folder, bins = NULL, save_data = FALSE,
   }
 
   list(data = data_df, fits = fits_df, flags = flags_df)
+}
+
+# Flag thresholds for the Python `save_data()` and `get_flags()` methods, as a
+# named list holding only the thresholds that were set.
+psd_flag_args <- function(beads = NULL, bubbles = NULL, incomplete = NULL,
+                          missing_cells = NULL, biomass = NULL, bloom = NULL,
+                          humidity = NULL) {
+  args <- list(
+    beads = if (!is.null(beads)) as.numeric(beads),
+    bubbles = if (!is.null(bubbles)) as.integer(bubbles),
+    incomplete = if (!is.null(incomplete)) as.integer(incomplete),
+    missing_cells = missing_cells,
+    biomass = if (!is.null(biomass)) as.integer(biomass),
+    bloom = if (!is.null(bloom)) as.integer(bloom),
+    humidity = humidity
+  )
+
+  args[!vapply(args, is.null, logical(1))]
+}
+
+# Folder a sample's PSD plot is saved in: one per flag, or "PSD.OK" for a
+# sample without a flag. `flags` is NULL when no sample was flagged at all.
+psd_plot_subfolder <- function(sample, flags, plot_folder) {
+  flag <- flags$flag[flags$sample == sample]
+
+  if (length(flag) == 0) {
+    return(file.path(plot_folder, "PSD.OK"))
+  }
+
+  file.path(plot_folder, make.names(flag[1]))
 }

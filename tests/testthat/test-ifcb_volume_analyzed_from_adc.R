@@ -157,3 +157,36 @@ test_that("ifcb_volume_analyzed keeps header values when the ADC estimate is NA"
   )
   expect_equal(ml, 0.25 * (120 - 12) / 60)
 })
+
+test_that("an empty ADC file is read as zero ROIs", {
+  dir <- tempfile("adc_empty_")
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+
+  # A sample that never triggered has a zero-byte .adc, which read.csv() rejects
+  adc_file <- file.path(dir, "D20220101T000000_IFCB001.adc")
+  file.create(adc_file)
+
+  adc <- read_adc_columns(adc_file)
+  expect_equal(nrow(adc), 0)
+
+  roi_cols <- adc_get_roi_columns(adc)
+  expect_length(roi_cols$x, 0)
+  expect_length(roi_cols$startbyte, 0)
+
+  res <- expect_no_warning(ifcb_volume_analyzed_from_adc(adc_file))
+  expect_true(is.na(res$ml_analyzed))
+})
+
+test_that("ifcb_volume_analyzed keeps header values when the ADC file is empty", {
+  dir <- tempfile("adc_empty_hdr_")
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+
+  writeLines(c("runtime: 120", "inhibittime: 12"),
+             file.path(dir, "D20220101T000000_IFCB001.hdr"))
+  file.create(file.path(dir, "D20220101T000000_IFCB001.adc"))
+
+  ml <- ifcb_volume_analyzed(file.path(dir, "D20220101T000000_IFCB001.hdr"))
+  expect_equal(ml, 0.25 * (120 - 12) / 60)
+})

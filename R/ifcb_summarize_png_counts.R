@@ -73,6 +73,11 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
     # List all PNG files in the current subdirectory
     png_files <- list.files(file.path(png_folder, subdir), pattern = "\\.png$", full.names = TRUE)
 
+    # A class folder without images has nothing to summarize
+    if (length(png_files) == 0) {
+      next
+    }
+
     # Initialize a list to store results for the current class
     class_results <- list()
 
@@ -85,42 +90,21 @@ ifcb_summarize_png_counts <- function(png_folder, hdr_folder = NULL, sum_level =
       ifcb_number <- parts[2]  # Extract IFCB number directly
       roi_number <- as.integer(parts[3])
 
-      if (is.null(hdr_info)) {
-        # If hdr_info is not available or sum_level is "class", use ifcb_convert_filenames directly
-        gps_timestamp <- ifcb_convert_filenames(sample_name)
-        gpsLatitude <- NA
-        gpsLongitude <- NA
-        timestamp <- gps_timestamp$timestamp
-        date <- gps_timestamp$date
-        year <- gps_timestamp$year
-        month <- gps_timestamp$month
-        day <- gps_timestamp$day
-        time <- gps_timestamp$time
-      } else {
-        # Find the matching entry in hdr_info if sum_level is "sample"
-        match_row <- hdr_info$sample == sample_name
-        if (sum_level == "sample" && any(match_row)) {
-          gpsLatitude <- hdr_info$gpsLatitude[match_row]
-          gpsLongitude <- hdr_info$gpsLongitude[match_row]
-          timestamp <- hdr_info$timestamp[match_row]
-          date <- lubridate::date(timestamp)
-          year <- lubridate::year(timestamp)
-          month <- lubridate::month(timestamp)
-          day <- lubridate::day(timestamp)
-          time <- format(timestamp, "%H:%M:%S")
-        } else {
-          # If sum_level is "class" or no match found (unlikely case), set to NA
-          gps_timestamp <- ifcb_convert_filenames(sample_name)
-          gpsLatitude <- NA
-          gpsLongitude <- NA
-          timestamp <- gps_timestamp$timestamp
-          date <- gps_timestamp$date
-          year <- gps_timestamp$year
-          month <- gps_timestamp$month
-          day <- gps_timestamp$day
-          time <- gps_timestamp$time
-        }
-      }
+      # Time comes from the sample name, so its columns have the same type
+      # whether or not the sample has a header file. Only the position is
+      # read from the header.
+      gps_timestamp <- ifcb_convert_filenames(sample_name)
+      match_row <- which(hdr_info$sample == sample_name)[1]
+      has_hdr <- sum_level == "sample" && !is.na(match_row)
+
+      gpsLatitude <- if (has_hdr) as.numeric(hdr_info$gpsLatitude[match_row]) else NA_real_
+      gpsLongitude <- if (has_hdr) as.numeric(hdr_info$gpsLongitude[match_row]) else NA_real_
+      timestamp <- gps_timestamp$timestamp
+      date <- gps_timestamp$date
+      year <- gps_timestamp$year
+      month <- gps_timestamp$month
+      day <- gps_timestamp$day
+      time <- gps_timestamp$time
 
       # Append results for the current PNG file to class_results
       class_results[[length(class_results) + 1]] <- tibble(
