@@ -82,3 +82,23 @@ test_that("ifcb_zip_pngs works correctly", {
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
+
+test_that("ifcb_zip_pngs ignores leftovers in the session temp folder", {
+  png_dir <- tempfile("ifcb_zip_pngs_staging_")
+  dir.create(file.path(png_dir, "Staging_class_001"), recursive = TRUE)
+  on.exit(unlink(png_dir, recursive = TRUE), add = TRUE)
+  file.create(file.path(png_dir, "Staging_class_001", "D20220522T003051_IFCB134_00001.png"))
+
+  # Leftovers of an earlier, failed run for the same class
+  stale_dir <- file.path(tempdir(), "Staging_class")
+  dir.create(stale_dir, showWarnings = FALSE)
+  file.create(file.path(stale_dir, "D19990101T000000_IFCB000_00001.png"))
+  on.exit(unlink(stale_dir, recursive = TRUE), add = TRUE)
+
+  zip_filename <- file.path(png_dir, "output.zip")
+  ifcb_zip_pngs(png_dir, zip_filename, quiet = TRUE)
+
+  contents <- zip::zip_list(zip_filename)$filename
+  expect_false(any(grepl("D19990101T000000", contents)))
+  expect_true("Staging_class/D20220522T003051_IFCB134_00001.png" %in% contents)
+})

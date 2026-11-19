@@ -115,8 +115,12 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
     data_files <- NULL
   }
 
-  # Temporary directory to store renamed folders
-  temp_dir <- tempdir()
+  # Stage the archive in a folder of its own, removed again on exit. Staging
+  # directly in tempdir() would pick up whatever an earlier, failed run (or any
+  # other code) left in folders with the same names.
+  temp_dir <- tempfile("ifcb_zip_matlab_")
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
   manual_dir <- file.path(temp_dir, "manual")
   features_dir <- file.path(temp_dir, "features")
   data_dir <- file.path(temp_dir, "data")
@@ -287,7 +291,8 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   # Create the zip archive
   files_to_zip <- c(manual_dir, features_dir, config_dir)
   if (!is.null(data_files)) files_to_zip <- c(files_to_zip, data_dir)
-  if (!is.null(readme_file)) files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"), file.path(temp_dir, "MANIFEST.txt"))
+  if (!is.null(readme_file)) files_to_zip <- c(files_to_zip, file.path(temp_dir, "README.md"))
+  files_to_zip <- c(files_to_zip, file.path(temp_dir, "MANIFEST.txt"))
 
   if (!quiet) {
     cli_inform("Creating MANIFEST.txt...")
@@ -308,10 +313,4 @@ ifcb_zip_matlab <- function(manual_folder, features_folder, class2use_file, zip_
   if (!quiet) {
     cli_alert_success("Zip archive created: {.file {normalizePath(zip_filename, winslash = '/')}}")
   }
-
-  # Clean up temporary directories
-  unlink(manual_dir, recursive = TRUE)
-  unlink(features_dir, recursive = TRUE)
-  unlink(config_dir, recursive = TRUE)
-  unlink(data_dir, recursive = TRUE)
 }

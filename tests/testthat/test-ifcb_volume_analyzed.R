@@ -45,3 +45,29 @@ test_that("ifcb_volume_analyzed works with multiple files", {
 })
 
 unlink(exdir)
+
+test_that("ifcb_volume_analyzed accepts a URL to a header file", {
+  # ifcb_get_runtime() reads URLs, but the local file check used to reject them
+  mockery::stub(ifcb_volume_analyzed, "ifcb_get_runtime",
+                list(runtime = 1200, inhibittime = 120))
+
+  ml <- ifcb_volume_analyzed("https://example.org/data/D20220522T003051_IFCB134.hdr",
+                             hdrOnly_flag = TRUE)
+
+  expect_equal(ml, 0.25 * (1200 - 120) / 60)
+})
+
+test_that("ifcb_volume_analyzed looks up the ADC next to a URL header", {
+  requested <- NULL
+  mockery::stub(ifcb_volume_analyzed, "ifcb_get_runtime",
+                list(runtime = 1200, inhibittime = 120))
+  mockery::stub(ifcb_volume_analyzed, "ifcb_volume_analyzed_from_adc", function(adc_file) {
+    requested <<- adc_file
+    list(ml_analyzed = NA_real_, inhibittime = NA_real_, runtime = NA_real_)
+  })
+
+  ml <- ifcb_volume_analyzed("https://example.org/data/D20220522T003051_IFCB134.hdr")
+
+  expect_equal(requested, "https://example.org/data/D20220522T003051_IFCB134.adc")
+  expect_equal(ml, 0.25 * (1200 - 120) / 60)
+})

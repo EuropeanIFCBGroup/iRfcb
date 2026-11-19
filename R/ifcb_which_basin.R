@@ -1,4 +1,4 @@
-utils::globalVariables(c("longitude", "latitude"))
+utils::globalVariables(c("longitude", "latitude", "in_basin"))
 
 #' Determine if Points are in a Specified Sea Basin
 #'
@@ -11,7 +11,8 @@ utils::globalVariables(c("longitude", "latitude"))
 #' @param shape_file The absolute path to a custom polygon shapefile in WGS84 (EPSG:4326) that represents the sea basin.
 #'                   Defaults to the Baltic Sea, Kattegat, and Skagerrak basins included in the `iRfcb` package.
 #'
-#' @return A vector indicating the basin each point belongs to, or a ggplot object if `plot = TRUE`.
+#' @return A character vector indicating the basin each point belongs to, with `NA` for points outside every basin or
+#' where a coordinate is missing, or a ggplot object if `plot = TRUE`.
 #'
 #' @details This function reads a pre-packaged shapefile of the Baltic Sea, Kattegat, and Skagerrak basins from the `iRfcb` package by default, or a user-supplied
 #'          shapefile if provided. The shapefiles originate from SHARK (https://shark.smhi.se/en/). It sets the CRS, transforms the CRS to WGS84 (EPSG:4326) if necessary, and checks if the given points
@@ -54,8 +55,22 @@ ifcb_which_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
     basins <- sf::st_transform(basins, 4326)
   }
 
+  # Points without a position cannot be placed and are returned as NA
+  has_position <- !is.na(latitudes) & !is.na(longitudes)
+
+  # Basin name for each point, NA outside every basin or where the position
+  # is missing
+  basin_names <- rep(NA_character_, length(latitudes))
+
+  if (!any(has_position)) {
+    if (plot) {
+      cli_abort("No points with both a latitude and a longitude to plot.")
+    }
+    return(basin_names)
+  }
+
   # Create a data frame of the points
-  points_df <- data.frame(longitude = longitudes, latitude = latitudes)
+  points_df <- data.frame(longitude = longitudes, latitude = latitudes)[has_position, , drop = FALSE]
 
   # Convert the data frame to an sf object
   points_sf <- sf::st_as_sf(points_df, coords = c("longitude", "latitude"), crs = sf::st_crs(basins))
@@ -63,25 +78,20 @@ ifcb_which_basin <- function(latitudes, longitudes, plot = FALSE, shape_file = N
   # Check which points are within the filtered basins
   points_in_basins <- sf::st_within(points_sf, basins, sparse = FALSE)
 
-  # Determine the basin for each point
-  basin_names <- apply(points_in_basins, 1, function(row) {
-    if (any(row)) {
-      basins$basin[which(row)]
-    } else {
-      NA
-    }
+  basin_names[has_position] <- apply(points_in_basins, 1, function(row) {
+    if (any(row)) basins$basin[which(row)[1]] else NA_character_
   })
 
   # Plot the data
   if (plot) {
-    points_df$in_basin <- basin_names
+    points_sf$in_basin <- basin_names[has_position]
     plot_obj <- ggplot() +
       geom_sf(data = basins, fill = "lightblue", color = "black", alpha = 0.5) +
-      geom_sf(data = points_sf, aes(color = as.factor(basin_names)), size = 2) +
+      geom_sf(data = points_sf, aes(color = as.factor(in_basin)), size = 2) +
       labs(title = ifelse(is.null(shape_file), "Points in Baltic Sea sub-basins", "Points in basin"),
            color = "Sea basin") +
-      ylim(c(min(latitudes)-1, max(latitudes)+1)) +
-      xlim(c(min(longitudes)-1, max(longitudes)+1)) +
+      ylim(c(min(points_df$latitude)-1, max(points_df$latitude)+1)) +
+      xlim(c(min(points_df$longitude)-1, max(points_df$longitude)+1)) +
       theme_minimal() +
       # Set white background and ensure plot background is white
       theme(

@@ -143,3 +143,32 @@ test_that("ifcb_read_summary handles lists correctly", {
 })
 
 unlink(exdir)
+
+test_that("use_python = TRUE gives the native result when scipy is unavailable", {
+  # The count matrix used to be transposed whenever use_python was TRUE, even
+  # when the file had been read by the native reader after all.
+  mockery::stub(ifcb_read_summary, "scipy_available", FALSE)
+
+  native <- ifcb_read_summary(summary_file_path)
+  fallback <- ifcb_read_summary(summary_file_path, use_python = TRUE)
+
+  expect_equal(fallback, native)
+})
+
+test_that("ifcb_read_summary orients class matrices by the class list", {
+  # scipy squeezes a single-sample summary to one value per class, which
+  # arrives as a column. Counts and biovolumes must both be turned back.
+  summary_list <- list(
+    class2useTB = c("Mesodinium_rubrum", "unclassified"),
+    classcountTB = matrix(c(5, 3), ncol = 1),
+    classbiovolTB = matrix(c(50, 30), ncol = 1),
+    ml_analyzedTB = 4,
+    filelistTB = "D20220522T003051_IFCB134"
+  )
+
+  res <- ifcb_read_summary(summary_list, biovolume = TRUE, threshold = "none")
+
+  expect_equal(res$species, c("Mesodinium_rubrum", "unclassified"))
+  expect_equal(res$counts, c(5, 3))
+  expect_equal(res$biovolume, c(50, 30))
+})

@@ -158,9 +158,28 @@ test_that("a zero-trigger sample is flagged is_empty rather than failing as unre
   expect_true(qc$is_empty)            # advisory flag actually fires
   expect_true(qc$roi_count_match)     # 0 imaged == header roiCount 0
 
-  # No volume can be computed for a sample that never triggered, so the check is
-  # not applicable rather than failed. Being empty is reported by `is_empty`; it
-  # must not also fail the integrity checks.
+  # The empty .adc holds no clocks, so the volume comes from the header's run
+  # and inhibit times, as in the MATLAB reference. Being empty is reported by
+  # `is_empty`; it must not also fail the integrity checks.
+  expect_equal(qc$ml_analyzed, ifcb_volume_analyzed(hf, hdrOnly_flag = TRUE))
+  expect_true(qc$volume_ok)
+  expect_true(qc$qc_pass)
+})
+
+test_that("a zero-trigger sample without header run times has no volume verdict", {
+  work <- tempfile()
+  dir.create(work)
+  on.exit(unlink(work, recursive = TRUE), add = TRUE)
+
+  nm <- "D20220522T003051_IFCB134"
+  writeLines("roiCount: 0", file.path(work, paste0(nm, ".hdr")))
+  file.create(file.path(work, paste0(nm, c(".adc", ".roi"))))
+
+  qc <- suppressWarnings(ifcb_qc_sample(file.path(work, nm)))
+
+  # No volume from the ADC or the header: not applicable rather than failed
+  expect_true(qc$is_empty)
+  expect_true(is.na(qc$ml_analyzed))
   expect_true(is.na(qc$volume_ok))
   expect_true(qc$qc_pass)
 })

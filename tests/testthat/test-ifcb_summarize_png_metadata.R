@@ -64,3 +64,23 @@ test_that("ifcb_summarize_png_metadata handles empty directories gracefully", {
                                              feature_folder = empty_feature_dir,
                                              hdr_folder = hdr_folder), "No feature files found")
 })
+
+test_that("ifcb_summarize_png_metadata joins feature files of any version", {
+  work_dir <- tempfile("ifcb_png_metadata_versions")
+  on.exit(unlink(work_dir, recursive = TRUE), add = TRUE)
+  dir.create(work_dir)
+
+  v2_file <- list.files(feature_folder, pattern = "_fea_v2\\.csv$", full.names = TRUE)[1]
+  expected <- ifcb_summarize_png_metadata(png_folder, feature_folder = feature_folder)
+  expect_false(anyNA(expected$Biovolume))
+
+  for (suffix in c("_fea_v4.csv", "_features_v4.csv")) {
+    version_folder <- file.path(work_dir, suffix)
+    dir.create(version_folder)
+    file.copy(v2_file, file.path(version_folder,
+                                 sub("_fea_v2\\.csv$", suffix, basename(v2_file))))
+
+    result <- ifcb_summarize_png_metadata(png_folder, feature_folder = version_folder)
+    expect_equal(result$Biovolume, expected$Biovolume)
+  }
+})

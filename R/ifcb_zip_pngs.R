@@ -59,8 +59,12 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
   # Total number of subdirectories
   total_subdirs <- length(subdirs)
 
-  # Temporary directory to store renamed folders
-  temp_dir <- tempdir()
+  # Stage the archive in a folder of its own, removed again on exit. Staging
+  # directly in tempdir() would pick up whatever an earlier, failed run (or any
+  # other code) left in a folder named after one of the classes.
+  temp_dir <- tempfile("ifcb_zip_pngs_")
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
   temp_subdirs <- character()
 
   if (print_progress & !quiet) cli_progress_bar("Collecting subdirectories", total = total_subdirs)
@@ -189,7 +193,4 @@ ifcb_zip_pngs <- function(png_folder, zip_filename, readme_file = NULL, email_ad
   } else {
     cli_inform("No directories with {.file .png} files found.")
   }
-
-  # Clean up temporary directories
-  unlink(temp_subdirs, recursive = TRUE)
 }

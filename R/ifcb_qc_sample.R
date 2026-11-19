@@ -73,9 +73,12 @@ utils::globalVariables(c("files_complete", "roi_count_match", "roi_data_complete
 #' given sample is reported as `NA` and treated as *not applicable*: it does not
 #' fail `qc_pass`. This matters for legacy IFCB headers, which omit the
 #' post-run `roiCount` summary field (so `roi_count_match` is `NA`); such samples
-#' can still pass on the checks that do apply. It also applies to a sample that
-#' never triggered, where no volume can be computed and `volume_ok` is `NA`
-#' rather than `FALSE` (`is_empty` reports the condition instead). A sample
+#' can still pass on the checks that do apply. It also applies to an empty
+#' sample for which no volume can be derived, where `volume_ok` is `NA` rather
+#' than `FALSE` (`is_empty` reports the condition instead). A sample that never
+#' triggered has an empty `.adc` file, so its volume is taken from the run and
+#' inhibit times in the header, as [ifcb_volume_analyzed()] does, and is checked
+#' like any other. A sample
 #' whose analyzed volume comes out as exactly `0` is a different case and does
 #' fail: that is a computed answer saying the instrument ran and analyzed no
 #' water, rather than a check that could not be run. Only a check
@@ -199,9 +202,9 @@ ifcb_qc_sample <- function(sample,
   # sample, so e.g. legacy headers lacking `roiCount` (giving `roi_count_match`
   # = NA) are not penalised for a check that cannot run. Only checks that
   # actually evaluated to FALSE fail `qc_pass`. `files_complete` is never NA and
-  # therefore always counts. `volume_ok` is NA only for a sample that never
-  # triggered, where no volume exists to check; that is reported by `is_empty`
-  # and must not also fail the integrity checks.
+  # therefore always counts. `volume_ok` is NA only for an empty sample with no
+  # derivable volume; that is reported by `is_empty` and must not also fail the
+  # integrity checks.
   out$qc_pass <- with(out, {
     ok <- files_complete &
       dplyr::coalesce(roi_count_match, TRUE) &
@@ -392,8 +395,10 @@ qc_one_sample <- function(base_path, max_ml = NULL, volume_tolerance = 0.05,
     base_ml <- if (!is.na(syringe_ml) && syringe_ml > 0) syringe_ml else IFCB_DEFAULT_SYRINGE_ML
     base_ml * (1 + volume_tolerance)
   }
-  # An empty sample never triggered, so no volume can be computed. That is a
-  # property of the sample, not a defect, and `is_empty` already reports it;
+  # An empty sample has no ADC rows to derive a volume from, so its volume is
+  # the header one (run time minus inhibit time), as in the MATLAB reference.
+  # When the header cannot supply it either, no volume can be computed. That is
+  # a property of the sample, not a defect, and `is_empty` already reports it;
   # leaving `volume_ok` NA keeps it out of `qc_pass` rather than failing a
   # sample that is merely empty.
   #

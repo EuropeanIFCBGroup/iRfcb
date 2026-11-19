@@ -125,3 +125,79 @@ test_that("ifcb_annotate_batch handles errors gracefully", {
   unlink(manual_folder, recursive = TRUE)
   unlink(new_folder, recursive = TRUE)
 })
+
+test_that("ifcb_annotate_batch creates new files in a separate manual_output", {
+  base <- tempfile("annotate_batch_output_")
+  manual_folder <- file.path(base, "manual")
+  manual_output <- file.path(base, "output")
+  data_folder <- file.path(base, "data")
+  dir.create(data_folder, recursive = TRUE)
+  on.exit(unlink(base, recursive = TRUE), add = TRUE)
+
+  unzip(test_path("test_data/test_data.zip"),
+        files = c("test_data/config/class2use.mat",
+                  "test_data/data/D20220522T003051_IFCB134.adc"),
+        exdir = data_folder, junkpaths = TRUE)
+
+  ifcb_annotate_batch(png_images = "D20220522T003051_IFCB134_00002.png",
+                      class = "Nodularia_spumigena",
+                      manual_folder = manual_folder,
+                      adc_files = file.path(data_folder, "D20220522T003051_IFCB134.adc"),
+                      class2use_file = file.path(data_folder, "class2use.mat"),
+                      manual_output = manual_output)
+
+  classlist <- ifcb_get_mat_variable(file.path(manual_output, "D20220522T003051_IFCB134.mat"),
+                                     "classlist")
+  expect_equal(classlist[, 2], c(1, 10, 1))
+  expect_length(list.files(manual_folder), 0)
+})
+
+test_that("ifcb_annotate_batch updates files found in subfolders with manual_recursive", {
+  base <- tempfile("annotate_batch_recursive_")
+  manual_folder <- file.path(base, "manual")
+  sub_folder <- file.path(manual_folder, "2022")
+  manual_output <- file.path(base, "output")
+  dir.create(sub_folder, recursive = TRUE)
+  on.exit(unlink(base, recursive = TRUE), add = TRUE)
+
+  unzip(test_path("test_data/test_data.zip"),
+        files = c("test_data/config/class2use.mat",
+                  "test_data/data/D20220522T003051_IFCB134.adc"),
+        exdir = base, junkpaths = TRUE)
+  unzip(test_path("test_data/test_data.zip"),
+        files = "test_data/manual/D20220522T003051_IFCB134.mat",
+        exdir = sub_folder, junkpaths = TRUE)
+
+  ifcb_annotate_batch(png_images = "D20220522T003051_IFCB134_00003.png",
+                      class = "Nodularia_spumigena",
+                      manual_folder = manual_folder,
+                      adc_files = file.path(base, "D20220522T003051_IFCB134.adc"),
+                      class2use_file = file.path(base, "class2use.mat"),
+                      manual_output = manual_output,
+                      manual_recursive = TRUE)
+
+  classlist <- ifcb_get_mat_variable(file.path(manual_output, "D20220522T003051_IFCB134.mat"),
+                                     "classlist")
+  expect_equal(classlist[3, 2], 10)
+})
+
+test_that("ifcb_annotate_batch skips a sample whose ADC file is empty", {
+  base <- tempfile("annotate_batch_empty_")
+  dir.create(base)
+  on.exit(unlink(base, recursive = TRUE), add = TRUE)
+
+  unzip(test_path("test_data/test_data.zip"),
+        files = "test_data/config/class2use.mat", exdir = base, junkpaths = TRUE)
+  adc_file <- file.path(base, "D20220522T003051_IFCB134.adc")
+  file.create(adc_file)
+
+  expect_warning(
+    ifcb_annotate_batch(png_images = "D20220522T003051_IFCB134_00002.png",
+                        class = "Nodularia_spumigena",
+                        manual_folder = file.path(base, "manual"),
+                        adc_files = adc_file,
+                        class2use_file = file.path(base, "class2use.mat")),
+    "empty"
+  )
+  expect_length(list.files(file.path(base, "manual")), 0)
+})

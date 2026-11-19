@@ -16,7 +16,9 @@
 #' @param manual_folder_output Character. Path to the output folder where the merged classification files will be stored.
 #' @param do_compression A logical value indicating whether to compress the `.mat` file. Defaults to `TRUE`.
 #' @param temp_index_offset Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.
-#' @param skip_class Character. A vector of class names to skip from the `class2use_file_additions` during the merge process. Default is `NULL`.
+#' @param skip_class Character. A vector of class names to skip from the `class2use_file_additions` during the merge process.
+#' Skipped classes are not added to the merged class list, and ROIs annotated with them in the additions files are left
+#' unannotated (`NaN`) in the merged files, unless the class also exists in the base set. Default is `NULL`.
 #' @param quiet Logical. If `TRUE`, suppresses output messages. Default is `FALSE`.
 #'
 #' @return No return value. Outputs the combined `class2use` file in the same folder as `class2use_file_base` is located or at a user-specified location,
@@ -75,20 +77,21 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   class2use_base <- as.character(ifcb_get_mat_variable(class2use_file_base))
   class2use_additions <- as.character(ifcb_get_mat_variable(class2use_file_additions))
 
-  # Remove classes to skip
-  if(!is.null(skip_class)) {
-    class2use_additions <- class2use_additions[!class2use_additions %in% skip_class]
-  }
+  # Classes to skip are left out of the combined list, but they stay in
+  # `class2use_additions`: the additions files index into the full list, so
+  # dropping them here would shift every later index onto the wrong class.
+  skipped <- class2use_additions %in% skip_class
 
   # Combine vectors, only add unique elements from additions
-  class2use_combined <- unique(c(class2use_base, class2use_additions))
+  class2use_combined <- unique(c(class2use_base, class2use_additions[!skipped]))
 
-  # Create dataframe with index translations
+  # Create dataframe with index translations, one row per additions class.
+  # `rownumber` is the class's index in the combined list, or NA for a skipped
+  # class that the base set does not have either.
   translation_df <- data.frame(
-    rownumber = seq_along(class2use_combined),
-    class2use_combined = class2use_combined,
-    index_in_base = match(class2use_combined, class2use_base),
-    index_in_additions = match(class2use_combined, class2use_additions)
+    rownumber = match(class2use_additions, class2use_combined),
+    class2use_additions = class2use_additions,
+    index_in_additions = seq_along(class2use_additions)
   )
 
   # Create temporary placeholder indices
@@ -137,7 +140,9 @@ ifcb_merge_manual <- function(class2use_file_base, class2use_file_additions,
   }
 
   # Filter translation data
-  addition_translations <- translation_df[!is.na(translation_df$index_in_additions) & translation_df$index_in_additions != translation_df$rownumber, ]
+  # Only indices that change need rewriting. A skipped class with no place in
+  # the combined list (NA) is rewritten to NaN, i.e. left unannotated.
+  addition_translations <- translation_df[is.na(translation_df$rownumber) | translation_df$index_in_additions != translation_df$rownumber, ]
 
   if (!quiet) {
     cli_inform("Replacing {nrow(addition_translations)} class {?index/indices} with temporary placeholders...")

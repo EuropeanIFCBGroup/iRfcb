@@ -100,7 +100,9 @@ class without any threshold applied.}
 
 \item{drop_zero_volume}{Logical. If \code{TRUE}, rows where \code{Biovolume} equals zero (e.g., artifacts such as smudges on the flow cell) are removed. Default: \code{FALSE}.}
 
-\item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).}
+\item{feature_version}{Optional numeric or character version to filter feature files by (e.g. 2 for "_v2"). Default is NULL (no filtering).
+A sample with more than one feature file (e.g. both \verb{_fea_v2.csv} and \verb{_fea_v4.csv}) is an error, since its ROIs would be counted twice;
+set \code{feature_version} to select one.}
 
 \item{use_cell_counts}{Logical. If \code{TRUE}, reads the optional per-ROI \code{cell_count}
 data stored by the diatom chain counter in \code{.mat}/\code{.h5}/\code{.csv} classification files and

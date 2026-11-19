@@ -168,3 +168,24 @@ test_that("ifcb_get_ferrybox_data handles no matching GPS data", {
   unlink(temp_dir, recursive = TRUE)
 })
 
+
+test_that("ifcb_get_ferrybox_data returns one row per input timestamp", {
+  temp_dir <- tempfile("ifcb_get_ferrybox_data_rows")
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  file.copy(system.file("exdata/example_ferrybox.txt", package = "iRfcb"),
+            file.path(temp_dir, "SveaFB_38059_20220501000100_20220531235800_OK.txt"))
+
+  # A repeated timestamp, and two timestamps that round to the same minute
+  test_timestamps <- as.POSIXct(c("2022-05-22 00:04:39", "2022-05-22 00:04:39",
+                                  "2022-05-22 00:04:50", "2022-05-22 00:30:51"),
+                                tz = "UTC")
+
+  result <- expect_no_warning(ifcb_get_ferrybox_data(test_timestamps, temp_dir))
+
+  expect_equal(result$timestamp, test_timestamps)
+  expect_equal(result$gpsLatitude[2], result$gpsLatitude[1])
+  expect_false(anyNA(result$gpsLatitude[1:3]))
+  expect_true(is.na(result$gpsLatitude[4]))
+})

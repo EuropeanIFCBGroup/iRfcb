@@ -57,3 +57,12 @@ test_that("ifcb_is_in_basin handles invalid inputs gracefully", {
   # Check if the function returns an error for invalid inputs
   expect_error(suppressWarnings(ifcb_is_in_basin(invalid_latitudes, invalid_longitudes)), "missing values in coordinates not allowed")
 })
+
+test_that("ifcb_is_in_basin returns NA for missing coordinates", {
+  result <- ifcb_is_in_basin(c(58.0, NA, 58.0, 55.0), c(18.0, 19.0, NA, 2.0))
+  single <- ifcb_is_in_basin(c(58.0, 55.0), c(18.0, 2.0))
+
+  expect_identical(result, c(single[1], NA, NA, single[2]))
+  expect_identical(ifcb_is_in_basin(NA_real_, NA_real_), NA)
+  expect_s3_class(ifcb_is_in_basin(c(58.0, NA), c(18.0, 19.0), plot = TRUE), "ggplot")
+})

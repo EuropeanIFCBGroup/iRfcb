@@ -608,3 +608,63 @@ test_that("a missing cell_count inside a chain-counted file warns in ifcb_extrac
   expect_true(is.na(res$cell_count[res$roi_number == 3]))
   expect_equal(res$cell_count[res$roi_number == 2], 4)
 })
+
+test_that("class_files take precedence over custom_images and custom_classes", {
+  temp_dir <- tempfile("ifcb_biovolume_precedence")
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+
+  # Keep the test offline: no class is treated as a diatom
+  mockery::stub(ifcb_extract_biovolumes, "ifcb_is_diatom", function(taxa_list, ...) {
+    dplyr::tibble(taxa = taxa_list, genus = taxa_list,
+                  worms_class = NA_character_, is_diatom = FALSE)
+  })
+
+  features <- file.path(temp_dir, "test_data", "features")
+  class_files <- file.path(temp_dir, "test_data", "class", "class2022_v1")
+
+  expected <- ifcb_extract_biovolumes(features, class_files, verbose = FALSE)
+
+  expect_warning(
+    result <- ifcb_extract_biovolumes(
+      features, class_files,
+      custom_images = c("D20220522T003051_IFCB134_00002.png",
+                        "D20220522T003051_IFCB134_00003.png"),
+      custom_classes = c("custom_a", "custom_b"),
+      verbose = FALSE
+    ),
+    "ignoring"
+  )
+
+  expect_false(any(c("custom_a", "custom_b") %in% result$class))
+  expect_equal(result, expected)
+})
+
+test_that("ifcb_extract_biovolumes rejects two feature versions for one sample", {
+  feature_dir <- tempfile("ifcb_biovolume_versions_")
+  dir.create(feature_dir)
+  on.exit(unlink(feature_dir, recursive = TRUE), add = TRUE)
+
+  features <- data.frame(roi_number = 2:3, Biovolume = c(100, 200))
+  write.csv(features, file.path(feature_dir, "D20220522T003051_IFCB134_fea_v2.csv"), row.names = FALSE)
+  write.csv(features, file.path(feature_dir, "D20220522T003051_IFCB134_fea_v4.csv"), row.names = FALSE)
+
+  mockery::stub(ifcb_extract_biovolumes, "ifcb_is_diatom", function(taxa_list, ...) {
+    dplyr::tibble(taxa = taxa_list, genus = taxa_list,
+                  worms_class = NA_character_, is_diatom = FALSE)
+  })
+
+  images <- c("D20220522T003051_IFCB134_00002.png", "D20220522T003051_IFCB134_00003.png")
+
+  # Reading both would count every ROI twice
+  expect_error(
+    ifcb_extract_biovolumes(feature_dir, custom_images = images,
+                            custom_classes = c("custom_a", "custom_b"), verbose = FALSE),
+    "more than one feature file"
+  )
+
+  res <- ifcb_extract_biovolumes(feature_dir, custom_images = images,
+                                 custom_classes = c("custom_a", "custom_b"),
+                                 feature_version = 2, verbose = FALSE)
+  expect_equal(nrow(res), 2)
+})

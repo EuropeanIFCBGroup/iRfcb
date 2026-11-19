@@ -69,7 +69,11 @@ ifcb_zip_images_by_class <- function(
 
   if (!quiet) cli_progress_bar("Zipping classes", total = total_subdirs)
 
-  temp_root <- tempdir()
+  # Stage each class in a folder of its own, removed again on exit, so that
+  # nothing left in tempdir() under a class name ends up in an archive.
+  temp_root <- tempfile("ifcb_zip_images_by_class_")
+  dir.create(temp_root)
+  on.exit(unlink(temp_root, recursive = TRUE), add = TRUE)
 
   for (i in seq_along(subdirs)) {
 

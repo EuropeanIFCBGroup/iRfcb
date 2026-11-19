@@ -171,3 +171,55 @@ test_that("helpers works correctly", {
   # Clean up temporary files
   unlink(temp_dir, recursive = TRUE)
 })
+
+test_that("ifcb_zip_matlab stages in a private folder and always adds a manifest", {
+  temp_dir <- tempfile("ifcb_zip_matlab_staging_")
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+  unzip(test_path("test_data/test_data.zip"), exdir = temp_dir)
+
+  # Leftovers of an earlier, failed run in the shared session temp folder
+  stale_dir <- file.path(tempdir(), "manual")
+  made_stale_dir <- !dir.exists(stale_dir)
+  dir.create(stale_dir, showWarnings = FALSE)
+  stale_file <- file.path(stale_dir, "D19990101T000000_IFCB000.mat")
+  file.create(stale_file)
+  on.exit(unlink(if (made_stale_dir) stale_dir else stale_file, recursive = TRUE), add = TRUE)
+
+  zip_filename <- file.path(temp_dir, "output.zip")
+  ifcb_zip_matlab(file.path(temp_dir, "test_data/manual"),
+                  file.path(temp_dir, "test_data/features"),
+                  file.path(temp_dir, "test_data/config/class2use.mat"),
+                  zip_filename, quiet = TRUE)
+
+  contents <- zip::zip_list(zip_filename)$filename
+  expect_false(any(grepl("D19990101T000000_IFCB000", contents)))
+  expect_true("MANIFEST.txt" %in% contents)
+  expect_true("manual/D20220522T003051_IFCB134.mat" %in% contents)
+
+  # The earlier run's files are left alone
+  expect_true(file.exists(stale_file))
+})
+
+test_that("split_large_zip ignores leftovers in the session temp folder", {
+  temp_dir <- tempfile("split_large_zip_staging_")
+  dir.create(file.path(temp_dir, "src", "class_a"), recursive = TRUE)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  writeBin(as.raw(sample(0:255, 4000, replace = TRUE)),
+           file.path(temp_dir, "src", "class_a", "a.png"))
+  zip_file <- file.path(temp_dir, "images.zip")
+  zip::zipr(zip_file, file.path(temp_dir, "src", "class_a"))
+
+  stale_dir <- file.path(tempdir(), "split_zip_temp", "stale_class")
+  dir.create(stale_dir, recursive = TRUE, showWarnings = FALSE)
+  file.create(file.path(stale_dir, "stale.png"))
+  on.exit(unlink(file.path(tempdir(), "split_zip_temp"), recursive = TRUE), add = TRUE)
+
+  split_large_zip(zip_file, max_size = 0.001, quiet = TRUE)
+
+  parts <- list.files(temp_dir, pattern = "_part_\\d+\\.zip$", full.names = TRUE)
+  expect_gte(length(parts), 1)
+  contents <- unlist(lapply(parts, function(part) zip::zip_list(part)$filename))
+  expect_false(any(grepl("stale", contents)))
+  expect_true(any(grepl("class_a/a.png", contents, fixed = TRUE)))
+})

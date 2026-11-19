@@ -34,7 +34,7 @@ ifcb_get_ferrybox_data(
 Defaults to 1 minutes. Timestamps further away than this threshold will not be used for filling missing data.}
 }
 \value{
-A data frame containing the input timestamps and corresponding data for the specified parameters.
+A data frame with one row per input timestamp, in the order supplied, and the corresponding data for the specified parameters.
 Columns include 'timestamp', 'gpsLatitude', 'gpsLongitude' (if applicable), and the specified parameters.
 }
 \description{

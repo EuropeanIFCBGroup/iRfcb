@@ -38,7 +38,9 @@ If \code{NULL}, the merged file will be stored in the same directory as \code{cl
 
 \item{temp_index_offset}{Numeric. A large integer used to generate temporary indices during the merge process. Default is 50000.}
 
-\item{skip_class}{Character. A vector of class names to skip from the \code{class2use_file_additions} during the merge process. Default is \code{NULL}.}
+\item{skip_class}{Character. A vector of class names to skip from the \code{class2use_file_additions} during the merge process.
+Skipped classes are not added to the merged class list, and ROIs annotated with them in the additions files are left
+unannotated (\code{NaN}) in the merged files, unless the class also exists in the base set. Default is \code{NULL}.}
 
 \item{quiet}{Logical. If \code{TRUE}, suppresses output messages. Default is \code{FALSE}.}
 }

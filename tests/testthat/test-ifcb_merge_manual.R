@@ -128,3 +128,42 @@ test_that("ifcb_merge_manual throws the correct error messages", {
   # Clean up the temporary directory after the test
   unlink(temp_dir, recursive = TRUE)
 })
+
+test_that("ifcb_merge_manual keeps the additions indices aligned when skip_class is used", {
+  temp_dir <- tempfile("ifcb_merge_manual_skip")
+  dir.create(temp_dir)
+  on.exit(unlink(temp_dir, recursive = TRUE), add = TRUE)
+
+  base_classes <- c("unclassified", "A")
+  additions_classes <- c("unclassified", "B", "C")
+
+  ifcb_create_class2use(base_classes, file.path(temp_dir, "base.mat"))
+  ifcb_create_class2use(additions_classes, file.path(temp_dir, "additions.mat"))
+
+  ifcb_create_manual_file(3, base_classes,
+                          file.path(temp_dir, "base", "D20220101T000000_IFCB1.mat"),
+                          classlist = c(1, 2, 2))
+  # ROI 1 = B (skipped), ROI 2 = C, ROI 3 = unclassified
+  additions_file <- "D20220102T000000_IFCB1.mat"
+  ifcb_create_manual_file(3, additions_classes,
+                          file.path(temp_dir, "additions", additions_file),
+                          classlist = c(2, 3, 1))
+
+  ifcb_merge_manual(file.path(temp_dir, "base.mat"), file.path(temp_dir, "additions.mat"),
+                    file.path(temp_dir, "merged.mat"),
+                    file.path(temp_dir, "base"), file.path(temp_dir, "additions"),
+                    file.path(temp_dir, "merged"), skip_class = "B", quiet = TRUE)
+
+  expect_equal(as.character(ifcb_get_mat_variable(file.path(temp_dir, "merged.mat"))),
+               c("unclassified", "A", "C"))
+
+  merged <- ifcb_count_mat_annotations(file.path(temp_dir, "merged", additions_file),
+                                       file.path(temp_dir, "merged.mat"),
+                                       sum_level = "roi")
+
+  # C keeps its own label, and the skipped B annotation is left unannotated
+  # instead of being relabelled as the class that took over its index
+  expect_equal(merged$class[merged$`roi number` == 2], "C")
+  expect_equal(merged$class[merged$`roi number` == 3], "unclassified")
+  expect_false(1 %in% merged$`roi number`)
+})
